@@ -69,6 +69,7 @@
   "dependencies": {
     "@material-ui/core": "^3.1.1",
     "@material-ui/icons": "^3.0.1",
+    "dotenv": "^8.1.0",
     "husky": "^1.0.1",
     "keymirror": "^0.1.1",
     "lint-staged": "^7.3.0",
@@ -82,6 +83,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "truffle-contract": "^3.0.6",
+    "truffle-hdwallet-provider": "^1.0.17",
     "web3": "^1.0.0-beta.36"
   },
   "husky": {
