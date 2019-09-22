@@ -1,14 +1,14 @@
 import constants from 'core/types'
 
 const initialState = {
-  web3Provider: null
+  fee: null
 }
 
-export function providerReducer(state = initialState, action) {
+export function poolParamsReducer(state = initialState, action) {
   switch (action.type) {
-    case constants.SET_PROVIDER:
+    case constants.GET_POOL_FEE:
       return Object.assign({}, state, {
-        web3Provider: action.web3Provider
+        fee: action.result.fee
       })
 
     default:
