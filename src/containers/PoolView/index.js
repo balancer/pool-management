@@ -5,33 +5,40 @@ import * as poolParamActionCreators from 'core/actions/actions-pool-params'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 
-class HomeView extends Component {
+class PoolView extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      name: ''
+      address: ''
     }
   }
 
+  componentWillMount() {
+    const { address } = this.props.match.params
+
+    this.setState({ address })
+  }
+
+  // componentDidMount() {
+  //   const { actions } = this.props
+  //   const { address } = this.state
+
+  //   actions.poolParams.getFee(address)
+  // }
+
   onSubmit = (evt) => {
     const { actions } = this.props
-    const { name } = this.state
+    const { address } = this.state
 
-    actions.poolParams.getFee(name)
+    actions.poolParams.getFee(address)
     evt.preventDefault()
   }
 
-  handleChange = (evt) => {
-    const { value } = evt.currentTarget
-
-    this.setState({
-      name: value
-    })
-  }
-
   render() {
-    const { name } = this.state
+    const { address } = this.state
+    const { poolParams } = this.props
+    console.log(poolParams)
 
     return (
       <div className="container">
@@ -39,7 +46,7 @@ class HomeView extends Component {
           <TextField
             id="standard-name"
             label="Enter Name"
-            value={name}
+            value={address}
             onChange={this.handleChange}
           />
           <br />
@@ -47,7 +54,7 @@ class HomeView extends Component {
           <Button variant="outlined" type="submit">Submit</Button>
         </form>
         <br />
-        <div>Name already exists?</div>
+        <div>Name already exists? {poolParams.fee}</div>
       </div>
     )
   }
@@ -67,4 +74,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeView)
+export default connect(mapStateToProps, mapDispatchToProps)(PoolView)

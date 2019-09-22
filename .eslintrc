@@ -50,6 +50,7 @@
     "react/no-unused-prop-types": [2, {
       skipShapeProps: false
     }],
+    "react/prop-types": "off",
     "import/prefer-default-export": "off",
     "function-paren-newline": "off"
   }
