@@ -4,28 +4,7 @@ import Web3 from 'web3'
 import abiDecoder from 'abi-decoder'
 
 import BPool from '../../../balancer-core/out/BPool_meta.json'
-
-export function getFee(contractAddress) {
-  return async (dispatch, getState) => {
-    const { web3Provider } = getState().provider
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
-
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
-    // You can make multiple calls in here and dispatch each individually
-    const fee = await bPool.methods.getFee().call()
-    const result = {
-      contractAddress,
-      fee
-    }
-    dispatch((() => {
-      return {
-        type: constants.GET_POOL_FEE,
-        result
-      }
-    })())
-  }
-}
+import TestToken from '../../../external-contracts/TestToken.json'
 
 export function getParams(contractAddress) {
   return async (dispatch, getState) => {
@@ -111,5 +90,57 @@ export function getTokenBalances(contractAddress) {
         result
       }
     })())
+  }
+}
+
+export function bindToken(contractAddress, token, balance, weight) {
+  return async (dispatch, getState) => {
+    const { web3Provider } = getState().provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    // Dispatch Start
+    dispatch((() => {
+      return {
+        contractAddress,
+        type: constants.BIND_TOKEN_REQUEST
+      }
+    })())
+
+    try {
+      const bPool = new web3.eth.Contract(
+        BPool.output.abi,
+        contractAddress,
+        {
+          from: defaultAccount
+        })
+      const tokenContract = new web3.eth.Contract(TestToken.abi, token, { from: defaultAccount })
+      // You can make multiple calls in here and dispatch each individually
+      const approveTx = await tokenContract.methods.approve(balance).send()
+      const bindTx = bPool.methods.bind(token, balance, weight).send()
+
+      const result = {
+        contractAddress,
+        approveTx,
+        bindTx
+      }
+
+      // Dispatch Success
+      dispatch((() => {
+        return {
+          type: constants.BIND_TOKEN_SUCCESS,
+          result
+        }
+      })())
+    } catch (e) {
+      // Dispatch Failure
+      dispatch((() => {
+        return {
+          contractAddress,
+          type: constants.BIND_TOKEN_FAILURE,
+          error: e
+        }
+      })())
+    }
   }
 }

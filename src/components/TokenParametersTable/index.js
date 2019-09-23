@@ -12,16 +12,14 @@ import { styles } from './styles.scss'
 
 const columns = [
   { id: 'address', label: 'Address', minWidth: 200 },
-  { id: 'weight', label: 'Weight', minWidth: 200 },
-  { id: 'balance', label: 'Balance', minWidth: 200 }
+  { id: 'balance', label: 'Balance', minWidth: 200 },
+  { id: 'weight', label: 'Weight', minWidth: 200 }
 ]
 
 export default function TokenParametersTable(props) {
   const {
     tokenData
   } = props
-  console.log(tokenData)
-
 
   const rows = []
 
@@ -64,24 +62,24 @@ export default function TokenParametersTable(props) {
                 >
                   {column.label}
                 </TableCell>
-                            ))}
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                            return (
-                              <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                {columns.map((column) => {
-                                        const value = row[column.id]
-                                        return (
-                                          <TableCell key={column.id} align={column.align}>
-                                            {column.format && typeof value === 'number' ? column.format(value) : value}
-                                          </TableCell>
-                                        )
-                                    })}
-                              </TableRow>
-                            )
-                        })}
+              return (
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  {columns.map((column) => {
+                    const value = row[column.id]
+                    return (
+                      <TableCell key={column.id} align={column.align}>
+                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>
@@ -92,11 +90,11 @@ export default function TokenParametersTable(props) {
         rowsPerPage={rowsPerPage}
         page={page}
         backIconButtonProps={{
-                    'aria-label': 'previous page'
-                }}
+          'aria-label': 'previous page'
+        }}
         nextIconButtonProps={{
-                    'aria-label': 'next page'
-                }}
+          'aria-label': 'next page'
+        }}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
