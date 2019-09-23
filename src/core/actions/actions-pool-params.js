@@ -27,6 +27,37 @@ export function getFee(contractAddress) {
   }
 }
 
+export function getParams(contractAddress) {
+  return async (dispatch, getState) => {
+    const { web3Provider } = getState().provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    // You can make multiple calls in here and dispatch each individually
+    const manager = await bPool.methods.getManager().call()
+    const fee = await bPool.methods.getFee().call()
+    const numTokens = await bPool.methods.getNumTokens().call()
+    const isPaused = await bPool.methods.isPaused().call()
+    const hasParams = true
+
+    const result = {
+      contractAddress,
+      fee,
+      manager,
+      numTokens,
+      isPaused,
+      hasParams
+    }
+    dispatch((() => {
+      return {
+        type: constants.GET_POOL_PARAMS,
+        result
+      }
+    })())
+  }
+}
+
 export function getTokenBalances(contractAddress) {
   return async (dispatch, getState) => {
     const { web3Provider } = getState().provider

@@ -4,7 +4,11 @@ import { bindActionCreators } from 'redux'
 import * as poolParamActionCreators from 'core/actions/actions-pool-params'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Container from '@material-ui/core/Container'
+import Typography from '@material-ui/core/Typography'
+
 import TokenParametersTable from 'components/TokenParametersTable'
+import PoolParamsGrid from 'components/PoolParamsGrid'
 
 class PoolView extends Component {
   constructor(props) {
@@ -36,7 +40,24 @@ class PoolView extends Component {
     const { address } = this.state
 
     actions.pools.getTokenBalances(address)
+    actions.pools.getParams(address)
     evt.preventDefault()
+  }
+
+  buildParamCards() {
+    const { address } = this.state
+    const { pools } = this.props
+    const pool = pools.pools[address]
+
+    if (!pool) {
+      return <div />
+    }
+
+    if (pool.hasParams) {
+      return <PoolParamsGrid pool={pool} />
+    }
+
+    return <div />
   }
 
   buildTokenParamsTable() {
@@ -69,10 +90,11 @@ class PoolView extends Component {
   render() {
     const { address } = this.state
 
+    const paramCards = this.buildParamCards()
     const tokenParamTable = this.buildTokenParamsTable()
 
     return (
-      <div className="container" >
+      <Container>
         <form onSubmit={this.onSubmit}>
           <TextField
             id="standard-name"
@@ -85,9 +107,14 @@ class PoolView extends Component {
           <Button variant="outlined" type="submit">Submit</Button>
         </form>
         <br />
-        <div>Name already exists?</div>
+        <Typography variant="h3" component="h3">Balancer Pool</Typography>
+        <br />
+        {paramCards}
+        <br />
+        <Typography variant="h5" component="h5">Tokens</Typography>
+        <br />
         {tokenParamTable}
-      </div>
+      </Container>
     )
   }
 }

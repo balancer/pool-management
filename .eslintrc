@@ -54,6 +54,7 @@
     "no-mixed-operators": "off",
     "react/jsx-closing-tag-location": "off",
     "no-console": "warn",
+    "no-unused-vars": "warn",
     "import/prefer-default-export": "off",
     "function-paren-newline": "off"
   }

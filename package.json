@@ -67,8 +67,8 @@
     "webpack-pwa-manifest": "^3.6.2"
   },
   "dependencies": {
-    "@material-ui/core": "^3.1.1",
-    "@material-ui/icons": "^3.0.1",
+    "@material-ui/core": "^4.0.0",
+    "@material-ui/icons": "^4.0.0",
     "abi-decoder": "^2.2.0",
     "dotenv": "^8.1.0",
     "husky": "^1.0.1",
