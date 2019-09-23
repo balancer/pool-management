@@ -7,12 +7,13 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
+import Tabs from '@material-ui/core/Tabs'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import TokenParametersTable from 'components/TokenParametersTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
-import ExchangeForm from 'components/ExchangeForm'
 import AsyncButton from 'components/AsyncButton'
+import * as numberLib from 'core/libs/lib-number-helpers'
 import { styles } from './styles.scss'
 
 class PoolView extends Component {
@@ -29,6 +30,11 @@ class PoolView extends Component {
         address: '',
         balance: '',
         weight: ''
+      },
+      setTokenParamsInput: {
+        address: '0xc045c7b6b976d24728872d2117073c893d0b09c2',
+        balance: '2000',
+        weight: '50'
       }
     }
   }
@@ -85,6 +91,38 @@ class PoolView extends Component {
     this.setState({ bindTokenInput })
   }
 
+  setTokenParamsProperty = (property, event) => {
+    const { setTokenParamsInput } = this.state
+    const newProperty = event.target.value
+
+    setTokenParamsInput[property] = newProperty
+
+    this.setState({ setTokenParamsInput })
+  }
+
+
+  setTokenParams = (evt) => {
+    const { actions, pools } = this.props
+    const { address, setTokenParamsInput } = this.state
+
+    const pool = pools.pools[address]
+
+    if (!pool) {
+      // Invariant
+    }
+
+    // Don't allow action if pending
+    if (!pool.pendingTx) {
+      actions.pools.setTokenParams(
+        address,
+        setTokenParamsInput.address,
+        numberLib.toWei(setTokenParamsInput.balance),
+        numberLib.toWei(setTokenParamsInput.weight)
+      )
+    }
+    evt.preventDefault()
+  }
+
   bindToken = (evt) => {
     const { actions, pools } = this.props
     const { address, bindTokenInput } = this.state
@@ -95,6 +133,7 @@ class PoolView extends Component {
       // Invariant
     }
 
+    // Don't allow action if pending
     if (!pool.pendingTx) {
       actions.pools.bindToken(
         address,
@@ -102,11 +141,7 @@ class PoolView extends Component {
         bindTokenInput.balance,
         bindTokenInput.weight
       )
-    } else {
-      // Don't do anything because we're pending!
     }
-
-
     evt.preventDefault()
   }
 
@@ -140,22 +175,6 @@ class PoolView extends Component {
     }
 
     return <TokenParametersTable tokenData={pool.tokenParams} />
-  }
-
-  buildExchangeForm() {
-    const { address } = this.state
-    const { pools } = this.props
-    const pool = pools.pools[address]
-
-    if (!pool) {
-      return <div />
-    }
-
-    if (!pool.hasParams || !pool.hasTokenParams) {
-      return <div />
-    }
-
-    return <ExchangeForm />
   }
 
   buildInternalExchangeForm() {
@@ -269,8 +288,10 @@ class PoolView extends Component {
 
   buildBindTokenForm() {
     const { address, bindTokenInput } = this.state
-    const { pools, provider } = this.props
+    const { pools } = this.props
     const pool = pools.pools[address]
+
+    console.log(pool)
 
     if (!pool) {
       return <div />
@@ -306,9 +327,61 @@ class PoolView extends Component {
               value={bindTokenInput.weight}
               onChange={e => this.setBindInputProperty('weight', e)}
             />
+            <input type="submit" value="Submit" />
           </Grid>
           <Grid item xs={12} sm={3}>
             <AsyncButton buttonText="Bind" isLoading={pool.pendingTx} />
+          </Grid>
+        </Grid>
+      </form>
+    </Container>)
+  }
+
+  buildSetTokenParamsForm() {
+    const { address, setTokenParamsInput } = this.state
+    const { pools } = this.props
+    const pool = pools.pools[address]
+
+    console.log(pool)
+
+    if (!pool) {
+      return <div />
+    }
+
+    if (!pool.hasParams || !pool.hasTokenParams) {
+      return <div />
+    }
+
+    return (<Container>
+      <form onSubmit={this.setTokenParams}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={9}>
+            <TextField
+              id="token-address"
+              label="Token Address"
+              value={setTokenParamsInput.address}
+              onChange={e => this.setTokenParamsProperty('address', e)}
+            />
+            <TextField
+              id="token-address"
+              label="Balance"
+              type="number"
+              placeholder="0"
+              value={setTokenParamsInput.balance}
+              onChange={e => this.setTokenParamsProperty('balance', e)}
+            />
+            <TextField
+              id="token-address"
+              label="Weight"
+              type="number"
+              placeholder="0"
+              value={setTokenParamsInput.weight}
+              onChange={e => this.setTokenParamsProperty('weight', e)}
+            />
+            <input type="submit" value="Submit" />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <AsyncButton buttonText="Bind" isLoading />
           </Grid>
         </Grid>
       </form>
@@ -322,9 +395,9 @@ class PoolView extends Component {
 
     const paramCards = this.buildParamCards()
     const tokenParamTable = this.buildTokenParamsTable()
-    const exchangeForm = this.buildExchangeForm()
     const internalForm = this.buildInternalExchangeForm()
-    const adminForm = this.buildBindTokenForm()
+    const bindTokensForm = this.buildBindTokenForm()
+    const setTokenParamsForm = this.buildSetTokenParamsForm()
 
     if (provider) {
       actions.pools.getTokenBalances(address)
@@ -357,9 +430,13 @@ class PoolView extends Component {
         <br />
         {/* {internalForm} */}
         <br />
-        <Typography variant="h5" component="h5">Admin</Typography>
+        <Typography variant="h5" component="h5">Add Token</Typography>
         <br />
-        {adminForm}
+        {bindTokensForm}
+        <br />
+        <Typography variant="h5" component="h5">Edit Token</Typography>
+        <br />
+        {setTokenParamsForm}
       </Container>
     )
   }

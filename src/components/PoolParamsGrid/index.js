@@ -33,12 +33,6 @@ export default function PoolParamsGrid(props) {
         <Grid item xs={6} sm={3}>
           <IconCard title="Active" text={activeText} />
         </Grid>
-        <Grid item xs={6} sm={6}>
-          <IconCard title="Fee" text={pool.fee} />
-        </Grid>
-        <Grid item xs={6} sm={6}>
-          <IconCard title="Number of Tokens" text={pool.numTokens} />
-        </Grid>
       </Grid>
     </div>
   )

@@ -102,7 +102,7 @@ export function bindToken(contractAddress, token, balance, weight) {
     // Dispatch Start
     dispatch((() => {
       return {
-        contractAddress,
+        result: contractAddress,
         type: constants.BIND_TOKEN_REQUEST
       }
     })())
@@ -116,7 +116,7 @@ export function bindToken(contractAddress, token, balance, weight) {
         })
       const tokenContract = new web3.eth.Contract(TestToken.abi, token, { from: defaultAccount })
       // You can make multiple calls in here and dispatch each individually
-      const approveTx = await tokenContract.methods.approve(balance).send()
+      const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
       const bindTx = bPool.methods.bind(token, balance, weight).send()
 
       const result = {
@@ -132,11 +132,13 @@ export function bindToken(contractAddress, token, balance, weight) {
           result
         }
       })())
+
+      dispatch(getTokenBalances(contractAddress))
     } catch (e) {
       // Dispatch Failure
       dispatch((() => {
         return {
-          contractAddress,
+          result: contractAddress,
           type: constants.BIND_TOKEN_FAILURE,
           error: e
         }
@@ -144,3 +146,58 @@ export function bindToken(contractAddress, token, balance, weight) {
     }
   }
 }
+
+export function setTokenParams(contractAddress, token, balance, weight) {
+  return async (dispatch, getState) => {
+    const { web3Provider } = getState().provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    // Dispatch Start
+    dispatch((() => {
+      return {
+        result: contractAddress,
+        type: constants.SET_TOKEN_PARAMS_REQUEST
+      }
+    })())
+
+    try {
+      const bPool = new web3.eth.Contract(
+        BPool.output.abi,
+        contractAddress,
+        {
+          from: defaultAccount
+        })
+      const tokenContract = new web3.eth.Contract(TestToken.abi, token, { from: defaultAccount })
+      // You can make multiple calls in here and dispatch each individually
+      const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
+      const bindTx = bPool.methods.setParams(token, balance, weight).send()
+
+      const result = {
+        contractAddress,
+        approveTx,
+        bindTx
+      }
+
+      // Dispatch Success
+      dispatch((() => {
+        return {
+          type: constants.SET_TOKEN_PARAMS_SUCCESS,
+          result
+        }
+      })())
+
+      dispatch(getTokenBalances(contractAddress))
+    } catch (e) {
+      // Dispatch Failure
+      dispatch((() => {
+        return {
+          result: contractAddress,
+          type: constants.SET_TOKEN_PARAMS_FAILURE,
+          error: e
+        }
+      })())
+    }
+  }
+}
+

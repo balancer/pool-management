@@ -59,6 +59,33 @@ export function poolParamsReducer(state = initialState, action) {
       return result
     }
 
+    case constants.SET_TOKEN_PARAMS_REQUEST: {
+      const result = Object.assign({}, state)
+      if (!result.pools[action.result.contractAddress]) {
+        result.pools[action.result.contractAddress] = {}
+      }
+      result.pools[action.result.contractAddress].pendingTx = true
+      return result
+    }
+
+    case constants.SET_TOKEN_PARAMS_SUCCESS: {
+      const result = Object.assign({}, state)
+      if (!result.pools[action.result.contractAddress]) {
+        result.pools[action.result.contractAddress] = {}
+      }
+      result.pools[action.result.contractAddress].pendingTx = false
+      return result
+    }
+
+    case constants.SET_TOKEN_PARAMS_FAILURE: {
+      const result = Object.assign({}, state)
+      if (!result.pools[action.result.contractAddress]) {
+        result.pools[action.result.contractAddress] = {}
+      }
+      result.pools[action.result.contractAddress].pendingTx = false
+      return result
+    }
+
     default:
       return state
   }
