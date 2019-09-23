@@ -22,15 +22,15 @@ const bin = {
 const params = {
     coinParams: [
         {
-            balance: '1000',
-            weight: '100'
+            balance: '10',
+            weight: '30'
         },
         {
-            balance: '2000',
-            weight: '200'
+            balance: '20',
+            weight: '20'
         },
         {
-            balance: '500',
+            balance: '50',
             weight: '50'
         },
     ]
@@ -72,6 +72,9 @@ async function deployPreConfigured() {
 
     // Set Initial Pool Params
 
+
+    // TODO: Multiply all weights by 100
+
     // await bpool.methods.setParams(coins[0].options.address, coinParams[0].balance, coinParams[0].weight)
     // Set Token Approvals + Bind Tokens
     for (let i = 0; i < coins.length; i++) {
@@ -83,6 +86,7 @@ async function deployPreConfigured() {
     await bpool.methods.start().send()
 
     // That's it!
+    console.log('Deployed Factory: ', factory.options.address)
     console.log('Deployed Pool: ', bpool.options.address)
 }
 

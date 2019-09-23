@@ -69,10 +69,13 @@
   "dependencies": {
     "@material-ui/core": "^3.1.1",
     "@material-ui/icons": "^3.0.1",
+    "abi-decoder": "^2.2.0",
     "dotenv": "^8.1.0",
     "husky": "^1.0.1",
+    "install": "^0.13.0",
     "keymirror": "^0.1.1",
     "lint-staged": "^7.3.0",
+    "npm": "^6.11.3",
     "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",

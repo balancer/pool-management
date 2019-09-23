@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import * as poolParamActionCreators from 'core/actions/actions-pool-params'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import TokenParametersTable from 'components/TokenParametersTable'
 
 class PoolView extends Component {
   constructor(props) {
@@ -15,7 +16,10 @@ class PoolView extends Component {
   }
 
   componentWillMount() {
+    const { actions } = this.props
     const { address } = this.props.match.params
+
+    actions.pools.getTokenBalances(address)
 
     this.setState({ address })
   }
@@ -24,24 +28,51 @@ class PoolView extends Component {
   //   const { actions } = this.props
   //   const { address } = this.state
 
-  //   actions.poolParams.getFee(address)
+  //   actions.pools.getFee(address)
   // }
 
   onSubmit = (evt) => {
     const { actions } = this.props
     const { address } = this.state
 
-    actions.poolParams.getFee(address)
+    actions.pools.getTokenBalances(address)
     evt.preventDefault()
+  }
+
+  buildTokenParamsTable() {
+    const { address } = this.state
+    const { pools } = this.props
+    const pool = pools.pools[address]
+
+    console.log('pool!', pools)
+    console.log('pool!', pool)
+
+    if (!pool) {
+      return <div />
+    }
+
+
+    let tokenParamTable
+
+    if (pool.hasTokenParams) {
+      console.log(pool.tokenParams)
+      tokenParamTable = (<div>
+        <TokenParametersTable tokenData={pool.tokenParams} />
+      </div>)
+    } else {
+      tokenParamTable = <div />
+    }
+
+    return tokenParamTable
   }
 
   render() {
     const { address } = this.state
-    const { poolParams } = this.props
-    console.log(poolParams)
+
+    const tokenParamTable = this.buildTokenParamsTable()
 
     return (
-      <div className="container">
+      <div className="container" >
         <form onSubmit={this.onSubmit}>
           <TextField
             id="standard-name"
@@ -54,7 +85,8 @@ class PoolView extends Component {
           <Button variant="outlined" type="submit">Submit</Button>
         </form>
         <br />
-        <div>Name already exists? {poolParams.fee}</div>
+        <div>Name already exists?</div>
+        {tokenParamTable}
       </div>
     )
   }
@@ -62,14 +94,14 @@ class PoolView extends Component {
 
 function mapStateToProps(state) {
   return {
-    poolParams: state.poolParams
+    pools: state.pools
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     actions: {
-      poolParams: bindActionCreators(poolParamActionCreators, dispatch)
+      pools: bindActionCreators(poolParamActionCreators, dispatch)
     }
   }
 }

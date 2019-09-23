@@ -51,6 +51,9 @@
       skipShapeProps: false
     }],
     "react/prop-types": "off",
+    "no-mixed-operators": "off",
+    "react/jsx-closing-tag-location": "off",
+    "no-console": "warn",
     "import/prefer-default-export": "off",
     "function-paren-newline": "off"
   }
