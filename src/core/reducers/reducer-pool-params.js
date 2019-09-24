@@ -1,7 +1,7 @@
 import constants from 'core/types'
 
 const initialState = {
-  pools: {}
+  pool: {}
 }
 
 export function poolParamsReducer(state = initialState, action) {
@@ -83,6 +83,7 @@ export function poolParamsReducer(state = initialState, action) {
         result.pools[action.result.contractAddress] = {}
       }
       result.pools[action.result.contractAddress].pendingTx = false
+      result.pools[action.result.contractAddress].txError = action.result.error
       return result
     }
 

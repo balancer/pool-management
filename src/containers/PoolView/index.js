@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
 import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import TokenParametersTable from 'components/TokenParametersTable'
@@ -22,6 +23,7 @@ class PoolView extends Component {
 
     this.state = {
       address: '',
+      currentTab: 0,
       inputAmount: 0,
       outputAmount: 0,
       inputToken: 'EUR',
@@ -58,6 +60,12 @@ class PoolView extends Component {
       inputAmount: event.target.value
     })
   }
+
+  setCurrentTab = (newValue, event) => {
+    const currentTab = event.target.value
+    console.log(currentTab)
+    this.setState({ currentTab })
+  };
 
   setInputToken = (event) => {
     const { inputToken, outputToken } = this.state
@@ -291,8 +299,6 @@ class PoolView extends Component {
     const { pools } = this.props
     const pool = pools.pools[address]
 
-    console.log(pool)
-
     if (!pool) {
       return <div />
     }
@@ -342,8 +348,6 @@ class PoolView extends Component {
     const { pools } = this.props
     const pool = pools.pools[address]
 
-    console.log(pool)
-
     if (!pool) {
       return <div />
     }
@@ -390,8 +394,10 @@ class PoolView extends Component {
 
   render() {
     const { provider, actions, pools } = this.props
-    const { address } = this.state
+    const { address, currentTab } = this.state
     const pool = pools.pools[address]
+
+    console.log('render', provider, pool, currentTab)
 
     const paramCards = this.buildParamCards()
     const tokenParamTable = this.buildTokenParamsTable()
@@ -399,7 +405,7 @@ class PoolView extends Component {
     const bindTokensForm = this.buildBindTokenForm()
     const setTokenParamsForm = this.buildSetTokenParamsForm()
 
-    if (provider) {
+    if (!pool && provider) {
       actions.pools.getTokenBalances(address)
       actions.pools.getParams(address)
     }
@@ -426,6 +432,18 @@ class PoolView extends Component {
         <br />
         {tokenParamTable}
         <br />
+        <Tabs
+          value={currentTab}
+          onChange={e => this.setCurrentTab(e)}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          <Tab label="Item One" />
+          <Tab label="Item Two" />
+          <Tab label="Item Three" />
+        </Tabs>
+
         <Typography variant="h5" component="h5">Exchange</Typography>
         <br />
         {/* {internalForm} */}
@@ -445,7 +463,7 @@ class PoolView extends Component {
 function mapStateToProps(state) {
   return {
     pools: state.pools,
-    provider: state.web3Provider
+    provider: state.provider
   }
 }
 

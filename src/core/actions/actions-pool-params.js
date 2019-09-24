@@ -102,7 +102,7 @@ export function bindToken(contractAddress, token, balance, weight) {
     // Dispatch Start
     dispatch((() => {
       return {
-        result: contractAddress,
+        result: { contractAddress },
         type: constants.BIND_TOKEN_REQUEST
       }
     })())
@@ -156,7 +156,7 @@ export function setTokenParams(contractAddress, token, balance, weight) {
     // Dispatch Start
     dispatch((() => {
       return {
-        result: contractAddress,
+        result: { contractAddress },
         type: constants.SET_TOKEN_PARAMS_REQUEST
       }
     })())
@@ -173,17 +173,16 @@ export function setTokenParams(contractAddress, token, balance, weight) {
       const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
       const bindTx = bPool.methods.setParams(token, balance, weight).send()
 
-      const result = {
-        contractAddress,
-        approveTx,
-        bindTx
-      }
 
       // Dispatch Success
       dispatch((() => {
         return {
           type: constants.SET_TOKEN_PARAMS_SUCCESS,
-          result
+          result: {
+            contractAddress,
+            approveTx,
+            bindTx
+          }
         }
       })())
 
@@ -192,9 +191,8 @@ export function setTokenParams(contractAddress, token, balance, weight) {
       // Dispatch Failure
       dispatch((() => {
         return {
-          result: contractAddress,
-          type: constants.SET_TOKEN_PARAMS_FAILURE,
-          error: e
+          result: { contractAddress, error: e },
+          type: constants.SET_TOKEN_PARAMS_FAILURE
         }
       })())
     }
