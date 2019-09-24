@@ -46,15 +46,6 @@ class PoolView extends Component {
     this.setState({ address })
   }
 
-  onSubmit = (evt) => {
-    const { actions } = this.props
-    const { address } = this.state
-
-    actions.pools.getTokenBalances(address)
-    actions.pools.getParams(address)
-    evt.preventDefault()
-  }
-
   setInputAmount = (event) => {
     this.setState({
       inputAmount: event.target.value
@@ -68,7 +59,7 @@ class PoolView extends Component {
   };
 
   setInputToken = (event) => {
-    const { inputToken, outputToken } = this.state
+    const { outputToken } = this.state
     const newToken = event.target.value
 
     // If the output token is the same, unset it
@@ -80,14 +71,15 @@ class PoolView extends Component {
   }
 
   setOutputToken = (event) => {
-    const outputToken = event.target.value
-    // // If the input token is the same, unset it
-    // if (inputToken === outputToken) {
-    //   debugger
-    //   setValues({ ...values, 'inputToken': 'None' })
-    // }
+    const { inputToken } = this.state
+    const newToken = event.target.value
 
-    this.setState({ outputToken })
+    // If the output token is the same, unset it
+    if (inputToken === newToken) {
+      this.setState({ outputToken: newToken, inputToken: 'None' })
+    } else {
+      this.setState({ outputToken: newToken })
+    }
   }
 
   setBindInputProperty = (property, event) => {
@@ -110,10 +102,8 @@ class PoolView extends Component {
 
 
   setTokenParams = (evt) => {
-    const { actions, pools } = this.props
+    const { actions, pool } = this.props
     const { address, setTokenParamsInput } = this.state
-
-    const pool = pools.pools[address]
 
     if (!pool) {
       // Invariant
@@ -132,10 +122,8 @@ class PoolView extends Component {
   }
 
   bindToken = (evt) => {
-    const { actions, pools } = this.props
+    const { actions, pool } = this.props
     const { address, bindTokenInput } = this.state
-
-    const pool = pools.pools[address]
 
     if (!pool) {
       // Invariant
@@ -154,43 +142,22 @@ class PoolView extends Component {
   }
 
   buildParamCards() {
-    const { address } = this.state
-    const { pools } = this.props
-    const pool = pools.pools[address]
-
-    if (!pool) {
-      return <div />
-    }
-
-    if (!pool.hasParams) {
-      return <div />
-    }
+    const { pool } = this.props
 
     return <PoolParamsGrid pool={pool} />
   }
 
   buildTokenParamsTable() {
-    const { address } = this.state
-    const { pools } = this.props
-    const pool = pools.pools[address]
-
-    if (!pool) {
-      return <div />
-    }
-
-    if (!pool.hasTokenParams) {
-      return <div />
-    }
+    const { pool } = this.props
 
     return <TokenParametersTable tokenData={pool.tokenParams} />
   }
 
   buildInternalExchangeForm() {
     const {
-      address, inputAmount, outputAmount, inputToken, outputToken
+      inputAmount, outputAmount, inputToken, outputToken
     } = this.state
-    const { pools } = this.props
-    const pool = pools.pools[address]
+    const { pool } = this.props
 
     const currencies = [
       {
@@ -214,14 +181,6 @@ class PoolView extends Component {
         label: '¥'
       }
     ]
-
-    if (!pool) {
-      return <div />
-    }
-
-    if (!pool.hasParams || !pool.hasTokenParams) {
-      return <div />
-    }
 
     return (<form noValidate autoComplete="off">
       <div>
@@ -295,17 +254,8 @@ class PoolView extends Component {
   }
 
   buildBindTokenForm() {
-    const { address, bindTokenInput } = this.state
-    const { pools } = this.props
-    const pool = pools.pools[address]
-
-    if (!pool) {
-      return <div />
-    }
-
-    if (!pool.hasParams || !pool.hasTokenParams) {
-      return <div />
-    }
+    const { bindTokenInput } = this.state
+    const { pool } = this.props
 
     return (<Container>
       <form onSubmit={this.bindToken}>
@@ -344,17 +294,8 @@ class PoolView extends Component {
   }
 
   buildSetTokenParamsForm() {
-    const { address, setTokenParamsInput } = this.state
-    const { pools } = this.props
-    const pool = pools.pools[address]
-
-    if (!pool) {
-      return <div />
-    }
-
-    if (!pool.hasParams || !pool.hasTokenParams) {
-      return <div />
-    }
+    const { setTokenParamsInput } = this.state
+    const { pool } = this.props
 
     return (<Container>
       <form onSubmit={this.setTokenParams}>
@@ -393,21 +334,34 @@ class PoolView extends Component {
   }
 
   render() {
-    const { provider, actions, pools } = this.props
+    const { provider, actions, pool } = this.props
     const { address, currentTab } = this.state
-    const pool = pools.pools[address]
 
     console.log('render', provider, pool, currentTab)
+    console.log(!pool.loadedParams)
+    console.log(provider !== null)
 
-    const paramCards = this.buildParamCards()
-    const tokenParamTable = this.buildTokenParamsTable()
-    const internalForm = this.buildInternalExchangeForm()
-    const bindTokensForm = this.buildBindTokenForm()
-    const setTokenParamsForm = this.buildSetTokenParamsForm()
+    const allParamsLoaded = pool.loadedParams && pool.loadedTokenParams
+    const poolParamsLoaded = pool.loadedParams
+    const tokenParamsLoaded = pool.loadedTokenParams
 
-    if (!pool && provider) {
+    // If the address isn't this contract, invalidate and load the entire state
+    // if (pool.address !== address && provider !== null) {
+
+    // }
+
+    if (pool.loadedParams === false && provider !== null) {
       actions.pools.getTokenBalances(address)
       actions.pools.getParams(address)
+    }
+
+    // if (pool.loadedParams === false && provider !== null) {
+    //   actions.pools.getTokenBalances(address)
+    //   actions.pools.getParams(address)
+    // }
+
+    if (!pool.loadedParams || !pool.loadedTokenParams) {
+      return <div />
     }
 
     return (
@@ -426,11 +380,19 @@ class PoolView extends Component {
         <br />
         <Typography variant="h3" component="h3">Balancer Pool</Typography>
         <br />
-        {paramCards}
+        {poolParamsLoaded ? (
+          this.buildParamCards()
+        ) : (
+          <div />
+          )}
         <br />
         <Typography variant="h5" component="h5" > Tokens</Typography >
         <br />
-        {tokenParamTable}
+        {tokenParamsLoaded ? (
+          this.buildTokenParamsTable()
+        ) : (
+          <div />
+          )}
         <br />
         <Tabs
           value={currentTab}
@@ -450,11 +412,19 @@ class PoolView extends Component {
         <br />
         <Typography variant="h5" component="h5">Add Token</Typography>
         <br />
-        {bindTokensForm}
+        {tokenParamsLoaded ? (
+          this.buildBindTokenForm()
+        ) : (
+          <div />
+          )}
         <br />
         <Typography variant="h5" component="h5">Edit Token</Typography>
         <br />
-        {setTokenParamsForm}
+        {tokenParamsLoaded ? (
+          this.buildSetTokenParamsForm()
+        ) : (
+          <div />
+          )}
       </Container>
     )
   }
@@ -462,7 +432,7 @@ class PoolView extends Component {
 
 function mapStateToProps(state) {
   return {
-    pools: state.pools,
+    pool: state.pool.pool,
     provider: state.provider
   }
 }

@@ -6,7 +6,7 @@ import { poolParamsReducer } from 'core/reducers/reducer-pool-params'
 const rootReducer = combineReducers({
   ui: uiReducer,
   provider: providerReducer,
-  pools: poolParamsReducer
+  pool: poolParamsReducer
 })
 
 export default rootReducer

@@ -171,7 +171,7 @@ export function setTokenParams(contractAddress, token, balance, weight) {
       const tokenContract = new web3.eth.Contract(TestToken.abi, token, { from: defaultAccount })
       // You can make multiple calls in here and dispatch each individually
       const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
-      const bindTx = bPool.methods.setParams(token, balance, weight).send()
+      const bindTx = await bPool.methods.setParams(token, balance, weight).send()
 
 
       // Dispatch Success
