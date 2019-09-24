@@ -21,6 +21,7 @@ export function poolParamsReducer(state = initialState, action) {
         pool: {
           ...pool,
           loadedParams: true,
+          address: action.result.contractAddress,
           poolParams: {
             fee: action.result.fee,
             manager: action.result.manager,
@@ -37,6 +38,7 @@ export function poolParamsReducer(state = initialState, action) {
         ...state,
         pool: {
           ...pool,
+          address: action.result.contractAddress,
           loadedTokenParams: true,
           tokenParams: action.result.tokenData
         }
@@ -49,7 +51,8 @@ export function poolParamsReducer(state = initialState, action) {
         ...state,
         pool: {
           ...pool,
-          pendingTx: true
+          pendingTx: true,
+          txError: null
         }
       })
     }
@@ -60,7 +63,8 @@ export function poolParamsReducer(state = initialState, action) {
         ...state,
         pool: {
           ...pool,
-          pendingTx: false
+          pendingTx: false,
+          txError: null
         }
       })
     }
@@ -83,7 +87,8 @@ export function poolParamsReducer(state = initialState, action) {
         ...state,
         pool: {
           ...pool,
-          pendingTx: true
+          pendingTx: true,
+          txError: null
         }
       })
     }
@@ -94,7 +99,8 @@ export function poolParamsReducer(state = initialState, action) {
         ...state,
         pool: {
           ...pool,
-          pendingTx: false
+          pendingTx: false,
+          txError: null
         }
       })
     }

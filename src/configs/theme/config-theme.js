@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles'
-import { getStyles }      from 'core/libs/lib-style-helpers'
+import { getStyles } from 'core/libs/lib-style-helpers'
 
 const colors = getStyles([
   'error',

@@ -7,27 +7,21 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import TokenParametersTable from 'components/TokenParametersTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
+import MoreParamsGrid from 'components/MoreParamsGrid'
 import AsyncButton from 'components/AsyncButton'
 import * as numberLib from 'core/libs/lib-number-helpers'
 import { styles } from './styles.scss'
 
-class PoolView extends Component {
+class PoolSwapView extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       address: '',
-      currentTab: 0,
-      inputAmount: 0,
-      outputAmount: 0,
-      inputToken: 'EUR',
-      outputToken: 'EUR',
       bindTokenInput: {
         address: '',
         balance: '',
@@ -44,42 +38,6 @@ class PoolView extends Component {
   componentWillMount() {
     const { address } = this.props.match.params
     this.setState({ address })
-  }
-
-  setInputAmount = (event) => {
-    this.setState({
-      inputAmount: event.target.value
-    })
-  }
-
-  setCurrentTab = (newValue, event) => {
-    const currentTab = event.target.value
-    console.log(currentTab)
-    this.setState({ currentTab })
-  };
-
-  setInputToken = (event) => {
-    const { outputToken } = this.state
-    const newToken = event.target.value
-
-    // If the output token is the same, unset it
-    if (outputToken === newToken) {
-      this.setState({ inputToken: newToken, outputToken: 'None' })
-    } else {
-      this.setState({ inputToken: newToken })
-    }
-  }
-
-  setOutputToken = (event) => {
-    const { inputToken } = this.state
-    const newToken = event.target.value
-
-    // If the output token is the same, unset it
-    if (inputToken === newToken) {
-      this.setState({ outputToken: newToken, inputToken: 'None' })
-    } else {
-      this.setState({ outputToken: newToken })
-    }
   }
 
   setBindInputProperty = (property, event) => {
@@ -99,7 +57,6 @@ class PoolView extends Component {
 
     this.setState({ setTokenParamsInput })
   }
-
 
   setTokenParams = (evt) => {
     const { actions, pool } = this.props
@@ -153,106 +110,6 @@ class PoolView extends Component {
     return <TokenParametersTable tokenData={pool.tokenParams} />
   }
 
-  buildInternalExchangeForm() {
-    const {
-      inputAmount, outputAmount, inputToken, outputToken
-    } = this.state
-    const { pool } = this.props
-
-    const currencies = [
-      {
-        value: 'None',
-        label: 'N'
-      },
-      {
-        value: 'USD',
-        label: '$'
-      },
-      {
-        value: 'EUR',
-        label: '€'
-      },
-      {
-        value: 'BTC',
-        label: '฿'
-      },
-      {
-        value: 'JPY',
-        label: '¥'
-      }
-    ]
-
-    return (<form noValidate autoComplete="off">
-      <div>
-        <TextField
-          id="amount-in"
-          label="Input"
-          placeholder="0"
-          value={inputAmount}
-          // onChange={handleChange('inputAmount')}
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          margin="normal"
-          variant="outlined"
-        />
-        <TextField
-          id="token-in"
-          select
-          label="Token"
-          value={inputToken}
-          onChange={this.setInputToken}
-          SelectProps={{
-            native: true
-          }}
-          helperText="Please select your currency"
-          margin="normal"
-          variant="outlined"
-        >
-          {currencies.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </TextField>
-      </div>
-      <div>
-        <TextField
-          id="amount-out"
-          label="Output (estimated)"
-          placeholder="0"
-          value={outputAmount}
-          type="number"
-          InputLabelProps={{
-            shrink: true
-          }}
-          margin="normal"
-          variant="outlined"
-        />
-        <TextField
-          id="token-out"
-          select
-          label="Token"
-          value={outputToken}
-          onChange={this.setOutputToken}
-          SelectProps={{
-            native: true
-          }}
-          helperText="Please select your currency"
-          margin="normal"
-          variant="outlined"
-        >
-          {currencies.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </TextField>
-      </div>
-    </form>)
-  }
-
   buildBindTokenForm() {
     const { bindTokenInput } = this.state
     const { pool } = this.props
@@ -260,13 +117,16 @@ class PoolView extends Component {
     return (<Container>
       <form onSubmit={this.bindToken}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={12}>
             <TextField
               id="token-address"
               label="Token Address"
               value={bindTokenInput.address}
               onChange={e => this.setBindInputProperty('address', e)}
+              fullWidth
             />
+          </Grid>
+          <Grid item xs={12} sm={4}>
             <TextField
               id="token-address"
               label="Balance"
@@ -275,6 +135,8 @@ class PoolView extends Component {
               value={bindTokenInput.balance}
               onChange={e => this.setBindInputProperty('balance', e)}
             />
+          </Grid>
+          <Grid item xs={12} sm={4}>
             <TextField
               id="token-address"
               label="Weight"
@@ -283,10 +145,9 @@ class PoolView extends Component {
               value={bindTokenInput.weight}
               onChange={e => this.setBindInputProperty('weight', e)}
             />
-            <input type="submit" value="Submit" />
           </Grid>
-          <Grid item xs={12} sm={3}>
-            <AsyncButton buttonText="Bind" isLoading={pool.pendingTx} />
+          <Grid item xs={12} sm={4}>
+            <input type="submit" value="Submit" />
           </Grid>
         </Grid>
       </form>
@@ -295,18 +156,20 @@ class PoolView extends Component {
 
   buildSetTokenParamsForm() {
     const { setTokenParamsInput } = this.state
-    const { pool } = this.props
 
     return (<Container>
       <form onSubmit={this.setTokenParams}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={12}>
             <TextField
               id="token-address"
               label="Token Address"
               value={setTokenParamsInput.address}
               onChange={e => this.setTokenParamsProperty('address', e)}
+              fullWidth
             />
+          </Grid>
+          <Grid item xs={12} sm={4}>
             <TextField
               id="token-address"
               label="Balance"
@@ -315,22 +178,21 @@ class PoolView extends Component {
               value={setTokenParamsInput.balance}
               onChange={e => this.setTokenParamsProperty('balance', e)}
             />
-            <TextField
-              id="token-address"
-              label="Weight"
-              type="number"
-              placeholder="0"
-              value={setTokenParamsInput.weight}
-              onChange={e => this.setTokenParamsProperty('weight', e)}
-            />
-            <input type="submit" value="Submit" />
           </Grid>
-          <Grid item xs={12} sm={3}>
-            <AsyncButton buttonText="Bind" isLoading />
+          <Grid item xs={12} sm={4}><TextField
+            id="token-address"
+            label="Weight"
+            type="number"
+            placeholder="0"
+            value={setTokenParamsInput.weight}
+            onChange={e => this.setTokenParamsProperty('weight', e)}
+          /></Grid>
+          <Grid item xs={12} sm={4}>
+            <input type="submit" value="Submit" />
           </Grid>
         </Grid>
       </form>
-    </Container>)
+    </Container >)
   }
 
   render() {
@@ -350,7 +212,7 @@ class PoolView extends Component {
 
     // }
 
-    if (pool.loadedParams === false && provider !== null) {
+    if (pool.address !== address && provider !== null) {
       actions.pools.getTokenBalances(address)
       actions.pools.getParams(address)
     }
@@ -366,65 +228,51 @@ class PoolView extends Component {
 
     return (
       <Container>
-        <form onSubmit={this.onSubmit}>
-          <TextField
-            id="standard-name"
-            label="Enter Name"
-            value={address}
-            onChange={this.handleChange}
-          />
-          <br />
-          <br />
-          <Button variant="outlined" type="submit">Submit</Button>
-        </form>
-        <br />
-        <Typography variant="h3" component="h3">Balancer Pool</Typography>
-        <br />
-        {poolParamsLoaded ? (
-          this.buildParamCards()
-        ) : (
-          <div />
-          )}
-        <br />
-        <Typography variant="h5" component="h5" > Tokens</Typography >
-        <br />
-        {tokenParamsLoaded ? (
-          this.buildTokenParamsTable()
-        ) : (
-          <div />
-          )}
-        <br />
-        <Tabs
-          value={currentTab}
-          onChange={e => this.setCurrentTab(e)}
-          indicatorColor="primary"
-          textColor="primary"
-          centered
-        >
-          <Tab label="Item One" />
-          <Tab label="Item Two" />
-          <Tab label="Item Three" />
-        </Tabs>
-
-        <Typography variant="h5" component="h5">Exchange</Typography>
-        <br />
-        {/* {internalForm} */}
-        <br />
-        <Typography variant="h5" component="h5">Add Token</Typography>
-        <br />
-        {tokenParamsLoaded ? (
-          this.buildBindTokenForm()
-        ) : (
-          <div />
-          )}
-        <br />
-        <Typography variant="h5" component="h5">Edit Token</Typography>
-        <br />
-        {tokenParamsLoaded ? (
-          this.buildSetTokenParamsForm()
-        ) : (
-          <div />
-          )}
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography variant="h3" component="h3">Balancer Pool</Typography>
+            <br />
+            {poolParamsLoaded ? (
+              this.buildParamCards()
+            ) : (
+              <div />
+              )}
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Typography variant="h5" component="h5" > Tokens</Typography >
+            <br />
+            {tokenParamsLoaded ? (
+              this.buildTokenParamsTable()
+            ) : (
+              <div />
+              )}
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h5" component="h5">Add Token</Typography>
+                <br />
+                {tokenParamsLoaded ? (
+                  this.buildBindTokenForm()
+                ) : (
+                  <div />
+                  )}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h5" component="h5">Edit Token</Typography>
+                <br />
+                {tokenParamsLoaded ? (
+                  this.buildSetTokenParamsForm()
+                ) : (
+                  <div />
+                  )}
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <MoreParamsGrid pool={pool} />
+          </Grid>
+        </Grid>
       </Container>
     )
   }
@@ -446,4 +294,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PoolView)
+export default connect(mapStateToProps, mapDispatchToProps)(PoolSwapView)

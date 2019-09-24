@@ -12,7 +12,9 @@ import {
 } from 'react-router-dom'
 import theme from 'configs/theme/config-theme'
 import HomeView from 'containers/HomeView'
-import PoolView from 'containers/PoolView'
+import PoolSwapView from 'containers/PoolSwapView'
+import PoolManageView from 'containers/PoolManageView'
+import PoolListView from 'containers/PoolListView'
 import Header from './components/Header'
 import Footer from './components/Footer'
 
@@ -34,8 +36,11 @@ class App extends Component {
             <div className="app-shell">
               <Switch>
                 <Route path="/home" component={HomeView} />
-                <Route path="/pool/:address" component={PoolView} />
-                <Redirect from="/" to="/home" />
+                <Route path="/swap/:address" component={PoolSwapView} />
+                <Route path="/manage/:address" component={PoolManageView} />
+                <Route path="/list" component={PoolListView} />
+                <Route path="/my-pools" component={PoolListView} />
+                <Redirect from="/" to="/list" />
               </Switch>
             </div>
           </div>

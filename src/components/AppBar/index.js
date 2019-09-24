@@ -1,7 +1,7 @@
-import React                   from 'react'
-import PropTypes               from 'prop-types'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { AppBar as MuiAppBar } from '@material-ui/core'
-import { styles }              from './styles.scss'
+import { styles } from './styles.scss'
 
 const AppBar = (props) => {
   const { children } = props
