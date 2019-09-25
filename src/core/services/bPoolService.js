@@ -60,8 +60,8 @@ export async function getTokenParams(provider, contractAddress) {
         // Get the token, balance, weight, etc...
         if (decodedData.name === 'bind' || decodedData.name === 'setParams') {
             const token = decodedData.params[0].value
-            const balance = decodedData.params[1].value
-            const weight = decodedData.params[2].value
+            const balance = decodedData.params[1].value.toString()
+            const weight = decodedData.params[2].value.toString()
 
             console.log(decodedData)
 
@@ -73,8 +73,14 @@ export async function getTokenParams(provider, contractAddress) {
         }
     }
 
-
     console.log(tokenData)
+
+    // Object.keys(tokenData).forEach(async (key) => {
+    //     const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
+    //     tokenData[key].balance = await tokenContract.methods.balanceOf(contractAddress).call()
+    // })
+
+    // console.log(tokenData)
 
     return {
         result: 'success',
@@ -202,8 +208,6 @@ export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, L
             from: defaultAccount
         })
     const tokenIn = new web3.eth.Contract(TestToken.abi, Ti, { from: defaultAccount })
-    const tokenOut = new web3.eth.Contract(TestToken.abi, To, { from: defaultAccount })
-
 
     try {
         await tokenIn.methods.approve(contractAddress, Ai).send()

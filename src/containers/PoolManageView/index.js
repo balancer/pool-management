@@ -69,7 +69,9 @@ class PoolSwapView extends Component {
     const { address, provider } = this.state
     const { pool } = this.state
 
+
     const tokenData = await bPoolService.getTokenParams(provider, address)
+
     this.setState({
       pool: {
         ...pool,

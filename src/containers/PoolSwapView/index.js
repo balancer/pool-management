@@ -2,17 +2,11 @@ import React, { Component } from 'react'
 import * as providerService from 'core/services/providerService'
 import * as bPoolService from 'core/services/bPoolService'
 import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
 import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
-import TokenParametersTable from 'components/TokenParametersTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
 import MoreParamsGrid from 'components/MoreParamsGrid'
 import * as numberLib from 'core/libs/lib-number-helpers'
-import Web3 from 'web3'
-import { styles } from './styles.scss'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -102,7 +96,6 @@ class PoolSwapView extends Component {
   }
 
   setInputToken = (event) => {
-    const { actions } = this.props
     const { outputToken } = this.state
     const newToken = event.target.value
 
@@ -112,16 +105,9 @@ class PoolSwapView extends Component {
     } else {
       this.setState({ inputToken: newToken })
     }
-
-    if (newToken === 'None') {
-      this.setState({ outputBalance: 0 })
-    } else {
-      actions.token.getUserBalance(newToken)
-    }
   }
 
   setOutputToken = (event) => {
-    const { actions } = this.props
     const { inputToken } = this.state
     const newToken = event.target.value
 
@@ -130,12 +116,6 @@ class PoolSwapView extends Component {
       this.setState({ outputToken: newToken, inputToken: 'None' })
     } else {
       this.setState({ outputToken: newToken })
-    }
-
-    if (newToken === 'None') {
-      this.setState({ outputBalance: 0 })
-    } else {
-      actions.token.getUserBalance(newToken)
     }
   }
 
