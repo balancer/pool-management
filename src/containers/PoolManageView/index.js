@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as providerActionCreators from 'core/actions/actions-provider'
 import * as poolParamActionCreators from 'core/actions/actions-pool-params'
+import * as providerService from 'core/services/providerService'
+import * as bPoolService from 'core/services/bPoolService'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
@@ -31,13 +33,60 @@ class PoolSwapView extends Component {
         address: '0xc045c7b6b976d24728872d2117073c893d0b09c2',
         balance: '2000',
         weight: '50'
+      },
+      pool: {
+        poolParams: {},
+        tokenParams: {},
+        pendingTx: false,
+        txError: null,
+        loadedParams: false,
+        loadedTokenParams: false
       }
     }
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const { address } = this.props.match.params
     this.setState({ address })
+
+    const provider = await providerService.getProvider()
+    this.setState({ provider })
+
+    await this.getParams()
+    await this.getTokenParams()
+  }
+
+  async getParams() {
+    const { address } = this.state
+    const { provider } = this.state
+
+    const { pool } = this.state
+
+    const poolData = await bPoolService.getParams(provider, address)
+    this.setState({
+      pool: {
+        ...pool,
+        loadedParams: true,
+        poolParams: poolData.data
+      }
+    })
+  }
+
+  async getTokenParams() {
+    const { address, provider } = this.state
+    const { pool } = this.state
+
+    const tokenData = await bPoolService.getTokenParams(provider, address)
+    this.setState({
+      pool: {
+        ...pool,
+        loadedTokenParams: true,
+        tokenParams: tokenData.data
+      }
+    })
+
+    console.log(tokenData)
+    console.log(this.state.pool)
   }
 
   setBindInputProperty = (property, event) => {
@@ -58,61 +107,62 @@ class PoolSwapView extends Component {
     this.setState({ setTokenParamsInput })
   }
 
-  setTokenParams = (evt) => {
-    const { actions, pool } = this.props
-    const { address, setTokenParamsInput } = this.state
+  setTokenParams = async (evt) => {
+    const {
+ provider, address, setTokenParamsInput, pool
+} = this.state
 
     if (!pool) {
       // Invariant
     }
 
-    // Don't allow action if pending
-    if (!pool.pendingTx) {
-      actions.pools.setTokenParams(
-        address,
-        setTokenParamsInput.address,
-        numberLib.toWei(setTokenParamsInput.balance),
-        numberLib.toWei(setTokenParamsInput.weight)
-      )
-    }
-    evt.preventDefault()
+
+    await bPoolService.setTokenParams(
+      provider,
+      address,
+      setTokenParamsInput.address,
+      numberLib.toWei(setTokenParamsInput.balance),
+      numberLib.toWei(setTokenParamsInput.weight)
+    )
+
+
+    await this.getTokenParams()
   }
 
-  bindToken = (evt) => {
-    const { actions, pool } = this.props
-    const { address, bindTokenInput } = this.state
+  bindToken = async (evt) => {
+    const {
+ provider, address, bindTokenInput, pool
+} = this.state
 
     if (!pool) {
       // Invariant
     }
 
-    // Don't allow action if pending
-    if (!pool.pendingTx) {
-      actions.pools.bindToken(
-        address,
-        bindTokenInput.address,
-        bindTokenInput.balance,
-        bindTokenInput.weight
-      )
-    }
-    evt.preventDefault()
+    await bPoolService.bindToken(
+      provider,
+      address,
+      bindTokenInput.address,
+      numberLib.toWei(bindTokenInput.balance),
+      numberLib.toWei(bindTokenInput.weight)
+    )
+
+    await this.getTokenParams()
   }
 
   buildParamCards() {
-    const { pool } = this.props
+    const { pool } = this.state
 
     return <PoolParamsGrid pool={pool} />
   }
 
   buildTokenParamsTable() {
-    const { pool } = this.props
+    const { pool } = this.state
 
     return <TokenParametersTable tokenData={pool.tokenParams} />
   }
 
   buildBindTokenForm() {
     const { bindTokenInput } = this.state
-    const { pool } = this.props
 
     return (<Container>
       <form onSubmit={this.bindToken}>
@@ -196,31 +246,7 @@ class PoolSwapView extends Component {
   }
 
   render() {
-    const { provider, actions, pool } = this.props
-    const { address, currentTab } = this.state
-
-    console.log('render', provider, pool, currentTab)
-    console.log(!pool.loadedParams)
-    console.log(provider !== null)
-
-    const allParamsLoaded = pool.loadedParams && pool.loadedTokenParams
-    const poolParamsLoaded = pool.loadedParams
-    const tokenParamsLoaded = pool.loadedTokenParams
-
-    // If the address isn't this contract, invalidate and load the entire state
-    // if (pool.address !== address && provider !== null) {
-
-    // }
-
-    if (pool.address !== address && provider !== null) {
-      actions.pools.getTokenBalances(address)
-      actions.pools.getParams(address)
-    }
-
-    // if (pool.loadedParams === false && provider !== null) {
-    //   actions.pools.getTokenBalances(address)
-    //   actions.pools.getParams(address)
-    // }
+    const { pool } = this.state
 
     if (!pool.loadedParams || !pool.loadedTokenParams) {
       return <div />
@@ -232,7 +258,7 @@ class PoolSwapView extends Component {
           <Grid item xs={12}>
             <Typography variant="h3" component="h3">Balancer Pool</Typography>
             <br />
-            {poolParamsLoaded ? (
+            {pool.loadedParams ? (
               this.buildParamCards()
             ) : (
               <div />
@@ -241,7 +267,7 @@ class PoolSwapView extends Component {
           <Grid item xs={12} sm={12}>
             <Typography variant="h5" component="h5" > Tokens</Typography >
             <br />
-            {tokenParamsLoaded ? (
+            {pool.loadedParams ? (
               this.buildTokenParamsTable()
             ) : (
               <div />
@@ -252,7 +278,7 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Add Token</Typography>
                 <br />
-                {tokenParamsLoaded ? (
+                {pool.loadedTokenParams ? (
                   this.buildBindTokenForm()
                 ) : (
                   <div />
@@ -261,7 +287,7 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Edit Token</Typography>
                 <br />
-                {tokenParamsLoaded ? (
+                {pool.loadedTokenParams ? (
                   this.buildSetTokenParamsForm()
                 ) : (
                   <div />
