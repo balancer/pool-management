@@ -5,6 +5,7 @@
   "license": "MIT",
   "description": "A Foundational UI Boilerplate for Ethereum Dapps Built With Trufle",
   "scripts": {
+    "deploy": "node scripts/deployPreConfigured.js",
     "clean": "rimraf dist",
     "build": "webpack --progress --verbose --colors --display-error-details --config webpack/common.config.babel.js",
     "build:production": "npm run clean && npm run build",
