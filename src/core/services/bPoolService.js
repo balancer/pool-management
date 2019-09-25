@@ -39,37 +39,68 @@ export async function getTokenParams(provider, contractAddress) {
 
     abiDecoder.addABI(BPool.output.abi)
 
+    const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
+    const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
+
     // Get a list of successful token binds by checking the calls. We'll assume the code is correct
     // TODO: Sanity check - Make sure that failed tx don't create a log
     const eventName = 'LOG_CALL'
-    const events = await bPool.getPastEvents(eventName, {
+    const bindEvents = await bPool.getPastEvents(eventName, {
+        filter: { sig: bindSig },
         fromBlock: 0,
         toBlock: 'latest'
     })
 
+    const setParamsEvents = await bPool.getPastEvents(eventName, {
+        filter: { sig: setParamsSig },
+        fromBlock: 0,
+        toBlock: 'latest'
+    })
+
+    const events = {
+        ...bindEvents,
+        ...setParamsEvents
+    }
+
+    console.log(bindEvents)
+    console.log(setParamsEvents)
     const tokenData = {}
 
-    // Decode the data field of all LOG_CALL
-    for (const event of events) {
-        if (event.returnValues.data === null) {
-            break
-        }
+    // Add all tokens from Binds
+    for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
         // If this is the right type of event signature
         // Get the token, balance, weight, etc...
-        if (decodedData.name === 'bind' || decodedData.name === 'setParams') {
-            const token = decodedData.params[0].value
-            const balance = decodedData.params[1].value.toString()
-            const weight = decodedData.params[2].value.toString()
+        const token = decodedData.params[0].value
+        const balance = decodedData.params[1].value.toString()
+        const weight = decodedData.params[2].value.toString()
 
-            console.log(decodedData)
+        console.log(decodedData)
 
-            // TODO: Ensure all possible operations SET values rather than modify them
-            // TODO: Run through all events IN ORDER, from first to last, overriding as you go
-            tokenData[token] = {
-                balance, weight
-            }
+        // TODO: Ensure all possible operations SET values rather than modify them
+        // TODO: Run through all events IN ORDER, from first to last, overriding as you go
+        tokenData[token] = {
+            balance, weight
+        }
+    }
+
+    // Update from setParams
+    for (const event of setParamsEvents) {
+        const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
+
+        // If this is the right type of event signature
+        // Get the token, balance, weight, etc...
+        const token = decodedData.params[0].value
+        const balance = decodedData.params[1].value.toString()
+        const weight = decodedData.params[2].value.toString()
+
+        console.log(decodedData)
+
+        // TODO: Ensure all possible operations SET values rather than modify them
+        // TODO: Run through all events IN ORDER, from first to last, overriding as you go
+        tokenData[token] = {
+            balance, weight
         }
     }
 
