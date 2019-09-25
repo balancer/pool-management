@@ -22,22 +22,21 @@ const bin = {
 const params = {
     coinParams: [
         {
-            balance: '10',
-            weight: '30'
+            balance: '10000000000000000000',
+            weight: '10000000000000000000'
         },
         {
-            balance: '20',
-            weight: '20'
+            balance: '10000000000000000000',
+            weight: '10000000000000000000'
         },
         {
-            balance: '50',
-            weight: '50'
+            balance: '10000000000000000000',
+            weight: '10000000000000000000'
         },
     ]
 }
 
 async function deployPreConfigured() {
-
     const accounts = await web3.eth.getAccounts();
     console.log(accounts);
 
@@ -52,19 +51,21 @@ async function deployPreConfigured() {
     // Deploy Tokens
     let coins = [];
 
-    for (let i of coinParams) {
+    for (let i = 0; i < coinParams.length; i++) {
+        console.log(`Deploying Coin ${i}...`)
         const coin = await TestToken.deploy({
             arguments:
-                ['TokenName', 'Symbol', 18, '100000000000000000']
+                ['TokenName', 'Symbol', 18, '10000000000000000000000']
         }).send()
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         coins.push(coin);
     }
 
     // Deploy Factory
-    const factory = await BFactory.deploy().send();
+    const factory = await BFactory.deploy().send({ gas: MAX_GAS });
 
     // // Deploy Pool
+    console.log(`Deploying BPool...`)
     tx = await factory.methods.newBPool().send()
 
     const poolAddress = tx.events['LOG_NEW_POOL'].returnValues.pool
@@ -78,16 +79,23 @@ async function deployPreConfigured() {
     // await bpool.methods.setParams(coins[0].options.address, coinParams[0].balance, coinParams[0].weight)
     // Set Token Approvals + Bind Tokens
     for (let i = 0; i < coins.length; i++) {
+        console.log(`Approving Coin ${i} to Bind...`)
         await coins[i].methods.approve(bpool.options.address, MAX_UINT).send()
-        await bpool.methods.bind(coins[i].options.address, coinParams[i].balance, coinParams[i].weight).send()
+        console.log(`Binding Coin ${i} to BPool...`)
+        await bpool.methods.bind(coins[i].options.address, coinParams[i].balance, coinParams[i].weight).send({ gas: MAX_GAS })
     }
 
     //Start Pool
+    console.log(`Starting BPool...`)
     await bpool.methods.start().send()
 
     // That's it!
     console.log('Deployed Factory: ', factory.options.address)
     console.log('Deployed Pool: ', bpool.options.address)
+    console.log('Deployed Coins: ')
+    for (let i = 0; i < coins.length; i++) {
+        console.log(`\t${coins[i].options.address}`)
+    }
 }
 
 function main() {
