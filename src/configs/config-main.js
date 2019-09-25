@@ -5,5 +5,5 @@ export const appConfig = {
   shortName: 'Balancer',
   description: '',
   splashScreenBackground: '#ffffff',
-  factory: '0xb111Ded3F2e4012C0B85D930Fda298693D0DA0B2'
+  factory: '0x0DB24A927FFC3622884B7A3B6f1C694ED8092A01'
 }

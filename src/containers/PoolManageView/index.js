@@ -23,9 +23,9 @@ class PoolSwapView extends Component {
         weight: ''
       },
       setTokenParamsInput: {
-        address: '0xc045c7b6b976d24728872d2117073c893d0b09c2',
-        balance: '2000',
-        weight: '50'
+        address: '',
+        balance: '',
+        weight: ''
       },
       pool: {
         poolParams: {},
