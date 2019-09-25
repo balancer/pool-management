@@ -1,20 +1,13 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as providerActionCreators from 'core/actions/actions-provider'
-import * as poolParamActionCreators from 'core/actions/actions-pool-params'
 import * as providerService from 'core/services/providerService'
 import * as bPoolService from 'core/services/bPoolService'
 import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import TokenParametersTable from 'components/TokenParametersTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
 import MoreParamsGrid from 'components/MoreParamsGrid'
-import AsyncButton from 'components/AsyncButton'
 import * as numberLib from 'core/libs/lib-number-helpers'
 import { styles } from './styles.scss'
 
@@ -84,9 +77,6 @@ class PoolSwapView extends Component {
         tokenParams: tokenData.data
       }
     })
-
-    console.log(tokenData)
-    console.log(this.state.pool)
   }
 
   setBindInputProperty = (property, event) => {
@@ -109,8 +99,8 @@ class PoolSwapView extends Component {
 
   setTokenParams = async (evt) => {
     const {
- provider, address, setTokenParamsInput, pool
-} = this.state
+      provider, address, setTokenParamsInput, pool
+    } = this.state
 
     if (!pool) {
       // Invariant
@@ -131,8 +121,8 @@ class PoolSwapView extends Component {
 
   bindToken = async (evt) => {
     const {
- provider, address, bindTokenInput, pool
-} = this.state
+      provider, address, bindTokenInput, pool
+    } = this.state
 
     if (!pool) {
       // Invariant
@@ -304,20 +294,4 @@ class PoolSwapView extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    pool: state.pool.pool,
-    provider: state.provider
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: {
-      provider: bindActionCreators(providerActionCreators, dispatch),
-      pools: bindActionCreators(poolParamActionCreators, dispatch)
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PoolSwapView)
+export default PoolSwapView

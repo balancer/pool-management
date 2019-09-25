@@ -190,3 +190,34 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
     }
 }
 
+export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(
+        BPool.output.abi,
+        contractAddress,
+        {
+            from: defaultAccount
+        })
+    const tokenIn = new web3.eth.Contract(TestToken.abi, Ti, { from: defaultAccount })
+    const tokenOut = new web3.eth.Contract(TestToken.abi, To, { from: defaultAccount })
+
+
+    try {
+        await tokenIn.methods.approve(contractAddress, Ai).send()
+        await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).send()
+
+        // Dispatch Success
+        return {
+            result: 'success'
+        }
+    } catch (e) {
+        // Dispatch Failure
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
+    }
+}

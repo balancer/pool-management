@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as providerActionCreators from 'core/actions/actions-provider'
-import * as poolParamActionCreators from 'core/actions/actions-pool-params'
+import * as providerService from 'core/services/providerService'
+import * as bPoolService from 'core/services/bPoolService'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
@@ -12,13 +10,9 @@ import Typography from '@material-ui/core/Typography'
 import TokenParametersTable from 'components/TokenParametersTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
 import MoreParamsGrid from 'components/MoreParamsGrid'
-import AsyncButton from 'components/AsyncButton'
 import * as numberLib from 'core/libs/lib-number-helpers'
 import Web3 from 'web3'
 import { styles } from './styles.scss'
-import BPool from '../../../balancer-core/out/BPool_meta.json'
-import TestToken from '../../../external-contracts/TestToken.json'
-
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -26,18 +20,61 @@ class PoolSwapView extends Component {
 
     this.state = {
       address: '',
-      inputBalance: 0,
-      outputBalance: 0,
       inputAmount: 0,
-      outputAmount: 0,
+      outputLimit: 0,
+      limitPrice: 0,
       inputToken: 'EUR',
-      outputToken: 'EUR'
+      outputToken: 'EUR',
+      pool: {
+        poolParams: {},
+        tokenParams: {},
+        pendingTx: false,
+        txError: null,
+        loadedParams: false,
+        loadedTokenParams: false
+      }
     }
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const { address } = this.props.match.params
     this.setState({ address })
+
+    const provider = await providerService.getProvider()
+    this.setState({ provider })
+
+    await this.getParams()
+    await this.getTokenParams()
+  }
+
+  async getParams() {
+    const { address } = this.state
+    const { provider } = this.state
+
+    const { pool } = this.state
+
+    const poolData = await bPoolService.getParams(provider, address)
+    this.setState({
+      pool: {
+        ...pool,
+        loadedParams: true,
+        poolParams: poolData.data
+      }
+    })
+  }
+
+  async getTokenParams() {
+    const { address, provider } = this.state
+    const { pool } = this.state
+
+    const tokenData = await bPoolService.getTokenParams(provider, address)
+    this.setState({
+      pool: {
+        ...pool,
+        loadedTokenParams: true,
+        tokenParams: tokenData.data
+      }
+    })
   }
 
   setInputAmount = (event) => {
@@ -46,9 +83,21 @@ class PoolSwapView extends Component {
     })
   }
 
-  setOutputAmount = (event) => {
+  setOutputLimit = (event) => {
     this.setState({
-      outputAmount: event.target.value
+      outputLimit: event.target.value
+    })
+  }
+
+  setOutputLimit = (event) => {
+    this.setState({
+      outputLimit: event.target.value
+    })
+  }
+
+  setLimitPrice = (event) => {
+    this.setState({
+      limitPrice: event.target.value
     })
   }
 
@@ -90,27 +139,33 @@ class PoolSwapView extends Component {
     }
   }
 
-  swapExactAmountIn = (evt) => {
-    // Send action
-    const { provider } = this.props
-    console.log(provider)
-    const { web3Provider } = provider
+  swapExactAmountIn = async (evt) => {
     const {
-      address, inputToken, inputAmount, outputToken, outputAmount
+      provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, pool
     } = this.state
 
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
+    if (!pool) {
+      // Invariant
+    }
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, address, { from: defaultAccount })
-    const result = bPool.methods.swap_ExactAmountIn(inputToken, inputAmount, outputToken, outputAmount, outputAmount).send()
+
+    await bPoolService.swapExactAmountIn(
+      provider,
+      address,
+      inputToken,
+      numberLib.toWei(inputAmount),
+      outputToken,
+      numberLib.toWei(outputLimit),
+      numberLib.toWei(limitPrice)
+    )
+
+    await this.getTokenParams()
   }
 
   buildInternalExchangeForm() {
     const {
-      inputBalance, outputBalance, inputAmount, outputAmount, inputToken, outputToken
+      inputAmount, outputLimit, inputToken, outputToken, limitPrice, pool
     } = this.state
-    const { pool } = this.props
 
     const tokens = [{
       value: 'None',
@@ -126,31 +181,35 @@ class PoolSwapView extends Component {
       })
     })
 
-    console.log(pool.tokenParams)
-    console.log(tokens)
-
     return (<form onSubmit={this.swapExactAmountIn} noValidate autoComplete="off">
       <Grid container spacing={1}>
         <Grid container spacing={1}>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={12} sm={9}>
             <TextField
-              id="balance-in"
-              label="Balance"
-              placeholder=""
-              disabled
-              value={inputBalance}
-              type="number"
-              InputLabelProps={{
-                shrink: true
+              id="token-in"
+              select
+              label="Input Token"
+              value={inputToken}
+              onChange={this.setInputToken}
+              SelectProps={{
+                native: true
               }}
+              helperText="Please select your currency"
               margin="normal"
               variant="outlined"
-            />
+              fullWidth
+            >
+              {tokens.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={12} sm={3}>
             <TextField
               id="amount-in"
-              label="Input"
+              label="Input Amount"
               placeholder="0"
               value={inputAmount}
               onChange={this.setInputAmount}
@@ -161,66 +220,15 @@ class PoolSwapView extends Component {
               }}
               margin="normal"
               variant="outlined"
+              fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="token-in"
-              select
-              label="Token"
-              value={inputToken}
-              onChange={this.setInputToken}
-              SelectProps={{
-                native: true
-              }}
-              helperText="Please select your currency"
-              margin="normal"
-              variant="outlined"
-            >
-              {tokens.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
-          </Grid>
-        </Grid>
-        <Grid container spacing={1}>
-          <Grid item xs={6} sm={3}>
-            <TextField
-              id="balance-out"
-              label="Balance"
-              placeholder=""
-              disabled
-              value={outputBalance}
-              type="number"
-              InputLabelProps={{
-                shrink: true
-              }}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <TextField
-              id="amount-out"
-              label="Output (estimated)"
-              placeholder="0"
-              value={outputAmount}
-              onChange={this.setOutputAmount}
-              type="number"
-              InputLabelProps={{
-                shrink: true
-              }}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={9}>
             <TextField
               id="token-out"
               select
-              label="Token"
+              fullWidth
+              label="Output Token"
               value={outputToken}
               onChange={this.setOutputToken}
               SelectProps={{
@@ -237,42 +245,47 @@ class PoolSwapView extends Component {
               ))}
             </TextField>
           </Grid>
-        </Grid>
-        <Grid container spacing={1}>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              id="limit-out"
+              label="Limit Output"
+              placeholder="0"
+              value={outputLimit}
+              onChange={this.setOutputLimit}
+              type="number"
+              InputLabelProps={{
+                shrink: true
+              }}
+              margin="normal"
+              variant="outlined"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="limit-price"
+              label="Limit Price"
+              value={limitPrice}
+              onChange={this.setLimitPrice}
+              type="number"
+              InputLabelProps={{
+                shrink: true
+              }}
+              margin="normal"
+              variant="outlined"
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={12} sm={6}>
             <input type="submit" value="Submit" />
           </Grid>
         </Grid>
       </Grid>
-    </form>)
+    </form >)
   }
 
   render() {
-    const { provider, actions, pool } = this.props
-    const { address, currentTab } = this.state
-
-    console.log('render', provider, pool, currentTab)
-    console.log(!pool.loadedParams)
-    console.log(provider !== null)
-
-    const allParamsLoaded = pool.loadedParams && pool.loadedTokenParams
-    const poolParamsLoaded = pool.loadedParams
-    const tokenParamsLoaded = pool.loadedTokenParams
-
-    // If the address isn't this contract, invalidate and load the entire state
-    // if (pool.address !== address && provider !== null) {
-
-    // }
-
-    if (pool.address !== address && provider !== null) {
-      actions.pools.getTokenBalances(address)
-      actions.pools.getParams(address)
-    }
-
-    // if (pool.loadedParams === false && provider !== null) {
-    //   actions.pools.getTokenBalances(address)
-    //   actions.pools.getParams(address)
-    // }
+    const { pool } = this.state
 
     if (!pool.loadedParams || !pool.loadedTokenParams) {
       return <div />
@@ -296,20 +309,4 @@ class PoolSwapView extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    pool: state.pool.pool,
-    provider: state.provider
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: {
-      provider: bindActionCreators(providerActionCreators, dispatch),
-      pools: bindActionCreators(poolParamActionCreators, dispatch)
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PoolSwapView)
+export default PoolSwapView
