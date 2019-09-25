@@ -4,13 +4,14 @@ import * as bFactoryService from 'core/services/bFactoryService'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import PoolList from 'components/PoolList'
+import { appConfig } from 'configs/config-main'
 
 class PoolListView extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      factoryAddress: '0x3F4E941ef5071a1D09C2eB4a24DA1Fc43F76fcfF',
+      factoryAddress: appConfig.factory,
       provider: null,
       knownPools: {},
       poolsLoaded: false,

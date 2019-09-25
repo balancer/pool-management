@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function PoolParamsGrid(props) {
-  const { pool } = props
+  const { pool, address } = props
 
   let activeText
 
@@ -28,7 +28,7 @@ export default function PoolParamsGrid(props) {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={6} sm={9}>
-          <IconCard title="Pool" text={pool.address} />
+          <IconCard title="Pool" text={address} />
         </Grid>
         <Grid item xs={6} sm={3}>
           <IconCard title="Active" text={activeText} />

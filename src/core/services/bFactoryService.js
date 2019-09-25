@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax */
-import constants from 'core/types'
 import Web3 from 'web3'
 
 import BFactory from '../../../balancer-core/out/BFactory_meta.json'

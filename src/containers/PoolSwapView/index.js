@@ -174,7 +174,6 @@ class PoolSwapView extends Component {
               SelectProps={{
                 native: true
               }}
-              helperText="Please select your currency"
               margin="normal"
               variant="outlined"
               fullWidth
@@ -214,7 +213,6 @@ class PoolSwapView extends Component {
               SelectProps={{
                 native: true
               }}
-              helperText="Please select your currency"
               margin="normal"
               variant="outlined"
             >
@@ -265,7 +263,7 @@ class PoolSwapView extends Component {
   }
 
   render() {
-    const { pool } = this.state
+    const { pool, address } = this.state
 
     if (!pool.loadedParams || !pool.loadedTokenParams) {
       return <div />
@@ -275,7 +273,7 @@ class PoolSwapView extends Component {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
-            <PoolParamsGrid pool={pool} />
+            <PoolParamsGrid address={address} pool={pool} />
           </Grid>
           <Grid item xs={12} sm={12}>
             {this.buildInternalExchangeForm()}

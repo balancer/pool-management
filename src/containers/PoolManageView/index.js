@@ -142,9 +142,9 @@ class PoolSwapView extends Component {
   }
 
   buildParamCards() {
-    const { pool } = this.state
+    const { pool, address } = this.state
 
-    return <PoolParamsGrid pool={pool} />
+    return <PoolParamsGrid address={address} pool={pool} />
   }
 
   buildTokenParamsTable() {
