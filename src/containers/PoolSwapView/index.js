@@ -14,7 +14,11 @@ import PoolParamsGrid from 'components/PoolParamsGrid'
 import MoreParamsGrid from 'components/MoreParamsGrid'
 import AsyncButton from 'components/AsyncButton'
 import * as numberLib from 'core/libs/lib-number-helpers'
+import Web3 from 'web3'
 import { styles } from './styles.scss'
+import BPool from '../../../balancer-core/out/BPool_meta.json'
+import TestToken from '../../../external-contracts/TestToken.json'
+
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -86,6 +90,22 @@ class PoolSwapView extends Component {
     }
   }
 
+  swapExactAmountIn = (evt) => {
+    // Send action
+    const { provider } = this.props
+    console.log(provider)
+    const { web3Provider } = provider
+    const {
+      address, inputToken, inputAmount, outputToken, outputAmount
+    } = this.state
+
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(BPool.output.abi, address, { from: defaultAccount })
+    const result = bPool.methods.swap_ExactAmountIn(inputToken, inputAmount, outputToken, outputAmount, outputAmount).send()
+  }
+
   buildInternalExchangeForm() {
     const {
       inputBalance, outputBalance, inputAmount, outputAmount, inputToken, outputToken
@@ -109,9 +129,9 @@ class PoolSwapView extends Component {
     console.log(pool.tokenParams)
     console.log(tokens)
 
-    return (<form noValidate autoComplete="off">
-      <Grid container spacing={3}>
-        <Grid container spacing={3}>
+    return (<form onSubmit={this.swapExactAmountIn} noValidate autoComplete="off">
+      <Grid container spacing={1}>
+        <Grid container spacing={1}>
           <Grid item xs={6} sm={3}>
             <TextField
               id="balance-in"
@@ -165,53 +185,64 @@ class PoolSwapView extends Component {
             </TextField>
           </Grid>
         </Grid>
-        <div>
-          <TextField
-            id="balance-out"
-            label="Balance"
-            placeholder=""
-            disabled
-            value={outputBalance}
-            type="number"
-            InputLabelProps={{
-              shrink: true
-            }}
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            id="amount-out"
-            label="Output (estimated)"
-            placeholder="0"
-            value={outputAmount}
-            onChange={this.setOutputAmount}
-            type="number"
-            InputLabelProps={{
-              shrink: true
-            }}
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            id="token-out"
-            select
-            label="Token"
-            value={outputToken}
-            onChange={this.setOutputToken}
-            SelectProps={{
-              native: true
-            }}
-            helperText="Please select your currency"
-            margin="normal"
-            variant="outlined"
-          >
-            {tokens.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </TextField>
-        </div>
+        <Grid container spacing={1}>
+          <Grid item xs={6} sm={3}>
+            <TextField
+              id="balance-out"
+              label="Balance"
+              placeholder=""
+              disabled
+              value={outputBalance}
+              type="number"
+              InputLabelProps={{
+                shrink: true
+              }}
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <TextField
+              id="amount-out"
+              label="Output (estimated)"
+              placeholder="0"
+              value={outputAmount}
+              onChange={this.setOutputAmount}
+              type="number"
+              InputLabelProps={{
+                shrink: true
+              }}
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="token-out"
+              select
+              label="Token"
+              value={outputToken}
+              onChange={this.setOutputToken}
+              SelectProps={{
+                native: true
+              }}
+              helperText="Please select your currency"
+              margin="normal"
+              variant="outlined"
+            >
+              {tokens.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={6}>
+            <input type="submit" value="Submit" />
+          </Grid>
+        </Grid>
       </Grid>
     </form>)
   }

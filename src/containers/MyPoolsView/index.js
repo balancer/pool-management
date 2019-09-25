@@ -3,18 +3,12 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as providerActionCreators from 'core/actions/actions-provider'
 import * as factoryActionCreators from 'core/actions/actions-factory'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
-import Grid from '@material-ui/core/Grid'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import PoolList from 'components/PoolList'
 import { styles } from './styles.scss'
 
-class PoolListView extends Component {
+class MyPoolsView extends Component {
   constructor(props) {
     super(props)
 
@@ -29,10 +23,8 @@ class PoolListView extends Component {
 
     const knownPoolsLoaded = factory.poolsLoaded
 
-    if (!knownPoolsLoaded && provider !== null) {
-      console.log('getting pools', !knownPoolsLoaded && provider !== null)
-      console.log('getting pools')
-      actions.factory.getKnownPools(factoryAddress)
+    if (knownPoolsLoaded === false && provider !== null) {
+      actions.factory.getKnownPools(factoryAddress, { manager: provider })
     }
 
     if (!knownPoolsLoaded) {
@@ -70,4 +62,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PoolListView)
+export default connect(mapStateToProps, mapDispatchToProps)(MyPoolsView)

@@ -19,6 +19,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 
 import './styles.scss' // global styles
+import MyPoolsView from '../MyPoolsView'
 
 class App extends Component {
   componentDidMount() {
@@ -39,7 +40,7 @@ class App extends Component {
                 <Route path="/swap/:address" component={PoolSwapView} />
                 <Route path="/manage/:address" component={PoolManageView} />
                 <Route path="/list" component={PoolListView} />
-                <Route path="/my-pools" component={PoolListView} />
+                <Route path="/my-pools" component={MyPoolsView} />
                 <Redirect from="/" to="/list" />
               </Switch>
             </div>

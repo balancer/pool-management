@@ -5,7 +5,7 @@ import abiDecoder from 'abi-decoder'
 
 import BFactory from '../../../balancer-core/out/BFactory_meta.json'
 
-export function getKnownPools(factoryAddress) {
+export function getKnownPools(factoryAddress, filter) {
     return async (dispatch, getState) => {
         const { web3Provider } = getState().provider
         const web3 = new Web3(web3Provider)
@@ -34,7 +34,14 @@ export function getKnownPools(factoryAddress) {
             // Decode the data field of all LOG_CALL
             for (const event of events) {
                 console.log(event)
-                poolData[event.returnValues.pool] = { manager: event.returnValues.caller }
+
+                const filterByManager = filter && filter.manager
+
+                if (filterByManager && filter.manager === event.returnValues.caller) {
+                    poolData[event.returnValues.pool] = { manager: event.returnValues.caller }
+                } else {
+                    poolData[event.returnValues.pool] = { manager: event.returnValues.caller }
+                }
             }
 
             // const hasTokenData = (Object.keys(tokenData).length > 0)

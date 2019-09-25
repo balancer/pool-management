@@ -73,24 +73,22 @@ class Header extends Component {
       <div className={styles}>
         <AppBar>
           <Toolbar>
-            <Link href="/list/" to="/list/">
-              <IconButton edge="start" color="inherit" aria-label="menu">
-                {/* <img src="src/assets/pngs/balancer_logo.png" /> */}
-                <Typography variant="title" color="inherit">
-                  {appConfig.name}
-                </Typography>
-              </IconButton>
-            </Link>
+            <IconButton edge="start" color="inherit" aria-label="menu">
+              {/* <img src="src/assets/pngs/balancer_logo.png" /> */}
+              <Typography variant="title" color="inherit">
+                {appConfig.name}
+              </Typography>
+            </IconButton>
             <IconButton color="inherit" aria-label="menu">
               <SwapHoriz />
               <Typography variant="title" color="inherit">
-                Swap
+                <Link href="/list" to="/list">Swap</Link>
               </Typography>
             </IconButton>
             <IconButton color="inherit" aria-label="menu">
               <AccountBalance />
               <Typography variant="title" color="inherit">
-                Manage
+                <Link href="/my-pools" to="/my-pools">Manage</Link>
               </Typography>
             </IconButton>
             {menu}

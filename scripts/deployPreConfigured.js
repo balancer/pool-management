@@ -66,8 +66,8 @@ async function deployPreConfigured() {
 
     // // Deploy Pool
     tx = await factory.methods.newBPool().send()
-    const poolAddress = tx.events['LOG_NEW_POOL'].returnValues.pool
 
+    const poolAddress = tx.events['LOG_NEW_POOL'].returnValues.pool
     const bpool = new web3.eth.Contract(abi.BPool, poolAddress, { from: defaultAccount });
 
     // Set Initial Pool Params
@@ -79,7 +79,7 @@ async function deployPreConfigured() {
     // Set Token Approvals + Bind Tokens
     for (let i = 0; i < coins.length; i++) {
         await coins[i].methods.approve(bpool.options.address, MAX_UINT).send()
-        await bpool.methods.bind(coins[i].options.address, coinParams[i].balance, coinParams[i].weight)
+        await bpool.methods.bind(coins[i].options.address, coinParams[i].balance, coinParams[i].weight).send()
     }
 
     //Start Pool
