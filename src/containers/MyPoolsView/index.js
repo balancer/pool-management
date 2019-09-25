@@ -1,42 +1,56 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as providerActionCreators from 'core/actions/actions-provider'
-import * as factoryActionCreators from 'core/actions/actions-factory'
+import * as providerService from 'core/services/providerService'
+import * as bFactoryService from 'core/services/bFactoryService'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import PoolList from 'components/PoolList'
-import { styles } from './styles.scss'
 
 class MyPoolsView extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      factoryAddress: '0x3F4E941ef5071a1D09C2eB4a24DA1Fc43F76fcfF'
+      factoryAddress: '0x3F4E941ef5071a1D09C2eB4a24DA1Fc43F76fcfF',
+      provider: null,
+      knownPools: {},
+      poolsLoaded: false,
+      pendingRequest: false,
+      requestError: null
     }
   }
 
-  render() {
-    const { provider, factory, actions } = this.props
+  async componentWillMount() {
     const { factoryAddress } = this.state
 
-    const knownPoolsLoaded = factory.poolsLoaded
+    const provider = await providerService.getProvider()
+    this.setState({ provider })
 
-    if (knownPoolsLoaded === false && provider !== null) {
-      actions.factory.getKnownPools(factoryAddress, { manager: provider })
-    }
 
-    if (!knownPoolsLoaded) {
+    const { defaultAccount } = provider.web3Provider.eth
+    const poolData = await bFactoryService.getKnownPools(provider, factoryAddress, {
+      caller: defaultAccount,
+      fromBlock: 0,
+      toBlock: 'latest'
+    })
+    this.setState({
+      knownPools: poolData.knownPools,
+      poolsLoaded: true
+    })
+  }
+
+  render() {
+    const { knownPools, poolsLoaded } = this.state
+
+    if (!poolsLoaded) {
       return <div />
     }
 
     return (
       <Container>
-        <Typography variant="h3" component="h3">Balancer Pools</Typography>
+        <Typography variant="h3" component="h3">My Pools</Typography>
         <br />
-        {knownPoolsLoaded ? (
-          <PoolList linkPath="swap" poolData={factory.knownPools} />
+        {poolsLoaded ? (
+          <PoolList linkPath="swap" poolData={knownPools} />
         ) : (
           <div />
           )}
@@ -46,20 +60,4 @@ class MyPoolsView extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    provider: state.provider,
-    factory: state.factory
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: {
-      provider: bindActionCreators(providerActionCreators, dispatch),
-      factory: bindActionCreators(factoryActionCreators, dispatch)
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyPoolsView)
+export default MyPoolsView

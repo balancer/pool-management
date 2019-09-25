@@ -1,41 +1,44 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as providerActionCreators from 'core/actions/actions-provider'
-import * as factoryActionCreators from 'core/actions/actions-factory'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
-import Grid from '@material-ui/core/Grid'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
+import * as providerService from 'core/services/providerService'
+import * as bFactoryService from 'core/services/bFactoryService'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import PoolList from 'components/PoolList'
-import { styles } from './styles.scss'
 
 class PoolListView extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      factoryAddress: '0x3F4E941ef5071a1D09C2eB4a24DA1Fc43F76fcfF'
+      factoryAddress: '0x3F4E941ef5071a1D09C2eB4a24DA1Fc43F76fcfF',
+      provider: null,
+      knownPools: {},
+      poolsLoaded: false,
+      pendingRequest: false,
+      requestError: null
     }
   }
 
-  render() {
-    const { provider, factory, actions } = this.props
+  async componentWillMount() {
     const { factoryAddress } = this.state
 
-    const knownPoolsLoaded = factory.poolsLoaded
+    const provider = await providerService.getProvider()
+    this.setState({ provider })
 
-    if (!knownPoolsLoaded && provider !== null) {
-      console.log('getting pools', !knownPoolsLoaded && provider !== null)
-      console.log('getting pools')
-      actions.factory.getKnownPools(factoryAddress)
-    }
+    const poolData = await bFactoryService.getKnownPools(provider, factoryAddress, {
+      fromBlock: 0,
+      toBlock: 'latest'
+    })
+    this.setState({
+      knownPools: poolData.knownPools,
+      poolsLoaded: true
+    })
+  }
 
-    if (!knownPoolsLoaded) {
+  render() {
+    const { poolsLoaded, knownPools } = this.state
+
+    if (!poolsLoaded) {
       return <div />
     }
 
@@ -43,8 +46,8 @@ class PoolListView extends Component {
       <Container>
         <Typography variant="h3" component="h3">Balancer Pools</Typography>
         <br />
-        {knownPoolsLoaded ? (
-          <PoolList linkPath="swap" poolData={factory.knownPools} />
+        {poolsLoaded ? (
+          <PoolList linkPath="swap" poolData={knownPools} />
         ) : (
           <div />
           )}
@@ -54,20 +57,4 @@ class PoolListView extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    provider: state.provider,
-    factory: state.factory
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: {
-      provider: bindActionCreators(providerActionCreators, dispatch),
-      factory: bindActionCreators(factoryActionCreators, dispatch)
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PoolListView)
+export default PoolListView
