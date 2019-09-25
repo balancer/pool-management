@@ -97,16 +97,16 @@ async function deployPreConfigured() {
     await bpool.methods.start().send()
 
     // That's it!
-    console.log('Deployed Factory: ', factory.options.address)
-    console.log('Deployed Pool: ', bpool.options.address)
-    console.log('Deployed Coins: ')
+    console.log('-----------------')
+    console.log('Deployed Factory:', factory.options.address)
+    console.log('Deployed Pool   :', bpool.options.address)
+    console.log('Deployed Coins  : ')
     for (let i = 0; i < coins.length; i++) {
-        console.log(`\t${coins[i].options.address}`)
+        console.log(`\t\t  ${coins[i].options.address}`)
         let result = await coins[i].methods.name().call()
-        console.log(result)
         result = await coins[i].methods.totalSupply().call()
-        console.log(result)
     }
+    console.log('-----------------')
 }
 
 function main() {
