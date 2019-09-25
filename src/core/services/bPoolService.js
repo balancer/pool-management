@@ -57,29 +57,18 @@ export async function getTokenParams(provider, contractAddress) {
         toBlock: 'latest'
     })
 
-    const events = {
-        ...bindEvents,
-        ...setParamsEvents
-    }
-
-    console.log(bindEvents)
-    console.log(setParamsEvents)
     const tokenData = {}
 
     // Add all tokens from Binds
     for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
-        // If this is the right type of event signature
-        // Get the token, balance, weight, etc...
         const token = decodedData.params[0].value
         const balance = decodedData.params[1].value.toString()
         const weight = decodedData.params[2].value.toString()
 
-        console.log(decodedData)
+        // console.log(decodedData)
 
-        // TODO: Ensure all possible operations SET values rather than modify them
-        // TODO: Run through all events IN ORDER, from first to last, overriding as you go
         tokenData[token] = {
             balance, weight
         }
@@ -89,29 +78,22 @@ export async function getTokenParams(provider, contractAddress) {
     for (const event of setParamsEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
-        // If this is the right type of event signature
-        // Get the token, balance, weight, etc...
         const token = decodedData.params[0].value
         const balance = decodedData.params[1].value.toString()
         const weight = decodedData.params[2].value.toString()
 
-        console.log(decodedData)
+        // console.log(decodedData)
 
-        // TODO: Ensure all possible operations SET values rather than modify them
-        // TODO: Run through all events IN ORDER, from first to last, overriding as you go
         tokenData[token] = {
             balance, weight
         }
     }
 
-    console.log(tokenData)
-
-    // Object.keys(tokenData).forEach(async (key) => {
-    //     const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
-    //     tokenData[key].balance = await tokenContract.methods.balanceOf(contractAddress).call()
-    // })
-
-    // console.log(tokenData)
+    // Update token data with actual balances
+    Object.keys(tokenData).forEach(async (key) => {
+        const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
+        tokenData[key].balance = await tokenContract.methods.balanceOf(contractAddress).call()
+    })
 
     return {
         result: 'success',
