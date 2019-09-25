@@ -22,24 +22,28 @@ const bin = {
 const params = {
     coinParams: [
         {
+            name: 'CoinA',
+            symbol: 'AAA',
             balance: '10000000000000000000',
             weight: '10000000000000000000'
         },
         {
-            balance: '10000000000000000000',
-            weight: '10000000000000000000'
+            name: 'CoinB',
+            symbol: 'BBB',
+            balance: '20000000000000000000',
+            weight: '20000000000000000000'
         },
         {
-            balance: '10000000000000000000',
-            weight: '10000000000000000000'
+            name: 'CoinC',
+            symbol: 'CCC',
+            balance: '50000000000000000000',
+            weight: '50000000000000000000'
         },
     ]
 }
 
 async function deployPreConfigured() {
     const accounts = await web3.eth.getAccounts();
-    console.log(accounts);
-
     const defaultAccount = accounts[0];
 
     const { coinParams } = params;
@@ -54,12 +58,15 @@ async function deployPreConfigured() {
     for (let i = 0; i < coinParams.length; i++) {
         console.log(`Deploying Coin ${i}...`)
         const coin = await TestToken.deploy({
+            data: TestTokenSchema.bytecode,
             arguments:
-                ['TokenName', 'Symbol', 18, '10000000000000000000000']
-        }).send()
+                [coinParams[i].name, coinParams[i].symbol, 18, '10000000000000000000000']
+        }).send({ gas: MAX_GAS })
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         coins.push(coin);
     }
+
+
 
     // Deploy Factory
     const factory = await BFactory.deploy().send({ gas: MAX_GAS });
@@ -95,6 +102,10 @@ async function deployPreConfigured() {
     console.log('Deployed Coins: ')
     for (let i = 0; i < coins.length; i++) {
         console.log(`\t${coins[i].options.address}`)
+        let result = await coins[i].methods.name().call()
+        console.log(result)
+        result = await coins[i].methods.totalSupply().call()
+        console.log(result)
     }
 }
 
