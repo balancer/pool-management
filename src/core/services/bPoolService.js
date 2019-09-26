@@ -34,30 +34,43 @@ export async function getParams(provider, contractAddress) {
     }
 }
 
-export async function getOutGivenIn(provider, contractAddress, Bi, Wi, Bo, Wo, Ai, fee) {
+export async function getOutGivenIn(provider, contractAddress, Ai, Ti, To) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
     const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    const inputToken = new web3.eth.Contract(TestToken.abi, Ti, { from: defaultAccount })
+    const outputToken = new web3.eth.Contract(TestToken.abi, To, { from: defaultAccount })
+
+    const Bi = await inputToken.methods.balanceOf(contractAddress).call()
+    const Wi = await bPool.methods.getNormalizedWeight(Ti).call()
+
+    const Bo = await outputToken.methods.balanceOf(contractAddress).call()
+    const Wo = await bPool.methods.getNormalizedWeight(To).call()
+
+    const fee = await bPool.methods.getFee().call()
+
+    console.log(bPool.methods)
 
     const outGivenIn = await bPool.methods._calc_OutGivenIn(Bi, Wi, Bo, Wo, Ai, fee).call()
-
+    console.log('outGivenIn', outGivenIn)
     return {
         result: 'success',
         data: outGivenIn
     }
 }
 
-export async function getSpotPrice(provider, contractAddress, Bi, Wi, Bo, Wo, f) {
+export async function getSpotPrice(provider, contractAddress, Ti, To) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
     const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
 
-    const spotPrice = await bPool.methods._calc_SpotPrice(Bi, Wi, Bo, Wo, f).call()
+    const spotPrice = await bPool.methods.getSpotPrice(Ti, To).call()
 
+    console.log('spotPrice:', web3.utils.fromWei(spotPrice))
     return {
         result: 'success',
         data: spotPrice
