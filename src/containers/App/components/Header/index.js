@@ -72,11 +72,13 @@ class Header extends Component {
       <div className={styles}>
         <AppBar>
           <Toolbar>
-            <IconButton className="menu-icon" edge="start" color="inherit" aria-label="menu">
-              <Typography variant="title" color="inherit">
-                {appConfig.name}
-              </Typography>
-            </IconButton>
+            <Link className="menu-icon" href="/list" to="/list">
+              <IconButton className="menu-icon" edge="start" color="inherit" aria-label="menu">
+                <Typography variant="title" color="inherit">
+                  {appConfig.name}
+                </Typography>
+              </IconButton>
+            </Link>
             <Link className="menu-icon" href="/list" to="/list">
               <IconButton color="inherit" aria-label="menu">
                 <SwapHoriz />
@@ -93,7 +95,7 @@ class Header extends Component {
                 </Typography>
               </IconButton>
             </Link>
-            <Link className="menu-icon" href="/list" to="/list">
+            <Link className="menu-icon" href="/logs-list" to="/logs-list">
               <IconButton color="inherit" aria-label="menu">
                 <Assignment />
                 <Typography variant="title" color="inherit">
