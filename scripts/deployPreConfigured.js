@@ -2,6 +2,7 @@ const bcore = require('../balancer-core')
 const TestTokenSchema = require('../external-contracts/TestToken')
 const Web3 = require('web3')
 const networkConfig = require('../networks.js');
+const fs = require('fs');
 
 const web3 = new Web3("http://localhost:8545");
 
@@ -40,6 +41,17 @@ const params = {
             weight: '50000000000000000000'
         },
     ]
+}
+
+function writeConfigFile(factoryAddress) {
+    const filePath = process.cwd() + `/src/configs//deployed.json`;
+
+    let config = {
+        factoryAddress: factoryAddress,
+    };
+
+    let data = JSON.stringify(config);
+    fs.writeFileSync(filePath, data);
 }
 
 async function deployPreConfigured() {
@@ -107,6 +119,10 @@ async function deployPreConfigured() {
         result = await coins[i].methods.totalSupply().call()
     }
     console.log('-----------------')
+
+    console.log('')
+    writeConfigFile(factory.options.address)
+    console.log('Deployed factory address written to config file')
 }
 
 function main() {

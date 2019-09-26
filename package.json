@@ -1,10 +1,11 @@
 {
-  "name": "ReactDappBoilerplate",
-  "version": "2.0.0",
+  "name": "balancer-mvp",
+  "version": "0.0.1",
   "private": true,
   "license": "MIT",
   "description": "A Foundational UI Boilerplate for Ethereum Dapps Built With Trufle",
   "scripts": {
+    "dapp": "yarn deploy && yarn start",
     "deploy": "node scripts/deployPreConfigured.js",
     "clean": "rimraf dist",
     "build": "webpack --progress --verbose --colors --display-error-details --config webpack/common.config.babel.js",
