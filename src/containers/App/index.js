@@ -7,9 +7,11 @@ import {
   Switch
 } from 'react-router-dom'
 import theme from 'configs/theme/config-theme'
+import LogView from 'containers/LogView'
 import PoolSwapView from 'containers/PoolSwapView'
 import PoolManageView from 'containers/PoolManageView'
 import PoolListView from 'containers/PoolListView'
+import PoolLogsListView from 'containers/PoolLogsListView'
 import Header from './components/Header'
 import Footer from './components/Footer'
 
@@ -28,8 +30,10 @@ class App extends Component {
               <Switch>
                 <Route path="/swap/:address" component={PoolSwapView} />
                 <Route path="/manage/:address" component={PoolManageView} />
+                <Route path="/logs/:address" component={LogView} />
                 <Route path="/list" component={PoolListView} />
                 <Route path="/my-pools" component={MyPoolsView} />
+                <Route path="/logs-list" component={PoolLogsListView} />
                 <Redirect from="/" to="/list" />
               </Switch>
             </div>

@@ -7,6 +7,7 @@ import Container from '@material-ui/core/Container'
 import PoolParamsGrid from 'components/PoolParamsGrid'
 import MoreParamsGrid from 'components/MoreParamsGrid'
 import * as numberLib from 'core/libs/lib-number-helpers'
+import ValueDisplayGrid from '../../components/ValueDisplayGrid'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class PoolSwapView extends Component {
       limitPrice: 0,
       inputToken: 'EUR',
       outputToken: 'EUR',
+      expectedOutput: '...',
       pool: {
         poolParams: {},
         tokenParams: {},
@@ -72,9 +74,14 @@ class PoolSwapView extends Component {
   }
 
   setInputAmount = (event) => {
+    const {
+ provider, address, inputToken, outputToken
+} = this.state
     this.setState({
       inputAmount: event.target.value
     })
+
+    bPoolService.getSpotPrice(provider, address, inputToken, outputToken)
   }
 
   setOutputLimit = (event) => {
@@ -144,7 +151,7 @@ class PoolSwapView extends Component {
 
   buildInternalExchangeForm() {
     const {
-      inputAmount, outputLimit, inputToken, outputToken, limitPrice, pool
+      inputAmount, outputLimit, inputToken, outputToken, limitPrice, expectedOutput, pool
     } = this.state
 
     const tokens = [{

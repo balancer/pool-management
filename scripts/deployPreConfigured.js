@@ -1,7 +1,8 @@
-const bcore = require('../balancer-core')
+const CombinedSchema = require('../external-contracts/combined')
 const TestTokenSchema = require('../external-contracts/TestToken')
 const Web3 = require('web3')
 const networkConfig = require('../networks.js');
+const fs = require('fs');
 
 const web3 = new Web3("http://localhost:8545");
 
@@ -9,14 +10,14 @@ const MAX_GAS = 0xffffffff;
 const MAX_UINT = web3.utils.toTwosComplement('-1');
 
 const abi = {
-    BFactory: JSON.parse(bcore.types.BFactory.abi),
-    BPool: JSON.parse(bcore.types.BPool.abi),
+    BFactory: JSON.parse(CombinedSchema.contracts['sol/BFactory.sol:BFactory'].abi),
+    BPool: JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi),
     TestToken: TestTokenSchema.abi
 }
 
 const bin = {
-    BFactory: bcore.types.BFactory.bin,
-    BPool: bcore.types.BPool.bin
+    BFactory: CombinedSchema.contracts['sol/BFactory.sol:BFactory'].bin,
+    BPool: CombinedSchema.contracts['sol/BPool.sol:BPool'].bin
 }
 
 const params = {
@@ -40,6 +41,17 @@ const params = {
             weight: '50000000000000000000'
         },
     ]
+}
+
+function writeConfigFile(factoryAddress) {
+    const filePath = process.cwd() + `/src/configs//deployed.json`;
+
+    let config = {
+        factoryAddress: factoryAddress,
+    };
+
+    let data = JSON.stringify(config);
+    fs.writeFileSync(filePath, data);
 }
 
 async function deployPreConfigured() {
@@ -107,6 +119,10 @@ async function deployPreConfigured() {
         result = await coins[i].methods.totalSupply().call()
     }
     console.log('-----------------')
+
+    console.log('')
+    writeConfigFile(factory.options.address)
+    console.log('Deployed factory address written to config file')
 }
 
 function main() {

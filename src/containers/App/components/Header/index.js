@@ -5,12 +5,11 @@ import AppBar from 'components/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
-
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import AccountBalance from '@material-ui/icons/AccountBalance'
+import Assignment from '@material-ui/icons/Assignment'
 import SwapHoriz from '@material-ui/icons/SwapHoriz'
 import { appConfig } from 'configs/config-main'
 import { styles } from './styles.scss'
@@ -73,11 +72,13 @@ class Header extends Component {
       <div className={styles}>
         <AppBar>
           <Toolbar>
-            <IconButton className="menu-icon" edge="start" color="inherit" aria-label="menu">
-              <Typography variant="title" color="inherit">
-                {appConfig.name}
-              </Typography>
-            </IconButton>
+            <Link className="menu-icon" href="/list" to="/list">
+              <IconButton className="menu-icon" edge="start" color="inherit" aria-label="menu">
+                <Typography variant="title" color="inherit">
+                  {appConfig.name}
+                </Typography>
+              </IconButton>
+            </Link>
             <Link className="menu-icon" href="/list" to="/list">
               <IconButton color="inherit" aria-label="menu">
                 <SwapHoriz />
@@ -91,6 +92,14 @@ class Header extends Component {
                 <AccountBalance />
                 <Typography variant="title" color="inherit">
                   Manage
+                </Typography>
+              </IconButton>
+            </Link>
+            <Link className="menu-icon" href="/logs-list" to="/logs-list">
+              <IconButton color="inherit" aria-label="menu">
+                <Assignment />
+                <Typography variant="title" color="inherit">
+                  View Logs
                 </Typography>
               </IconButton>
             </Link>

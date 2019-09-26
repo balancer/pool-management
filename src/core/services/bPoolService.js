@@ -1,16 +1,22 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-restricted-syntax */
 import Web3 from 'web3'
 import abiDecoder from 'abi-decoder'
 
-import BPool from '../../../balancer-core/out/BPool_meta.json'
+import CombinedSchema from '../../../external-contracts/combined'
 import TestToken from '../../../external-contracts/TestToken.json'
+
+const BPoolAbi = JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi)
+const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
+const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
 
 export async function getParams(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    console.log(BPoolAbi)
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
 
     const manager = await bPool.methods.getManager().call()
     const fee = await bPool.methods.getFee().call()
@@ -30,17 +36,107 @@ export async function getParams(provider, contractAddress) {
     }
 }
 
+export async function getOutGivenIn(provider, contractAddress, Ai, Ti, To) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+    const inputToken = new web3.eth.Contract(TestToken.abi, Ti, { from: defaultAccount })
+    const outputToken = new web3.eth.Contract(TestToken.abi, To, { from: defaultAccount })
+
+    const Bi = await inputToken.methods.balanceOf(contractAddress).call()
+    const Wi = await bPool.methods.getNormalizedWeight(Ti).call()
+
+    const Bo = await outputToken.methods.balanceOf(contractAddress).call()
+    const Wo = await bPool.methods.getNormalizedWeight(To).call()
+
+    const fee = await bPool.methods.getFee().call()
+
+    console.log(bPool.methods)
+
+    const outGivenIn = await bPool.methods._calc_OutGivenIn(Bi, Wi, Bo, Wo, Ai, fee).call()
+    console.log('outGivenIn', outGivenIn)
+    return {
+        result: 'success',
+        data: outGivenIn
+    }
+}
+
+export async function getSpotPrice(provider, contractAddress, Ti, To) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+
+    const spotPrice = await bPool.methods.getSpotPrice(Ti, To).call()
+
+    console.log('spotPrice:', web3.utils.fromWei(spotPrice))
+    return {
+        result: 'success',
+        data: spotPrice
+    }
+}
+
+export async function getCallLogs(provider, contractAddress) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+
+    abiDecoder.addABI(BPoolAbi)
+
+    const eventName = 'LOG_CALL'
+    const events = await bPool.getPastEvents(eventName, {
+        fromBlock: 0,
+        toBlock: 'latest'
+    })
+
+    const logData = []
+
+    // Decode Events
+    for (const event of events) {
+        const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
+
+        console.log(event)
+        console.log(decodedData)
+        const { caller } = event.returnValues
+        const rawSig = event.returnValues.sig
+        const rawData = event.returnValues.data
+        const decodedSig = decodedData.name
+        const decodedValues = []
+
+        for (const param of decodedData.params) {
+            decodedValues.push(param.value)
+        }
+
+        logData.push({
+            caller,
+            rawSig,
+            rawData,
+            decodedValues,
+            decodedSig
+        })
+    }
+
+    console.log(logData)
+
+    return {
+        result: 'success',
+        data: logData
+    }
+}
+
 export async function getTokenParams(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
 
-    abiDecoder.addABI(BPool.output.abi)
-
-    const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
-    const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
+    abiDecoder.addABI(BPoolAbi)
 
     // Get a list of successful token binds by checking the calls. We'll assume the code is correct
     // TODO: Sanity check - Make sure that failed tx don't create a log
@@ -106,7 +202,7 @@ export async function bindToken(provider, contractAddress, token, balance, weigh
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
     const bPool = new web3.eth.Contract(
-        BPool.output.abi,
+        BPoolAbi,
         contractAddress,
         {
             from: defaultAccount
@@ -159,7 +255,7 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
     const { BN } = web3.utils
 
     const bPool = new web3.eth.Contract(
-        BPool.output.abi,
+        BPoolAbi,
         contractAddress,
         {
             from: defaultAccount
@@ -215,7 +311,7 @@ export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, L
     const { defaultAccount } = web3Provider.eth
 
     const bPool = new web3.eth.Contract(
-        BPool.output.abi,
+        BPoolAbi,
         contractAddress,
         {
             from: defaultAccount
