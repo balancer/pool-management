@@ -3,9 +3,10 @@
 import Web3 from 'web3'
 import abiDecoder from 'abi-decoder'
 
-import BPool from '../../../external-contracts/BPool_meta.json'
+import CombinedSchema from '../../../external-contracts/combined'
 import TestToken from '../../../external-contracts/TestToken.json'
 
+const BPoolAbi = JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi)
 const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
 const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
 
@@ -14,7 +15,8 @@ export async function getParams(provider, contractAddress) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    console.log(BPoolAbi)
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
 
     const manager = await bPool.methods.getManager().call()
     const fee = await bPool.methods.getFee().call()
@@ -39,7 +41,7 @@ export async function getOutGivenIn(provider, contractAddress, Ai, Ti, To) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
     const inputToken = new web3.eth.Contract(TestToken.abi, Ti, { from: defaultAccount })
     const outputToken = new web3.eth.Contract(TestToken.abi, To, { from: defaultAccount })
 
@@ -66,7 +68,7 @@ export async function getSpotPrice(provider, contractAddress, Ti, To) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
 
     const spotPrice = await bPool.methods.getSpotPrice(Ti, To).call()
 
@@ -82,9 +84,9 @@ export async function getCallLogs(provider, contractAddress) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
 
-    abiDecoder.addABI(BPool.output.abi)
+    abiDecoder.addABI(BPoolAbi)
 
     const eventName = 'LOG_CALL'
     const events = await bPool.getPastEvents(eventName, {
@@ -132,9 +134,9 @@ export async function getTokenParams(provider, contractAddress) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
 
-    abiDecoder.addABI(BPool.output.abi)
+    abiDecoder.addABI(BPoolAbi)
 
     // Get a list of successful token binds by checking the calls. We'll assume the code is correct
     // TODO: Sanity check - Make sure that failed tx don't create a log
@@ -200,7 +202,7 @@ export async function bindToken(provider, contractAddress, token, balance, weigh
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
     const bPool = new web3.eth.Contract(
-        BPool.output.abi,
+        BPoolAbi,
         contractAddress,
         {
             from: defaultAccount
@@ -253,7 +255,7 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
     const { BN } = web3.utils
 
     const bPool = new web3.eth.Contract(
-        BPool.output.abi,
+        BPoolAbi,
         contractAddress,
         {
             from: defaultAccount
@@ -309,7 +311,7 @@ export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, L
     const { defaultAccount } = web3Provider.eth
 
     const bPool = new web3.eth.Contract(
-        BPool.output.abi,
+        BPoolAbi,
         contractAddress,
         {
             from: defaultAccount
