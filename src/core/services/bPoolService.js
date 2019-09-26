@@ -5,6 +5,9 @@ import abiDecoder from 'abi-decoder'
 import BPool from '../../../external-contracts/BPool_meta.json'
 import TestToken from '../../../external-contracts/TestToken.json'
 
+const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
+const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
+
 export async function getParams(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
@@ -30,7 +33,7 @@ export async function getParams(provider, contractAddress) {
     }
 }
 
-export async function getTokenParams(provider, contractAddress) {
+export async function getCallLogs(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
@@ -39,8 +42,55 @@ export async function getTokenParams(provider, contractAddress) {
 
     abiDecoder.addABI(BPool.output.abi)
 
-    const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
-    const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
+    const eventName = 'LOG_CALL'
+    const events = await bPool.getPastEvents(eventName, {
+        fromBlock: 0,
+        toBlock: 'latest'
+    })
+
+    const logData = []
+
+    // Decode Events
+    for (const event of events) {
+        const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
+
+        console.log(event)
+        console.log(decodedData)
+        const { caller } = event.returnValues
+        const rawSig = event.returnValues.sig
+        const rawData = event.returnValues.data
+        const decodedSig = decodedData.name
+        const decodedValues = []
+
+        for (const param of decodedData.params) {
+            decodedValues.push(param.value)
+        }
+
+        logData.push({
+            caller,
+            rawSig,
+            rawData,
+            decodedValues,
+            decodedSig
+        })
+    }
+
+    console.log(logData)
+
+    return {
+        result: 'success',
+        data: logData
+    }
+}
+
+export async function getTokenParams(provider, contractAddress) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const bPool = new web3.eth.Contract(BPool.output.abi, contractAddress, { from: defaultAccount })
+
+    abiDecoder.addABI(BPool.output.abi)
 
     // Get a list of successful token binds by checking the calls. We'll assume the code is correct
     // TODO: Sanity check - Make sure that failed tx don't create a log
