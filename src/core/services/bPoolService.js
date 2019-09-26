@@ -2,7 +2,7 @@
 import Web3 from 'web3'
 import abiDecoder from 'abi-decoder'
 
-import BPool from '../../../balancer-core/out/BPool_meta.json'
+import BPool from '../../../external-contracts/BPool_meta.json'
 import TestToken from '../../../external-contracts/TestToken.json'
 
 export async function getParams(provider, contractAddress) {

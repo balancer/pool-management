@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import Web3 from 'web3'
 
-import BFactory from '../../../balancer-core/out/BFactory_meta.json'
+import BFactory from '../../../external-contracts/BFactory_meta.json'
 
 export async function getKnownPools(provider, factoryAddress, filter) {
     const { web3Provider } = provider
