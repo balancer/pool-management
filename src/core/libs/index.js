@@ -1,2 +1,7 @@
-export * as numberLib from './lib-number-helpers'
-export { getStyles } from './lib-style-helpers'
+import * as numberLib from './lib-number-helpers'
+import { getStyles } from './lib-style-helpers'
+
+export {
+  numberLib,
+  getStyles
+}

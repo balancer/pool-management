@@ -1,2 +1,7 @@
-export { appConfig } from './config-main'
-export theme from './theme/config-theme'
+import { appConfig } from './config-main'
+import theme from './theme/config-theme'
+
+export {
+  appConfig,
+  theme
+}

@@ -1,3 +1,9 @@
-export * as providerService from './providerService'
-export * as bPoolService from './bPoolService'
-export * as bFactoryService from './bFactoryService'
+import * as providerService from './providerService'
+import * as bPoolService from './bPoolService'
+import * as bFactoryService from './bFactoryService'
+
+export {
+  providerService,
+  bPoolService,
+  bFactoryService
+}
