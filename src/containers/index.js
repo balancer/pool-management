@@ -1,6 +1,20 @@
-export App from 'containers/App'
-export { Header, Footer } from 'containers/App/components'
-export PoolSwapView from 'containers/PoolSwapView'
-export PoolManageView from 'containers/PoolManageView'
-export PoolListView from 'containers/PoolListView'
-export MyPoolsView from 'containers/MyPoolsView'
+import App from 'containers/App'
+import { Header, Footer } from 'containers/App/components'
+import PoolSwapView from 'containers/PoolSwapView'
+import PoolManageView from 'containers/PoolManageView'
+import PoolListView from 'containers/PoolListView'
+import MyPoolsView from 'containers/MyPoolsView'
+import PoolLogsListView from 'containers/'
+import LogView from 'containers/LogView'
+
+export {
+  App,
+  Header,
+  Footer,
+  PoolSwapView,
+  PoolManageView,
+  PoolListView,
+  MyPoolsView,
+  PoolLogsListView,
+  LogView
+}
