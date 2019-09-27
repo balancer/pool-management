@@ -10,7 +10,12 @@ MVP dApp to demonstrate core Balancer protocol functionality
     ```
     
 ### Setup Environment
-- You'll need a local ganache instance running and a metamask-enabled browser. The deploy script is configured to connect to the default Ganache host (localhost:8545)
+- You'll need a local ganache instance running and a metamask-enabled browser. The deploy script is configured to connect to the default Ganache host (localhost:8545). This ganache instance should have a gas limit of 4294967295.
+
+- Ganache-cli parameters
+  ```
+  ganache-cli --deterministic -l 4294967295
+  ```
 
 ### Deploy Script
 - The pre-configured pool script deploys a fresh test environment, including a factory, several tokens, and a pool with those tokens as parameters. There are no cli arguments at the moment, but the parameters in the script file itself can be changed with relative ease (e.g. Number of tokens, their starting parameters)
