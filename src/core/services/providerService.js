@@ -5,7 +5,7 @@ export async function getProvider() {
         if (window.ethereum) {
             const { ethereum } = window
             const web3Provider = new Web3(ethereum)
-          console.log(web3Provider)
+
             const account = await ethereum.enable()
             const defaultAccount = account[0]
             web3Provider.eth.defaultAccount = defaultAccount
