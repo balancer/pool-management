@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Snackbar, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import Snackbar from '@material-ui/core/Snackbar'
-import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 
@@ -13,8 +12,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Notification() {
   const classes = useStyles()
-  const [open, setOpen] = React.useState(false)
-  const [message, setMessage] = React.useState('')
+  const [open, setOpen] = useState(false)
+  const [message, setMessage] = useState('')
 
   const openNotification = (newMessage) => {
     setOpen(true)

@@ -1,32 +1,29 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { withRouter, Link } from 'react-router-dom'
-import AppBar from 'components/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
+import { Toolbar, Typography, IconButton, Menu, MenuItem } from '@material-ui/core'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import AccountBalance from '@material-ui/icons/AccountBalance'
 import Assignment from '@material-ui/icons/Assignment'
 import SwapHoriz from '@material-ui/icons/SwapHoriz'
+
+import AppBar from 'components/AppBar'
+import { getProvider } from 'core/services/providerService'
 import { appConfig } from 'configs/config-main'
 import { styles } from './styles.scss'
-import { getProvider } from '../../../../core/services/providerService'
 
 class Header extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      anchorEl: null,
-      addess: ''
+      anchorElement: null,
+      address: ''
     }
   }
 
   getMenu() {
-    const { anchorEl, address } = this.state
+    const { anchorElement, address } = this.state
     this.checkAccount()
     return (
       <div>
@@ -34,14 +31,14 @@ class Header extends Component {
           aria-haspopup="true"
           color="inherit"
           className="dropdown"
-          aria-owns={anchorEl ? 'simple-menu' : null}
+          aria-owns={anchorElement ? 'simple-menu' : null}
           onClick={this.handleClick}
         >
           <h4> {address} </h4><AccountCircle />
         </IconButton>
         <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
+          anchorEl={anchorElement}
+          open={Boolean(anchorElement)}
           onClose={this.close}
         >
           <MenuItem data-link="account" onClick={this.goTo}>Menu Option 1</MenuItem>
@@ -59,20 +56,20 @@ class Header extends Component {
     })
   }
 
-  goTo = (evt) => {
+  goTo = (event) => {
     const { history } = this.props
-    const { link } = evt.currentTarget.dataset
+    const { link } = event.currentTarget.dataset
 
     history.push(link)
     this.close()
   }
 
   handleClick = (event) => {
-    this.setState({ anchorEl: event.currentTarget })
+    this.setState({ anchorElement: event.currentTarget })
   }
 
   close = () => {
-    this.setState({ anchorEl: null })
+    this.setState({ anchorElement: null })
   }
 
   render() {
