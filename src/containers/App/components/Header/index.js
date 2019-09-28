@@ -27,7 +27,7 @@ class Header extends Component {
 
   getMenu() {
     const { anchorEl, address } = this.state
-
+    this.checkAccount()
     return (
       <div>
         <IconButton

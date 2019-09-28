@@ -36,10 +36,6 @@ export default function Notification() {
   })
 
   const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
     setOpen(false)
   }
 
@@ -66,7 +62,9 @@ export default function Notification() {
             className={classes.close}
             onClick={handleClose}
           >
-            <CloseIcon />
+            <CloseIcon
+              onClick={handleClose}
+            />
           </IconButton>
         ]}
       />
