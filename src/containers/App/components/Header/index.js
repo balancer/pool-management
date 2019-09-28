@@ -13,18 +13,20 @@ import Assignment from '@material-ui/icons/Assignment'
 import SwapHoriz from '@material-ui/icons/SwapHoriz'
 import { appConfig } from 'configs/config-main'
 import { styles } from './styles.scss'
+import { getProvider } from '../../../../core/services/providerService'
 
 class Header extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      anchorEl: null
+      anchorEl: null,
+      addess: ''
     }
   }
 
   getMenu() {
-    const { anchorEl } = this.state
+    const { anchorEl, address } = this.state
 
     return (
       <div>
@@ -35,7 +37,7 @@ class Header extends Component {
           aria-owns={anchorEl ? 'simple-menu' : null}
           onClick={this.handleClick}
         >
-          <AccountCircle />
+          <h4> {address} </h4><AccountCircle />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
@@ -47,6 +49,14 @@ class Header extends Component {
         </Menu>
       </div>
     )
+  }
+
+  checkAccount = () => {
+    getProvider().then((provider) => {
+      if (provider.result === 'success') {
+        this.setState({ address: provider.web3Provider.eth.defaultAccount })
+      }
+    })
   }
 
   goTo = (evt) => {
