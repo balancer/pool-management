@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
+import { Container, Grid, TextField, Button } from '@material-ui/core'
+
 import * as providerService from 'core/services/providerService'
 import * as bPoolService from 'core/services/bPoolService'
-import TextField from '@material-ui/core/TextField'
-import Grid from '@material-ui/core/Grid'
-import Container from '@material-ui/core/Container'
-import PoolParamsGrid from 'components/PoolParamsGrid'
-import MoreParamsGrid from 'components/MoreParamsGrid'
 import * as numberLib from 'core/libs/lib-number-helpers'
-import ValueDisplayGrid from '../../components/ValueDisplayGrid'
+import { PoolParamsGrid, MoreParamsGrid, ValueDisplayGrid } from 'components'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -44,11 +41,7 @@ class PoolSwapView extends Component {
   }
 
   async getParams() {
-    const { address } = this.state
-    const { provider } = this.state
-
-    const { pool } = this.state
-
+    const { address, provider, pool } = this.state
     const poolData = await bPoolService.getParams(provider, address)
     this.setState({
       pool: {
@@ -60,9 +53,7 @@ class PoolSwapView extends Component {
   }
 
   async getTokenParams() {
-    const { address, provider } = this.state
-    const { pool } = this.state
-
+    const { address, provider, pool } = this.state
     const tokenData = await bPoolService.getTokenParams(provider, address)
     this.setState({
       pool: {
@@ -75,8 +66,8 @@ class PoolSwapView extends Component {
 
   setInputAmount = (event) => {
     const {
- provider, address, inputToken, outputToken
-} = this.state
+      provider, address, inputToken, outputToken
+    } = this.state
     this.setState({
       inputAmount: event.target.value
     })
@@ -126,7 +117,8 @@ class PoolSwapView extends Component {
     }
   }
 
-  swapExactAmountIn = async (evt) => {
+  swapExactAmountIn = async (event) => {
+    event.preventDefault()
     const {
       provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, pool
     } = this.state
@@ -168,105 +160,113 @@ class PoolSwapView extends Component {
       })
     })
 
-    return (<form onSubmit={this.swapExactAmountIn} noValidate autoComplete="off">
-      <Grid container spacing={1}>
+    return (
+      <form onSubmit={this.swapExactAmountIn} noValidate autoComplete="off">
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={9}>
-            <TextField
-              id="token-in"
-              select
-              label="Input Token"
-              value={inputToken}
-              onChange={this.setInputToken}
-              SelectProps={{
-                native: true
-              }}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-            >
-              {tokens.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <TextField
-              id="amount-in"
-              label="Input Amount"
-              placeholder="0"
-              value={inputAmount}
-              onChange={this.setInputAmount}
-              // onChange={handleChange('inputAmount')}
-              type="number"
-              InputLabelProps={{
-                shrink: true
-              }}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={9}>
-            <TextField
-              id="token-out"
-              select
-              fullWidth
-              label="Output Token"
-              value={outputToken}
-              onChange={this.setOutputToken}
-              SelectProps={{
-                native: true
-              }}
-              margin="normal"
-              variant="outlined"
-            >
-              {tokens.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <TextField
-              id="limit-out"
-              label="Limit Output"
-              placeholder="0"
-              value={outputLimit}
-              onChange={this.setOutputLimit}
-              type="number"
-              InputLabelProps={{
-                shrink: true
-              }}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="limit-price"
-              label="Limit Price"
-              value={limitPrice}
-              onChange={this.setLimitPrice}
-              type="number"
-              InputLabelProps={{
-                shrink: true
-              }}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <input type="submit" value="Submit" />
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={9}>
+              <TextField
+                id="token-in"
+                select
+                label="Input Token"
+                value={inputToken}
+                onChange={this.setInputToken}
+                SelectProps={{
+                  native: true
+                }}
+                margin="normal"
+                variant="outlined"
+                fullWidth
+              >
+                {tokens.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="amount-in"
+                label="Input Amount"
+                placeholder="0"
+                value={inputAmount}
+                onChange={this.setInputAmount}
+                // onChange={handleChange('inputAmount')}
+                type="number"
+                InputLabelProps={{
+                  shrink: true
+                }}
+                margin="normal"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <TextField
+                id="token-out"
+                select
+                fullWidth
+                label="Output Token"
+                value={outputToken}
+                onChange={this.setOutputToken}
+                SelectProps={{
+                  native: true
+                }}
+                margin="normal"
+                variant="outlined"
+              >
+                {tokens.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="limit-out"
+                label="Limit Output"
+                placeholder="0"
+                value={outputLimit}
+                onChange={this.setOutputLimit}
+                type="number"
+                InputLabelProps={{
+                  shrink: true
+                }}
+                margin="normal"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="limit-price"
+                label="Limit Price"
+                value={limitPrice}
+                onChange={this.setLimitPrice}
+                type="number"
+                InputLabelProps={{
+                  shrink: true
+                }}
+                margin="normal"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Button
+                type="submit"
+                variant="contained"
+                style={{ marginTop: 25 }}
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </form >)
+      </form>
+    )
   }
 
   render() {
@@ -283,7 +283,7 @@ class PoolSwapView extends Component {
             <PoolParamsGrid address={address} pool={pool} />
           </Grid>
           <Grid item xs={12} sm={12}>
-            {this.buildInternalExchangeForm()}
+            { this.buildInternalExchangeForm() }
           </Grid>
           <Grid item xs={12} sm={12}>
             <MoreParamsGrid pool={pool} />

@@ -1,14 +1,9 @@
 import React, { Component } from 'react'
-import * as providerService from 'core/services/providerService'
-import * as bPoolService from 'core/services/bPoolService'
-import TextField from '@material-ui/core/TextField'
-import Grid from '@material-ui/core/Grid'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
-import TokenParametersTable from 'components/TokenParametersTable'
-import PoolParamsGrid from 'components/PoolParamsGrid'
-import MoreParamsGrid from 'components/MoreParamsGrid'
-import * as numberLib from 'core/libs/lib-number-helpers'
+import { Container, Grid, Typography, TextField, Button } from '@material-ui/core'
+
+import { providerService, bPoolService } from 'core/services'
+import { numberLib } from 'core/libs'
+import { TokenParametersTable, PoolParamsGrid, MoreParamsGrid } from 'components'
 import { styles } from './styles.scss'
 
 class PoolSwapView extends Component {
@@ -99,7 +94,7 @@ class PoolSwapView extends Component {
     this.setState({ setTokenParamsInput })
   }
 
-  setTokenParams = async (evt) => {
+  setTokenParams = async (event) => {
     const {
       provider, address, setTokenParamsInput, pool
     } = this.state
@@ -121,7 +116,7 @@ class PoolSwapView extends Component {
     await this.getTokenParams()
   }
 
-  bindToken = async (evt) => {
+  bindToken = async (event) => {
     const {
       provider, address, bindTokenInput, pool
     } = this.state
@@ -156,44 +151,51 @@ class PoolSwapView extends Component {
   buildBindTokenForm() {
     const { bindTokenInput } = this.state
 
-    return (<Container>
-      <form onSubmit={this.bindToken}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
-            <TextField
-              id="token-address"
-              label="Token Address"
-              value={bindTokenInput.address}
-              onChange={e => this.setBindInputProperty('address', e)}
-              fullWidth
-            />
+    return (
+      <Container>
+        <form onSubmit={this.bindToken}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                id="token-address"
+                label="Token Address"
+                value={bindTokenInput.address}
+                onChange={e => this.setBindInputProperty('address', e)}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="token-address"
+                label="Balance"
+                type="number"
+                placeholder="0"
+                value={bindTokenInput.balance}
+                onChange={e => this.setBindInputProperty('balance', e)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="token-address"
+                label="Weight"
+                type="number"
+                placeholder="0"
+                value={bindTokenInput.weight}
+                onChange={e => this.setBindInputProperty('weight', e)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Button
+                type="submit"
+                variant="contained"
+              >
+                Submit
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              id="token-address"
-              label="Balance"
-              type="number"
-              placeholder="0"
-              value={bindTokenInput.balance}
-              onChange={e => this.setBindInputProperty('balance', e)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              id="token-address"
-              label="Weight"
-              type="number"
-              placeholder="0"
-              value={bindTokenInput.weight}
-              onChange={e => this.setBindInputProperty('weight', e)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <input type="submit" value="Submit" />
-          </Grid>
-        </Grid>
-      </form>
-    </Container>)
+        </form>
+      </Container>
+    )
   }
 
   buildSetTokenParamsForm() {
@@ -207,7 +209,7 @@ class PoolSwapView extends Component {
               id="token-address"
               label="Token Address"
               value={setTokenParamsInput.address}
-              onChange={e => this.setTokenParamsProperty('address', e)}
+              onChange={event => this.setTokenParamsProperty('address', event)}
               fullWidth
             />
           </Grid>
@@ -218,7 +220,7 @@ class PoolSwapView extends Component {
               type="number"
               placeholder="0"
               value={setTokenParamsInput.balance}
-              onChange={e => this.setTokenParamsProperty('balance', e)}
+              onChange={event => this.setTokenParamsProperty('balance', event)}
             />
           </Grid>
           <Grid item xs={12} sm={4}><TextField
@@ -227,10 +229,15 @@ class PoolSwapView extends Component {
             type="number"
             placeholder="0"
             value={setTokenParamsInput.weight}
-            onChange={e => this.setTokenParamsProperty('weight', e)}
+            onChange={event => this.setTokenParamsProperty('weight', event)}
           /></Grid>
           <Grid item xs={12} sm={4}>
-            <input type="submit" value="Submit" />
+            <Button
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
           </Grid>
         </Grid>
       </form>
