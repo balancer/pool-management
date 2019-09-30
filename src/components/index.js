@@ -8,6 +8,7 @@ import ExchangeForm from 'components/ExchangeForm'
 import IconCard from 'components/IconCard'
 import MoreParamsGrid from 'components/MoreParamsGrid'
 import PoolList from 'components/PoolList'
+import PoolInvestListTable from 'components/PoolInvestListTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
 import PoolTitleCard from 'components/PoolTitleCard'
 import SpotPriceGrid from 'components/SpotPriceGrid'
@@ -21,8 +22,10 @@ export {
   BottomNavigation,
   Button,
   EmptyState,
+  ExchangeForm,
   IconCard,
   MoreParamsGrid,
+  PoolInvestListTable,
   PoolList,
   PoolParamsGrid,
   PoolTitleCard,
