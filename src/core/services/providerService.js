@@ -9,7 +9,6 @@ export async function getProvider() {
             const account = await ethereum.enable()
             const defaultAccount = account[0]
             web3Provider.eth.defaultAccount = defaultAccount
-
             return {
                 result: 'success',
                 web3Provider

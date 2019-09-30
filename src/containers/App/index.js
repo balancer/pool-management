@@ -14,6 +14,7 @@ import PoolListView from 'containers/PoolListView'
 import PoolLogsListView from 'containers/PoolLogsListView'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import Notification from './components/Notification'
 
 import './styles.scss' // global styles
 import MyPoolsView from '../MyPoolsView'
@@ -26,6 +27,7 @@ class App extends Component {
           <div>
             <Header />
             <Footer />
+            <Notification />
             <div className="app-shell">
               <Switch>
                 <Route path="/swap/:address" component={PoolSwapView} />
