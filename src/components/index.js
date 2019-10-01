@@ -13,6 +13,8 @@ import PoolTitleCard from 'components/PoolTitleCard'
 import SpotPriceGrid from 'components/SpotPriceGrid'
 import TokenParametersTable from 'components/TokenParametersTable'
 import ValueDisplayGrid from 'components/ValueDisplayGrid'
+import PoolSwapListTable from 'components/PoolSwapListTable'
+import SwapForm from 'components/SwapForm'
 
 export {
   AppBar,
@@ -28,5 +30,7 @@ export {
   PoolTitleCard,
   SpotPriceGrid,
   TokenParametersTable,
-  ValueDisplayGrid
+  ValueDisplayGrid,
+  PoolSwapListTable,
+  SwapForm
 }
