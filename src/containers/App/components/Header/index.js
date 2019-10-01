@@ -86,30 +86,6 @@ class Header extends Component {
                 </Typography>
               </IconButton>
             </Link>
-            <Link className="menu-icon" href="/list" to="/list">
-              <IconButton color="inherit" aria-label="menu">
-                <SwapHoriz />
-                <Typography variant="title" color="inherit">
-                  Swap
-                </Typography>
-              </IconButton>
-            </Link>
-            <Link className="menu-icon" href="/my-pools" to="/my-pools">
-              <IconButton color="inherit" aria-label="menu">
-                <AccountBalance />
-                <Typography variant="title" color="inherit">
-                  Manage
-                </Typography>
-              </IconButton>
-            </Link>
-            <Link className="menu-icon" href="/logs-list" to="/logs-list">
-              <IconButton color="inherit" aria-label="menu">
-                <Assignment />
-                <Typography variant="title" color="inherit">
-                  View Logs
-                </Typography>
-              </IconButton>
-            </Link>
             {menu}
           </Toolbar>
         </AppBar>
