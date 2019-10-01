@@ -30,7 +30,7 @@ class App extends Component {
                 <Route path="/list" component={PoolListView} />
                 <Route path="/my-pools" component={MyPoolsView} />
                 <Route path="/logs-list" component={PoolLogsListView} />
-                <Redirect from="/" to="/invest/0x5Db06acd673531218B10430bA6dE9b69913Ad545" />
+                <Redirect from="/" to="/logs-list" />
               </Switch>
             </div>
           </div>

@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
-import { Container, Typography, Grid, Card, CardContent } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import {
+  Container, Grid,
+  Card, CardContent,
+  FormGroup, FormControl,
+  Select, MenuItem, InputLabel,
+  TextField
+} from '@material-ui/core'
 
-import { PoolInvestListTable } from 'components'
+import { PoolInvestListTable, Button } from 'components'
 import { providerService, bFactoryService } from 'core/services'
 import { appConfig } from 'configs'
+import { formConfig } from './config'
 
 class PoolInvestView extends Component {
   constructor(props) {
@@ -12,20 +18,18 @@ class PoolInvestView extends Component {
 
     this.state = {
       factoryAddress: appConfig.factory,
-      provider: null,
       knownPools: {},
       poolsLoaded: false,
-      pendingRequest: false,
-      requestError: null
+      formConfig: formConfig.joinPool,
+      selectedAction: 'joinPool',
+      tokenAddress: 'Token Address1',
+      tokenAmount: 0
     }
   }
 
   async componentWillMount() {
     const { factoryAddress } = this.state
-
     const provider = await providerService.getProvider()
-    this.setState({ provider })
-
     const { defaultAccount } = provider.web3Provider.eth
     const poolData = await bFactoryService.getKnownPools(provider, factoryAddress, {
       caller: defaultAccount,
@@ -34,24 +38,52 @@ class PoolInvestView extends Component {
     })
     this.setState({
       knownPools: poolData.knownPools,
-      poolsLoaded: true
+      poolsLoaded: true,
+      provider
     })
   }
 
   render() {
-    const { knownPools, poolsLoaded } = this.state
-
-    if (!poolsLoaded) {
-      return <div />
+    const {
+      knownPools, poolsLoaded, selectedAction, tokenAddress, tokenAmount
+    } = this.state
+    const config = formConfig
+    const handleFormConfigChange = (event) => {
+      const action = event.target.value
+      this.setState({
+        formConfig: config[event.target.value],
+        selectedAction: action,
+        tokenAddress: 'Token Address1',
+        tokenAmount: 0
+      })
     }
-
+    const handleTokenAmountChange = (event) => {
+      if (event.target.value !== '') {
+        const amount = Number(event.target.value)
+        this.setState({ tokenAmount: amount })
+      } else {
+        this.setState({ tokenAmount: '' })
+      }
+    }
+    const handleTokenAddressSelect = (event) => {
+      this.setState({ tokenAddress: event.target.value })
+    }
+    const buttonText = () => {
+      if (this.state.selectedAction.slice(0, 4) === 'join') {
+        return 'Invest'
+      }
+        return 'Redeem'
+    }
+    const handleSubmit = () => {
+      // Send Data somewhere!
+    }
     return (
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={4}>
             <Card>
               <CardContent>
-                Pool Card Address
+                Pool Card Address: { '0x5Db06acd673531218B10430bA6dE9b69913Ad545' }
               </CardContent>
             </Card>
           </Grid>
@@ -65,7 +97,7 @@ class PoolInvestView extends Component {
           <Grid item xs={4}>
             <Card>
               <CardContent>
-                My Pool Token Balance
+                My Pool Token Balance: { '1000' }
               </CardContent>
             </Card>
           </Grid>
@@ -77,14 +109,84 @@ class PoolInvestView extends Component {
           <Grid item xs={12}>
             <Card>
               <CardContent>
-                Invest/Devest Method Dropdown
+                <FormControl style={{ margin: 10, minWidth: 120 }}>
+                  <InputLabel htmlFor="action-type">Invest/Devest</InputLabel>
+                  <Select
+                    value={selectedAction}
+                    onChange={handleFormConfigChange}
+                    displayEmpty
+                    inputProps={{
+                       name: 'actionType',
+                       id: 'action-type'
+                     }}
+                  >
+                    <MenuItem value="joinPool">Join Pool</MenuItem>
+                    <MenuItem value="joinswap_ExternAmountIn">Join Swap</MenuItem>
+                    <MenuItem value="joinswap_PoolAmountOut">Join Swap Pool</MenuItem>
+                    <MenuItem value="exitPool">Exit Pool</MenuItem>
+                    <MenuItem value="exitswap_PoolAmountIn">Exit Swap Pool</MenuItem>
+                    <MenuItem value="exitswap_ExternAmountOut">Exit Swap</MenuItem>
+                  </Select>
+                </FormControl>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12}>
             <Card>
               <CardContent>
-                Form to invest/devest(fields based on method selected)
+                { this.state.formConfig.actionLabel }
+                <FormGroup>
+                  {
+                    this.state.formConfig.inputs.map((input, index) => {
+                      const id = index * 1
+                      switch (input.type) {
+                        case 'number':
+                          return (
+                            <TextField
+                              required
+                              value={tokenAmount}
+                              key={id}
+                              label={input.label}
+                              type="number"
+                              onChange={handleTokenAmountChange}
+                            />
+                          )
+                          // break
+                        case 'select':
+                          return (
+                            <FormControl key={id}>
+                              <InputLabel htmlFor="token">Select a Token</InputLabel>
+                              <Select
+                                value={tokenAddress}
+                                onChange={handleTokenAddressSelect}
+                                inputProps={{
+                                  name: 'token',
+                                  id: 'token'
+                                }}
+                                displayEmpty
+                              >
+                                {
+                                input.options.map((option) => {
+                                  return (
+                                    <MenuItem key={id} value={option.address}>
+                                      { option.address }
+                                    </MenuItem>
+                                  )
+                                })
+                              }
+                              </Select>
+                            </FormControl>
+                          )
+                          // break
+                        default:
+                         return null
+                      }
+                    })
+                  }
+                  <Button onClick={handleSubmit}>
+                    { buttonText() }
+                  </Button>
+                </FormGroup>
               </CardContent>
             </Card>
           </Grid>
