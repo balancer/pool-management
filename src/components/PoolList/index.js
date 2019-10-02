@@ -5,9 +5,10 @@ import Button from '../Button'
 
 
 const columns = [
-  { id: 'address', label: 'Address', minWidth: 40 },
-  { id: 'manager', label: 'Manager', minWidth: 40 },
-  { id: 'buttons', label: '', minWidth: 50 }
+  { id: 'address', label: 'Address', minWidth: 50 },
+  { id: 'swap', label: '', minWidth: 50 },
+  { id: 'manage', label: '', minWidth: 50 },
+  { id: 'invest', label: '', minWidth: 50 }
 ]
 
 const useStyles = makeStyles(theme => ({
@@ -34,11 +35,9 @@ export default function TokenParametersTable(props) {
 
   Object.keys(poolData).forEach((key) => {
     const address = key
-    const { manager } = poolData[key]
 
     rows.push({
-      address,
-      manager
+      address
     })
   })
 
@@ -58,14 +57,14 @@ export default function TokenParametersTable(props) {
   return (
     <Paper className={classes.root}>
       <div className={classes.table}>
-        <Table stickyHeader>
+        <Table>
           <TableHead>
             <TableRow>
               {columns.map(column => (
                 <TableCell
                   key={`header${column.id}`}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{ minWidth: column.minWidth, minHeight: 10 }}
                 >
                   {column.label}
                 </TableCell>
@@ -79,21 +78,20 @@ export default function TokenParametersTable(props) {
                   <TableCell key={`cel${row.address}`}>
                     <Link href={`/${linkPath}/${row.address}`} to={`/${linkPath}/${row.address}`}>{row.address}</Link>
                   </TableCell>
-                  <TableCell key={`manager${row.address}`}>
-                    {row.manager}
+                  <TableCell>
+                    <Button size="small" key={`swap${row.address}`} component={Link} to={`/swap/${row.address}`}>
+                    Swap
+                    </Button>
                   </TableCell>
-                  <TableCell key={`buttons${row.address}`}>
-                    <ButtonGroup size="small" aria-label="small outlined button group">
-                      <Button key={`swap${row.address}`} component={Link} to={`/swap/${row.address}`}>
-                      Swap
-                      </Button>
-                      <Button key={`invest${row.address}`} component={Link} to={`/invest/${row.address}`}>
-                      Invest
-                      </Button>
-                      <Button key={`manage${row.address}`} component={Link} to={`/manage/${row.address}`}>
-                      Manage
-                      </Button>
-                    </ButtonGroup>
+                  <TableCell>
+                    <Button size="small" key={`invest${row.address}`} component={Link} to={`/invest/${row.address}`}>
+                    Invest
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button size="small" key={`manage${row.address}`} component={Link} to={`/manage/${row.address}`}>
+                    Manage
+                    </Button>
                   </TableCell>
                 </TableRow>
               )

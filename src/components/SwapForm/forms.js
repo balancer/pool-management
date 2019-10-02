@@ -167,10 +167,10 @@ export function SwapFormHandler(props) {
     const { provider, address, updateTokenParams } = props
     const { inputs, handleInputChange, handleSubmit } = useSwapForm(() => {
       const {
-        inputToken, outputToken, outputAmount, outputLimit, limitPrice
+        inputToken, outputToken, outputAmount, inLimit, limitPrice
       } = inputs
       const data = {
-        provider, address, inputToken, outputToken, outputAmount, outputLimit, limitPrice, updateTokenParams
+        provider, address, inputToken, outputToken, outputAmount, inLimit, limitPrice, updateTokenParams
       }
       swapExactAmountOut(data)
     })
@@ -242,11 +242,11 @@ export function SwapFormHandler(props) {
             </Grid>
             <Grid item xs={12} sm={3}>
               <TextField
-                id="limit-out"
-                name="outputLimit"
-                label="Limit Output"
+                id="limit-in"
+                name="inLimit"
+                label="Limit In"
                 placeholder="0"
-                value={inputs.outputLimit}
+                value={inputs.inLimit}
                 onChange={handleInputChange}
                 type="number"
                 InputLabelProps={{

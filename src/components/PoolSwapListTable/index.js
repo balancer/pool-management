@@ -9,8 +9,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%'
   },
   table: {
-    minWidth: 650,
-    overflowX: 'auto'
+    minWidth: 650
   },
   address: {
     width: '70%'
@@ -85,7 +84,7 @@ export default function PoolSwapListTable(props) {
                     100
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
-                    {row.weight}
+                    {web3.utils.fromWei(row.weight)}
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
                     <ToggleButton
