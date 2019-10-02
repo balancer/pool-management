@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {
   Container, Grid,
   Card, CardContent,
-  FormGroup, FormControl,
+  Typography, FormControl,
   Select, MenuItem, InputLabel,
   TextField
 } from '@material-ui/core'
@@ -131,64 +131,78 @@ class PoolInvestView extends Component {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                { this.state.formConfig.actionLabel }
-                <FormGroup>
-                  {
-                    this.state.formConfig.inputs.map((input, index) => {
-                      const id = index * 1
-                      switch (input.type) {
-                        case 'number':
-                          return (
-                            <TextField
-                              required
-                              value={tokenAmount}
-                              key={id}
-                              label={input.label}
-                              type="number"
-                              onChange={handleTokenAmountChange}
-                            />
-                          )
-                          // break
-                        case 'select':
-                          return (
-                            <FormControl key={id}>
-                              <InputLabel htmlFor="token">Select a Token</InputLabel>
-                              <Select
-                                value={tokenAddress}
-                                onChange={handleTokenAddressSelect}
-                                inputProps={{
-                                  name: 'token',
-                                  id: 'token'
-                                }}
-                                displayEmpty
-                              >
-                                {
-                                input.options.map((option) => {
-                                  return (
-                                    <MenuItem key={id} value={option.address}>
-                                      { option.address }
-                                    </MenuItem>
-                                  )
-                                })
-                              }
-                              </Select>
-                            </FormControl>
-                          )
-                          // break
-                        default:
-                         return null
+          <Grid item xs={12} sm={12}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h5" component="h5">{ this.state.formConfig.actionLabel }</Typography>
+                <Container>
+                  <form onSubmit={handleSubmit}>
+                    <Grid container spacing={3}>
+                      {
+                        this.state.formConfig.inputs.map((input, index) => {
+                          const id = index * 1
+                          switch (input.type) {
+                            case 'number':
+                              return (
+                                <Grid item xs={12} sm={12}>
+
+                                  <TextField
+                                    required
+                                    value={tokenAmount}
+                                    key={id}
+                                    label={input.label}
+                                    type="number"
+                                    onChange={handleTokenAmountChange}
+                                  />
+                                </Grid>
+                              )
+                              // break
+                            case 'select':
+                              return (
+                                <Grid item xs={12} sm={12}>
+                                  <FormControl key={id}>
+                                    <InputLabel htmlFor="token">Select a Token</InputLabel>
+                                    <Select
+                                      value={tokenAddress}
+                                      onChange={handleTokenAddressSelect}
+                                      inputProps={{
+                                        name: 'token',
+                                        id: 'token'
+                                      }}
+                                      displayEmpty
+                                    >
+                                      {
+                                      input.options.map((option) => {
+                                        return (
+                                          <MenuItem key={id} value={option.address}>
+                                            { option.address }
+                                          </MenuItem>
+                                        )
+                                      })
+                                    }
+                                    </Select>
+                                  </FormControl>
+                                </Grid>
+                              )
+                              // break
+                            default:
+                            return null
+                          }
+                        })
                       }
-                    })
-                  }
-                  <Button onClick={handleSubmit}>
-                    { buttonText() }
-                  </Button>
-                </FormGroup>
-              </CardContent>
-            </Card>
+                      <Grid item xs={12} sm={4}>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                        >
+                          { buttonText() }
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </form>
+                </Container>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Container>
