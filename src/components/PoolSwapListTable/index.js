@@ -1,8 +1,8 @@
 import React from 'react'
-import web3 from 'web3'
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles } from '@material-ui/core'
-import CheckIcon from '@material-ui/icons/Check'
-import ToggleButton from '@material-ui/lab/ToggleButton'
+import { numberLib } from 'core/libs'
+import ToggleButton from '../ToggleButton'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,6 +51,10 @@ export default function PoolSwapListTable(props) {
     setPage(0)
   }
 
+  const handleSelect = (event) => {
+    setSelected(!selected)
+  }
+
   return (
     <Paper className={styles.root}>
       <div className={styles.table}>
@@ -78,25 +82,16 @@ export default function PoolSwapListTable(props) {
                     {row.address}
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    {web3.utils.fromWei(row.balance)}
+                    {numberLib.toEther(row.balance)}
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
                     100
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
-                    {web3.utils.fromWei(row.weight)}
+                    {numberLib.toEther(row.weight)}
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
-                    <ToggleButton
-                      key={`lock${row.address}`}
-                      value="check"
-                      selected={selected}
-                      onChange={() => {
-                        setSelected(!selected)
-                      }}
-                    >
-                      <CheckIcon key={`check${row.address}`} />
-                    </ToggleButton>
+                    <ToggleButton token={row.address} />
                   </TableCell>
                 </TableRow>
               )

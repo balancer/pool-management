@@ -21,21 +21,19 @@ export const swapExactAmountIn = async (data) => {
 
 export const swapExactAmountOut = async (data) => {
   const {
-    provider, address, outputAmount, outputLimit, inputToken, outputToken, limitPrice, updateTokenParams
+    provider, address, outputAmount, inLimit, inputToken, outputToken, limitPrice, updateTokenParams
   } = data
+  await bPoolService.swapExactAmountOut(
+    provider,
+    address,
+    inputToken,
+    numberLib.toWei(inLimit),
+    outputToken,
+    numberLib.toWei(outputAmount),
+    numberLib.toWei(limitPrice)
+  )
 
-  console.log('we need to implement swap exact amount out contract method')
-  // await bPoolService.swapExactAmountOut(
-  //   provider,
-  //   address,
-  //   inputToken,
-  //   numberLib.toWei(outputAmount),
-  //   outputToken,
-  //   numberLib.toWei(outputLimit),
-  //   numberLib.toWei(limitPrice)
-  // )
-
-  // updateTokenParams()
+  updateTokenParams()
 }
 
 
@@ -43,19 +41,18 @@ export const swapExactMarginalPrice = async (data) => {
   const {
     provider, address, outLimit, inLimit, inputToken, outputToken, marginalPrice, updateTokenParams
   } = data
+  console.log(data)
+  await bPoolService.swapExactMarginalPrice(
+    provider,
+    address,
+    inputToken,
+    numberLib.toWei(inLimit),
+    outputToken,
+    numberLib.toWei(outLimit),
+    numberLib.toWei(marginalPrice)
+  )
 
-  console.log('we need to implement swap exact marginal price contract method')
-  // await bPoolService.swapExactMarginalPrice(
-  //   provider,
-  //   address,
-  //   inputToken,
-  //   numberLib.toWei(outputAmount),
-  //   outputToken,
-  //   numberLib.toWei(outputLimit),
-  //   numberLib.toWei(limitPrice)
-  // )
-
-  // updateTokenParams()
+  updateTokenParams()
 }
 
 export const swapThreeLimitMaximize = async (data) => {

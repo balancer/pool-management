@@ -5,6 +5,7 @@ import abiDecoder from 'abi-decoder'
 
 import CombinedSchema from '../../../external-contracts/combined'
 import TestToken from '../../../external-contracts/TestToken.json'
+import numberLib from '../libs'
 
 const BPoolAbi = JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi)
 const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
@@ -226,21 +227,83 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
 
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
     const bPool = await getBPoolInstance(provider, contractAddress)
-    const tokenIn = await getTokenInstance(provider, Ti)
-
     try {
-        await tokenIn.methods.approve(contractAddress, Ai).send()
         await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).send()
-
-        // Dispatch Success
         return {
             result: 'success'
         }
     } catch (e) {
-        // Dispatch Failure
         return {
             result: 'failure',
             data: { error: e }
         }
     }
 }
+
+/**
+ *
+ * @param {providerObject} provider
+ * @param {address} contractAddress
+ * @param {address} Ti -- input token
+ * @param {address} To -- output token
+ * @param {uint} Li -- limit in
+ * @param {uint} Ao -- output amount
+ * @param {uint} PL -- price limit
+ */
+export async function swapExactAmountOut(provider, contractAddress, Ti, Li, To, Ao, PL) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+
+  try {
+      await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).send()
+      return {
+          result: 'success'
+      }
+  } catch (e) {
+      return {
+          result: 'failure',
+          data: { error: e }
+      }
+  }
+}
+
+/**
+ *
+ * @param {provider} provider
+ * @param {address} contractAddress
+ * @param {address} Ti -- input token
+ * @param {uint} Li -- in limit
+ * @param {address} To -- output token
+ * @param {uint} Lo -- out limit
+ * @param {uint} MP -- marginal price
+ */
+export async function swapExactMarginalPrice(provider, contractAddress, Ti, Li, To, Lo, MP) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+
+  try {
+      await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).send()
+      return {
+          result: 'success'
+      }
+  } catch (e) {
+      return {
+          result: 'failure',
+          data: { error: e }
+      }
+  }
+}
+
+export async function approve(provider, contractAddress, token) {
+  const tokenIn = await getTokenInstance(provider, token)
+  try {
+    await tokenIn.methods.approve(contractAddress, numberLib.MAX_UINT()).send()
+    return {
+      result: 'success'
+    }
+  } catch (e) {
+    return {
+      result: 'failure',
+      data: { error: e }
+    }
+  }
+}
+

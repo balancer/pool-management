@@ -7,3 +7,7 @@ export function toEther(value) {
 export function toWei(value) {
   return Web3.utils.toWei(value, 'ether')
 }
+
+export function MAX_UINT() {
+  return Web3.utils.toTwosComplement('-1')
+}
