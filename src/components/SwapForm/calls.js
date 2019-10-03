@@ -41,7 +41,6 @@ export const swapExactMarginalPrice = async (data) => {
   const {
     provider, address, outLimit, inLimit, inputToken, outputToken, marginalPrice, updateTokenParams
   } = data
-  console.log(data)
   await bPoolService.swapExactMarginalPrice(
     provider,
     address,
@@ -53,24 +52,5 @@ export const swapExactMarginalPrice = async (data) => {
   )
 
   updateTokenParams()
-}
-
-export const swapThreeLimitMaximize = async (data) => {
-  const {
-    provider, address, outLimit, inLimit, inputToken, outputToken, limitPrice, updateTokenParams
-  } = data
-
-  console.log('we need to implement swap three limit maximize contract method')
-  // await bPoolService.swapThreeLimitMaximize(
-  //   provider,
-  //   address,
-  //   inputToken,
-  //   numberLib.toWei(outputAmount),
-  //   outputToken,
-  //   numberLib.toWei(outputLimit),
-  //   numberLib.toWei(limitPrice)
-  // )
-
-  // updateTokenParams()
 }
 

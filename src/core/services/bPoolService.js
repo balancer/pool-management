@@ -291,19 +291,3 @@ export async function swapExactMarginalPrice(provider, contractAddress, Ti, Li, 
       }
   }
 }
-
-export async function approve(provider, contractAddress, token) {
-  const tokenIn = await getTokenInstance(provider, token)
-  try {
-    await tokenIn.methods.approve(contractAddress, numberLib.MAX_UINT()).send()
-    return {
-      result: 'success'
-    }
-  } catch (e) {
-    return {
-      result: 'failure',
-      data: { error: e }
-    }
-  }
-}
-
