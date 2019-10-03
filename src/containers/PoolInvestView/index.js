@@ -136,102 +136,95 @@ class PoolInvestView extends Component {
             }
           </Grid>
           <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <FormControl style={{ margin: 10, minWidth: 120 }}>
-                  <InputLabel htmlFor="action-type">Invest/Devest</InputLabel>
-                  <Select
-                    value={selectedAction}
-                    onChange={handleFormConfigChange}
-                    displayEmpty
-                    inputProps={{
-                       name: 'actionType',
-                       id: 'action-type'
-                     }}
-                  >
-                    <MenuItem value="joinPool">Join Pool</MenuItem>
-                    <MenuItem value="joinswap_ExternAmountIn">Join Swap</MenuItem>
-                    <MenuItem value="joinswap_PoolAmountOut">Join Swap Pool</MenuItem>
-                    <MenuItem value="exitPool">Exit Pool</MenuItem>
-                    <MenuItem value="exitswap_PoolAmountIn">Exit Swap Pool</MenuItem>
-                    <MenuItem value="exitswap_ExternAmountOut">Exit Swap</MenuItem>
-                  </Select>
-                </FormControl>
-              </CardContent>
-            </Card>
+            <FormControl style={{ margin: 10, minWidth: 120 }}>
+              <InputLabel htmlFor="action-type">Invest/Devest</InputLabel>
+              <Select
+                value={selectedAction}
+                onChange={handleFormConfigChange}
+                displayEmpty
+                inputProps={{
+                    name: 'actionType',
+                    id: 'action-type'
+                  }}
+              >
+                <MenuItem value="joinPool">Join Pool</MenuItem>
+                <MenuItem value="joinswap_ExternAmountIn">Join Swap</MenuItem>
+                <MenuItem value="joinswap_PoolAmountOut">Join Swap Pool</MenuItem>
+                <MenuItem value="exitPool">Exit Pool</MenuItem>
+                <MenuItem value="exitswap_PoolAmountIn">Exit Swap Pool</MenuItem>
+                <MenuItem value="exitswap_ExternAmountOut">Exit Swap</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} style={{ marginBottom: '100px' }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="h5" component="h5">{ this.state.formConfig.actionLabel }</Typography>
-                <Container>
-                  <form onSubmit={handleSubmit}>
-                    <Grid container spacing={2}>
-                      {
-                        this.state.formConfig.inputs.map((input, index) => {
-                          const id = index * 1
-                          switch (input.type) {
-                            case 'number':
-                              return (
-                                <Grid item xs={12} sm={9}>
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={2}>
+                    {
+                      this.state.formConfig.inputs.map((input, index) => {
+                        const id = index * 1
+                        switch (input.type) {
+                          case 'number':
+                            return (
+                              <Grid item xs={12} sm={9}>
 
-                                  <TextField
-                                    label={input.label}
-                                    placeholder="0"
-                                    value={tokenAmount}
-                                    onChange={handleTokenAmountChange}
-                                    type="number"
-                                    InputLabelProps={{
-                                       shrink: true
-                                     }}
-                                    margin="normal"
-                                    variant="outlined"
-                                    fullWidth
-                                  />
-                                </Grid>
-                              )
-                              // break
-                            case 'select':
-                              return (
-                                <Grid item xs={12} sm={9}>
-                                  <TextField
-                                    select
-                                    fullWidth
-                                    label="Select a Token"
-                                    value={tokenAddress}
-                                    onChange={handleTokenAddressSelect}
-                                    SelectProps={{
-                                      native: true
+                                <TextField
+                                  label={input.label}
+                                  placeholder="0"
+                                  value={tokenAmount}
+                                  onChange={handleTokenAmountChange}
+                                  type="number"
+                                  InputLabelProps={{
+                                      shrink: true
                                     }}
-                                    margin="normal"
-                                    variant="outlined"
-                                  >
-                                    {input.options.map(option => (
-                                      <option key={`${id}${option.address}`} value={option.address}>
-                                        {option.address}
-                                      </option>
-                                    ))}
-                                  </TextField>
-                                </Grid>
-                              )
-                              // break
-                            default:
-                            return null
-                          }
-                        })
-                      }
-                      <Grid item xs={12} sm={3}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          style={{ marginTop: 25 }}
-                        >
-                          { buttonText() }
-                        </Button>
-                      </Grid>
+                                  margin="normal"
+                                  variant="outlined"
+                                  fullWidth
+                                />
+                              </Grid>
+                            )
+                            // break
+                          case 'select':
+                            return (
+                              <Grid item xs={12} sm={9}>
+                                <TextField
+                                  select
+                                  fullWidth
+                                  label="Select a Token"
+                                  value={tokenAddress}
+                                  onChange={handleTokenAddressSelect}
+                                  SelectProps={{
+                                    native: true
+                                  }}
+                                  margin="normal"
+                                  variant="outlined"
+                                >
+                                  {input.options.map(option => (
+                                    <option key={`${id}${option.address}`} value={option.address}>
+                                      {option.address}
+                                    </option>
+                                  ))}
+                                </TextField>
+                              </Grid>
+                            )
+                            // break
+                          default:
+                          return null
+                        }
+                      })
+                    }
+                    <Grid item xs={12} sm={3}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        style={{ marginTop: 25 }}
+                      >
+                        { buttonText() }
+                      </Button>
                     </Grid>
-                  </form>
-                </Container>
+                  </Grid>
+                </form>
               </Grid>
             </Grid>
           </Grid>
