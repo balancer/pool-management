@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Container, Grid, TextField, Button } from '@material-ui/core'
+import { Container, Grid } from '@material-ui/core'
 import * as providerService from 'core/services/providerService'
 import * as bPoolService from 'core/services/bPoolService'
-import * as numberLib from 'core/libs/lib-number-helpers'
-import { PoolParamsGrid, SwapForm, PoolSwapListTable } from 'components'
+import { PoolParamsGrid, SwapForm, PoolListTokenTable, Loading } from 'components'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -57,30 +56,6 @@ class PoolSwapView extends Component {
     })
   }
 
-  // swapExactAmountIn = async (event) => {
-  //   event.preventDefault()
-  //   const {
-  //     provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, pool
-  //   } = this.state
-
-  //   if (!pool) {
-  //     // Invariant
-  //   }
-
-
-  //   await bPoolService.swapExactAmountIn(
-  //     provider,
-  //     address,
-  //     inputToken,
-  //     numberLib.toWei(inputAmount),
-  //     outputToken,
-  //     numberLib.toWei(outputLimit),
-  //     numberLib.toWei(limitPrice)
-  //   )
-
-  //   await this.getTokenParams()
-  // }
-
   render() {
     const { pool, address, provider } = this.state
 
@@ -95,7 +70,12 @@ class PoolSwapView extends Component {
             <PoolParamsGrid address={address} pool={pool} />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <PoolSwapListTable tokenParams={pool.tokenParams} />
+            {
+                pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Loading />
+                </div>
+              }
           </Grid>
           <Grid item xs={12} sm={12}>
             <SwapForm updateTokenParams={this.getTokenParams} address={address} provider={provider} tokenParams={pool.tokenParams} />

@@ -16,26 +16,28 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function PoolSwapListTable(props) {
+export default function PoolInvestListTable(props) {
   const styles = useStyles()
   const columns = [
     { label: 'Symbol', id: 'symbol', minWidth: 60 },
     { label: 'Address', id: 'Address', minWidth: 60 },
-    { label: 'My balance (ETH)', id: 'My balance', minWidth: 60 },
+    { label: 'My balance', id: 'My balance', minWidth: 60 },
     { label: 'Pool balance', id: 'Pool balance', minWidth: 60 },
     { label: 'Weight', id: 'Weight', minWidth: 60 },
     { label: 'Lock/Unlock', id: 'lockable', minWidth: 60 }
   ]
-  const [selected, setSelected] = React.useState(false)
 
   const { tokenParams } = props
   const rows = Object.keys(tokenParams).map((token) => {
-    const { symbol, balance, weight } = tokenParams[token]
+    const {
+ symbol, balance, weight, userBalance
+} = tokenParams[token]
     return {
-      symbol: symbol || 'EUR',
+      symbol: symbol || 'ETH',
       address: token,
       balance,
-      weight
+      weight,
+      userBalance
     }
   })
 
@@ -49,10 +51,6 @@ export default function PoolSwapListTable(props) {
   function handleChangeRowsPerPage(event) {
     setRowsPerPage(+event.target.value)
     setPage(0)
-  }
-
-  const handleSelect = (event) => {
-    setSelected(!selected)
   }
 
   return (
@@ -82,10 +80,10 @@ export default function PoolSwapListTable(props) {
                     {row.address}
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    {numberLib.toEther(row.balance)}
+                    { row.userBalance ? numberLib.toEther(row.userBalance.toString()) : 0 }
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
-                    100
+                    {numberLib.toEther(row.balance)}
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
                     {numberLib.toEther(row.weight)}

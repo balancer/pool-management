@@ -71,7 +71,7 @@
   "dependencies": {
     "@material-ui/core": "^4.0.0",
     "@material-ui/icons": "^4.0.0",
-    "@material-ui/lab": "^4.0.0-alpha.27",
+    "@material-ui/lab": "^4.0.0-alpha.28",
     "abi-decoder": "^2.2.0",
     "dotenv": "^8.1.0",
     "husky": "^1.0.1",
