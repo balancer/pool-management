@@ -224,6 +224,22 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
     }
 }
 
+export async function setFee(provider, contractAddress, amount) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+  try {
+    await bPool.methods.setFee(amount).send()
+
+    return {
+      result: 'success'
+    }
+  } catch (e) {
+    return {
+      result: 'failure',
+      data: { error: e }
+    }
+  }
+}
+
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
     const bPool = await getBPoolInstance(provider, contractAddress)
     const tokenIn = await getTokenInstance(provider, Ti)

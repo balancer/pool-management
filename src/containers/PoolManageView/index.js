@@ -4,7 +4,6 @@ import { Container, Grid, Typography, TextField, Button } from '@material-ui/cor
 import { providerService, bPoolService } from 'core/services'
 import { numberLib } from 'core/libs'
 import { TokenParametersTable, PoolParamsGrid, MoreParamsGrid } from 'components'
-import { styles } from './styles.scss'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -21,6 +20,9 @@ class PoolSwapView extends Component {
         address: '',
         balance: '',
         weight: ''
+      },
+      setFee: {
+        amount: ''
       },
       pool: {
         poolParams: {},
@@ -85,6 +87,15 @@ class PoolSwapView extends Component {
     this.setState({ bindTokenInput })
   }
 
+
+  setFeeAmount = (property, event) => {
+    const { setFee } = this.state
+    const newProperty = event.target.value
+
+    setFee[property] = newProperty
+    this.setState({ setFee })
+  }
+
   setTokenParamsProperty = (property, event) => {
     const { setTokenParamsInput } = this.state
     const newProperty = event.target.value
@@ -114,6 +125,15 @@ class PoolSwapView extends Component {
 
 
     await this.getTokenParams()
+  }
+
+  setFee = async (event) => {
+    event.preventDefault()
+    const {
+      setFee, provider, address
+    } = this.state
+
+    bPoolService.setFee(provider, address, setFee.amount)
   }
 
   bindToken = async (event) => {
@@ -245,6 +265,34 @@ class PoolSwapView extends Component {
     </Container >)
   }
 
+  buildSetFeeForm() {
+    const { setFee } = this.state
+    return (<Container>
+      <form onSubmit={this.setFee}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={8}>
+            <TextField
+              id="fee-amount"
+              label="Fee Amount"
+              type="number"
+              value={setFee.amount}
+              onChange={event => this.setFeeAmount('amount', event)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Button
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </Container >)
+}
+
   render() {
     const { pool } = this.state
 
@@ -289,6 +337,19 @@ class PoolSwapView extends Component {
                 <br />
                 {pool.loadedTokenParams ? (
                   this.buildSetTokenParamsForm()
+                ) : (
+                  <div />
+                  )}
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h5" component="h5">Set fee</Typography>
+                <br />
+                {pool.loadedTokenParams ? (
+                  this.buildSetFeeForm()
                 ) : (
                   <div />
                   )}
