@@ -19,7 +19,7 @@ async function getBPoolInstance(provider, contractAddress) {
     return bPool
 }
 
-async function getTokenInstance(provider, contractAddress) {
+export async function getTokenInstance(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
