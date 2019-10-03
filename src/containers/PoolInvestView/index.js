@@ -32,8 +32,7 @@ class PoolInvestView extends Component {
         txError: null,
         loadedParams: false,
         loadedTokenParams: false
-      },
-      poolBalance: 0
+      }
     }
   }
 
@@ -60,17 +59,13 @@ class PoolInvestView extends Component {
   async getTokenParams() {
     const { address, provider, pool } = this.state
     const tokenData = await bPoolService.getTokenParams(provider, address)
-    const poolBalance = Object.keys(tokenData.data).map((token) => {
-      return +tokenData.data[token].balance
-    }).reduce((a, b) => a + b, 0)
 
     this.setState({
       pool: {
         ...pool,
         loadedTokenParams: true,
         tokenParams: tokenData.data
-      },
-      poolBalance
+      }
     })
   }
 
@@ -88,7 +83,7 @@ class PoolInvestView extends Component {
 
   render() {
     const {
-      selectedAction, tokenAddress, tokenAmount, pool, address, poolBalance
+      selectedAction, tokenAddress, tokenAmount, pool, address
     } = this.state
     const config = formConfig
     const handleFormConfigChange = (event) => {

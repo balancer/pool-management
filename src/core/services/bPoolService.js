@@ -254,6 +254,22 @@ export async function setFee(provider, contractAddress, amount) {
   }
 }
 
+export async function makePublic(provider, contractAddress,) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+  try {
+    await bPool.methods.makePublic().send()
+
+    return {
+      result: 'success'
+    }
+  } catch (e) {
+    return {
+      result: 'failure',
+      data: { error: e }
+    }
+  }
+}
+
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
     const bPool = await getBPoolInstance(provider, contractAddress)
     try {

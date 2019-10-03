@@ -59,25 +59,21 @@ class PoolSwapView extends Component {
   render() {
     const { pool, address, provider } = this.state
 
-    if (!pool.loadedParams || !pool.loadedTokenParams) {
-      return <div />
-    }
-
     return (
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
             <PoolParamsGrid address={address} pool={pool} />
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12}>
             {
-                pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Loading />
-                </div>
-              }
+              pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loading />
+              </div>
+            }
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12}>
             <SwapForm updateTokenParams={this.getTokenParams} address={address} provider={provider} tokenParams={pool.tokenParams} />
           </Grid>
         </Grid>

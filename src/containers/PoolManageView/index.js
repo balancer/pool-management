@@ -3,7 +3,7 @@ import { Container, Grid, Typography, TextField, Button } from '@material-ui/cor
 
 import { providerService, bPoolService } from 'core/services'
 import { numberLib } from 'core/libs'
-import { TokenParametersTable, PoolParamsGrid, MoreParamsGrid, PoolListTokenTable, Loading } from 'components'
+import { PoolParamsGrid, MoreParamsGrid, PoolListTokenTable, Loading } from 'components'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -134,6 +134,14 @@ class PoolSwapView extends Component {
     } = this.state
 
     bPoolService.setFee(provider, address, setFee.amount)
+  }
+
+  makePublic = async (event) => {
+    event.preventDefault()
+    const {
+      provider, address
+    } = this.state
+    bPoolService.makePublic(provider, address)
   }
 
   bindToken = async (event) => {
@@ -296,14 +304,27 @@ class PoolSwapView extends Component {
         </Grid>
       </form>
     </Container >)
-}
+  }
+
+  buildMakePublicButton() {
+    return (<Container>
+      <form onSubmit={this.makePublic}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <Button
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </Container >)
+  }
 
   render() {
     const { pool } = this.state
-
-    if (!pool.loadedParams || !pool.loadedTokenParams) {
-      return <div />
-    }
 
     return (
       <Container>
@@ -314,8 +335,8 @@ class PoolSwapView extends Component {
             {pool.loadedParams ? (
               this.buildParamCards()
             ) : (
-              <div />
-              )}
+              <Loading />
+            )}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Typography variant="h5" component="h5" > Tokens</Typography >
@@ -326,20 +347,12 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Add Token</Typography>
                 <br />
-                {pool.loadedTokenParams ? (
-                  this.buildBindTokenForm()
-                ) : (
-                  <div />
-                  )}
+                { this.buildBindTokenForm() }
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Edit Token</Typography>
                 <br />
-                {pool.loadedTokenParams ? (
-                  this.buildSetTokenParamsForm()
-                ) : (
-                  <div />
-                  )}
+                { this.buildSetTokenParamsForm() }
               </Grid>
             </Grid>
           </Grid>
@@ -348,11 +361,12 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Set fee</Typography>
                 <br />
-                {pool.loadedTokenParams ? (
-                  this.buildSetFeeForm()
-                ) : (
-                  <div />
-                  )}
+                { this.buildSetFeeForm() }
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h5" component="h5">Make public</Typography>
+                <br />
+                { this.buildMakePublicButton() }
               </Grid>
             </Grid>
           </Grid>
