@@ -27,8 +27,11 @@ export default function PoolParamsGrid(props) {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={6} sm={9}>
+        <Grid item xs={6} sm={6}>
           <IconCard title="Pool" text={address} />
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <IconCard title="Fee" text={pool.poolParams.fee} />
         </Grid>
         <Grid item xs={6} sm={3}>
           <IconCard title="Active" text={activeText} />

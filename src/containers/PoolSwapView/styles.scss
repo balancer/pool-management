@@ -13,4 +13,14 @@
     menu: {
         width: 200;
     }
+    .root {
+      width: '100%';
+      overflow-x: 'auto';
+    }
+
+    .table {
+      overflow-x: 'auto';
+      width: '100%';
+    }
 }
+

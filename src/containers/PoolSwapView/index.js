@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
-import { Container, Grid, TextField, Button } from '@material-ui/core'
-
+import { Container, Grid } from '@material-ui/core'
 import * as providerService from 'core/services/providerService'
 import * as bPoolService from 'core/services/bPoolService'
-import * as numberLib from 'core/libs/lib-number-helpers'
-import { PoolParamsGrid, MoreParamsGrid, ValueDisplayGrid } from 'components'
+import { PoolParamsGrid, SwapForm, PoolListTokenTable, Loading } from 'components'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -12,12 +10,6 @@ class PoolSwapView extends Component {
 
     this.state = {
       address: '',
-      inputAmount: 0,
-      outputLimit: 0,
-      limitPrice: 0,
-      inputToken: 'EUR',
-      outputToken: 'EUR',
-      expectedOutput: '...',
       pool: {
         poolParams: {},
         tokenParams: {},
@@ -64,213 +56,8 @@ class PoolSwapView extends Component {
     })
   }
 
-  setInputAmount = (event) => {
-    const {
-      provider, address, inputToken, outputToken
-    } = this.state
-    this.setState({
-      inputAmount: event.target.value
-    })
-
-    bPoolService.getSpotPrice(provider, address, inputToken, outputToken)
-  }
-
-  setOutputLimit = (event) => {
-    this.setState({
-      outputLimit: event.target.value
-    })
-  }
-
-  setOutputLimit = (event) => {
-    this.setState({
-      outputLimit: event.target.value
-    })
-  }
-
-  setLimitPrice = (event) => {
-    this.setState({
-      limitPrice: event.target.value
-    })
-  }
-
-  setInputToken = (event) => {
-    const { outputToken } = this.state
-    const newToken = event.target.value
-
-    // If the output token is the same, unset it
-    if (outputToken === newToken) {
-      this.setState({ inputToken: newToken, outputToken: 'None' })
-    } else {
-      this.setState({ inputToken: newToken })
-    }
-  }
-
-  setOutputToken = (event) => {
-    const { inputToken } = this.state
-    const newToken = event.target.value
-
-    // If the output token is the same, unset it
-    if (inputToken === newToken) {
-      this.setState({ outputToken: newToken, inputToken: 'None' })
-    } else {
-      this.setState({ outputToken: newToken })
-    }
-  }
-
-  swapExactAmountIn = async (event) => {
-    event.preventDefault()
-    const {
-      provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, pool
-    } = this.state
-
-    if (!pool) {
-      // Invariant
-    }
-
-
-    await bPoolService.swapExactAmountIn(
-      provider,
-      address,
-      inputToken,
-      numberLib.toWei(inputAmount),
-      outputToken,
-      numberLib.toWei(outputLimit),
-      numberLib.toWei(limitPrice)
-    )
-
-    await this.getTokenParams()
-  }
-
-  buildInternalExchangeForm() {
-    const {
-      inputAmount, outputLimit, inputToken, outputToken, limitPrice, expectedOutput, pool
-    } = this.state
-
-    const tokens = [{
-      value: 'None',
-      label: 'None'
-    }]
-
-    Object.keys(pool.tokenParams).forEach((key, index) => {
-      // key: the name of the object key
-      // index: the ordinal position of the key within the object
-      tokens.push({
-        value: key,
-        label: key
-      })
-    })
-
-    return (
-      <form onSubmit={this.swapExactAmountIn} noValidate autoComplete="off">
-        <Grid container spacing={1}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-in"
-                select
-                label="Input Token"
-                value={inputToken}
-                onChange={this.setInputToken}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="amount-in"
-                label="Input Amount"
-                placeholder="0"
-                value={inputAmount}
-                onChange={this.setInputAmount}
-                // onChange={handleChange('inputAmount')}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-out"
-                select
-                fullWidth
-                label="Output Token"
-                value={outputToken}
-                onChange={this.setOutputToken}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-out"
-                label="Limit Output"
-                placeholder="0"
-                value={outputLimit}
-                onChange={this.setOutputLimit}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="limit-price"
-                label="Limit Price"
-                value={limitPrice}
-                onChange={this.setLimitPrice}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                style={{ marginTop: 25 }}
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </form>
-    )
-  }
-
   render() {
-    const { pool, address } = this.state
+    const { pool, address, provider } = this.state
 
     if (!pool.loadedParams || !pool.loadedTokenParams) {
       return <div />
@@ -283,10 +70,15 @@ class PoolSwapView extends Component {
             <PoolParamsGrid address={address} pool={pool} />
           </Grid>
           <Grid item xs={12} sm={12}>
-            { this.buildInternalExchangeForm() }
+            {
+                pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Loading />
+                </div>
+              }
           </Grid>
           <Grid item xs={12} sm={12}>
-            <MoreParamsGrid pool={pool} />
+            <SwapForm updateTokenParams={this.getTokenParams} address={address} provider={provider} tokenParams={pool.tokenParams} />
           </Grid>
         </Grid>
       </Container>

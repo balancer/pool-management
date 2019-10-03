@@ -8,13 +8,14 @@ import ExchangeForm from 'components/ExchangeForm'
 import IconCard from 'components/IconCard'
 import MoreParamsGrid from 'components/MoreParamsGrid'
 import PoolList from 'components/PoolList'
-import PoolInvestListTable from 'components/PoolInvestListTable'
+import PoolListTokenTable from 'components/PoolListTokenTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
 import PoolTitleCard from 'components/PoolTitleCard'
 import SpotPriceGrid from 'components/SpotPriceGrid'
 import TokenParametersTable from 'components/TokenParametersTable'
 import ValueDisplayGrid from 'components/ValueDisplayGrid'
 import Loading from 'components/Loading'
+import SwapForm from 'components/SwapForm'
 
 export {
   AppBar,
@@ -26,12 +27,13 @@ export {
   ExchangeForm,
   IconCard,
   MoreParamsGrid,
-  PoolInvestListTable,
+  PoolListTokenTable,
   PoolList,
   PoolParamsGrid,
   PoolTitleCard,
   SpotPriceGrid,
   TokenParametersTable,
   ValueDisplayGrid,
-  Loading
+  Loading,
+  SwapForm
 }

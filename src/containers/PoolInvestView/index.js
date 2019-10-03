@@ -7,9 +7,8 @@ import {
   TextField
 } from '@material-ui/core'
 
-import { PoolInvestListTable, Button, Loading } from 'components'
+import { PoolListTokenTable, Button, Loading, PoolParamsGrid } from 'components'
 import { providerService, bFactoryService, bPoolService } from 'core/services'
-import { numberLib } from 'core/libs'
 
 import { appConfig } from 'configs'
 import { formConfig } from './config'
@@ -122,34 +121,15 @@ class PoolInvestView extends Component {
       // Send Data somewhere!
     }
 
-    const active = !pool.poolParams.isPaused ? 'Yes' : 'No'
     return (
       <Container>
         <Grid container spacing={3}>
-          <Grid item xs={4}>
-            <Card>
-              <CardContent>
-                Pool Card Address: { address || '' }
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={4}>
-            <Card>
-              <CardContent>
-                Active? { active }
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={4}>
-            <Card>
-              <CardContent>
-                My Pool Token Balance: { numberLib.toEther(poolBalance.toString()) }
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={12}>
+            <PoolParamsGrid address={address} pool={pool} />
           </Grid>
           <Grid item xs={12}>
             {
-              pool.loadedTokenParams ? (<PoolInvestListTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+              pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Loading />
               </div>
@@ -193,44 +173,45 @@ class PoolInvestView extends Component {
                           switch (input.type) {
                             case 'number':
                               return (
-                                <Grid item xs={12} sm={8}>
+                                <Grid item xs={12} sm={9}>
 
                                   <TextField
-                                    required
-                                    value={tokenAmount}
-                                    key={id}
                                     label={input.label}
-                                    type="number"
+                                    placeholder="0"
+                                    value={tokenAmount}
                                     onChange={handleTokenAmountChange}
+                                    type="number"
+                                    InputLabelProps={{
+                                       shrink: true
+                                     }}
+                                    margin="normal"
+                                    variant="outlined"
+                                    fullWidth
                                   />
                                 </Grid>
                               )
                               // break
                             case 'select':
                               return (
-                                <Grid item xs={12} sm={8}>
-                                  <FormControl key={id}>
-                                    <InputLabel htmlFor="token">Select a Token</InputLabel>
-                                    <Select
-                                      value={tokenAddress}
-                                      onChange={handleTokenAddressSelect}
-                                      inputProps={{
-                                        name: 'token',
-                                        id: 'token'
-                                      }}
-                                      displayEmpty
-                                    >
-                                      {
-                                      input.options.map((option) => {
-                                        return (
-                                          <MenuItem key={id} value={option.address}>
-                                            { option.address }
-                                          </MenuItem>
-                                        )
-                                      })
-                                    }
-                                    </Select>
-                                  </FormControl>
+                                <Grid item xs={12} sm={9}>
+                                  <TextField
+                                    select
+                                    fullWidth
+                                    label="Select a Token"
+                                    value={tokenAddress}
+                                    onChange={handleTokenAddressSelect}
+                                    SelectProps={{
+                                      native: true
+                                    }}
+                                    margin="normal"
+                                    variant="outlined"
+                                  >
+                                    {input.options.map(option => (
+                                      <option key={`${id}${option.address}`} value={option.address}>
+                                        {option.address}
+                                      </option>
+                                    ))}
+                                  </TextField>
                                 </Grid>
                               )
                               // break
@@ -239,10 +220,11 @@ class PoolInvestView extends Component {
                           }
                         })
                       }
-                      <Grid item xs={12} sm={4}>
+                      <Grid item xs={12} sm={3}>
                         <Button
                           type="submit"
                           variant="contained"
+                          style={{ marginTop: 25 }}
                         >
                           { buttonText() }
                         </Button>

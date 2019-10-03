@@ -1,37 +1,43 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TablePagination from '@material-ui/core/TablePagination'
-import TableRow from '@material-ui/core/TableRow'
-import * as numberLib from 'core/libs/lib-number-helpers'
-import { styles } from './styles.scss'
+import { TablePagination, ButtonGroup, makeStyles, Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core'
+import Button from '../Button'
 
 
 const columns = [
-  { id: 'address', label: 'Address', minWidth: 200 },
-  { id: 'manager', label: 'Manager', minWidth: 200 }
+  { id: 'address', label: 'Address', minWidth: 50 },
+  { id: 'swap', label: '', minWidth: 50 },
+  { id: 'manage', label: '', minWidth: 50 },
+  { id: 'invest', label: '', minWidth: 50 }
 ]
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    width: '100%'
+  },
+  table: {
+    minWidth: 650,
+    overflowX: 'auto'
+  },
+  address: {
+    width: '70%'
+  }
+}))
 
 export default function TokenParametersTable(props) {
   const {
     poolData,
     linkPath
   } = props
+  const classes = useStyles()
 
   const rows = []
 
   Object.keys(poolData).forEach((key) => {
     const address = key
-    const { manager } = poolData[key]
 
     rows.push({
-      address,
-      manager
+      address
     })
   })
 
@@ -49,16 +55,16 @@ export default function TokenParametersTable(props) {
   }
 
   return (
-    <Paper className={styles.root}>
-      <div className={styles.tableWrapper}>
-        <Table stickyHeader>
+    <Paper className={classes.root}>
+      <div className={classes.table}>
+        <Table>
           <TableHead>
             <TableRow>
               {columns.map(column => (
                 <TableCell
-                  key={column.id}
+                  key={`header${column.id}`}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{ minWidth: column.minWidth, minHeight: 10 }}
                 >
                   {column.label}
                 </TableCell>
@@ -68,12 +74,24 @@ export default function TokenParametersTable(props) {
           <TableBody>
             {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
               return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                  <TableCell key={0}>
+                <TableRow hover tabIndex={-1} key={row.address}>
+                  <TableCell key={`cel${row.address}`}>
                     <Link href={`/${linkPath}/${row.address}`} to={`/${linkPath}/${row.address}`}>{row.address}</Link>
                   </TableCell>
-                  <TableCell key={1}>
-                    {row.manager}
+                  <TableCell>
+                    <Button size="small" key={`swap${row.address}`} component={Link} to={`/swap/${row.address}`}>
+                    Swap
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button size="small" key={`invest${row.address}`} component={Link} to={`/invest/${row.address}`}>
+                    Invest
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button size="small" key={`manage${row.address}`} component={Link} to={`/manage/${row.address}`}>
+                    Manage
+                    </Button>
                   </TableCell>
                 </TableRow>
               )

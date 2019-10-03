@@ -10,12 +10,26 @@ const BPoolAbi = JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi)
 const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
 const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
 
-export async function getParams(provider, contractAddress) {
+async function getBPoolInstance(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
     const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+    return bPool
+}
+
+async function getTokenInstance(provider, contractAddress) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const tokenContract = new web3.eth.Contract(TestToken.abi, contractAddress, { from: defaultAccount })
+    return tokenContract
+}
+
+export async function getParams(provider, contractAddress) {
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
     const manager = await bPool.methods.getManager().call()
     const fee = await bPool.methods.getFee().call()
@@ -36,15 +50,10 @@ export async function getParams(provider, contractAddress) {
 }
 
 export async function getSpotPrice(provider, contractAddress, Ti, To) {
-    const { web3Provider } = provider
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
-
-    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
     const spotPrice = await bPool.methods.getSpotPrice(Ti, To).call()
 
-    console.log('spotPrice:', web3.utils.fromWei(spotPrice))
     return {
         result: 'success',
         data: spotPrice
@@ -52,11 +61,7 @@ export async function getSpotPrice(provider, contractAddress, Ti, To) {
 }
 
 export async function getCallLogs(provider, contractAddress) {
-    const { web3Provider } = provider
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
-
-    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
     abiDecoder.addABI(BPoolAbi)
 
@@ -105,8 +110,7 @@ export async function getTokenParams(provider, contractAddress) {
     const { web3Provider } = provider
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
-
-    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
     abiDecoder.addABI(BPoolAbi)
 
@@ -180,34 +184,10 @@ export async function getTokenParams(provider, contractAddress) {
 }
 
 export async function bindToken(provider, contractAddress, token, balance, weight) {
-    const { web3Provider } = provider
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
-    const bPool = new web3.eth.Contract(
-        BPoolAbi,
-        contractAddress,
-        {
-            from: defaultAccount
-        })
-
-    const tokenContract = new web3.eth.Contract(TestToken.abi, token, { from: defaultAccount })
-
-    const { BN } = web3.utils
+    const bPool = await getBPoolInstance(provider, contractAddress)
+    const tokenContract = await getTokenInstance(provider, token)
 
     try {
-        // const balanceBN = new BN(balance)
-
-        // const currentApproval = await tokenContract.methods.allowance(defaultAccount, contractAddress).call()
-
-        // const currentApprovalBN = new BN(currentApproval)
-        // let approveTx
-
-        // // If current approval is less than the balance, approve more tokens
-        // if (currentApproval < balance) {
-        //     approveTx = await tokenContract.methods.approve(contractAddress, balanceBN.sub(currentApprovalBN).toString()).send()
-        // }
-
-
         const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
         const bindTx = await bPool.methods.bind(token, balance, weight).send()
 
@@ -231,40 +211,10 @@ export async function bindToken(provider, contractAddress, token, balance, weigh
 }
 
 export async function setTokenParams(provider, contractAddress, token, balance, weight) {
-    const { web3Provider } = provider
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
-    const { BN } = web3.utils
-
-    const bPool = new web3.eth.Contract(
-        BPoolAbi,
-        contractAddress,
-        {
-            from: defaultAccount
-        })
-    const tokenContract = new web3.eth.Contract(TestToken.abi, token, { from: defaultAccount })
+    const bPool = await getBPoolInstance(provider, contractAddress)
+    const tokenContract = await getTokenInstance(provider, token)
 
     try {
-        // const balanceBN = new BN(balance)
-
-        // const currentApproval = await tokenContract.methods.allowance(defaultAccount, contractAddress).call()
-        // const contractBalance = await tokenContract.methods.balanceOf(contractAddress).call()
-
-        // const currentApprovalBN = new BN(currentApproval)
-        // const contractBalanceBN = new BN(contractBalance)
-
-        // let approveTx
-
-        // if (contractBalanceBN < balanceBN) {
-        //     const balanceDifferenceBN = balanceBN.sub(contractBalanceBN)
-        //     const balanceDifference = balanceDifferenceBN.toString()
-        //     if (currentApprovalBN < balanceDifference) {
-        //         // Approve overrides the previous approval
-        //         approveTx = await tokenContract.methods.approve(contractAddress, balanceDifference).send()
-        //     }
-        // }
-
-
         // You can make multiple calls in here and dispatch each individually
         const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
         const bindTx = await bPool.methods.setParams(token, balance, weight).send()
@@ -287,18 +237,25 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
     }
 }
 
-export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
-    const { web3Provider } = provider
-    const web3 = new Web3(web3Provider)
-    const { defaultAccount } = web3Provider.eth
+export async function setFee(provider, contractAddress, amount) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+  try {
+    await bPool.methods.setFee(amount).send()
 
-    const bPool = new web3.eth.Contract(
-        BPoolAbi,
-        contractAddress,
-        {
-            from: defaultAccount
-        })
-    const tokenIn = new web3.eth.Contract(TestToken.abi, Ti, { from: defaultAccount })
+    return {
+      result: 'success'
+    }
+  } catch (e) {
+    return {
+      result: 'failure',
+      data: { error: e }
+    }
+  }
+}
+
+export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
+    const bPool = await getBPoolInstance(provider, contractAddress)
+    const tokenIn = await getTokenInstance(provider, Ti)
 
     try {
         await tokenIn.methods.approve(contractAddress, Ai).send()
