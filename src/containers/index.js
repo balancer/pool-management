@@ -1,5 +1,6 @@
 import App from 'containers/App'
 import { Header, Footer } from 'containers/App/components'
+import PoolInvestView from 'containers/PoolInvestView'
 import PoolSwapView from 'containers/PoolSwapView'
 import PoolManageView from 'containers/PoolManageView'
 import PoolListView from 'containers/PoolListView'
@@ -11,6 +12,7 @@ export {
   App,
   Header,
   Footer,
+  PoolInvestView,
   PoolSwapView,
   PoolManageView,
   PoolListView,

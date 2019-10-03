@@ -107,6 +107,9 @@ export async function getCallLogs(provider, contractAddress) {
 }
 
 export async function getTokenParams(provider, contractAddress) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
     const bPool = await getBPoolInstance(provider, contractAddress)
 
     abiDecoder.addABI(BPoolAbi)
@@ -131,6 +134,7 @@ export async function getTokenParams(provider, contractAddress) {
     // Add all tokens from Binds
     for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
+        console.log(decodedData.params)
 
         const token = decodedData.params[0].value
         const balance = decodedData.params[1].value.toString()
@@ -159,9 +163,18 @@ export async function getTokenParams(provider, contractAddress) {
     }
 
     // Update token data with actual balances
-    Object.keys(tokenData).forEach(async (key) => {
-        const tokenContract = await getTokenInstance(provider, key)
-        tokenData[key].balance = await tokenContract.methods.balanceOf(contractAddress).call()
+    const balances = []
+    for (const key of Object.keys(tokenData)) {
+      const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
+      balances.push(tokenContract.methods.balanceOf(contractAddress).call())
+      balances.push(tokenContract.methods.balanceOf(defaultAccount).call())
+    }
+
+    const resolvedBalances = await Promise.all(balances)
+
+    Object.keys(tokenData).forEach((key) => {
+      tokenData[key].balance = resolvedBalances.shift()
+      tokenData[key].userBalance = resolvedBalances.shift()
     })
 
     return {
@@ -222,6 +235,22 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
             data: { contractAddress, error: e }
         }
     }
+}
+
+export async function setFee(provider, contractAddress, amount) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+  try {
+    await bPool.methods.setFee(amount).send()
+
+    return {
+      result: 'success'
+    }
+  } catch (e) {
+    return {
+      result: 'failure',
+      data: { error: e }
+    }
+  }
 }
 
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {

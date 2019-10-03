@@ -25,10 +25,9 @@ MVP dApp to demonstrate core Balancer protocol functionality
    
 - The deploy script will output a list of the newly created addresses. These can be interacted with manually. (Logging to file will be added shortly) The factory will automatically be added to a config file and loaded by the dApp (Only if it's not already started, restart the dApp if it's not running)
 
-Alternatively, you can use `yarn dapp` to deploy test environment and start app in one command.
 
 ### Start App
-- The app will live at localhost:3000, unless that port is taken in which case it will ask to use another port.
+- The app will live at localhost:3000, unless that port is taken in which case it will ask to use another port. You can connect to it via any metamask-enabled browser. (Make sure metamask is connected to Ganache network @ localhost:8545)
     ```
     yarn start
     ```

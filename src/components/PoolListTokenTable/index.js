@@ -1,8 +1,7 @@
 import React from 'react'
-import web3 from 'web3'
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles } from '@material-ui/core'
-import CheckIcon from '@material-ui/icons/Check'
-import ToggleButton from '@material-ui/lab/ToggleButton'
+import { numberLib } from 'core/libs'
+import ToggleButton from '../ToggleButton'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,12 +29,15 @@ export default function PoolSwapListTable(props) {
 
   const { tokenParams } = props
   const rows = Object.keys(tokenParams).map((token) => {
-    const { symbol, balance, weight } = tokenParams[token]
+    const {
+ symbol, balance, weight, userBalance
+} = tokenParams[token]
     return {
-      symbol: symbol || 'EUR',
+      symbol: symbol || 'ETH',
       address: token,
       balance,
-      weight
+      weight,
+      userBalance
     }
   })
 
@@ -78,25 +80,16 @@ export default function PoolSwapListTable(props) {
                     {row.address}
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    {web3.utils.fromWei(row.balance)}
+                    { row.userBalance ? numberLib.toEther(row.userBalance.toString()) : 0 }
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
-                    100
+                    {numberLib.toEther(row.balance)}
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
-                    {web3.utils.fromWei(row.weight)}
+                    {numberLib.toEther(row.weight)}
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
-                    <ToggleButton
-                      key={`lock${row.address}`}
-                      value="check"
-                      selected={selected}
-                      onChange={() => {
-                        setSelected(!selected)
-                      }}
-                    >
-                      <CheckIcon key={`check${row.address}`} />
-                    </ToggleButton>
+                    <ToggleButton token={row.address} />
                   </TableCell>
                 </TableRow>
               )
