@@ -117,6 +117,7 @@ class PoolSwapView extends Component {
   }
 
   bindToken = async (event) => {
+    event.preventDefault()
     const {
       provider, address, bindTokenInput, pool
     } = this.state
