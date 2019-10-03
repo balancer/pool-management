@@ -1,43 +1,45 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import {
-  Paper,
-  Table, TableBody,
-  TableCell, TableHead,
-  TablePagination, TableRow
-} from '@material-ui/core'
-
-import { Button } from 'components'
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles } from '@material-ui/core'
 import { numberLib } from 'core/libs'
-import { styles } from './styles.scss'
+import ToggleButton from '../ToggleButton'
 
-const columns = [
-  { id: 'symbol', label: 'Symbol', minWidth: 10 },
-  { id: 'address', label: 'Address', minWidth: 200 },
-  { id: 'myBalance', label: 'My Balance', minWidth: 10 },
-  { id: 'poolBalance', label: 'Pool Balance', minWidth: 10 },
-  { id: 'weight', label: 'Weight', minWidth: 10 },
-  { id: 'lockUnlock', label: 'Lock/Unlock', minWidth: 10 }
-]
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    width: '100%'
+  },
+  table: {
+    minWidth: 650
+  },
+  address: {
+    width: '70%'
+  }
+}))
 
 export default function PoolInvestListTable(props) {
-  const {
-    poolData,
-    linkPath
-  } = props
+  const styles = useStyles()
+  const columns = [
+    { label: 'Symbol', id: 'symbol', minWidth: 60 },
+    { label: 'Address', id: 'Address', minWidth: 60 },
+    { label: 'My balance', id: 'My balance', minWidth: 60 },
+    { label: 'Pool balance', id: 'Pool balance', minWidth: 60 },
+    { label: 'Weight', id: 'Weight', minWidth: 60 },
+    { label: 'Lock/Unlock', id: 'lockable', minWidth: 60 }
+  ]
 
-  const rows = []
-
-  Object.keys(poolData).forEach((key) => {
-    const address = key
-    const { manager } = poolData[key]
-
-    rows.push({
-      address,
-      manager
-    })
+  const { tokenParams } = props
+  const rows = Object.keys(tokenParams).map((token) => {
+    const {
+ symbol, balance, weight, userBalance
+} = tokenParams[token]
+    return {
+      symbol: symbol || 'ETH',
+      address: token,
+      balance,
+      weight,
+      userBalance
+    }
   })
-
 
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
@@ -53,38 +55,45 @@ export default function PoolInvestListTable(props) {
 
   return (
     <Paper className={styles.root}>
-      <div className={styles.tableWrapper}>
-        <Table stickyHeader>
+      <div className={styles.table}>
+        <Table>
           <TableHead>
             <TableRow>
-              {
-                columns.map(column => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))
-              }
+              {columns.map(column => (
+                <TableCell
+                  key={column.id}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {
-              rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    <TableCell key={0}>
-                      <Link href={`/${linkPath}/${row.address}`} to={`/${linkPath}/${row.address}`}>{row.address}</Link>
-                    </TableCell>
-                    <TableCell key={1}>
-                      {row.manager}
-                    </TableCell>
-                  </TableRow>
-                )
-              })
-            }
+            {rows.map((row) => {
+              return (
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.address}>
+                  <TableCell key={`symbol${row.address}`}>
+                    {row.symbol}
+                  </TableCell>
+                  <TableCell key={`address${row.address}`}>
+                    {row.address}
+                  </TableCell>
+                  <TableCell key={`mybalance${row.address}`}>
+                    { row.userBalance ? numberLib.toEther(row.userBalance.toString()) : 0 }
+                  </TableCell>
+                  <TableCell key={`poolbalance${row.address}`}>
+                    {numberLib.toEther(row.balance)}
+                  </TableCell>
+                  <TableCell key={`wright${row.address}`}>
+                    {numberLib.toEther(row.weight)}
+                  </TableCell>
+                  <TableCell key={`toggl${row.address}`}>
+                    <ToggleButton token={row.address} />
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>

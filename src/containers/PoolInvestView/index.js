@@ -7,8 +7,10 @@ import {
   TextField
 } from '@material-ui/core'
 
-import { PoolInvestListTable, Button } from 'components'
-import { providerService, bFactoryService } from 'core/services'
+import { PoolInvestListTable, Button, Loading } from 'components'
+import { providerService, bFactoryService, bPoolService } from 'core/services'
+import { numberLib } from 'core/libs'
+
 import { appConfig } from 'configs'
 import { formConfig } from './config'
 
@@ -23,12 +25,22 @@ class PoolInvestView extends Component {
       formConfig: formConfig.joinPool,
       selectedAction: 'joinPool',
       tokenAddress: 'Token Address1',
-      tokenAmount: 0
+      tokenAmount: 0,
+      pool: {
+        poolParams: {},
+        tokenParams: {},
+        pendingTx: false,
+        txError: null,
+        loadedParams: false,
+        loadedTokenParams: false
+      },
+      poolBalance: 0
     }
   }
 
   async componentWillMount() {
     const { factoryAddress } = this.state
+    const { address } = this.props.match.params
     const provider = await providerService.getProvider()
     const { defaultAccount } = provider.web3Provider.eth
     const poolData = await bFactoryService.getKnownPools(provider, factoryAddress, {
@@ -39,13 +51,45 @@ class PoolInvestView extends Component {
     this.setState({
       knownPools: poolData.knownPools,
       poolsLoaded: true,
-      provider
+      provider,
+      address
+    })
+    await this.getParams()
+    await this.getTokenParams()
+  }
+
+  async getTokenParams() {
+    const { address, provider, pool } = this.state
+    const tokenData = await bPoolService.getTokenParams(provider, address)
+    const poolBalance = Object.keys(tokenData.data).map((token) => {
+      return +tokenData.data[token].balance
+    }).reduce((a, b) => a + b, 0)
+
+    this.setState({
+      pool: {
+        ...pool,
+        loadedTokenParams: true,
+        tokenParams: tokenData.data
+      },
+      poolBalance
+    })
+  }
+
+  async getParams() {
+    const { address, provider, pool } = this.state
+    const poolData = await bPoolService.getParams(provider, address)
+    this.setState({
+      pool: {
+        ...pool,
+        loadedParams: true,
+        poolParams: poolData.data
+      }
     })
   }
 
   render() {
     const {
-      knownPools, poolsLoaded, selectedAction, tokenAddress, tokenAmount
+      selectedAction, tokenAddress, tokenAmount, pool, address, poolBalance
     } = this.state
     const config = formConfig
     const handleFormConfigChange = (event) => {
@@ -77,33 +121,38 @@ class PoolInvestView extends Component {
     const handleSubmit = () => {
       // Send Data somewhere!
     }
+
+    const active = !pool.poolParams.isPaused ? 'Yes' : 'No'
     return (
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={4}>
             <Card>
               <CardContent>
-                Pool Card Address: { '0x5Db06acd673531218B10430bA6dE9b69913Ad545' }
+                Pool Card Address: { address || '' }
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={4}>
             <Card>
               <CardContent>
-                Active Card
+                Active? { active }
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={4}>
             <Card>
               <CardContent>
-                My Pool Token Balance: { '1000' }
+                My Pool Token Balance: { numberLib.toEther(poolBalance.toString()) }
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12}>
             {
-              poolsLoaded ? (<PoolInvestListTable linkPath="logs" poolData={knownPools} />) : (<div />)
+              pool.loadedTokenParams ? (<PoolInvestListTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loading />
+              </div>
             }
           </Grid>
           <Grid item xs={12}>
@@ -131,20 +180,20 @@ class PoolInvestView extends Component {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} sm={12} style={{ marginBottom: '100px' }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">{ this.state.formConfig.actionLabel }</Typography>
                 <Container>
                   <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={2}>
                       {
                         this.state.formConfig.inputs.map((input, index) => {
                           const id = index * 1
                           switch (input.type) {
                             case 'number':
                               return (
-                                <Grid item xs={12} sm={12}>
+                                <Grid item xs={12} sm={8}>
 
                                   <TextField
                                     required
@@ -159,7 +208,7 @@ class PoolInvestView extends Component {
                               // break
                             case 'select':
                               return (
-                                <Grid item xs={12} sm={12}>
+                                <Grid item xs={12} sm={8}>
                                   <FormControl key={id}>
                                     <InputLabel htmlFor="token">Select a Token</InputLabel>
                                     <Select

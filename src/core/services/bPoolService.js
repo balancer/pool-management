@@ -130,6 +130,7 @@ export async function getTokenParams(provider, contractAddress) {
     // Add all tokens from Binds
     for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
+        console.log(decodedData.params)
 
         const token = decodedData.params[0].value
         const balance = decodedData.params[1].value.toString()
@@ -158,9 +159,18 @@ export async function getTokenParams(provider, contractAddress) {
     }
 
     // Update token data with actual balances
-    Object.keys(tokenData).forEach(async (key) => {
-        const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
-        tokenData[key].balance = await tokenContract.methods.balanceOf(contractAddress).call()
+    const balances = []
+    for (const key of Object.keys(tokenData)) {
+      const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
+      balances.push(tokenContract.methods.balanceOf(contractAddress).call())
+      balances.push(tokenContract.methods.balanceOf(defaultAccount).call())
+    }
+
+    const resolvedBalances = await Promise.all(balances)
+
+    Object.keys(tokenData).forEach((key) => {
+      tokenData[key].balance = resolvedBalances.shift()
+      tokenData[key].userBalance = resolvedBalances.shift()
     })
 
     return {
