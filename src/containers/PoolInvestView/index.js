@@ -63,7 +63,6 @@ class PoolInvestView extends Component {
   async getTokenParams() {
     const { address, provider, pool } = this.state
     const tokenData = await bPoolService.getTokenParams(provider, address)
-
     this.setState({
       pool: {
         ...pool,

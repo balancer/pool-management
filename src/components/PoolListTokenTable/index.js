@@ -2,6 +2,7 @@ import React from 'react'
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles } from '@material-ui/core'
 import { numberLib } from 'core/libs'
 import ToggleButton from '../ToggleButton'
+import PoolInvestView from '../../containers/PoolInvestView'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function PoolSwapListTable(props) {
+export default function PooListTokenTable(props) {
   const styles = useStyles()
   const columns = [
     { label: 'Symbol', id: 'symbol', minWidth: 60 },
@@ -39,6 +40,10 @@ export default function PoolSwapListTable(props) {
       weight,
       userBalance
     }
+  })
+
+  window.ethereum.on('accountsChanged', async (accounts) => {
+    window.location.reload()
   })
 
   const [page, setPage] = React.useState(0)
