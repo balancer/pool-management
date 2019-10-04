@@ -135,7 +135,6 @@ export async function getTokenParams(provider, contractAddress) {
     // Add all tokens from Binds
     for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
-        console.log(decodedData.params)
 
         const token = decodedData.params[0].value
         const balance = decodedData.params[1].value.toString()
