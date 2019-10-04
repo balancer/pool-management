@@ -1,5 +1,5 @@
-import * as bPoolService from 'core/services/bPoolService'
-import * as numberLib from 'core/libs/lib-number-helpers'
+import { bPoolService } from 'core/services'
+import { numberLib } from 'core/libs'
 
 export const swapExactAmountIn = async (data) => {
     const {

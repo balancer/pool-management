@@ -8,6 +8,4 @@ export function toWei(value) {
   return Web3.utils.toWei(value, 'ether')
 }
 
-export function MAX_UINT() {
-  return Web3.utils.toTwosComplement('-1')
-}
+export const MAX_UINT = Web3.utils.toTwosComplement('-1')
