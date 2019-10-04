@@ -12,6 +12,7 @@ coverage
 # production
 build
 dist
+src/configs/deployed.json
 
 # misc
 .DS_Store
