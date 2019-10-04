@@ -33,3 +33,8 @@ export async function getKnownPools(provider, factoryAddress, filter) {
 
     return result
 }
+
+export async function deployPool(provider, factoryAddress) {
+    const bFactory = await getFactoryInstance(provider, factoryAddress)
+    await bFactory.methods.newBPool().send()
+}

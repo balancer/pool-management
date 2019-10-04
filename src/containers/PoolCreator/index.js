@@ -11,12 +11,14 @@ import {
 import { Button } from 'components'
 import { providerService } from 'core/services'
 import { appConfig } from 'configs'
+import * as bFactoryService from 'core/services/bFactoryService'
 
 class PoolCreatorView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      factoryAddress: appConfig.factory
+      factoryAddress: appConfig.factory,
+      provider: null
     }
   }
 
@@ -29,9 +31,10 @@ class PoolCreatorView extends Component {
   }
 
   render() {
-    // const {} = this.state
-    const handleSubmit = () => {
-
+    const { provider, factoryAddress } = this.state
+    const handleSubmit = async () => {
+      console.log('submit')
+      await bFactoryService.deployPool(provider, factoryAddress)
     }
     return (
       <Container>
@@ -52,7 +55,7 @@ class PoolCreatorView extends Component {
               </Card>
             </Grid>
             <Grid item xs={12}>
-              <Button>Deploy New Pool</Button>
+              <Button type="submit" variant="contained">Deploy New Pool</Button>
             </Grid>
           </Grid>
         </form>
