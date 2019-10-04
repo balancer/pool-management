@@ -7,6 +7,7 @@ import PoolListView from 'containers/PoolListView'
 import MyPoolsView from 'containers/MyPoolsView'
 import PoolLogsListView from 'containers/'
 import LogView from 'containers/LogView'
+import PoolCreatorView from 'containers/PoolCreator'
 
 export {
   App,
@@ -18,5 +19,6 @@ export {
   PoolListView,
   MyPoolsView,
   PoolLogsListView,
-  LogView
+  LogView,
+  PoolCreatorView
 }
