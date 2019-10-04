@@ -257,8 +257,9 @@ export async function setFee(provider, contractAddress, amount) {
     }
 }
 
-export async function makePublic(provider, contractAddress) {
+export async function makePublic(provider, contractAddress, initialSupply) {
     const bPool = await getBPoolInstance(provider, contractAddress)
+    await bPool.methods.makePublic(initialSupply).send()
     try {
         await bPool.methods.makePublic().send()
 

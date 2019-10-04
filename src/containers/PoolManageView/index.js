@@ -133,7 +133,8 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    bPoolService.setFee(provider, address, setFee.amount)
+    await bPoolService.setFee(provider, address, setFee.amount)
+    await this.getParams()
   }
 
   makePublic = async (event) => {
@@ -141,7 +142,7 @@ class PoolSwapView extends Component {
     const {
       provider, address
     } = this.state
-    bPoolService.makePublic(provider, address)
+    await bPoolService.makePublic(provider, address, '10000000000000000000')
   }
 
   bindToken = async (event) => {
@@ -336,23 +337,23 @@ class PoolSwapView extends Component {
               this.buildParamCards()
             ) : (
               <Loading />
-            )}
+              )}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Typography variant="h5" component="h5" > Tokens</Typography >
-            { this.buildTokenParamsTable() }
+            {this.buildTokenParamsTable()}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Add Token</Typography>
                 <br />
-                { this.buildBindTokenForm() }
+                {this.buildBindTokenForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Edit Token</Typography>
                 <br />
-                { this.buildSetTokenParamsForm() }
+                {this.buildSetTokenParamsForm()}
               </Grid>
             </Grid>
           </Grid>
@@ -361,12 +362,12 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Set fee</Typography>
                 <br />
-                { this.buildSetFeeForm() }
+                {this.buildSetFeeForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Make public</Typography>
                 <br />
-                { this.buildMakePublicButton() }
+                {this.buildMakePublicButton()}
               </Grid>
             </Grid>
           </Grid>
