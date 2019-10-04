@@ -213,11 +213,9 @@ export async function bindToken(provider, contractAddress, token) {
 
 export async function setTokenParams(provider, contractAddress, token, balance, weight) {
     const bPool = await getBPoolInstance(provider, contractAddress)
-    const tokenContract = await getTokenInstance(provider, token)
 
     try {
         // You can make multiple calls in here and dispatch each individually
-        const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
         const bindTx = await bPool.methods.setParams(token, balance, weight).send()
 
         // Dispatch Success
@@ -225,7 +223,6 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
             result: 'success',
             data: {
                 contractAddress,
-                approveTx,
                 bindTx
             }
         }
