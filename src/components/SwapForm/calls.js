@@ -1,12 +1,14 @@
+import React from 'react'
 import { bPoolService } from 'core/services'
 import { numberLib } from 'core/libs'
+import { Error } from '../../provider'
 
-export const swapExactAmountIn = async (data) => {
+export const swapExactAmountIn = async (data, error) => {
     const {
       provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, updateTokenParams
     } = data
 
-    await bPoolService.swapExactAmountIn(
+    const call = await bPoolService.swapExactAmountIn(
       provider,
       address,
       inputToken,
@@ -16,7 +18,14 @@ export const swapExactAmountIn = async (data) => {
       numberLib.toWei(limitPrice)
     )
 
-    updateTokenParams()
+    // if (call.result === 'failure') {
+    //     error('WRONG')
+    // } else {
+    //   return {
+    //     message: null
+    //   }
+      updateTokenParams()
+    // }
 }
 
 export const swapExactAmountOut = async (data) => {

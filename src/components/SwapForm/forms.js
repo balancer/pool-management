@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Grid, TextField, Button } from '@material-ui/core'
 
 import { swapExactAmountIn, swapExactAmountOut, swapExactMarginalPrice, swapThreeLimitMaximize } from './calls'
+import { Error } from '../../provider'
 
 const useSwapForm = (callback) => {
   const [inputs, setInputs] = useState({})
@@ -40,18 +41,19 @@ export function SwapFormHandler(props) {
 
   const ExactAmountIn = () => {
     const { provider, address, updateTokenParams } = props
-    const { inputs, handleInputChange, handleSubmit } = useSwapForm(() => {
+    const { inputs, handleInputChange, handleSubmit } = useSwapForm((error) => {
       const {
         inputToken, outputToken, inputAmount, outputLimit, limitPrice
       } = inputs
       const data = {
         provider, address, inputToken, outputToken, inputAmount, outputLimit, limitPrice, updateTokenParams
       }
-      swapExactAmountIn(data)
+      swapExactAmountIn(data, error)
     })
 
     return (
-      <form onSubmit={handleSubmit} noValidate autoComplete="off">
+
+      <div>
         <Grid container spacing={1}>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={9}>
@@ -63,8 +65,8 @@ export function SwapFormHandler(props) {
                 value={inputs.inputToken}
                 onChange={handleInputChange}
                 SelectProps={{
-                  native: true
-                }}
+                              native: true
+                            }}
                 margin="normal"
                 variant="outlined"
                 fullWidth
@@ -73,7 +75,7 @@ export function SwapFormHandler(props) {
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
-                ))}
+                            ))}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -86,8 +88,8 @@ export function SwapFormHandler(props) {
                 onChange={handleInputChange}
                 type="number"
                 InputLabelProps={{
-                  shrink: true
-                }}
+                              shrink: true
+                            }}
                 margin="normal"
                 variant="outlined"
                 fullWidth
@@ -103,8 +105,8 @@ export function SwapFormHandler(props) {
                 value={inputs.outputToken}
                 onChange={handleInputChange}
                 SelectProps={{
-                  native: true
-                }}
+                              native: true
+                            }}
                 margin="normal"
                 variant="outlined"
               >
@@ -112,7 +114,7 @@ export function SwapFormHandler(props) {
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
-                ))}
+                            ))}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -125,8 +127,8 @@ export function SwapFormHandler(props) {
                 onChange={handleInputChange}
                 type="number"
                 InputLabelProps={{
-                  shrink: true
-                }}
+                              shrink: true
+                            }}
                 margin="normal"
                 variant="outlined"
                 fullWidth
@@ -141,25 +143,32 @@ export function SwapFormHandler(props) {
                 onChange={handleInputChange}
                 type="number"
                 InputLabelProps={{
-                  shrink: true
-                }}
+                              shrink: true
+                            }}
                 margin="normal"
                 variant="outlined"
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                style={{ marginTop: 25 }}
-              >
-                Submit
-              </Button>
+
+              <Error.Consumer>
+                {error => (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    style={{ marginTop: 25 }}
+                    onClick={() => { handleSubmit(error.setError) }}
+                  >
+                            Submit
+                  </Button>
+       )}
+              </Error.Consumer>
             </Grid>
           </Grid>
         </Grid>
-      </form>
+      </div>
+
     )
   }
 
