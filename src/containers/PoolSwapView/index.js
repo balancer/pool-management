@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Container, Grid } from '@material-ui/core'
-import * as providerService from 'core/services/providerService'
-import * as bPoolService from 'core/services/bPoolService'
+import { providerService, bPoolService } from 'core/services'
 import { PoolParamsGrid, SwapForm, PoolListTokenTable, Loading } from 'components'
 
 class PoolSwapView extends Component {
