@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
 import {
   Container, Grid,
-  Card, CardContent,
-  Typography, FormControl,
+  FormControl,
   Select, MenuItem, InputLabel,
   TextField
 } from '@material-ui/core'
 
 import { PoolListTokenTable, Button, Loading, PoolParamsGrid } from 'components'
+import {
+  joinPool, joinswapExternAmountIn, joinswapPoolAmountOut,
+  exitPool, exitswapPoolAmountIn, exitswapExternAmountOut
+} from 'components/PoolInvestForm/calls'
 import { providerService, bFactoryService, bPoolService } from 'core/services'
 
 import { appConfig } from 'configs'
@@ -24,7 +27,7 @@ class PoolInvestView extends Component {
       formConfig: formConfig.joinPool,
       selectedAction: 'joinPool',
       tokenAddress: 'Token Address1',
-      tokenAmount: 0,
+      tokenAmount: '0',
       pool: {
         poolParams: {},
         tokenParams: {},
@@ -83,7 +86,7 @@ class PoolInvestView extends Component {
 
   render() {
     const {
-      selectedAction, tokenAddress, tokenAmount, pool, address
+      selectedAction, tokenAddress, tokenAmount, pool, address, provider
     } = this.state
     const config = formConfig
     const handleFormConfigChange = (event) => {
@@ -92,12 +95,12 @@ class PoolInvestView extends Component {
         formConfig: config[event.target.value],
         selectedAction: action,
         tokenAddress: 'Token Address1',
-        tokenAmount: 0
+        tokenAmount: '0'
       })
     }
     const handleTokenAmountChange = (event) => {
       if (event.target.value !== '') {
-        const amount = Number(event.target.value)
+        const amount = event.target.value
         this.setState({ tokenAmount: amount })
       } else {
         this.setState({ tokenAmount: '' })
@@ -112,8 +115,32 @@ class PoolInvestView extends Component {
       }
         return 'Redeem'
     }
-    const handleSubmit = () => {
-      // Send Data somewhere!
+    const handleSubmit = (event) => {
+      // All this code will be refactored
+      event.preventDefault()
+      const data = {
+        provider,
+        address,
+        tokenAmount,
+        tokenAddress
+      }
+      // this logic will be moved to a component.
+      switch (selectedAction) {
+        case 'joinPool':
+          return joinPool(data)
+        case 'joinswap_ExternAmountIn':
+          return joinswapExternAmountIn(data)
+        case 'joinswap_PoolAmountOut':
+          return joinswapPoolAmountOut(data)
+        case 'exitPool':
+          return exitPool(data)
+        case 'exitswap_PoolAmountIn':
+          return exitswapPoolAmountIn(data)
+        case 'exitswap_ExternAmountOut':
+          return exitswapExternAmountOut(data)
+        default:
+          return null
+      }
     }
 
     return (
