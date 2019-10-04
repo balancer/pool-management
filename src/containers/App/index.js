@@ -8,7 +8,7 @@ import {
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
 import { theme } from 'configs'
-import { PoolSwapView, PoolManageView, PoolInvestView, PoolListView, PoolCreator, LogView } from 'containers'
+import { PoolSwapView, PoolManageView, PoolInvestView, PoolListView, PoolCreatorView, LogView } from 'containers'
 import { Header, Footer, Notification } from './components'
 import './styles.scss' // global styles
 
@@ -28,7 +28,7 @@ class App extends Component {
                 <Route path="/manage/:address" component={PoolManageView} />
                 <Route path="/logs/:address" component={LogView} />
                 <Route path="/list" component={PoolListView} />
-                <Route path="/new" component={PoolCreator} />
+                <Route path="/new" component={PoolCreatorView} />
                 <Redirect from="/" to="/list" />
               </Switch>
             </div>

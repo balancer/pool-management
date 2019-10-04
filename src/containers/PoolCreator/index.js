@@ -45,7 +45,7 @@ class PoolCreatorView extends Component {
                     id="standard-multiline-static"
                     multiline
                     rows="4"
-                    defaultValue="Some new pool description"
+                    placeholder="Some new pool description"
                     margin="normal"
                   />
                 </CardContent>
