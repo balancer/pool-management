@@ -164,17 +164,21 @@ export async function getTokenParams(provider, contractAddress) {
 
     // Update token data with actual balances
     const balances = []
+    const symbols = []
     for (const key of Object.keys(tokenData)) {
-      const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
-      balances.push(tokenContract.methods.balanceOf(contractAddress).call())
-      balances.push(tokenContract.methods.balanceOf(defaultAccount).call())
+        const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
+        balances.push(tokenContract.methods.balanceOf(contractAddress).call())
+        balances.push(tokenContract.methods.balanceOf(defaultAccount).call())
+        symbols.push(tokenContract.methods.symbol().call())
     }
 
     const resolvedBalances = await Promise.all(balances)
+    const resolvedSymbols = await Promise.all(symbols)
 
     Object.keys(tokenData).forEach((key) => {
-      tokenData[key].balance = resolvedBalances.shift()
-      tokenData[key].userBalance = resolvedBalances.shift()
+        tokenData[key].balance = resolvedBalances.shift()
+        tokenData[key].userBalance = resolvedBalances.shift()
+        tokenData[key].symbol = resolvedSymbols.shift()
     })
 
     return {
@@ -238,35 +242,35 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
 }
 
 export async function setFee(provider, contractAddress, amount) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
-  try {
-    await bPool.methods.setFee(amount).send()
+    const bPool = await getBPoolInstance(provider, contractAddress)
+    try {
+        await bPool.methods.setFee(amount).send()
 
-    return {
-      result: 'success'
+        return {
+            result: 'success'
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
     }
-  } catch (e) {
-    return {
-      result: 'failure',
-      data: { error: e }
-    }
-  }
 }
 
 export async function makePublic(provider, contractAddress) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
-  try {
-    await bPool.methods.makePublic().send()
+    const bPool = await getBPoolInstance(provider, contractAddress)
+    try {
+        await bPool.methods.makePublic().send()
 
-    return {
-      result: 'success'
+        return {
+            result: 'success'
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
     }
-  } catch (e) {
-    return {
-      result: 'failure',
-      data: { error: e }
-    }
-  }
 }
 
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
@@ -295,19 +299,19 @@ export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, L
  * @param {uint} PL -- price limit
  */
 export async function swapExactAmountOut(provider, contractAddress, Ti, Li, To, Ao, PL) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
-  try {
-      await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).send()
-      return {
-          result: 'success'
-      }
-  } catch (e) {
-      return {
-          result: 'failure',
-          data: { error: e }
-      }
-  }
+    try {
+        await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).send()
+        return {
+            result: 'success'
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
+    }
 }
 
 /**
@@ -321,19 +325,19 @@ export async function swapExactAmountOut(provider, contractAddress, Ti, Li, To, 
  * @param {uint} MP -- marginal price
  */
 export async function swapExactMarginalPrice(provider, contractAddress, Ti, Li, To, Lo, MP) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
-  try {
-      await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).send()
-      return {
-          result: 'success'
-      }
-  } catch (e) {
-      return {
-          result: 'failure',
-          data: { error: e }
-      }
-  }
+    try {
+        await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).send()
+        return {
+            result: 'success'
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
+    }
 }
 
 /**

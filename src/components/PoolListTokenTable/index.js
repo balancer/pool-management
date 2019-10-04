@@ -30,10 +30,10 @@ export default function PoolSwapListTable(props) {
   const { tokenParams, address, provider } = props
   const rows = Object.keys(tokenParams).map((token) => {
     const {
- symbol, balance, weight, userBalance
-} = tokenParams[token]
+      symbol, balance, weight, userBalance
+    } = tokenParams[token]
     return {
-      symbol: symbol || 'ETH',
+      symbol: symbol || '???',
       address: token,
       balance,
       weight,
@@ -84,7 +84,7 @@ export default function PoolSwapListTable(props) {
                     {row.address}
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    { row.userBalance ? numberLib.toEther(row.userBalance.toString()) : 0 }
+                    {row.userBalance ? numberLib.toEther(row.userBalance.toString()) : 0}
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
                     {numberLib.toEther(row.balance)}
