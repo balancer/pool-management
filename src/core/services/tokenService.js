@@ -16,6 +16,21 @@ export async function approve(provider, contractAddress, token) {
   }
 }
 
+export async function disapprove(provider, contractAddress, token) {
+  const tokenIn = await getTokenInstance(provider, token)
+  try {
+    await tokenIn.methods.approve(contractAddress, 0).send()
+    return {
+      result: 'success'
+    }
+  } catch (e) {
+    return {
+      result: 'failure',
+      data: { error: e }
+    }
+  }
+}
+
 export async function balanceOf(provider, address, token) {
   const tokenIn = await getTokenInstance(provider, token)
   try {
@@ -36,7 +51,8 @@ export async function allowance(provider, address, token) {
   const tokenIn = await getTokenInstance(provider, token)
   const { defaultAccount } = provider.web3Provider.eth
   try {
-    const allowanceAmount = await tokenIn.methods.allowance(address, defaultAccount).call()
+    const allowanceAmount = await tokenIn.methods.allowance(defaultAccount, address).call()
+    console.log('allowance', allowanceAmount)
     const isApproved = allowanceAmount > (numberLib.MAX_UINT / 2)
     return {
       result: 'success',

@@ -23,8 +23,11 @@ export default function StandaloneToggleButton(props) {
     if (!selected) {
       setSelected(true)
       await tokenService.approve(provider, address, token)
+      await checkApprovement()
     } else {
-      console.log('Disapproval method needs to be added')
+      setSelected(false)
+      await tokenService.disapprove(provider, address, token)
+      await checkApprovement()
     }
   }
 
