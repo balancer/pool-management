@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Grid, TextField, Button } from '@material-ui/core'
 
-import { swapExactAmountIn, swapExactAmountOut, swapExactMarginalPrice, swapThreeLimitMaximize } from './calls'
+import { swapExactAmountIn, swapExactAmountOut, swapExactMarginalPrice } from './calls'
 import { Error } from '../../provider'
 
 const useSwapForm = (callback) => {
@@ -428,141 +428,15 @@ export function SwapFormHandler(props) {
     )
   }
 
-  const ThreeLimitMaximize = () => {
-    const { provider, address, updateTokenParams } = props
-    const { inputs, handleInputChange, handleSubmit } = useSwapForm(() => {
-      const {
-        inputToken, outputToken, inLimit, outLimit, limitPrice
-      } = inputs
-      const data = {
-        provider, address, inputToken, outputToken, inLimit, outLimit, limitPrice, updateTokenParams
-      }
-      swapThreeLimitMaximize(data)
-    })
-
-    return (
-      <form onSubmit={handleSubmit} noValidate autoComplete="off">
-        <Grid container spacing={1}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-in"
-                name="inputToken"
-                select
-                label="Input Token"
-                value={inputs.inputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-in"
-                name="inLimit"
-                label="Limit in"
-                placeholder="0"
-                value={inputs.inLimit}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-out"
-                name="outputToken"
-                select
-                fullWidth
-                label="Output Token"
-                value={inputs.outputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-out"
-                name="outLimit"
-                label="Limit Out"
-                placeholder="0"
-                value={inputs.outLimit}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="limit-price"
-                name="limitPrice"
-                label="Limit Price"
-                value={inputs.limitPrice}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                style={{ marginTop: 25 }}
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </form>
-    )
-  }
-
   function checkMethod() {
     const { method } = props
     if (method === 'exactAmountIn') {
       return ExactAmountIn()
     } else if (method === 'exactAmountOut') {
       return ExactAmountOut()
-    } else if (method === 'exactMarginalPrice') {
-      return ExactMarginalPrice()
     }
-      return ThreeLimitMaximize()
+
+    return ExactMarginalPrice()
   }
 
   return (
