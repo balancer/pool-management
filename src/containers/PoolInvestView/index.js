@@ -88,6 +88,11 @@ class PoolInvestView extends Component {
     const {
       selectedAction, tokenAddress, tokenAmount, pool, address, provider
     } = this.state
+
+    const tokens = Object.keys(pool.tokenParams).map((value) => {
+      return { address: value }
+    })
+
     const config = formConfig
     const handleFormConfigChange = (event) => {
       const action = event.target.value
@@ -222,8 +227,8 @@ class PoolInvestView extends Component {
                                   margin="normal"
                                   variant="outlined"
                                 >
-                                  {input.options.map(option => (
-                                    <option key={`${id}${option.address}`} value={option.address}>
+                                  {tokens.map(option => (
+                                    <option key={option.address} value={option.address}>
                                       {option.address}
                                     </option>
                                   ))}
