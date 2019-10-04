@@ -66,7 +66,7 @@ class PoolSwapView extends Component {
           </Grid>
           <Grid item xs={12}>
             {
-              pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+              pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} address={address} provider={provider} linkPath="logs" />) :
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Loading />
               </div>

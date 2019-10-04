@@ -27,7 +27,7 @@ export default function PoolSwapListTable(props) {
   ]
   const [selected, setSelected] = React.useState(false)
 
-  const { tokenParams } = props
+  const { tokenParams, address, provider } = props
   const rows = Object.keys(tokenParams).map((token) => {
     const {
  symbol, balance, weight, userBalance
@@ -93,7 +93,7 @@ export default function PoolSwapListTable(props) {
                     {numberLib.toEther(row.weight)}
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
-                    <ToggleButton token={row.address} />
+                    <ToggleButton token={row.address} provider={provider} address={address} />
                   </TableCell>
                 </TableRow>
               )
