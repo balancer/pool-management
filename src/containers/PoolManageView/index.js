@@ -25,6 +25,9 @@ class PoolSwapView extends Component {
       setFee: {
         amount: ''
       },
+      makePublic: {
+        publicAmount: ''
+      },
       pool: {
         poolParams: {},
         tokenParams: {},
@@ -97,6 +100,14 @@ class PoolSwapView extends Component {
     this.setState({ setFee })
   }
 
+  setPublicAmount = (property, event) => {
+    const { makePublic } = this.state
+    const newProperty = event.target.value
+
+    makePublic[property] = newProperty
+    this.setState({ makePublic })
+  }
+
   setTokenParamsProperty = (property, event) => {
     const { setTokenParamsInput } = this.state
     const newProperty = event.target.value
@@ -147,10 +158,10 @@ class PoolSwapView extends Component {
 
   makePublic = async (error) => {
     const {
-      provider, address
+      provider, address, makePublic
     } = this.state
 
-    const call = await bPoolService.makePublic(provider, address)
+    const call = await bPoolService.makePublic(provider, address, makePublic.publicAmount)
 
     if (call.result === 'failure') {
       error(call.data.error.message)
@@ -339,9 +350,20 @@ class PoolSwapView extends Component {
   }
 
   buildMakePublicButton() {
+    const { makePublic } = this.state
     return (<Container>
       <div>
         <Grid container spacing={3}>
+          <Grid item xs={12} sm={8}>
+            <TextField
+              id="fee-amount"
+              label="Fee Amount"
+              type="number"
+              value={makePublic.publicAmount}
+              onChange={event => this.setPublicAmount('publicAmount', event)}
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={12} sm={4}>
             <Error.Consumer>
               {error => (
@@ -373,23 +395,23 @@ class PoolSwapView extends Component {
               this.buildParamCards()
             ) : (
               <Loading />
-            )}
+              )}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Typography variant="h5" component="h5" > Tokens</Typography >
-            { this.buildTokenParamsTable() }
+            {this.buildTokenParamsTable()}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Add Token</Typography>
                 <br />
-                { this.buildBindTokenForm() }
+                {this.buildBindTokenForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Edit Token</Typography>
                 <br />
-                { this.buildSetTokenParamsForm() }
+                {this.buildSetTokenParamsForm()}
               </Grid>
             </Grid>
           </Grid>
@@ -398,12 +420,12 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Set fee</Typography>
                 <br />
-                { this.buildSetFeeForm() }
+                {this.buildSetFeeForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Make public</Typography>
                 <br />
-                { this.buildMakePublicButton() }
+                {this.buildMakePublicButton()}
               </Grid>
             </Grid>
           </Grid>

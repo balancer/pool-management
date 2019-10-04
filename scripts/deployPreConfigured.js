@@ -57,6 +57,9 @@ function writeConfigFile(factoryAddress) {
 async function deployPreConfigured() {
     const accounts = await web3.eth.getAccounts();
     const defaultAccount = accounts[0];
+    const newManager = accounts[1];
+    const investor = accounts[2];
+    const user = accounts[3];
 
     const { coinParams } = params;
 
@@ -72,13 +75,19 @@ async function deployPreConfigured() {
         const coin = await TestToken.deploy({
             data: TestTokenSchema.bytecode,
             arguments:
-                [coinParams[i].name, coinParams[i].symbol, 18, '10000000000000000000000']
+                [coinParams[i].name, coinParams[i].symbol, 18, '40000000000000000000000000']
         }).send({ gas: MAX_GAS })
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         coins.push(coin);
     }
 
-
+    for (let i = 0; i < coins.length; i++) {
+        console.log(`Distributing coin ${i} to test accounts...`)
+        const amount = '10000000000000000000000000'
+        await coins[i].methods.transfer(newManager, amount).send()
+        await coins[i].methods.transfer(investor, amount).send()
+        await coins[i].methods.transfer(user, amount).send()
+    }
 
     // Deploy Factory
     const factory = await BFactory.deploy().send({ gas: MAX_GAS });

@@ -34,6 +34,7 @@ export default function MoreParamsGrid(props) {
             <CardContent>
               <Typography variant="h5">Pool Details</Typography>
               <Typography variant="body1">{`Manager    : ${pool.poolParams.manager}\n`}</Typography>
+              <Typography variant="body1">{`Fee: ${pool.poolParams.fee}\n`}</Typography>
               <Typography variant="body1">{`Token Count: ${pool.poolParams.numTokens}\n`}</Typography>
             </CardContent>
           </Card>
