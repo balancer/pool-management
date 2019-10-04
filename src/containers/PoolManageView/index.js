@@ -134,7 +134,8 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    bPoolService.setFees(provider, address, setFee.swapFee, setFee.exitFee)
+    await bPoolService.setFees(provider, address, setFee.swapFee, setFee.exitFee)
+    await this.getParams()
   }
 
   makePublic = async (event) => {
@@ -142,7 +143,7 @@ class PoolSwapView extends Component {
     const {
       provider, address
     } = this.state
-    bPoolService.makePublic(provider, address)
+    await bPoolService.makePublic(provider, address, '10000000000000000000')
   }
 
   bindToken = async (event) => {
@@ -171,10 +172,10 @@ class PoolSwapView extends Component {
   }
 
   buildTokenParamsTable() {
-    const { pool } = this.state
+    const { pool, provider, address } = this.state
 
     return (
-      pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+      pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} address={address} provider={provider} linkPath="logs" />) :
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Loading />
       </div>

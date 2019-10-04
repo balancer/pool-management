@@ -23,7 +23,7 @@ MVP dApp to demonstrate core Balancer protocol functionality
     yarn deploy
     ```
    
-- The deploy script will output a list of the newly created addresses. These can be interacted with manually. (Logging to file will be added shortly) The factory will automatically be added to a config file and loaded by the dApp (Only if it's not already started, restart the dApp if it's not running)
+- The deploy script will output a list of the newly created addresses. These can be interacted with manually. (Logging to file will be added shortly) The factory will automatically be added to a config file and loaded by the dApp.
 
 
 ### Start App
