@@ -172,10 +172,10 @@ class PoolSwapView extends Component {
   }
 
   buildTokenParamsTable() {
-    const { pool } = this.state
+    const { pool, provider, address } = this.state
 
     return (
-      pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+      pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} address={address} provider={provider} linkPath="logs" />) :
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Loading />
       </div>
