@@ -29,7 +29,7 @@ class App extends Component {
                 <Route path="/logs/:address" component={LogView} />
                 <Route path="/list" component={PoolListView} />
                 <Route path="/new" component={PoolCreator} />
-                <Redirect from="/" to="/logs-list" />
+                <Redirect from="/" to="/list" />
               </Switch>
             </div>
           </div>
