@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import * as providerService from 'core/services/providerService'
 import * as bFactoryService from 'core/services/bFactoryService'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
+import { Container, Grid, Typography, Button } from '@material-ui/core'
 import PoolList from 'components/PoolList'
 import { appConfig } from 'configs/config-main'
 
@@ -36,6 +35,28 @@ class PoolListView extends Component {
     })
   }
 
+  newPool = async (event) => {
+    event.preventDefault()
+    this.props.history.push('/new')
+  }
+
+  buildNewPoolButton() {
+    return (<Container>
+      <form onSubmit={this.newPool}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <Button
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </Container >)
+  }
+
   render() {
     const { poolsLoaded, knownPools } = this.state
 
@@ -45,14 +66,23 @@ class PoolListView extends Component {
 
     return (
       <Container>
-        <Typography variant="h3" component="h3">Balancer Pools</Typography>
-        <br />
-        {poolsLoaded ? (
-          <PoolList linkPath="swap" poolData={knownPools} />
-        ) : (
-          <div />
-          )}
-        <br />
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography variant="h3" component="h3">Balancer Pools</Typography>
+            <br />
+            {poolsLoaded ? (
+              <PoolList linkPath="swap" poolData={knownPools} />
+            ) : (
+              <div />
+              )}
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5" component="h5">Create New Pool</Typography>
+            <br />
+            {this.buildNewPoolButton()}
+          </Grid>
+        </Grid>
       </Container>
     )
   }
