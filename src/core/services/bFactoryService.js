@@ -1,8 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import Web3 from 'web3'
-import CombinedSchema from '../../../external-contracts/combined'
+import { schema } from './schemaService'
 
-const BFactoryAbi = JSON.parse(CombinedSchema.contracts['sol/BFactory.sol:BFactory'].abi)
 const LOG_NEW_POOL_EVENT = 'LOG_NEW_POOL'
 
 async function getFactoryInstance(provider, contractAddress) {
@@ -10,7 +9,7 @@ async function getFactoryInstance(provider, contractAddress) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bFactory = new web3.eth.Contract(BFactoryAbi, contractAddress, { from: defaultAccount })
+    const bFactory = new web3.eth.Contract(schema.BFactory.abi, contractAddress, { from: defaultAccount })
     return bFactory
 }
 

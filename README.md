@@ -14,7 +14,7 @@ MVP dApp to demonstrate core Balancer protocol functionality
 
 - Ganache-cli parameters
   ```
-  ganache-cli --deterministic -l 4294967295
+  ganache-cli --deterministic -l 4294967295 --allowUnlimitedContractSize
   ```
 
 ### Deploy Script

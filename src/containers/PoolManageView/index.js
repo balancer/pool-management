@@ -22,7 +22,8 @@ class PoolSwapView extends Component {
         weight: ''
       },
       setFee: {
-        amount: ''
+        swapFee: '',
+        exitFee: ''
       },
       pool: {
         poolParams: {},
@@ -133,7 +134,7 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    bPoolService.setFee(provider, address, setFee.amount)
+    bPoolService.setFees(provider, address, setFee.swapFee, setFee.exitFee)
   }
 
   makePublic = async (event) => {
@@ -158,8 +159,6 @@ class PoolSwapView extends Component {
       provider,
       address,
       bindTokenInput.address,
-      numberLib.toWei(bindTokenInput.balance),
-      numberLib.toWei(bindTokenInput.weight)
     )
 
     await this.getTokenParams()
@@ -196,26 +195,6 @@ class PoolSwapView extends Component {
                 value={bindTokenInput.address}
                 onChange={e => this.setBindInputProperty('address', e)}
                 fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                id="token-address"
-                label="Balance"
-                type="number"
-                placeholder="0"
-                value={bindTokenInput.balance}
-                onChange={e => this.setBindInputProperty('balance', e)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                id="token-address"
-                label="Weight"
-                type="number"
-                placeholder="0"
-                value={bindTokenInput.weight}
-                onChange={e => this.setBindInputProperty('weight', e)}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -283,13 +262,23 @@ class PoolSwapView extends Component {
     return (<Container>
       <form onSubmit={this.setFee}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={8}>
+          <Grid item xs={12} sm={4}>
             <TextField
-              id="fee-amount"
-              label="Fee Amount"
+              id="swap-fee-amount"
+              label="Swap Fee"
               type="number"
               value={setFee.amount}
-              onChange={event => this.setFeeAmount('amount', event)}
+              onChange={event => this.setFeeAmount('swapFee', event)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              id="exit-fee-amount"
+              label="Exit Fee"
+              type="number"
+              value={setFee.amount}
+              onChange={event => this.setFeeAmount('exitFee', event)}
               fullWidth
             />
           </Grid>
@@ -336,23 +325,23 @@ class PoolSwapView extends Component {
               this.buildParamCards()
             ) : (
               <Loading />
-            )}
+              )}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Typography variant="h5" component="h5" > Tokens</Typography >
-            { this.buildTokenParamsTable() }
+            {this.buildTokenParamsTable()}
           </Grid>
           <Grid item xs={12} sm={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Add Token</Typography>
                 <br />
-                { this.buildBindTokenForm() }
+                {this.buildBindTokenForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Edit Token</Typography>
                 <br />
-                { this.buildSetTokenParamsForm() }
+                {this.buildSetTokenParamsForm()}
               </Grid>
             </Grid>
           </Grid>
@@ -361,12 +350,12 @@ class PoolSwapView extends Component {
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Set fee</Typography>
                 <br />
-                { this.buildSetFeeForm() }
+                {this.buildSetFeeForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">Make public</Typography>
                 <br />
-                { this.buildMakePublicButton() }
+                {this.buildMakePublicButton()}
               </Grid>
             </Grid>
           </Grid>
