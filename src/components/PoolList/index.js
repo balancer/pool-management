@@ -80,17 +80,22 @@ export default function TokenParametersTable(props) {
                   </TableCell>
                   <TableCell>
                     <Button size="small" key={`swap${row.address}`} component={Link} to={`/swap/${row.address}`}>
-                    Swap
+                      Swap
                     </Button>
                   </TableCell>
                   <TableCell>
                     <Button size="small" key={`invest${row.address}`} component={Link} to={`/invest/${row.address}`}>
-                    Invest
+                      Invest
                     </Button>
                   </TableCell>
                   <TableCell>
                     <Button size="small" key={`manage${row.address}`} component={Link} to={`/manage/${row.address}`}>
-                    Manage
+                      Manage
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button size="small" key={`logs${row.address}`} component={Link} to={`/logs/${row.address}`}>
+                      Logs
                     </Button>
                   </TableCell>
                 </TableRow>
