@@ -1,7 +1,5 @@
-import React from 'react'
 import { bPoolService } from 'core/services'
 import { numberLib } from 'core/libs'
-import { Error } from '../../provider'
 
 export const swapExactAmountIn = async (data, error) => {
     const {
@@ -18,21 +16,18 @@ export const swapExactAmountIn = async (data, error) => {
       numberLib.toWei(limitPrice)
     )
 
-    // if (call.result === 'failure') {
-    //     error('WRONG')
-    // } else {
-    //   return {
-    //     message: null
-    //   }
+    if (call.result === 'failure') {
+      error(call.data.error.message)
+    } else {
       updateTokenParams()
-    // }
+    }
 }
 
-export const swapExactAmountOut = async (data) => {
+export const swapExactAmountOut = async (data, error) => {
   const {
     provider, address, outputAmount, inLimit, inputToken, outputToken, limitPrice, updateTokenParams
   } = data
-  await bPoolService.swapExactAmountOut(
+  const call = await bPoolService.swapExactAmountOut(
     provider,
     address,
     inputToken,
@@ -42,15 +37,19 @@ export const swapExactAmountOut = async (data) => {
     numberLib.toWei(limitPrice)
   )
 
-  updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 
 
-export const swapExactMarginalPrice = async (data) => {
+export const swapExactMarginalPrice = async (data, error) => {
   const {
     provider, address, outLimit, inLimit, inputToken, outputToken, marginalPrice, updateTokenParams
   } = data
-  await bPoolService.swapExactMarginalPrice(
+  const call = await bPoolService.swapExactMarginalPrice(
     provider,
     address,
     inputToken,
@@ -60,6 +59,10 @@ export const swapExactMarginalPrice = async (data) => {
     numberLib.toWei(marginalPrice)
   )
 
-  updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 

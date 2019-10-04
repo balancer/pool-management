@@ -6,11 +6,8 @@ import { Error } from '../../provider'
 
 const useSwapForm = (callback) => {
   const [inputs, setInputs] = useState({})
-  const handleSubmit = (event) => {
-    if (event) {
-      event.preventDefault()
-    }
-    callback()
+  const handleSubmit = (test) => {
+    callback(test)
   }
   const handleInputChange = (event) => {
     event.persist()
@@ -151,7 +148,6 @@ export function SwapFormHandler(props) {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-
               <Error.Consumer>
                 {error => (
                   <Button
@@ -160,9 +156,9 @@ export function SwapFormHandler(props) {
                     style={{ marginTop: 25 }}
                     onClick={() => { handleSubmit(error.setError) }}
                   >
-                            Submit
+                    Submit
                   </Button>
-       )}
+                 )}
               </Error.Consumer>
             </Grid>
           </Grid>
@@ -174,18 +170,18 @@ export function SwapFormHandler(props) {
 
   const ExactAmountOut = () => {
     const { provider, address, updateTokenParams } = props
-    const { inputs, handleInputChange, handleSubmit } = useSwapForm(() => {
+    const { inputs, handleInputChange, handleSubmit } = useSwapForm((error) => {
       const {
         inputToken, outputToken, outputAmount, inLimit, limitPrice
       } = inputs
       const data = {
         provider, address, inputToken, outputToken, outputAmount, inLimit, limitPrice, updateTokenParams
       }
-      swapExactAmountOut(data)
+      swapExactAmountOut(data, error)
     })
 
     return (
-      <form onSubmit={handleSubmit} noValidate autoComplete="off">
+      <div>
         <Grid container spacing={1}>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={9}>
@@ -283,34 +279,39 @@ export function SwapFormHandler(props) {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                style={{ marginTop: 25 }}
-              >
-                Submit
-              </Button>
+              <Error.Consumer>
+                {error => (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    style={{ marginTop: 25 }}
+                    onClick={() => { handleSubmit(error.setError) }}
+                  >
+                    Submit
+                  </Button>
+                 )}
+              </Error.Consumer>
             </Grid>
           </Grid>
         </Grid>
-      </form>
+      </div>
     )
   }
 
-  const ExactMaginalPrice = () => {
+  const ExactMarginalPrice = () => {
     const { provider, address, updateTokenParams } = props
-    const { inputs, handleInputChange, handleSubmit } = useSwapForm(() => {
+    const { inputs, handleInputChange, handleSubmit } = useSwapForm((error) => {
       const {
         inputToken, outputToken, inLimit, outLimit, marginalPrice
       } = inputs
       const data = {
         provider, address, inputToken, outputToken, inLimit, outLimit, marginalPrice, updateTokenParams
       }
-      swapExactMarginalPrice(data)
+      swapExactMarginalPrice(data, error)
     })
 
     return (
-      <form onSubmit={handleSubmit} noValidate autoComplete="off">
+      <div>
         <Grid container spacing={1}>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={9}>
@@ -408,17 +409,22 @@ export function SwapFormHandler(props) {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                style={{ marginTop: 25 }}
-              >
-                Submit
-              </Button>
+              <Error.Consumer>
+                {error => (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    style={{ marginTop: 25 }}
+                    onClick={() => { handleSubmit(error.setError) }}
+                  >
+                    Submit
+                  </Button>
+                 )}
+              </Error.Consumer>
             </Grid>
           </Grid>
         </Grid>
-      </form>
+      </div>
     )
   }
 
@@ -554,7 +560,7 @@ export function SwapFormHandler(props) {
     } else if (method === 'exactAmountOut') {
       return ExactAmountOut()
     } else if (method === 'exactMarginalPrice') {
-      return ExactMaginalPrice()
+      return ExactMarginalPrice()
     }
       return ThreeLimitMaximize()
   }

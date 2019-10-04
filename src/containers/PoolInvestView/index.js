@@ -15,6 +15,7 @@ import { providerService, bFactoryService, bPoolService } from 'core/services'
 
 import { appConfig } from 'configs'
 import { formConfig } from './config'
+import { Error } from '../../provider'
 
 class PoolInvestView extends Component {
   constructor(props) {
@@ -120,29 +121,29 @@ class PoolInvestView extends Component {
       }
         return 'Redeem'
     }
-    const handleSubmit = (event) => {
+    const handleSubmit = (error) => {
       // All this code will be refactored
-      event.preventDefault()
       const data = {
         provider,
         address,
         tokenAmount,
-        tokenAddress
+        tokenAddress,
+        updateTokenParams: this.getTokenParams
       }
       // this logic will be moved to a component.
       switch (selectedAction) {
         case 'joinPool':
-          return joinPool(data)
+          return joinPool(data, error)
         case 'joinswap_ExternAmountIn':
-          return joinswapExternAmountIn(data)
+          return joinswapExternAmountIn(data, error)
         case 'joinswap_PoolAmountOut':
-          return joinswapPoolAmountOut(data)
+          return joinswapPoolAmountOut(data, error)
         case 'exitPool':
-          return exitPool(data)
+          return exitPool(data, error)
         case 'exitswap_PoolAmountIn':
-          return exitswapPoolAmountIn(data)
+          return exitswapPoolAmountIn(data, error)
         case 'exitswap_ExternAmountOut':
-          return exitswapExternAmountOut(data)
+          return exitswapExternAmountOut(data, error)
         default:
           return null
       }
@@ -156,7 +157,7 @@ class PoolInvestView extends Component {
           </Grid>
           <Grid item xs={12}>
             {
-              pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} linkPath="logs" />) :
+              pool.loadedTokenParams ? (<PoolListTokenTable tokenParams={pool.tokenParams} address={address} provider={provider} linkPath="logs" />) :
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Loading />
               </div>
@@ -186,7 +187,7 @@ class PoolInvestView extends Component {
           <Grid item xs={12} sm={12} style={{ marginBottom: '100px' }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <form onSubmit={handleSubmit}>
+                <div>
                   <Grid container spacing={2}>
                     {
                       this.state.formConfig.inputs.map((input, index) => {
@@ -242,16 +243,21 @@ class PoolInvestView extends Component {
                       })
                     }
                     <Grid item xs={12} sm={3}>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        style={{ marginTop: 25 }}
-                      >
-                        { buttonText() }
-                      </Button>
+                      <Error.Consumer>
+                        {error => (
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            style={{ marginTop: 25 }}
+                            onClick={() => handleSubmit(error.setError)}
+                          >
+                            { buttonText() }
+                          </Button>
+                        )}
+                      </Error.Consumer>
                     </Grid>
                   </Grid>
-                </form>
+                </div>
               </Grid>
             </Grid>
           </Grid>

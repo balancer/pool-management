@@ -260,7 +260,7 @@ export async function setFee(provider, contractAddress, amount) {
 export async function makePublic(provider, contractAddress) {
     const bPool = await getBPoolInstance(provider, contractAddress)
     try {
-        await bPool.methods.makePublic().send()
+        await bPool.methods.makePublic(1).send()
 
         return {
             result: 'success'

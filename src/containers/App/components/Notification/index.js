@@ -28,8 +28,10 @@ export default function Notification(props) {
     setMessage(newMessage)
   }
 
-  if (errorMessage) {
-    openNotification(errorMessage)
+  if (errorMessage != null) {
+    setTimeout(() => {
+      openNotification(errorMessage)
+    }, 100)
   }
 
   useEffect(() => {
@@ -50,9 +52,8 @@ export default function Notification(props) {
     if (reason === 'clickaway') {
       return
     }
-
-    setOpen(false)
     setError(null)
+    setOpen(false)
   }
 
 
@@ -64,7 +65,7 @@ export default function Notification(props) {
           horizontal: 'left'
         }}
         open={open}
-        autoHideDuration={10000}
+        autoHideDuration={5000}
         onClose={handleClose}
       >
         <SnackbarContent

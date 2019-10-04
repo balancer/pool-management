@@ -9,16 +9,12 @@ export default class HandleError extends Component {
   state = {
     error: null,
     setError: (message) => {
-      console.log('we calling it')
       this.setState({
         error: message
       })
     }
   }
 
-  getError = () => {
-    return this.state.error
-  }
 
   render() {
     return (
