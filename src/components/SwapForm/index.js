@@ -38,8 +38,7 @@ export default function SwapForm(props) {
   const methods = [
     { label: 'Exact Amount In', name: 'exactAmountIn' },
     { label: 'Exact Amount Out', name: 'exactAmountOut' },
-    { label: 'Exact Marginal Price', name: 'exactMarginalPrice' },
-    { label: 'Three Limit Maximize', name: 'threeLimitMaximize' }
+    { label: 'Exact Marginal Price', name: 'exactMarginalPrice' }
   ]
   return (
     <Grid container style={{ marginBottom: '50px' }}>
