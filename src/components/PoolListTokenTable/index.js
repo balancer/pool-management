@@ -21,7 +21,7 @@ export default function PooListTokenTable(props) {
   const columns = [
     { label: 'Symbol', id: 'symbol', minWidth: 60 },
     { label: 'Address', id: 'Address', minWidth: 60 },
-    { label: 'My balance (ETH)', id: 'My balance', minWidth: 60 },
+    { label: 'My balance', id: 'My balance', minWidth: 60 },
     { label: 'Pool balance', id: 'Pool balance', minWidth: 60 },
     { label: 'Weight', id: 'Weight', minWidth: 60 },
     { label: 'Lock/Unlock', id: 'lockable', minWidth: 60 }

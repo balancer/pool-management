@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 })
 
 export default function IconCard(props) {
-  const { title, text } = props
+  const { title, text, text2 } = props
   const classes = useStyles()
   // const bull = <span className={classes.bullet}>•</span>
 
@@ -40,6 +40,13 @@ export default function IconCard(props) {
         <Typography variant="body2" component="p">
           {text}
         </Typography>
+        {
+          text2 ? (<Typography variant="body2" component="p">
+            {text2}
+          </Typography>) :
+          <div />
+        }
+
       </CardContent>
       {/* <CardActions>
                 <Button size="small">Learn More</Button>

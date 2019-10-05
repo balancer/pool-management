@@ -148,7 +148,7 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    const call = await bPoolService.setFees(provider, address, setFee.swapFee, setFee.exitFee)
+    const call = await bPoolService.setFees(provider, address, numberLib.toWei(setFee.swapFee), numberLib.toWei(setFee.exitFee))
 
     if (call.result === 'failure') {
       error(call.data.error.message)
@@ -402,12 +402,12 @@ class PoolSwapView extends Component {
           <Grid item xs={12} sm={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="h5" component="h5">Set fee</Typography>
+                <Typography variant="h5" component="h5">Set fee (%)</Typography>
                 <br />
                 {this.buildSetFeeForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="h5" component="h5">Make public</Typography>
+                <Typography variant="h5" component="h5">Make Shared</Typography>
                 <br />
                 {this.buildMakePublicButton()}
               </Grid>
