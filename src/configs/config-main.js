@@ -6,5 +6,7 @@ export const appConfig = {
   shortName: 'Balancer',
   description: '',
   splashScreenBackground: '#ffffff',
-  factory: deployed.factoryAddress
+  bFactory: deployed.bFactory,
+  bPool: deployed.bPool,
+  allCoins: deployed.allCoins
 }

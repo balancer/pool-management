@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Container, Grid, Typography, TextField, Button } from '@material-ui/core'
 
 import { providerService, bPoolService } from 'core/services'
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 import { PoolParamsGrid, MoreParamsGrid, PoolListTokenTable, Loading } from 'components'
 import { Error } from '../../provider'
 
@@ -23,7 +23,8 @@ class PoolSwapView extends Component {
         weight: ''
       },
       setFee: {
-        amount: ''
+        swapFee: '',
+        exitFee: ''
       },
       makePublic: {
         publicAmount: ''
@@ -71,7 +72,7 @@ class PoolSwapView extends Component {
     const { pool } = this.state
 
 
-    const tokenData = await bPoolService.getTokenParams(provider, address)
+    const tokenData = await bPoolService.getAllWhitelistedTokenParams(provider, address)
 
     this.setState({
       pool: {
@@ -131,8 +132,8 @@ class PoolSwapView extends Component {
       provider,
       address,
       setTokenParamsInput.address,
-      numberLib.toWei(setTokenParamsInput.balance),
-      numberLib.toWei(setTokenParamsInput.weight)
+      web3Lib.toWei(setTokenParamsInput.balance),
+      web3Lib.toWei(setTokenParamsInput.weight)
     )
 
     if (call.result === 'failure') {
@@ -147,12 +148,12 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    const call = await bPoolService.setFee(provider, address, setFee.amount)
+    const call = await bPoolService.setFees(provider, address, web3Lib.toWei(setFee.swapFee), web3Lib.toWei(setFee.exitFee))
 
     if (call.result === 'failure') {
       error(call.data.error.message)
     } else {
-      await this.getTokenParams()
+      await this.getParams()
     }
   }
 
@@ -172,31 +173,19 @@ class PoolSwapView extends Component {
 
   bindToken = async (error) => {
     const {
-      provider, address, bindTokenInput, pool
+      provider, address, bindTokenInput
     } = this.state
-
-    if (!pool) {
-      // Invariant
-    }
 
     const call = await bPoolService.bindToken(
       provider,
       address,
       bindTokenInput.address,
-      numberLib.toWei(bindTokenInput.balance),
-      numberLib.toWei(bindTokenInput.weight)
     )
     if (call.result === 'failure') {
       error(call.error.message)
     } else {
       await this.getTokenParams()
     }
-  }
-
-  buildParamCards() {
-    const { pool, address } = this.state
-
-    return <PoolParamsGrid address={address} pool={pool} />
   }
 
   buildTokenParamsTable() {
@@ -224,26 +213,6 @@ class PoolSwapView extends Component {
                 value={bindTokenInput.address}
                 onChange={e => this.setBindInputProperty('address', e)}
                 fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                id="token-address"
-                label="Balance"
-                type="number"
-                placeholder="0"
-                value={bindTokenInput.balance}
-                onChange={e => this.setBindInputProperty('balance', e)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                id="token-address"
-                label="Weight"
-                type="number"
-                placeholder="0"
-                value={bindTokenInput.weight}
-                onChange={e => this.setBindInputProperty('weight', e)}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -321,13 +290,23 @@ class PoolSwapView extends Component {
     return (<Container>
       <div>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={8}>
+          <Grid item xs={12} sm={4}>
             <TextField
-              id="fee-amount"
-              label="Fee Amount"
+              id="swap-fee-amount"
+              label="Swap Fee"
               type="number"
               value={setFee.amount}
-              onChange={event => this.setFeeAmount('amount', event)}
+              onChange={event => this.setFeeAmount('swapFee', event)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              id="exit-fee-amount"
+              label="Exit Fee"
+              type="number"
+              value={setFee.amount}
+              onChange={event => this.setFeeAmount('exitFee', event)}
               fullWidth
             />
           </Grid>
@@ -383,7 +362,7 @@ class PoolSwapView extends Component {
   }
 
   render() {
-    const { pool } = this.state
+    const { address, pool } = this.state
 
     return (
       <Container>
@@ -392,7 +371,7 @@ class PoolSwapView extends Component {
             <Typography variant="h3" component="h3">Balancer Pool</Typography>
             <br />
             {pool.loadedParams ? (
-              this.buildParamCards()
+              <PoolParamsGrid address={address} pool={pool} />
             ) : (
               <Loading />
               )}
@@ -418,12 +397,12 @@ class PoolSwapView extends Component {
           <Grid item xs={12} sm={12}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="h5" component="h5">Set fee</Typography>
+                <Typography variant="h5" component="h5">Set fee (%)</Typography>
                 <br />
                 {this.buildSetFeeForm()}
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="h5" component="h5">Make public</Typography>
+                <Typography variant="h5" component="h5">Make Shared</Typography>
                 <br />
                 {this.buildMakePublicButton()}
               </Grid>

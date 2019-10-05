@@ -22,7 +22,7 @@ class PoolInvestView extends Component {
     super(props)
 
     this.state = {
-      factoryAddress: appConfig.factory,
+      factoryAddress: appConfig.bFactory,
       knownPools: {},
       poolsLoaded: false,
       formConfig: formConfig.joinPool,
@@ -118,7 +118,7 @@ class PoolInvestView extends Component {
       if (this.state.selectedAction.slice(0, 4) === 'join') {
         return 'Invest'
       }
-        return 'Redeem'
+      return 'Redeem'
     }
     const handleSubmit = (error) => {
       // All this code will be refactored
@@ -152,7 +152,12 @@ class PoolInvestView extends Component {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
-            <PoolParamsGrid address={address} pool={pool} />
+            {
+              pool.loadedParams ? (<PoolParamsGrid address={address} pool={pool} />) :
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loading />
+              </div>
+            }
           </Grid>
           <Grid item xs={12}>
             {
@@ -170,9 +175,9 @@ class PoolInvestView extends Component {
                 onChange={handleFormConfigChange}
                 displayEmpty
                 inputProps={{
-                    name: 'actionType',
-                    id: 'action-type'
-                  }}
+                  name: 'actionType',
+                  id: 'action-type'
+                }}
               >
                 <MenuItem value="joinPool">Join Pool</MenuItem>
                 <MenuItem value="joinswap_ExternAmountIn">Join Swap</MenuItem>
@@ -203,15 +208,15 @@ class PoolInvestView extends Component {
                                   onChange={handleTokenAmountChange}
                                   type="number"
                                   InputLabelProps={{
-                                      shrink: true
-                                    }}
+                                    shrink: true
+                                  }}
                                   margin="normal"
                                   variant="outlined"
                                   fullWidth
                                 />
                               </Grid>
                             )
-                            // break
+                          // break
                           case 'select':
                             return (
                               <Grid item xs={12} sm={9}>
@@ -235,9 +240,9 @@ class PoolInvestView extends Component {
                                 </TextField>
                               </Grid>
                             )
-                            // break
+                          // break
                           default:
-                          return null
+                            return null
                         }
                       })
                     }
@@ -250,7 +255,7 @@ class PoolInvestView extends Component {
                             style={{ marginTop: 25 }}
                             onClick={() => handleSubmit(error.setError)}
                           >
-                            { buttonText() }
+                            {buttonText()}
                           </Button>
                         )}
                       </Error.Consumer>

@@ -1,26 +1,26 @@
 import { bPoolService } from 'core/services'
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 
 export const swapExactAmountIn = async (data, error) => {
-    const {
-      provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, updateTokenParams
-    } = data
+  const {
+    provider, address, inputAmount, outputLimit, inputToken, outputToken, limitPrice, updateTokenParams
+  } = data
 
-    const call = await bPoolService.swapExactAmountIn(
-      provider,
-      address,
-      inputToken,
-      numberLib.toWei(inputAmount),
-      outputToken,
-      numberLib.toWei(outputLimit),
-      numberLib.toWei(limitPrice)
-    )
+  const call = await bPoolService.swapExactAmountIn(
+    provider,
+    address,
+    inputToken,
+    web3Lib.toWei(inputAmount),
+    outputToken,
+    web3Lib.toWei(outputLimit),
+    web3Lib.toWei(limitPrice)
+  )
 
-    if (call.result === 'failure') {
-      error(call.data.error.message)
-    } else {
-      updateTokenParams()
-    }
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 
 export const swapExactAmountOut = async (data, error) => {
@@ -31,10 +31,10 @@ export const swapExactAmountOut = async (data, error) => {
     provider,
     address,
     inputToken,
-    numberLib.toWei(inLimit),
+    web3Lib.toWei(inLimit),
     outputToken,
-    numberLib.toWei(outputAmount),
-    numberLib.toWei(limitPrice)
+    web3Lib.toWei(outputAmount),
+    web3Lib.toWei(limitPrice)
   )
 
   if (call.result === 'failure') {
@@ -53,10 +53,10 @@ export const swapExactMarginalPrice = async (data, error) => {
     provider,
     address,
     inputToken,
-    numberLib.toWei(inLimit),
+    web3Lib.toWei(inLimit),
     outputToken,
-    numberLib.toWei(outLimit),
-    numberLib.toWei(marginalPrice)
+    web3Lib.toWei(outLimit),
+    web3Lib.toWei(marginalPrice)
   )
 
   if (call.result === 'failure') {

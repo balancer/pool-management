@@ -1,7 +1,7 @@
-import * as numberLib from './lib-number-helpers'
+import * as web3Lib from './lib-web3-helpers'
 import { getStyles } from './lib-style-helpers'
 
 export {
-  numberLib,
+  web3Lib,
   getStyles
 }

@@ -1,13 +1,13 @@
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-restricted-syntax */
 import Web3 from 'web3'
 import abiDecoder from 'abi-decoder'
+import { schema } from './schemaService'
+import * as web3Lib from '../libs/lib-web3-helpers'
+import { appConfig } from '../../configs'
 
-import CombinedSchema from '../../../external-contracts/combined'
-import TestToken from '../../../external-contracts/TestToken.json'
-import numberLib from '../libs'
-
-const BPoolAbi = JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi)
 const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
 const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
 
@@ -16,7 +16,7 @@ async function getBPoolInstance(provider, contractAddress) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const bPool = new web3.eth.Contract(BPoolAbi, contractAddress, { from: defaultAccount })
+    const bPool = new web3.eth.Contract(schema.BPool.abi, contractAddress, { from: defaultAccount })
     return bPool
 }
 
@@ -25,20 +25,23 @@ export async function getTokenInstance(provider, contractAddress) {
     const web3 = new Web3(web3Provider)
     const { defaultAccount } = web3Provider.eth
 
-    const tokenContract = new web3.eth.Contract(TestToken.abi, contractAddress, { from: defaultAccount })
+    const tokenContract = new web3.eth.Contract(schema.TestToken.abi, contractAddress, { from: defaultAccount })
     return tokenContract
 }
 
 export async function getParams(provider, contractAddress) {
     const bPool = await getBPoolInstance(provider, contractAddress)
 
-    const manager = await bPool.methods.getManager().call()
-    const fee = await bPool.methods.getFee().call()
+    const manager = await bPool.methods.getController().call()
+    const fees = await bPool.methods.getFees().call()
     const numTokens = await bPool.methods.getNumTokens().call()
     const isPaused = await bPool.methods.isPaused().call()
 
+    console.log(fees)
+
     const result = {
-        fee,
+        swapFee: fees['0'],
+        exitFee: fees['1'],
         manager,
         numTokens,
         isPaused
@@ -64,7 +67,7 @@ export async function getSpotPrice(provider, contractAddress, Ti, To) {
 export async function getCallLogs(provider, contractAddress) {
     const bPool = await getBPoolInstance(provider, contractAddress)
 
-    abiDecoder.addABI(BPoolAbi)
+    abiDecoder.addABI(schema.BPool.abi)
 
     const eventName = 'LOG_CALL'
     const events = await bPool.getPastEvents(eventName, {
@@ -113,7 +116,7 @@ export async function getTokenParams(provider, contractAddress) {
     const { defaultAccount } = web3Provider.eth
     const bPool = await getBPoolInstance(provider, contractAddress)
 
-    abiDecoder.addABI(BPoolAbi)
+    abiDecoder.addABI(schema.BPool.abi)
 
     // Get a list of successful token binds by checking the calls. We'll assume the code is correct
     // TODO: Sanity check - Make sure that failed tx don't create a log
@@ -136,7 +139,7 @@ export async function getTokenParams(provider, contractAddress) {
     for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
-        const token = decodedData.params[0].value
+        const token = web3Lib.toChecksum(decodedData.params[0].value)
         const balance = decodedData.params[1].value.toString()
         const weight = decodedData.params[2].value.toString()
 
@@ -151,7 +154,7 @@ export async function getTokenParams(provider, contractAddress) {
     for (const event of setParamsEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
-        const token = decodedData.params[0].value
+        const token = web3Lib.toChecksum(decodedData.params[0].value)
         const balance = decodedData.params[1].value.toString()
         const weight = decodedData.params[2].value.toString()
 
@@ -166,7 +169,7 @@ export async function getTokenParams(provider, contractAddress) {
     const balances = []
     const symbols = []
     for (const key of Object.keys(tokenData)) {
-        const tokenContract = new web3.eth.Contract(TestToken.abi, key, { from: defaultAccount })
+        const tokenContract = new web3.eth.Contract(schema.TestToken.abi, key, { from: defaultAccount })
         balances.push(tokenContract.methods.balanceOf(contractAddress).call())
         balances.push(tokenContract.methods.balanceOf(defaultAccount).call())
         symbols.push(tokenContract.methods.symbol().call())
@@ -181,23 +184,59 @@ export async function getTokenParams(provider, contractAddress) {
         tokenData[key].symbol = resolvedSymbols.shift()
     })
 
+    console.log('getParams', tokenData)
+
     return {
         result: 'success',
         data: tokenData
     }
 }
 
-export async function bindToken(provider, contractAddress, token, balance, weight) {
+// Get all the tokens in this pool, PLUS all the whitelisted tokens the user has balances of
+export async function getAllWhitelistedTokenParams(provider, contractAddress) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const tokenWhitelist = appConfig.allCoins
+    const tokenParams = await getTokenParams(provider, contractAddress)
+    const paramData = tokenParams.data
+    const tokenData = {}
+
+    console.log('whitelist', tokenWhitelist)
+
+    // Add whitelisted tokens which aren't in pool to our data set
+    for (const token of tokenWhitelist) {
+        if (!paramData[token]) {
+            console.log('token doesnt exist', token)
+            tokenData[token] = {}
+            const tokenContract = new web3.eth.Contract(schema.TestToken.abi, token, { from: defaultAccount })
+            tokenData[token].userBalance = await tokenContract.methods.balanceOf(defaultAccount).call()
+            tokenData[token].symbol = await tokenContract.methods.symbol().call()
+            tokenData[token].balance = '0'
+            tokenData[token].weight = '0'
+        } else {
+            console.log('token exists', token)
+            tokenData[token] = paramData[token]
+        }
+    }
+
+    console.log('result', tokenData)
+
+    return {
+        result: 'success',
+        data: tokenData
+    }
+}
+
+export async function bindToken(provider, contractAddress, token) {
     const bPool = await getBPoolInstance(provider, contractAddress)
-    const tokenContract = await getTokenInstance(provider, token)
 
     try {
-        const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
-        const bindTx = await bPool.methods.bind(token, balance, weight).send()
+        const bindTx = await bPool.methods.bind(token).send()
 
         const result = {
             contractAddress,
-            approveTx,
             bindTx
         }
 
@@ -216,11 +255,9 @@ export async function bindToken(provider, contractAddress, token, balance, weigh
 
 export async function setTokenParams(provider, contractAddress, token, balance, weight) {
     const bPool = await getBPoolInstance(provider, contractAddress)
-    const tokenContract = await getTokenInstance(provider, token)
 
     try {
         // You can make multiple calls in here and dispatch each individually
-        const approveTx = await tokenContract.methods.approve(contractAddress, balance).send()
         const bindTx = await bPool.methods.setParams(token, balance, weight).send()
 
         // Dispatch Success
@@ -228,7 +265,6 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
             result: 'success',
             data: {
                 contractAddress,
-                approveTx,
                 bindTx
             }
         }
@@ -241,10 +277,10 @@ export async function setTokenParams(provider, contractAddress, token, balance, 
     }
 }
 
-export async function setFee(provider, contractAddress, amount) {
+export async function setFees(provider, contractAddress, swapFee, exitFee) {
     const bPool = await getBPoolInstance(provider, contractAddress)
     try {
-        await bPool.methods.setFee(amount).send()
+        await bPool.methods.setFees(swapFee, exitFee).send()
 
         return {
             result: 'success'

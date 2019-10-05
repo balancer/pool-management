@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TablePagination from '@material-ui/core/TablePagination'
 import TableRow from '@material-ui/core/TableRow'
-import * as numberLib from 'core/libs/lib-number-helpers'
+import * as web3Lib from 'core/libs/lib-web3-helpers'
 import { styles } from './styles.scss'
 
 
@@ -25,8 +25,8 @@ export default function TokenParametersTable(props) {
 
   Object.keys(tokenData).forEach((key) => {
     const address = key
-    const balance = numberLib.toEther(tokenData[key].balance)
-    const weight = numberLib.toEther(tokenData[key].weight)
+    const balance = web3Lib.toEther(tokenData[key].balance)
+    const weight = web3Lib.toEther(tokenData[key].weight)
 
     rows.push({
       address,

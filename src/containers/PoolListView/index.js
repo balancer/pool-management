@@ -10,7 +10,7 @@ class PoolListView extends Component {
     super(props)
 
     this.state = {
-      factoryAddress: appConfig.factory,
+      factoryAddress: appConfig.bFactory,
       provider: null,
       knownPools: {},
       poolsLoaded: false,
