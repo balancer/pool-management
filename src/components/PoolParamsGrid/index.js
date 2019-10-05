@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import IconCard from 'components/IconCard'
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 
 
 const useStyles = makeStyles(theme => ({
@@ -23,8 +23,8 @@ export default function PoolParamsGrid(props) {
     activeText = 'Yes'
   }
 
-  const swapFee = numberLib.fromWeiToFee(pool.poolParams.swapFee)
-  const exitFee = numberLib.fromWeiToFee(pool.poolParams.exitFee)
+  const swapFee = web3Lib.fromWeiToFee(pool.poolParams.swapFee)
+  const exitFee = web3Lib.fromWeiToFee(pool.poolParams.exitFee)
 
   console.log(pool.poolParams.swapFee)
   console.log(swapFee)
@@ -38,7 +38,7 @@ export default function PoolParamsGrid(props) {
           <IconCard title="Pool" text={address} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <IconCard title="Fees" text={`Swap Fee: ${swapFee}`} text2={`Exit Fee: ${exitFee}`} />
+          <IconCard title="Fees" text={`Swap Fee: ${swapFee}%`} text2={`Exit Fee: ${exitFee}%`} />
         </Grid>
         <Grid item xs={6} sm={3}>
           <IconCard title="Active" text={activeText} />

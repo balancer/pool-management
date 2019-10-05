@@ -62,7 +62,12 @@ class PoolSwapView extends Component {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
-            <PoolParamsGrid address={address} pool={pool} />
+            {
+              pool.loadedParams ? (<PoolParamsGrid address={address} pool={pool} />) :
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loading />
+              </div>
+            }
           </Grid>
           <Grid item xs={12}>
             {

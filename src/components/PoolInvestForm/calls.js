@@ -1,5 +1,5 @@
 import { bPoolService } from 'core/services'
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 
 export const joinPool = async (data, error) => {
   const {
@@ -9,7 +9,7 @@ export const joinPool = async (data, error) => {
   const call = await bPoolService.joinPool(
     provider,
     address,
-    numberLib.toWei(tokenAmount)
+    web3Lib.toWei(tokenAmount)
   )
 
   if (call.result === 'failure') {
@@ -28,7 +28,7 @@ export const joinswapExternAmountIn = async (data, error) => {
     provider,
     address,
     tokenAddress,
-    numberLib.toWei(tokenAmount)
+    web3Lib.toWei(tokenAmount)
   )
 
   if (call.result === 'failure') {
@@ -46,7 +46,7 @@ export const joinswapPoolAmountOut = async (data, error) => {
   const call = await bPoolService.joinswapPoolAmountOut(
     provider,
     address,
-    numberLib.toWei(tokenAmount),
+    web3Lib.toWei(tokenAmount),
     tokenAddress
   )
 
@@ -65,7 +65,7 @@ export const exitPool = async (data, error) => {
   const call = await bPoolService.exitPool(
     provider,
     address,
-    numberLib.toWei(tokenAmount)
+    web3Lib.toWei(tokenAmount)
   )
 
   if (call.result === 'failure') {
@@ -83,7 +83,7 @@ export const exitswapPoolAmountIn = async (data, error) => {
   const call = await bPoolService.exitswapPoolAmountIn(
     provider,
     address,
-    numberLib.toWei(tokenAmount),
+    web3Lib.toWei(tokenAmount),
     tokenAddress
   )
 

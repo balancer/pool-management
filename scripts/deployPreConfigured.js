@@ -68,15 +68,37 @@ const params = {
     ]
 }
 
-function writeConfigFile(factoryAddress) {
+function writeConfigFile(deployed) {
     const filePath = process.cwd() + `/src/configs//deployed.json`;
 
-    let config = {
-        factoryAddress: factoryAddress,
-    };
+    // let config = {
+    //     factoryAddress: factoryAddress,
+    // };
 
-    let data = JSON.stringify(config);
+    let data = JSON.stringify(deployed);
     fs.writeFileSync(filePath, data);
+}
+
+
+function printResults(deployed) {
+    // That's it!
+    console.log('-----------------')
+    console.log('Deployed Factory  :', deployed.bFactory)
+    console.log('Deployed Pool     :', deployed.bPool)
+    console.log('Coins (pre-added) : ')
+    for (let i = 0; i < deployed.coins.length; i++) {
+        console.log(`\t\t  ${deployed.coins[i]}`)
+    }
+    console.log('Coins (not added) : ')
+    for (let i = 0; i < deployed.extraCoins.length; i++) {
+        console.log(`\t\t  ${deployed.extraCoins[i]}`)
+    }
+    console.log('-----------------')
+    console.log('')
+}
+
+function toChecksum(address) {
+    return web3.utils.toChecksumAddress(address)
 }
 
 async function deployPreConfigured() {
@@ -95,12 +117,15 @@ async function deployPreConfigured() {
     // Deploy Tokens
     let coins = [];
 
+    const tokenSupply = '4000000000000000000000'
+    const userSupply = '100000000000000000000'
+
     for (let i = 0; i < coinParams.length; i++) {
         console.log(`Deploying Coin ${i}...`)
         const coin = await TestToken.deploy({
             data: TestTokenSchema.bytecode,
             arguments:
-                [coinParams[i].name, coinParams[i].symbol, 18, '40000000000000000000000000']
+                [coinParams[i].name, coinParams[i].symbol, 18, tokenSupply]
         }).send({ gas: MAX_GAS })
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         coins.push(coin);
@@ -108,7 +133,7 @@ async function deployPreConfigured() {
 
     for (let i = 0; i < coins.length; i++) {
         console.log(`Distributing coin ${i} to test accounts...`)
-        const amount = '10000000000000000000000000'
+        const amount = userSupply
         await coins[i].methods.transfer(newManager, amount).send()
         await coins[i].methods.transfer(investor, amount).send()
         await coins[i].methods.transfer(user, amount).send()
@@ -121,7 +146,7 @@ async function deployPreConfigured() {
         const coin = await TestToken.deploy({
             data: TestTokenSchema.bytecode,
             arguments:
-                [extraCoinParams[i].name, extraCoinParams[i].symbol, 18, '40000000000000000000000000']
+                [extraCoinParams[i].name, extraCoinParams[i].symbol, 18, tokenSupply]
         }).send({ gas: MAX_GAS })
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         extraCoins.push(coin);
@@ -129,7 +154,7 @@ async function deployPreConfigured() {
 
     for (let i = 0; i < extraCoins.length; i++) {
         console.log(`Distributing extra coin ${i} to test accounts...`)
-        const amount = '10000000000000000000000000'
+        const amount = userSupply
         await extraCoins[i].methods.transfer(newManager, amount).send()
         await extraCoins[i].methods.transfer(investor, amount).send()
         await extraCoins[i].methods.transfer(user, amount).send()
@@ -165,26 +190,28 @@ async function deployPreConfigured() {
     console.log(`Starting BPool...`)
     await bpool.methods.start().send()
 
-    // That's it!
-    console.log('-----------------')
-    console.log('Deployed Factory  :', factory.options.address)
-    console.log('Deployed Pool     :', bpool.options.address)
-    console.log('Coins (pre-added) : ')
-    for (let i = 0; i < coins.length; i++) {
-        console.log(`\t\t  ${coins[i].options.address}`)
-        let result = await coins[i].methods.name().call()
-        result = await coins[i].methods.totalSupply().call()
+    let deployed = {
+        bFactory: toChecksum(factory.options.address),
+        bPool: toChecksum(bpool.options.address),
+        coins: [],
+        extraCoins: [],
+        allCoins: [],
     }
-    console.log('Coins (not added) : ')
-    for (let i = 0; i < extraCoins.length; i++) {
-        console.log(`\t\t  ${extraCoins[i].options.address}`)
-        let result = await extraCoins[i].methods.name().call()
-        result = await extraCoins[i].methods.totalSupply().call()
-    }
-    console.log('-----------------')
 
-    console.log('')
-    writeConfigFile(factory.options.address)
+    for (let i = 0; i < coins.length; i++) {
+        const checksumAddress = toChecksum(coins[i].options.address)
+        deployed.coins.push(checksumAddress)
+        deployed.allCoins.push(checksumAddress)
+    }
+
+    for (let i = 0; i < extraCoins.length; i++) {
+        const checksumAddress = toChecksum(extraCoins[i].options.address)
+        deployed.extraCoins.push(checksumAddress)
+        deployed.allCoins.push(checksumAddress)
+    }
+
+    printResults(deployed)
+    writeConfigFile(deployed);
     console.log('Deployed factory address written to config file')
 }
 

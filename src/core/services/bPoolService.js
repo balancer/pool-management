@@ -1,9 +1,12 @@
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-restricted-syntax */
 import Web3 from 'web3'
 import abiDecoder from 'abi-decoder'
 import { schema } from './schemaService'
-import numberLib from '../libs'
+import * as web3Lib from '../libs/lib-web3-helpers'
+import { appConfig } from '../../configs'
 
 const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
 const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
@@ -136,7 +139,7 @@ export async function getTokenParams(provider, contractAddress) {
     for (const event of bindEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
-        const token = decodedData.params[0].value
+        const token = web3Lib.toChecksum(decodedData.params[0].value)
         const balance = decodedData.params[1].value.toString()
         const weight = decodedData.params[2].value.toString()
 
@@ -151,7 +154,7 @@ export async function getTokenParams(provider, contractAddress) {
     for (const event of setParamsEvents) {
         const decodedData = abiDecoder.decodeMethod(event.returnValues.data)
 
-        const token = decodedData.params[0].value
+        const token = web3Lib.toChecksum(decodedData.params[0].value)
         const balance = decodedData.params[1].value.toString()
         const weight = decodedData.params[2].value.toString()
 
@@ -180,6 +183,41 @@ export async function getTokenParams(provider, contractAddress) {
         tokenData[key].userBalance = resolvedBalances.shift()
         tokenData[key].symbol = resolvedSymbols.shift()
     })
+
+    return {
+        result: 'success',
+        data: tokenData
+    }
+}
+
+// Get all the tokens in this pool, PLUS all the whitelisted tokens the user has balances of
+export async function getAllWhitelistedTokenParams(provider, contractAddress) {
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+
+    const tokenWhitelist = appConfig.allCoins
+    const tokenParams = await getTokenParams(provider, contractAddress)
+    const tokenData = tokenParams.data
+
+    console.log(tokenWhitelist, tokenParams)
+
+    // Add whitelisted tokens which aren't in pool to our data set
+    for (const token of tokenWhitelist) {
+        if (!tokenParams.hasOwnProperty(token)) {
+            console.log('token doesnt exist', token)
+            tokenData[token] = {}
+            const tokenContract = new web3.eth.Contract(schema.TestToken.abi, token, { from: defaultAccount })
+            tokenData[token].userBalance = await tokenContract.methods.balanceOf(defaultAccount).call()
+            tokenData[token].symbol = await tokenContract.methods.symbol().call()
+            tokenData[token].balance = '0'
+            tokenData[token].weight = '0'
+        } else {
+            console.log('token exists', token)
+        }
+    }
+
+    console.log(tokenData)
 
     return {
         result: 'success',

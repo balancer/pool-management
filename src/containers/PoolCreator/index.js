@@ -17,7 +17,7 @@ class PoolCreatorView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      factoryAddress: appConfig.factory,
+      factoryAddress: appConfig.bFactory,
       provider: null
     }
   }

@@ -1,10 +1,10 @@
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 import { getTokenInstance } from './bPoolService'
 
 export async function approve(provider, contractAddress, token) {
   const tokenIn = await getTokenInstance(provider, token)
   try {
-    await tokenIn.methods.approve(contractAddress, numberLib.MAX_UINT).send()
+    await tokenIn.methods.approve(contractAddress, web3Lib.MAX_UINT).send()
     return {
       result: 'success'
     }
@@ -52,7 +52,7 @@ export async function allowance(provider, address, token) {
   const { defaultAccount } = provider.web3Provider.eth
   try {
     const allowanceAmount = await tokenIn.methods.allowance(defaultAccount, address).call()
-    const isApproved = allowanceAmount > (numberLib.MAX_UINT / 2)
+    const isApproved = allowanceAmount > (web3Lib.MAX_UINT / 2)
     return {
       result: 'success',
       isApproved

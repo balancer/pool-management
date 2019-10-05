@@ -1,6 +1,6 @@
 import React from 'react'
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles } from '@material-ui/core'
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 import ToggleButton from '../ToggleButton'
 import PoolInvestView from '../../containers/PoolInvestView'
 
@@ -89,13 +89,13 @@ export default function PooListTokenTable(props) {
                     {row.address}
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    {row.userBalance ? numberLib.toEther(row.userBalance.toString()) : 0}
+                    {row.userBalance ? web3Lib.toEther(row.userBalance.toString()) : 0}
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
-                    {numberLib.toEther(row.balance)}
+                    {web3Lib.toEther(row.balance)}
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
-                    {numberLib.toEther(row.weight)}
+                    {web3Lib.toEther(row.weight)}
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
                     <ToggleButton token={row.address} provider={provider} address={address} />

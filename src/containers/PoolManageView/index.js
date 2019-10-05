@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Container, Grid, Typography, TextField, Button } from '@material-ui/core'
 
 import { providerService, bPoolService } from 'core/services'
-import { numberLib } from 'core/libs'
+import { web3Lib } from 'core/libs'
 import { PoolParamsGrid, MoreParamsGrid, PoolListTokenTable, Loading } from 'components'
 import { Error } from '../../provider'
 
@@ -72,7 +72,7 @@ class PoolSwapView extends Component {
     const { pool } = this.state
 
 
-    const tokenData = await bPoolService.getTokenParams(provider, address)
+    const tokenData = await bPoolService.getAllWhitelistedTokenParams(provider, address)
 
     this.setState({
       pool: {
@@ -132,8 +132,8 @@ class PoolSwapView extends Component {
       provider,
       address,
       setTokenParamsInput.address,
-      numberLib.toWei(setTokenParamsInput.balance),
-      numberLib.toWei(setTokenParamsInput.weight)
+      web3Lib.toWei(setTokenParamsInput.balance),
+      web3Lib.toWei(setTokenParamsInput.weight)
     )
 
     if (call.result === 'failure') {
@@ -148,7 +148,7 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    const call = await bPoolService.setFees(provider, address, numberLib.toWei(setFee.swapFee), numberLib.toWei(setFee.exitFee))
+    const call = await bPoolService.setFees(provider, address, web3Lib.toWei(setFee.swapFee), web3Lib.toWei(setFee.exitFee))
 
     if (call.result === 'failure') {
       error(call.data.error.message)
@@ -190,12 +190,6 @@ class PoolSwapView extends Component {
     } else {
       await this.getTokenParams()
     }
-  }
-
-  buildParamCards() {
-    const { pool, address } = this.state
-
-    return <PoolParamsGrid address={address} pool={pool} />
   }
 
   buildTokenParamsTable() {
@@ -367,7 +361,7 @@ class PoolSwapView extends Component {
   }
 
   render() {
-    const { pool } = this.state
+    const { address, pool } = this.state
 
     return (
       <Container>
@@ -376,7 +370,7 @@ class PoolSwapView extends Component {
             <Typography variant="h3" component="h3">Balancer Pool</Typography>
             <br />
             {pool.loadedParams ? (
-              this.buildParamCards()
+              <PoolParamsGrid address={address} pool={pool} />
             ) : (
               <Loading />
               )}

@@ -17,6 +17,10 @@ export function fromWeiToFee(value) {
   return etherValue * 100
 }
 
+export function toChecksum(address) {
+  return Web3.utils.toChecksumAddress(address)
+}
+
 // export function fromEtherToFee(value) {
 //   const weiValue = new BN(Web3.utils.toWei(value, 'ether'))
 //   const percentValue = weiValue.div(new BN(100))
