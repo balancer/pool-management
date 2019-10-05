@@ -4,6 +4,7 @@ import { Container, Grid, Typography, TextField, Button } from '@material-ui/cor
 import { providerService, bPoolService } from 'core/services'
 import { numberLib } from 'core/libs'
 import { PoolParamsGrid, MoreParamsGrid, PoolListTokenTable, Loading } from 'components'
+import { Error } from '../../provider'
 
 class PoolSwapView extends Component {
   constructor(props) {
@@ -23,6 +24,9 @@ class PoolSwapView extends Component {
       },
       setFee: {
         amount: ''
+      },
+      makePublic: {
+        publicAmount: ''
       },
       pool: {
         poolParams: {},
@@ -96,6 +100,14 @@ class PoolSwapView extends Component {
     this.setState({ setFee })
   }
 
+  setPublicAmount = (property, event) => {
+    const { makePublic } = this.state
+    const newProperty = event.target.value
+
+    makePublic[property] = newProperty
+    this.setState({ makePublic })
+  }
+
   setTokenParamsProperty = (property, event) => {
     const { setTokenParamsInput } = this.state
     const newProperty = event.target.value
@@ -105,7 +117,7 @@ class PoolSwapView extends Component {
     this.setState({ setTokenParamsInput })
   }
 
-  setTokenParams = async (event) => {
+  setTokenParams = async (error) => {
     const {
       provider, address, setTokenParamsInput, pool
     } = this.state
@@ -115,7 +127,7 @@ class PoolSwapView extends Component {
     }
 
 
-    await bPoolService.setTokenParams(
+    const call = await bPoolService.setTokenParams(
       provider,
       address,
       setTokenParamsInput.address,
@@ -123,30 +135,42 @@ class PoolSwapView extends Component {
       numberLib.toWei(setTokenParamsInput.weight)
     )
 
-
-    await this.getTokenParams()
+    if (call.result === 'failure') {
+      error(call.data.error.message)
+    } else {
+      await this.getTokenParams()
+    }
   }
 
-  setFee = async (event) => {
-    event.preventDefault()
+  setFee = async (error) => {
     const {
       setFee, provider, address
     } = this.state
 
-    await bPoolService.setFee(provider, address, setFee.amount)
-    await this.getParams()
+    const call = await bPoolService.setFee(provider, address, setFee.amount)
+
+    if (call.result === 'failure') {
+      error(call.data.error.message)
+    } else {
+      await this.getTokenParams()
+    }
   }
 
-  makePublic = async (event) => {
-    event.preventDefault()
+  makePublic = async (error) => {
     const {
-      provider, address
+      provider, address, makePublic
     } = this.state
-    await bPoolService.makePublic(provider, address, '10000000000000000000')
+
+    const call = await bPoolService.makePublic(provider, address, makePublic.publicAmount)
+
+    if (call.result === 'failure') {
+      error(call.data.error.message)
+    } else {
+      await this.getTokenParams()
+    }
   }
 
-  bindToken = async (event) => {
-    event.preventDefault()
+  bindToken = async (error) => {
     const {
       provider, address, bindTokenInput, pool
     } = this.state
@@ -155,15 +179,18 @@ class PoolSwapView extends Component {
       // Invariant
     }
 
-    await bPoolService.bindToken(
+    const call = await bPoolService.bindToken(
       provider,
       address,
       bindTokenInput.address,
       numberLib.toWei(bindTokenInput.balance),
       numberLib.toWei(bindTokenInput.weight)
     )
-
-    await this.getTokenParams()
+    if (call.result === 'failure') {
+      error(call.error.message)
+    } else {
+      await this.getTokenParams()
+    }
   }
 
   buildParamCards() {
@@ -188,7 +215,7 @@ class PoolSwapView extends Component {
 
     return (
       <Container>
-        <form onSubmit={this.bindToken}>
+        <div>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={12}>
               <TextField
@@ -220,15 +247,20 @@ class PoolSwapView extends Component {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Button
-                type="submit"
-                variant="contained"
-              >
-                Submit
-              </Button>
+              <Error.Consumer>
+                {error => (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    onClick={() => this.bindToken(error.setError)}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </Error.Consumer>
             </Grid>
           </Grid>
-        </form>
+        </div>
       </Container>
     )
   }
@@ -237,7 +269,7 @@ class PoolSwapView extends Component {
     const { setTokenParamsInput } = this.state
 
     return (<Container>
-      <form onSubmit={this.setTokenParams}>
+      <div>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
             <TextField
@@ -267,22 +299,27 @@ class PoolSwapView extends Component {
             onChange={event => this.setTokenParamsProperty('weight', event)}
           /></Grid>
           <Grid item xs={12} sm={4}>
-            <Button
-              type="submit"
-              variant="contained"
-            >
-              Submit
-            </Button>
+            <Error.Consumer>
+              {error => (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={() => this.setTokenParams(error.setError)}
+                >
+                  Submit
+                </Button>
+              )}
+            </Error.Consumer>
           </Grid>
         </Grid>
-      </form>
+      </div>
     </Container >)
   }
 
   buildSetFeeForm() {
     const { setFee } = this.state
     return (<Container>
-      <form onSubmit={this.setFee}>
+      <div>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={8}>
             <TextField
@@ -295,32 +332,53 @@ class PoolSwapView extends Component {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Button
-              type="submit"
-              variant="contained"
-            >
-              Submit
-            </Button>
+            <Error.Consumer>
+              {error => (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={() => this.setFee(error.setError)}
+                >
+                  Submit
+                </Button>
+              )}
+            </Error.Consumer>
           </Grid>
         </Grid>
-      </form>
+      </div>
     </Container >)
   }
 
   buildMakePublicButton() {
+    const { makePublic } = this.state
     return (<Container>
-      <form onSubmit={this.makePublic}>
+      <div>
         <Grid container spacing={3}>
+          <Grid item xs={12} sm={8}>
+            <TextField
+              id="fee-amount"
+              label="Fee Amount"
+              type="number"
+              value={makePublic.publicAmount}
+              onChange={event => this.setPublicAmount('publicAmount', event)}
+              fullWidth
+            />
+          </Grid>
           <Grid item xs={12} sm={4}>
-            <Button
-              type="submit"
-              variant="contained"
-            >
-              Submit
-            </Button>
+            <Error.Consumer>
+              {error => (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={() => this.makePublic(error.setError)}
+                >
+                  Submit
+                </Button>
+              )}
+            </Error.Consumer>
           </Grid>
         </Grid>
-      </form>
+      </div>
     </Container >)
   }
 

@@ -1,89 +1,114 @@
 import { bPoolService } from 'core/services'
 import { numberLib } from 'core/libs'
 
-export const joinPool = async (data) => {
-    const {
-      provider, address, tokenAmount
-    } = data
-
-    await bPoolService.joinPool(
-      provider,
-      address,
-      numberLib.toWei(tokenAmount)
-    )
-    // updateTokenParams()
-}
-
-export const joinswapExternAmountIn = async (data) => {
+export const joinPool = async (data, error) => {
   const {
-    provider, address, tokenAddress, tokenAmount
+    provider, address, tokenAmount, updateTokenParams
   } = data
 
-  await bPoolService.joinswapExternAmountIn(
+  const call = await bPoolService.joinPool(
+    provider,
+    address,
+    numberLib.toWei(tokenAmount)
+  )
+
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
+}
+
+export const joinswapExternAmountIn = async (data, error) => {
+  const {
+    provider, address, tokenAddress, tokenAmount, updateTokenParams
+  } = data
+
+  const call = await bPoolService.joinswapExternAmountIn(
     provider,
     address,
     tokenAddress,
     numberLib.toWei(tokenAmount)
   )
 
-  // updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 
-export const joinswapPoolAmountOut = async (data) => {
+export const joinswapPoolAmountOut = async (data, error) => {
   const {
-    provider, address, tokenAddress, tokenAmount
+    provider, address, tokenAddress, tokenAmount, updateTokenParams
   } = data
 
-  await bPoolService.joinswapPoolAmountOut(
+  const call = await bPoolService.joinswapPoolAmountOut(
     provider,
     address,
     numberLib.toWei(tokenAmount),
     tokenAddress
   )
 
-  // updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 
-export const exitPool = async (data) => {
+export const exitPool = async (data, error) => {
   const {
-    provider, address, tokenAmount
+    provider, address, tokenAmount, updateTokenParams
   } = data
 
-  await bPoolService.exitPool(
+  const call = await bPoolService.exitPool(
     provider,
     address,
     numberLib.toWei(tokenAmount)
   )
 
-  // updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 
-export const exitswapPoolAmountIn = async (data) => {
+export const exitswapPoolAmountIn = async (data, error) => {
   const {
-    provider, address, tokenAmount, tokenAddress
+    provider, address, tokenAmount, tokenAddress, updateTokenParams
   } = data
 
-  await bPoolService.exitswapPoolAmountIn(
+  const call = await bPoolService.exitswapPoolAmountIn(
     provider,
     address,
     numberLib.toWei(tokenAmount),
     tokenAddress
   )
 
-  // updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }
 
-export const exitswapExternAmountOut = async (data) => {
+export const exitswapExternAmountOut = async (data, error) => {
   const {
-    provider, address, tokenAmount, tokenAddress
+    provider, address, tokenAmount, tokenAddress, updateTokenParams
   } = data
 
-  await bPoolService.exitswapExternAmountOut(
+  const call = await bPoolService.exitswapExternAmountOut(
     provider,
     address,
     tokenAddress,
     tokenAmount
   )
 
-  // updateTokenParams()
+  if (call.result === 'failure') {
+    error(call.data.error.message)
+  } else {
+    updateTokenParams()
+  }
 }

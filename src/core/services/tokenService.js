@@ -52,7 +52,6 @@ export async function allowance(provider, address, token) {
   const { defaultAccount } = provider.web3Provider.eth
   try {
     const allowanceAmount = await tokenIn.methods.allowance(defaultAccount, address).call()
-    console.log('allowance', allowanceAmount)
     const isApproved = allowanceAmount > (numberLib.MAX_UINT / 2)
     return {
       result: 'success',

@@ -261,7 +261,7 @@ export async function makePublic(provider, contractAddress, initialSupply) {
     const bPool = await getBPoolInstance(provider, contractAddress)
     await bPool.methods.makePublic(initialSupply).send()
     try {
-        await bPool.methods.makePublic().send()
+        await bPool.methods.makePublic(1).send()
 
         return {
             result: 'success'
