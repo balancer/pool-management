@@ -184,6 +184,8 @@ export async function getTokenParams(provider, contractAddress) {
         tokenData[key].symbol = resolvedSymbols.shift()
     })
 
+    console.log('getParams', tokenData)
+
     return {
         result: 'success',
         data: tokenData
@@ -198,13 +200,14 @@ export async function getAllWhitelistedTokenParams(provider, contractAddress) {
 
     const tokenWhitelist = appConfig.allCoins
     const tokenParams = await getTokenParams(provider, contractAddress)
-    const tokenData = tokenParams.data
+    const paramData = tokenParams.data
+    const tokenData = {}
 
-    console.log(tokenWhitelist, tokenParams)
+    console.log('whitelist', tokenWhitelist)
 
     // Add whitelisted tokens which aren't in pool to our data set
     for (const token of tokenWhitelist) {
-        if (!tokenParams.hasOwnProperty(token)) {
+        if (!paramData[token]) {
             console.log('token doesnt exist', token)
             tokenData[token] = {}
             const tokenContract = new web3.eth.Contract(schema.TestToken.abi, token, { from: defaultAccount })
@@ -214,10 +217,11 @@ export async function getAllWhitelistedTokenParams(provider, contractAddress) {
             tokenData[token].weight = '0'
         } else {
             console.log('token exists', token)
+            tokenData[token] = paramData[token]
         }
     }
 
-    console.log(tokenData)
+    console.log('result', tokenData)
 
     return {
         result: 'success',

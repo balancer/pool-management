@@ -173,12 +173,8 @@ class PoolSwapView extends Component {
 
   bindToken = async (error) => {
     const {
-      provider, address, bindTokenInput, pool
+      provider, address, bindTokenInput
     } = this.state
-
-    if (!pool) {
-      // Invariant
-    }
 
     const call = await bPoolService.bindToken(
       provider,
@@ -220,12 +216,17 @@ class PoolSwapView extends Component {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Button
-                type="submit"
-                variant="contained"
-              >
-                Submit
-              </Button>
+              <Error.Consumer>
+                {error => (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    onClick={() => this.bindToken(error.setError)}
+                  >
+                    Submit
+                  </Button>
+                )}
+              </Error.Consumer>
             </Grid>
           </Grid>
         </div>

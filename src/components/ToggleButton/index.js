@@ -8,10 +8,8 @@ import { Error } from '../../provider'
 export default function StandaloneToggleButton(props) {
   const [selected, setSelected] = useState(false)
   const { provider, token, address } = props
-  console.log('props provider?', provider)
 
   const checkApprovement = async () => {
-    console.log(provider)
     const approvement = await tokenService.allowance(provider, address, token)
     if (approvement.result === 'success') {
       setSelected(approvement.isApproved)
