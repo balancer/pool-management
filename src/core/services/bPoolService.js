@@ -311,6 +311,7 @@ export async function makePublic(provider, contractAddress, initialSupply) {
 }
 
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
+    console.log(Ti, Ai, To, Lo, LP)
     const bPool = await getBPoolInstance(provider, contractAddress)
     try {
         await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).send()
