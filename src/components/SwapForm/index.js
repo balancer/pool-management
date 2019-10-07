@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function SwapForm(props) {
   const {
- address, provider, tokenParams, updateTokenParams
+ address, provider, tokenParams, updateTokenParams, setSwapSelection
 } = props
   const classes = useStyles()
   const [method, setMethod] = React.useState('exactAmountIn')
@@ -24,6 +24,7 @@ export default function SwapForm(props) {
 
   const handleDropdownChange = (event) => {
     setMethod(event.target.value)
+    setSwapSelection(event.target.value)
   }
 
   const handleClose = () => {
