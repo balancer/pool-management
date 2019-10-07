@@ -12,7 +12,9 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function ValueDisplayGrid(props) {
-  const { title, inputName, inputValue } = props
+  const {
+ title, inputAmount, outputAmount, effectivePrice
+} = props
 
   const classes = useStyles()
 
@@ -22,8 +24,24 @@ export default function ValueDisplayGrid(props) {
         <Grid item xs={12} sm={12}>
           <Card>
             <CardContent>
-              <Typography variant="h5">{title}</Typography>
-              <Typography variant="body1">{`${inputName}: ${inputValue}\n`}</Typography>
+              {
+                inputAmount ?
+                  <Typography variant="body1">{`Input: ${inputAmount}\n`}</Typography>
+                  :
+                  <div />
+              }
+              {
+                outputAmount ?
+                  <Typography variant="body1">{`Output: ${outputAmount}\n`}</Typography>
+                  :
+                  <div />
+              }
+              {
+                effectivePrice ?
+                  <Typography variant="body1">{`Output: ${effectivePrice}\n`}</Typography>
+                  :
+                  <div />
+              }
             </CardContent>
           </Card>
         </Grid>
