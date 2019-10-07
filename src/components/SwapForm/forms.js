@@ -45,7 +45,6 @@ export function SwapFormHandler(props) {
         const checkLimitOut = values.outputLimit !== undefined && values.outputLimit > 0
         const checkAmountIn = !Number.isNaN(event.target.value) && event.target.value > 0
         const checkLimitPrice = values.limitPrice !== undefined && values.limitPrice > 0
-        console.log(values)
         if (checkAmountIn && checkOutToken && checkLimitOut && checkInputToken && checkLimitPrice) {
           const newResult = resultConfig
           const data = {
@@ -57,6 +56,11 @@ export function SwapFormHandler(props) {
             console.log(result.preview)
             newResult.exactAmountIn[0].value = 10
             newResult.exactAmountIn[1].value = 420
+            setResultConfig(newResult)
+          }).catch((error) => {
+            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           })
         }
@@ -80,6 +84,11 @@ export function SwapFormHandler(props) {
             newResult.exactAmountOut[0].value = 10
             newResult.exactAmountOut[1].value = 420
             setResultConfig(newResult)
+          }).catch((error) => {
+            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
+            setResultConfig(newResult)
           })
         }
       } else if (props.method === 'exactMarginalPrice') {
@@ -102,6 +111,11 @@ export function SwapFormHandler(props) {
             newResult.exactMarginalPrice[0].value = 10
             newResult.exactMarginalPrice[1].value = 420
             newResult.exactMarginalPrice[2].value = 420
+            setResultConfig(newResult)
+          }).catch((error) => {
+            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           })
         }
