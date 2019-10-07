@@ -1,8 +1,8 @@
 const CombinedSchema = require('../external-contracts/combined')
 const TestTokenSchema = require('../external-contracts/TestToken')
 const schema = {
-    BPool: require('../balancer-core/build/contracts/BPool'),
-    BFactory: require('../balancer-core/build/contracts/BFactory'),
+    BPool: require('../external-contracts/BPool'),
+    BFactory: require('../external-contracts/BFactory'),
     TestToken: require('../external-contracts/TestToken')
 }
 const Web3 = require('web3')
@@ -13,17 +13,6 @@ const web3 = new Web3("http://localhost:8545");
 
 const MAX_GAS = 0xffffffff;
 const MAX_UINT = web3.utils.toTwosComplement('-1');
-
-const abi = {
-    BFactory: JSON.parse(CombinedSchema.contracts['sol/BFactory.sol:BFactory'].abi),
-    BPool: JSON.parse(CombinedSchema.contracts['sol/BPool.sol:BPool'].abi),
-    TestToken: TestTokenSchema.abi
-}
-
-const bin = {
-    BFactory: CombinedSchema.contracts['sol/BFactory.sol:BFactory'].bin,
-    BPool: CombinedSchema.contracts['sol/BPool.sol:BPool'].bin
-}
 
 const params = {
     coinParams: [
