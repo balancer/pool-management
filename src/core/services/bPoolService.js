@@ -506,3 +506,69 @@ export async function exitswapExternAmountOut(provider, contractAddress, tokenOu
         }
     }
 }
+
+export async function PreviewSwapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+  try {
+      const preview = await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).call()
+      return {
+          result: 'success',
+          preview
+      }
+  } catch (e) {
+      return {
+          result: 'failure',
+          data: { error: e }
+      }
+  }
+}
+
+/**
+*
+* @param {providerObject} provider
+* @param {address} contractAddress
+* @param {uint} Ao -- output amount
+*/
+export async function PreviewSwapExactAmountOut(provider, contractAddress, Ti, Li, To, Ao, PL) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+
+  try {
+      const preview = await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).call()
+      return {
+          result: 'success',
+          preview
+      }
+  } catch (e) {
+      return {
+          result: 'failure',
+          data: { error: e }
+      }
+  }
+}
+
+/**
+*
+* @param {provider} provider
+* @param {address} contractAddress
+* @param {address} Ti -- input token
+* @param {uint} Li -- in limit
+* @param {address} To -- output token
+* @param {uint} Lo -- out limit
+* @param {uint} MP -- marginal price
+*/
+export async function PreviewSwapExactMarginalPrice(provider, contractAddress, Ti, Li, To, Lo, MP) {
+  const bPool = await getBPoolInstance(provider, contractAddress)
+
+  try {
+      const preview = await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).call()
+      return {
+          result: 'success',
+          preview
+      }
+  } catch (e) {
+      return {
+          result: 'failure',
+          data: { error: e }
+      }
+  }
+}
