@@ -23,8 +23,8 @@ export default function PoolParamsGrid(props) {
     activeText = 'Yes'
   }
 
-  const swapFee = web3Lib.fromWeiToFee(pool.poolParams.swapFee)
-  const exitFee = web3Lib.fromWeiToFee(pool.poolParams.exitFee)
+  const swapFee = web3Lib.fromFeeToPercentage(pool.poolParams.swapFee)
+  const exitFee = web3Lib.fromFeeToPercentage(pool.poolParams.exitFee)
 
   console.log(pool.poolParams.swapFee)
   console.log(swapFee)

@@ -19,12 +19,12 @@ const useStyles = makeStyles(theme => ({
 export default function PooListTokenTable(props) {
   const styles = useStyles()
   const columns = [
-    { label: 'Symbol', id: 'symbol', minWidth: 60 },
-    { label: 'Address', id: 'Address', minWidth: 60 },
-    { label: 'My balance', id: 'My balance', minWidth: 60 },
-    { label: 'Pool balance', id: 'Pool balance', minWidth: 60 },
-    { label: 'Weight', id: 'Weight', minWidth: 60 },
-    { label: 'Lock/Unlock', id: 'lockable', minWidth: 60 }
+    { label: 'Symbol', id: 'symbol', minWidth: 20 },
+    { label: 'Address', id: 'Address', minWidth: 20 },
+    { label: 'My balance', id: 'My balance', minWidth: 20 },
+    { label: 'Pool balance', id: 'Pool balance', minWidth: 20 },
+    { label: 'Weight', id: 'Weight', minWidth: 20 },
+    { label: 'Lock/Unlock', id: 'lockable', minWidth: 20 }
   ]
   const [selected, setSelected] = React.useState(false)
 

@@ -81,7 +81,7 @@ class Header extends Component {
           <Toolbar>
             <Link className="menu-icon" href="/list" to="/list">
               <IconButton className="menu-icon" edge="start" color="inherit" aria-label="menu">
-                <Typography variant="title" color="inherit">
+                <Typography variant="h5" color="inherit">
                   {appConfig.name}
                 </Typography>
               </IconButton>

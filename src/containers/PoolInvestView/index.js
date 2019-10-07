@@ -199,8 +199,7 @@ class PoolInvestView extends Component {
                         switch (input.type) {
                           case 'number':
                             return (
-                              <Grid item xs={12} sm={9}>
-
+                              <Grid item xs={12} sm={9} key={id}>
                                 <TextField
                                   label={input.label}
                                   placeholder="0"
@@ -219,7 +218,7 @@ class PoolInvestView extends Component {
                           // break
                           case 'select':
                             return (
-                              <Grid item xs={12} sm={9}>
+                              <Grid item xs={12} sm={9} key={id}>
                                 <TextField
                                   select
                                   fullWidth

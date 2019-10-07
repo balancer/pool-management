@@ -54,13 +54,12 @@ export function SwapFormHandler(props) {
           }
           previewSwapExactAmountIn(data).then((result) => {
             console.log(result.preview)
-            newResult.exactAmountIn[0].value = 10
-            newResult.exactAmountIn[1].value = 420
+            newResult.exactAmountIn[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountIn[1].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           }).catch((error) => {
-            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountIn[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountIn[1].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           })
         }
@@ -81,13 +80,12 @@ export function SwapFormHandler(props) {
           }
           previewSwapExactAmountOut(data).then((result) => {
             console.log(result.preview)
-            newResult.exactAmountOut[0].value = 10
-            newResult.exactAmountOut[1].value = 420
+            newResult.exactAmountOut[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountOut[1].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           }).catch((error) => {
-            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountOut[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountOut[1].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           })
         }
@@ -108,9 +106,9 @@ export function SwapFormHandler(props) {
           }
           previewSwapExactMarginalPrice(data).then((result) => {
             console.log(result.preview)
-            newResult.exactMarginalPrice[0].value = 10
-            newResult.exactMarginalPrice[1].value = 420
-            newResult.exactMarginalPrice[2].value = 420
+            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
             setResultConfig(newResult)
           }).catch((error) => {
             newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
@@ -161,7 +159,7 @@ export function SwapFormHandler(props) {
     // index: the ordinal position of the key within the object
     tokens.push({
       value: key,
-      label: key
+      label: props.tokenParams[key].symbol
     })
   })
 
@@ -181,114 +179,116 @@ export function SwapFormHandler(props) {
 
       <div>
         <Grid container spacing={1}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-in"
-                name="inputToken"
-                select
-                label="Input Token"
-                value={inputs.inputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                              native: true
-                            }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                            ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="amount-in"
-                name="inputAmount"
-                label="Input Amount"
-                placeholder="0"
-                value={inputs.inputAmount}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                              shrink: true
-                            }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-out"
-                name="outputToken"
-                select
-                fullWidth
-                label="Output Token"
-                value={inputs.outputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                              native: true
-                            }}
-                margin="normal"
-                variant="outlined"
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                            ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-out"
-                name="outputLimit"
-                label="Limit Output"
-                placeholder="0"
-                value={inputs.outputLimit}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                              shrink: true
-                            }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="limit-price"
-                name="limitPrice"
-                label="Limit Price"
-                value={inputs.limitPrice}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                              shrink: true
-                            }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Error.Consumer>
-                {error => (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    style={{ marginTop: 25 }}
-                    onClick={() => { handleSubmit(error.setError) }}
-                  >
-                    Submit
-                  </Button>
-                 )}
-              </Error.Consumer>
+          <Grid item xs={6} sm={6}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="token-in"
+                  name="inputToken"
+                  select
+                  label="Input Token"
+                  value={inputs.inputToken}
+                  onChange={handleInputChange}
+                  SelectProps={{
+                    native: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                >
+                  {tokens.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="amount-in"
+                  name="inputAmount"
+                  label="Input Amount"
+                  placeholder="0"
+                  value={inputs.inputAmount}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="token-out"
+                  name="outputToken"
+                  select
+                  fullWidth
+                  label="Output Token"
+                  value={inputs.outputToken}
+                  onChange={handleInputChange}
+                  SelectProps={{
+                    native: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                >
+                  {tokens.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="limit-out"
+                  name="outputLimit"
+                  label="Limit Output"
+                  placeholder="0"
+                  value={inputs.outputLimit}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="limit-price"
+                  name="limitPrice"
+                  label="Limit Price"
+                  value={inputs.limitPrice}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Error.Consumer>
+                  {error => (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      style={{ marginTop: 25 }}
+                      onClick={() => { handleSubmit(error.setError) }}
+                    >
+                      Submit
+                    </Button>
+                  )}
+                </Error.Consumer>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -312,114 +312,116 @@ export function SwapFormHandler(props) {
     return (
       <div>
         <Grid container spacing={1}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-in"
-                name="inputToken"
-                select
-                label="Input Token"
-                value={inputs.inputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="amount-out"
-                name="outputAmount"
-                label="Output Amount"
-                placeholder="0"
-                value={inputs.outputAmount}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-out"
-                name="outputToken"
-                select
-                fullWidth
-                label="Output Token"
-                value={inputs.outputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-in"
-                name="inLimit"
-                label="Limit In"
-                placeholder="0"
-                value={inputs.inLimit}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="limit-price"
-                name="limitPrice"
-                label="Limit Price"
-                value={inputs.limitPrice}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Error.Consumer>
-                {error => (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    style={{ marginTop: 25 }}
-                    onClick={() => { handleSubmit(error.setError) }}
-                  >
-                    Submit
-                  </Button>
-                 )}
-              </Error.Consumer>
+          <Grid item xs={6} sm={6}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="token-in"
+                  name="inputToken"
+                  select
+                  label="Input Token"
+                  value={inputs.inputToken}
+                  onChange={handleInputChange}
+                  SelectProps={{
+                    native: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                >
+                  {tokens.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="amount-out"
+                  name="outputAmount"
+                  label="Output Amount"
+                  placeholder="0"
+                  value={inputs.outputAmount}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="token-out"
+                  name="outputToken"
+                  select
+                  fullWidth
+                  label="Output Token"
+                  value={inputs.outputToken}
+                  onChange={handleInputChange}
+                  SelectProps={{
+                    native: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                >
+                  {tokens.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="limit-in"
+                  name="inLimit"
+                  label="Limit In"
+                  placeholder="0"
+                  value={inputs.inLimit}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="limit-price"
+                  name="limitPrice"
+                  label="Limit Price"
+                  value={inputs.limitPrice}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Error.Consumer>
+                  {error => (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      style={{ marginTop: 25 }}
+                      onClick={() => { handleSubmit(error.setError) }}
+                    >
+                      Submit
+                    </Button>
+                  )}
+                </Error.Consumer>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -442,114 +444,116 @@ export function SwapFormHandler(props) {
     return (
       <div>
         <Grid container spacing={1}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-in"
-                name="inputToken"
-                select
-                label="Input Token"
-                value={inputs.inputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-in"
-                name="inLimit"
-                label="Limit in"
-                placeholder="0"
-                value={inputs.inLimit}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <TextField
-                id="token-out"
-                name="outputToken"
-                select
-                fullWidth
-                label="Output Token"
-                value={inputs.outputToken}
-                onChange={handleInputChange}
-                SelectProps={{
-                  native: true
-                }}
-                margin="normal"
-                variant="outlined"
-              >
-                {tokens.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <TextField
-                id="limit-out"
-                name="outLimit"
-                label="Limit Out"
-                placeholder="0"
-                value={inputs.outLimit}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="marginal-price"
-                name="marginalPrice"
-                label="Marginal Price"
-                value={inputs.marginalPrice}
-                onChange={handleInputChange}
-                type="number"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Error.Consumer>
-                {error => (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    style={{ marginTop: 25 }}
-                    onClick={() => { handleSubmit(error.setError) }}
-                  >
-                    Submit
-                  </Button>
-                 )}
-              </Error.Consumer>
+          <Grid item xs={6} sm={6}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="token-in"
+                  name="inputToken"
+                  select
+                  label="Input Token"
+                  value={inputs.inputToken}
+                  onChange={handleInputChange}
+                  SelectProps={{
+                    native: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                >
+                  {tokens.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="limit-in"
+                  name="inLimit"
+                  label="Limit in"
+                  placeholder="0"
+                  value={inputs.inLimit}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="token-out"
+                  name="outputToken"
+                  select
+                  fullWidth
+                  label="Output Token"
+                  value={inputs.outputToken}
+                  onChange={handleInputChange}
+                  SelectProps={{
+                    native: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                >
+                  {tokens.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="limit-out"
+                  name="outLimit"
+                  label="Limit Out"
+                  placeholder="0"
+                  value={inputs.outLimit}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  id="marginal-price"
+                  name="marginalPrice"
+                  label="Marginal Price"
+                  value={inputs.marginalPrice}
+                  onChange={handleInputChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Error.Consumer>
+                  {error => (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      style={{ marginTop: 25 }}
+                      onClick={() => { handleSubmit(error.setError) }}
+                    >
+                      Submit
+                    </Button>
+                  )}
+                </Error.Consumer>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -577,5 +581,6 @@ export function SwapFormHandler(props) {
         <SwapResults />
       </Grid>
     </Grid>
+
   )
 }

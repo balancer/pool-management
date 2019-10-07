@@ -11,10 +11,22 @@ export function toWei(value) {
   return Web3.utils.toWei(value, 'ether')
 }
 
-export function fromWeiToFee(value) {
+export function hexToNumberString(value) {
+  return Web3.utils.hexToNumberString(value)
+}
+
+export function fromFeeToPercentage(value) {
   const etherValue = Web3.utils.fromWei(value)
-  console.log(etherValue * 100)
-  return etherValue * 100
+  const percentageValue = etherValue * 100
+  console.log('fee read', etherValue, percentageValue)
+  return percentageValue
+}
+
+export function fromPercentageToFee(value) {
+  const weiValue = new BN(Web3.utils.toWei(value, 'ether'))
+  const feeValue = weiValue.div(new BN(100))
+  console.log('fee inputted', weiValue.toString(), feeValue.toString())
+  return feeValue.toString()
 }
 
 export function toChecksum(address) {

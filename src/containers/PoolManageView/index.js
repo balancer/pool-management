@@ -148,7 +148,7 @@ class PoolSwapView extends Component {
       setFee, provider, address
     } = this.state
 
-    const call = await bPoolService.setFees(provider, address, web3Lib.toWei(setFee.swapFee), web3Lib.toWei(setFee.exitFee))
+    const call = await bPoolService.setFees(provider, address, web3Lib.fromPercentageToFee(setFee.swapFee), web3Lib.fromPercentageToFee(setFee.exitFee))
 
     if (call.result === 'failure') {
       error(call.data.error.message)
