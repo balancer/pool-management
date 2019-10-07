@@ -57,9 +57,10 @@ export default function SwapForm(props) {
           }}
         >
           {
-            methods.map((type) => {
+            methods.map((type, index) => {
+              const id = index * 1
               return (
-                <MenuItem value={type.name}>
+                <MenuItem value={type.name} key={id}>
                   {type.label}
                 </MenuItem>
               )

@@ -13,7 +13,8 @@
     "lint": "eslint src",
     "precommit": "lint-staged",
     "start": "cross-env NODE_ENV=development node bin/launch-server.js",
-    "test": "bin/test.sh"
+    "test": "bin/test.sh",
+    "ganache": " ganache-cli --deterministic -l 4294967295 --allowUnlimitedContractSize"
   },
   "repository": {
     "type": "git",
