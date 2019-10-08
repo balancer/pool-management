@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles } from '@material-ui/core'
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles, Tooltip, Typography } from '@material-ui/core'
 import { web3Lib } from 'core/libs'
 import ToggleButton from '../ToggleButton'
 import PoolInvestView from '../../containers/PoolInvestView'
@@ -36,6 +36,7 @@ export default function PooListTokenTable(props) {
     return {
       symbol: symbol || '???',
       address: token,
+      addressStub: web3Lib.toAddressStub(token),
       balance,
       weight,
       userBalance
@@ -83,19 +84,21 @@ export default function PooListTokenTable(props) {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.address}>
                   <TableCell key={`symbol${row.address}`}>
-                    {row.symbol}
+                    <Typography>{row.symbol}</Typography>
                   </TableCell>
                   <TableCell key={`address${row.address}`}>
-                    {row.address}
+                    <Tooltip title={row.address} interactive>
+                      <Typography>{row.addressStub}</Typography>
+                    </Tooltip>
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    {row.userBalance ? web3Lib.toEther(row.userBalance.toString()) : 0}
+                    {row.userBalance ? web3Lib.roundValue(web3Lib.toEther(row.userBalance.toString())) : 0}
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
-                    {web3Lib.toEther(row.balance)}
+                    {web3Lib.roundValue(web3Lib.toEther(row.balance))}
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
-                    {web3Lib.toEther(row.weight)}
+                    {web3Lib.roundValue(web3Lib.toEther(row.weight))}
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
                     <ToggleButton token={row.address} provider={provider} address={address} />

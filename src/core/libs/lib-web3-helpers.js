@@ -11,6 +11,21 @@ export function toWei(value) {
   return Web3.utils.toWei(value, 'ether')
 }
 
+export function toAddressStub(address) {
+  const start = address.slice(0, 5)
+  const end = address.slice(-3)
+
+  return `${start}...${end}`
+}
+
+export function roundValue(value) {
+  const decimal = value.indexOf('.')
+  if (decimal === -1) {
+    return value
+  }
+  return value.slice(0, decimal + 10)
+}
+
 export function hexToNumberString(value) {
   return Web3.utils.hexToNumberString(value)
 }

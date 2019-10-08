@@ -4,7 +4,6 @@ import { Grid, TextField, Button, Card, CardContent } from '@material-ui/core'
 import { swapExactAmountIn, swapExactAmountOut, swapExactMarginalPrice, previewSwapExactAmountIn, previewSwapExactAmountOut, previewSwapExactMarginalPrice } from './calls'
 import { Error } from '../../provider'
 
-
 export function SwapFormHandler(props) {
   const tokens = [{
     value: 'None',
@@ -53,13 +52,14 @@ export function SwapFormHandler(props) {
             ...values
           }
           previewSwapExactAmountIn(data).then((result) => {
+            console.log(data)
             console.log(result.preview)
-            newResult.exactAmountIn[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactAmountIn[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountIn[0].value = result.preview.Ao
+            newResult.exactAmountIn[1].value = result.preview.Ao
             setResultConfig(newResult)
           }).catch((error) => {
-            newResult.exactAmountIn[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactAmountIn[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountIn[0].value = 'error'
+            newResult.exactAmountIn[1].value = 'error'
             setResultConfig(newResult)
           })
         }
@@ -80,12 +80,12 @@ export function SwapFormHandler(props) {
           }
           previewSwapExactAmountOut(data).then((result) => {
             console.log(result.preview)
-            newResult.exactAmountOut[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactAmountOut[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountOut[0].value = result.preview.Ao
+            newResult.exactAmountOut[1].value = result.preview.MP
             setResultConfig(newResult)
           }).catch((error) => {
-            newResult.exactAmountOut[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactAmountOut[1].value = Math.floor((Math.random() * 100) + 1)
+            newResult.exactAmountOut[0].value = 'error'
+            newResult.exactAmountOut[1].value = 'error'
             setResultConfig(newResult)
           })
         }
@@ -106,11 +106,12 @@ export function SwapFormHandler(props) {
           }
           previewSwapExactMarginalPrice(data).then((result) => {
             console.log(result.preview)
-            newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
-            newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
-            setResultConfig(newResult)
+            // newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
+            // newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
+            // newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
+            setResultConfig(result.preview)
           }).catch((error) => {
+            console.log(error)
             newResult.exactMarginalPrice[0].value = Math.floor((Math.random() * 100) + 1)
             newResult.exactMarginalPrice[1].value = Math.floor((Math.random() * 100) + 1)
             newResult.exactMarginalPrice[2].value = Math.floor((Math.random() * 100) + 1)
