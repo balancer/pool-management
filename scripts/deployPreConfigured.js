@@ -1,37 +1,34 @@
 const CombinedSchema = require('../external-contracts/combined')
 const TestTokenSchema = require('../external-contracts/TestToken')
-const schema = {
-    BPool: require('../external-contracts/BPool'),
-    BFactory: require('../external-contracts/BFactory'),
-    TestToken: require('../external-contracts/TestToken')
-}
+
 const Web3 = require('web3')
 const networkConfig = require('../networks.js');
 const fs = require('fs');
+const schema = require('./constants').schema;
 
 const web3 = new Web3("http://localhost:8545");
 
-const MAX_GAS = 0xffffffff;
-const MAX_UINT = web3.utils.toTwosComplement('-1');
+const MAX_GAS = require('./constants').MAX_GAS;
+const MAX_UINT = require('./constants').MAX_UINT;
 
 const params = {
     coinParams: [
         {
             name: 'CoinA',
             symbol: 'CoinA',
-            balance: '10000000000000000000',
+            balance: '1000000000000000000000',
             weight: '1000000000000000000'
         },
         {
             name: 'CoinB',
             symbol: 'CoinB',
-            balance: '20000000000000000000',
+            balance: '200000000000000000000',
             weight: '2000000000000000000'
         },
         {
             name: 'CoinC',
             symbol: 'CoinC',
-            balance: '50000000000000000000',
+            balance: '500000000000000000000',
             weight: '5000000000000000000'
         },
     ],
@@ -39,19 +36,19 @@ const params = {
         {
             name: 'CoinD',
             symbol: 'CoinD',
-            balance: '10000000000000000000',
+            balance: '1000000000000000000000',
             weight: '1000000000000000000'
         },
         {
             name: 'CoinE',
             symbol: 'CoinE',
-            balance: '20000000000000000000',
+            balance: '200000000000000000000',
             weight: '2000000000000000000'
         },
         {
             name: 'CoinF',
             symbol: 'CoinF',
-            balance: '50000000000000000000',
+            balance: '500000000000000000000',
             weight: '5000000000000000000'
         },
     ]

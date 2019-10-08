@@ -311,8 +311,37 @@ export async function makePublic(provider, contractAddress, initialSupply) {
 }
 
 export async function swapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
-    console.log(Ti, Ai, To, Lo, LP)
+    const { web3Provider } = provider
+    const web3 = new Web3(web3Provider)
+    const { defaultAccount } = web3Provider.eth
+    const { BN } = web3.utils
+
     const bPool = await getBPoolInstance(provider, contractAddress)
+    const tokenIn = new web3.eth.Contract(schema.TestToken.abi, Ti, { from: defaultAccount })
+    const tokenOut = new web3.eth.Contract(schema.TestToken.abi, To, { from: defaultAccount })
+
+    const UserBalanceI = new BN(await tokenIn.methods.balanceOf(defaultAccount).call())
+    const UserBalanceO = new BN(await tokenOut.methods.balanceOf(defaultAccount).call())
+    console.log('UserBalanceI', UserBalanceI.toString())
+    console.log('UserBalanceO', UserBalanceO.toString())
+
+    const Bi = new BN(await tokenIn.methods.balanceOf(bPool.options.address).call())
+    const Bo = new BN(await tokenOut.methods.balanceOf(bPool.options.address).call())
+    const Wi = new BN(await bPool.methods.getNormalizedWeight(tokenIn.options.address).call())
+    const Wo = new BN(await bPool.methods.getNormalizedWeight(tokenOut.options.address).call())
+
+    console.log('The parameters:')
+    console.log('Ti', Ti)
+    console.log('To', To)
+    console.log('Ai', Ai)
+    console.log('Lo', Lo)
+    console.log('LP', LP)
+    console.log('Bi', Bi.toString())
+    console.log('Bo', Bo.toString())
+    console.log('Wi', Wi.toString())
+    console.log('Wo', Wo.toString())
+
+
     try {
         await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).send()
         return {
@@ -509,19 +538,19 @@ export async function exitswapExternAmountOut(provider, contractAddress, tokenOu
 }
 
 export async function PreviewSwapExactAmountIn(provider, contractAddress, Ti, Ai, To, Lo, LP) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
-  try {
-      const preview = await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).call()
-      return {
-          result: 'success',
-          preview
-      }
-  } catch (e) {
-      return {
-          result: 'failure',
-          data: { error: e }
-      }
-  }
+    const bPool = await getBPoolInstance(provider, contractAddress)
+    try {
+        const preview = await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).call()
+        return {
+            result: 'success',
+            preview
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
+    }
 }
 
 /**
@@ -531,20 +560,20 @@ export async function PreviewSwapExactAmountIn(provider, contractAddress, Ti, Ai
 * @param {uint} Ao -- output amount
 */
 export async function PreviewSwapExactAmountOut(provider, contractAddress, Ti, Li, To, Ao, PL) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
-  try {
-      const preview = await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).call()
-      return {
-          result: 'success',
-          preview
-      }
-  } catch (e) {
-      return {
-          result: 'failure',
-          data: { error: e }
-      }
-  }
+    try {
+        const preview = await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).call()
+        return {
+            result: 'success',
+            preview
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
+    }
 }
 
 /**
@@ -558,18 +587,18 @@ export async function PreviewSwapExactAmountOut(provider, contractAddress, Ti, L
 * @param {uint} MP -- marginal price
 */
 export async function PreviewSwapExactMarginalPrice(provider, contractAddress, Ti, Li, To, Lo, MP) {
-  const bPool = await getBPoolInstance(provider, contractAddress)
+    const bPool = await getBPoolInstance(provider, contractAddress)
 
-  try {
-      const preview = await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).call()
-      return {
-          result: 'success',
-          preview
-      }
-  } catch (e) {
-      return {
-          result: 'failure',
-          data: { error: e }
-      }
-  }
+    try {
+        const preview = await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).call()
+        return {
+            result: 'success',
+            preview
+        }
+    } catch (e) {
+        return {
+            result: 'failure',
+            data: { error: e }
+        }
+    }
 }

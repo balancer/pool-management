@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, TextField, Button, Card, CardContent  } from '@material-ui/core'
+import { Grid, TextField, Button, Card, CardContent } from '@material-ui/core'
 
 import { swapExactAmountIn, swapExactAmountOut, swapExactMarginalPrice, previewSwapExactAmountIn, previewSwapExactAmountOut, previewSwapExactMarginalPrice } from './calls'
 import { Error } from '../../provider'
@@ -37,15 +37,15 @@ export function SwapFormHandler(props) {
       event.persist()
 
       setInputs(data => ({ ...data, [event.target.name]: event.target.value }))
-      if (props.method === 'exactAmountIn' && event.target.name === 'inputAmount') {
+      if (props.method === 'exactAmountIn') {
         const values = inputs
         values[event.target.name] = event.target.value
-        const checkInputToken = values.inputToken !== 'None'
-        const checkOutToken = values.outputToken !== 'None'
-        const checkLimitOut = values.outputLimit !== undefined && values.outputLimit > 0
-        const checkAmountIn = !Number.isNaN(event.target.value) && event.target.value > 0
-        const checkLimitPrice = values.limitPrice !== undefined && values.limitPrice > 0
-        if (checkAmountIn && checkOutToken && checkLimitOut && checkInputToken && checkLimitPrice) {
+        const checkInputToken = values.inputToken !== 'None' && values.inputToken !== undefined
+        const checkOutToken = values.outputToken !== 'None' && values.outputToken !== undefined
+        const checkAmountIn = !Number.isNaN(values.inputAmount) && values.inputAmount > 0
+        // const checkLimitOut = values.outputLimit !== undefined && values.outputLimit > 0
+        // const checkLimitPrice = values.limitPrice !== undefined && values.limitPrice > 0
+        if (checkAmountIn && checkOutToken && checkInputToken) {
           const newResult = resultConfig
           const data = {
             provider,
@@ -63,15 +63,15 @@ export function SwapFormHandler(props) {
             setResultConfig(newResult)
           })
         }
-      } else if (props.method === 'exactAmountOut' && event.target.name === 'outputAmount') {
+      } else if (props.method === 'exactAmountOut') {
         const values = inputs
         values[event.target.name] = event.target.value
-        const checkInputToken = values.inputToken !== 'None'
-        const checkOutToken = values.outputToken !== 'None'
-        const checkLimitIn = values.inLimit !== undefined && values.inLimit > 0
-        const checkAmountOut = !Number.isNaN(event.target.value) && event.target.value > 0
-        const checkLimitPrice = values.limitPrice !== undefined && values.limitPrice > 0
-        if (checkAmountOut && checkOutToken && checkLimitIn && checkInputToken && checkLimitPrice) {
+        const checkInputToken = values.inputToken !== 'None' && values.inputToken !== undefined
+        const checkOutToken = values.outputToken !== 'None' && values.outputToken !== undefined
+        const checkAmountOut = !Number.isNaN(values.outputAmount) && values.outputAmount > 0
+        // const checkLimitIn = values.inLimit !== undefined && values.inLimit > 0
+        // const checkLimitPrice = values.limitPrice !== undefined && values.limitPrice > 0
+        if (checkAmountOut && checkOutToken && checkInputToken) {
           const newResult = resultConfig
           const data = {
             provider,
@@ -92,12 +92,12 @@ export function SwapFormHandler(props) {
       } else if (props.method === 'exactMarginalPrice') {
         const values = inputs
         values[event.target.name] = event.target.value
-        const checkLimitIn = values.inLimit !== undefined && values.inLimit > 0
-        const checkLimitOut = values.outLimit !== undefined && values.outLimit > 0
-        const checkInputToken = values.inputToken !== 'None'
-        const checkOutToken = values.outToken !== 'None'
+        // const checkLimitIn = values.inLimit !== undefined && values.inLimit > 0
+        // const checkLimitOut = values.outLimit !== undefined && values.outLimit > 0
+        const checkInputToken = values.inputToken !== 'None' && values.inputToken !== undefined
+        const checkOutToken = values.outputToken !== 'None' && values.outputToken !== undefined
         const checkMarginalPrice = values.marginalPrice !== undefined && values.marginalPrice > 0
-        if (checkLimitIn && checkLimitOut && checkInputToken && checkOutToken && checkMarginalPrice) {
+        if (checkInputToken && checkOutToken && checkMarginalPrice) {
           const newResult = resultConfig
           const data = {
             provider,
@@ -144,7 +144,7 @@ export function SwapFormHandler(props) {
             resultConfig[props.method].map((result) => {
               return (
                 <React.Fragment>
-                  { result.label } : { result.value }<br />
+                  {result.label} : {result.value}<br />
                 </React.Fragment>
               )
             })
