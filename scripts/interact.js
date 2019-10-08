@@ -12,7 +12,7 @@ const addresses = {
 
 async function test() {
     const accounts = await web3.eth.getAccounts();
-    const defaultAccount = accounts[0];
+    const defaultAccount = accounts[1];
 
     const Ti = new web3.eth.Contract(schema.TestToken.abi, addresses.Ti, { from: defaultAccount })
     const To = new web3.eth.Contract(schema.TestToken.abi, addresses.To, { from: defaultAccount })
@@ -30,30 +30,60 @@ async function test() {
     // MATH
     const UserBalanceI = new BN(await Ti.methods.balanceOf(defaultAccount).call())
     const UserBalanceO = new BN(await To.methods.balanceOf(defaultAccount).call())
-    console.log('UserBalanceI', UserBalanceI.toString())
-    console.log('UserBalanceO', UserBalanceO.toString())
 
     const Bi = new BN(await Ti.methods.balanceOf(bPool.options.address).call())
     const Bo = new BN(await To.methods.balanceOf(bPool.options.address).call())
     const Wi = new BN(await bPool.methods.getNormalizedWeight(Ti.options.address).call())
     const Wo = new BN(await bPool.methods.getNormalizedWeight(To.options.address).call())
 
-    console.log('The parameters:')
-    console.log('Ai', Ai.toString())
-    console.log('Lo', Lo.toString())
-    console.log('Bi', Bi.toString())
-    console.log('Bo', Bo.toString())
-    console.log('LP', LP.toString())
-    console.log('Wi', Wi.toString())
-    console.log('Wo', Wo.toString())
+    console.log('_swap_ExactAmountIn_')
+
+    console.log('Initial State :')
+    console.log('------------------')
+    console.log('User Balance (Ti): ', UserBalanceI.toString())
+    console.log('User Balance (To): ', UserBalanceO.toString())
+    console.log('')
+    console.log('Pool Balance (Ti): ', Bi.toString())
+    console.log('Pool Balance (To): ', Bo.toString())
+    console.log('')
+    console.log('Wi               : ', Wi.toString())
+    console.log('Wo:              : ', Wo.toString())
+    console.log('')
+
+    console.log('Swap Parameters :')
+    console.log('------------------')
+    console.log('Ai               : ', Ai.toString())
+    console.log('Lo               : ', Lo.toString())
+    console.log('LP               : ', LP.toString())
+    console.log('')
 
     try {
         const result = await bPool.methods.swap_ExactAmountIn(addresses.To, Ai.toString(), addresses.To, Lo.toString(), LP.toString()).send({ from: defaultAccount, gas: MAX_GAS })
-        console.log(result.events['LOG_SWAP'].returnValues)
+
+        console.log('Transaction Result :')
+        console.log('------------------')
+        console.log('Amount In        : ', result.events['LOG_SWAP'].returnValues.amountIn)
+        console.log('Amount Out       : ', result.events['LOG_SWAP'].returnValues.amountOut)
+        console.log('')
     } catch (e) {
         console.log(result)
         console.log(e)
     }
+
+    const UserBalanceI2 = new BN(await Ti.methods.balanceOf(defaultAccount).call())
+    const UserBalanceO2 = new BN(await To.methods.balanceOf(defaultAccount).call())
+
+    const Bi2 = new BN(await Ti.methods.balanceOf(bPool.options.address).call())
+    const Bo2 = new BN(await To.methods.balanceOf(bPool.options.address).call())
+
+    console.log('After State :')
+    console.log('------------------')
+    console.log('User Balance (Ti): ', UserBalanceI2.toString())
+    console.log('User Balance (To): ', UserBalanceO2.toString())
+    console.log('')
+    console.log('Pool Balance (Ti): ', Bi2.toString())
+    console.log('Pool Balance (To): ', Bo2.toString())
+    console.log('')
 }
 
 function main() {
