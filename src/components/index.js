@@ -10,6 +10,7 @@ import MoreParamsGrid from 'components/MoreParamsGrid'
 import PoolList from 'components/PoolList'
 import PoolListTokenTable from 'components/PoolListTokenTable'
 import PoolParamsGrid from 'components/PoolParamsGrid'
+import InvestParamsGrid from 'components/InvestParamsGrid'
 import PoolTitleCard from 'components/PoolTitleCard'
 import SpotPriceGrid from 'components/SpotPriceGrid'
 import TokenParametersTable from 'components/TokenParametersTable'
@@ -30,6 +31,7 @@ export {
   PoolListTokenTable,
   PoolList,
   PoolParamsGrid,
+  InvestParamsGrid,
   PoolTitleCard,
   SpotPriceGrid,
   TokenParametersTable,

@@ -35,13 +35,13 @@ export default function PoolParamsGrid(props) {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={6} sm={6}>
-          <IconCard title="Pool" text={address} />
+          <IconCard title="Pool" text={address} addRows />
         </Grid>
         <Grid item xs={6} sm={3}>
           <IconCard title="Fees" text={`Swap Fee: ${swapFee}%`} text2={`Exit Fee: ${exitFee}%`} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <IconCard title="Active" text={activeText} />
+          <IconCard title="Active" text={activeText} addRows />
         </Grid>
       </Grid>
     </div>

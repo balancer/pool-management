@@ -24,7 +24,9 @@ const useStyles = makeStyles({
 })
 
 export default function IconCard(props) {
-  const { title, text, text2 } = props
+  const {
+ title, text, text2, addRows
+} = props
   const classes = useStyles()
   // const bull = <span className={classes.bullet}>•</span>
 
@@ -46,11 +48,15 @@ export default function IconCard(props) {
           </Typography>) :
           <div />
         }
+        {
+          addRows ? (<br />) :
+          <div />
+        }
 
       </CardContent>
       {/* <CardActions>
                 <Button size="small">Learn More</Button>
             </CardActions> */}
-    </Card>
+    </Card >
   )
 }

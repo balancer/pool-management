@@ -29,6 +29,29 @@ export async function getTokenInstance(provider, contractAddress) {
     return tokenContract
 }
 
+
+export async function getInvestParams(provider, contractAddress, account) {
+    const bPool = await getBPoolInstance(provider, contractAddress)
+
+    // Is pool Finalized (aka Shared)?
+    const isFinalized = await bPool.methods.isFinalized().call()
+
+    // What's the users' pool token balance?
+    const userBalance = await bPool.methods.balanceOf(account).call()
+    const totalSupply = await bPool.methods.totalSupply().call()
+
+    const result = {
+        isFinalized,
+        userBalance,
+        totalSupply
+    }
+    return {
+        result: 'success',
+        data: result
+
+    }
+}
+
 export async function getParams(provider, contractAddress) {
     const bPool = await getBPoolInstance(provider, contractAddress)
 

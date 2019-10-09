@@ -6,7 +6,7 @@ import {
   TextField
 } from '@material-ui/core'
 
-import { PoolListTokenTable, Button, Loading, PoolParamsGrid } from 'components'
+import { PoolListTokenTable, Button, Loading, PoolParamsGrid, InvestParamsGrid } from 'components'
 import {
   joinPool, joinswapExternAmountIn, joinswapPoolAmountOut,
   exitPool, exitswapPoolAmountIn, exitswapExternAmountOut
@@ -32,10 +32,12 @@ class PoolInvestView extends Component {
       pool: {
         poolParams: {},
         tokenParams: {},
+        investParams: {},
         pendingTx: false,
         txError: null,
         loadedParams: false,
-        loadedTokenParams: false
+        loadedTokenParams: false,
+        loadedInvestParams: false
       }
     }
   }
@@ -57,7 +59,21 @@ class PoolInvestView extends Component {
       address
     })
     await this.getParams()
+    await this.getInvestParams()
     await this.getTokenParams()
+  }
+
+  async getInvestParams() {
+    const { address, provider, pool } = this.state
+    const { defaultAccount } = provider.web3Provider.eth
+    const investData = await bPoolService.getInvestParams(provider, address, defaultAccount)
+    this.setState({
+      pool: {
+        ...pool,
+        loadedInvestParams: true,
+        investParams: investData.data
+      }
+    })
   }
 
   async getTokenParams() {
@@ -154,6 +170,14 @@ class PoolInvestView extends Component {
           <Grid item xs={12} sm={12}>
             {
               pool.loadedParams ? (<PoolParamsGrid address={address} pool={pool} />) :
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loading />
+              </div>
+            }
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            {
+              pool.loadedInvestParams ? (<InvestParamsGrid address={address} pool={pool} />) :
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Loading />
               </div>

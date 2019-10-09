@@ -33,14 +33,12 @@ export function hexToNumberString(value) {
 export function fromFeeToPercentage(value) {
   const etherValue = Web3.utils.fromWei(value)
   const percentageValue = etherValue * 100
-  console.log('fee read', etherValue, percentageValue)
   return percentageValue
 }
 
 export function fromPercentageToFee(value) {
   const weiValue = new BN(Web3.utils.toWei(value, 'ether'))
   const feeValue = weiValue.div(new BN(100))
-  console.log('fee inputted', weiValue.toString(), feeValue.toString())
   return feeValue.toString()
 }
 
