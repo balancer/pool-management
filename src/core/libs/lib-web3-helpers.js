@@ -23,7 +23,7 @@ export function roundValue(value) {
   if (decimal === -1) {
     return value
   }
-  return value.slice(0, decimal + 10)
+  return value.slice(0, decimal + 5)
 }
 
 export function hexToNumberString(value) {

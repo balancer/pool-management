@@ -162,7 +162,7 @@ class PoolSwapView extends Component {
       provider, address, makePublic
     } = this.state
 
-    const call = await bPoolService.makePublic(provider, address, makePublic.publicAmount)
+    const call = await bPoolService.makePublic(provider, address, web3Lib.toWei(makePublic.publicAmount))
 
     if (call.result === 'failure') {
       error(call.data.error.message)

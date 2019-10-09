@@ -38,8 +38,10 @@ export default function PooListTokenTable(props) {
       address: token,
       addressStub: web3Lib.toAddressStub(token),
       balance,
+      balanceStub: web3Lib.roundValue(web3Lib.toEther(balance)),
       weight,
-      userBalance
+      userBalance,
+      userBalanceStub: web3Lib.roundValue(web3Lib.toEther(userBalance))
     }
   })
 
@@ -92,10 +94,14 @@ export default function PooListTokenTable(props) {
                     </Tooltip>
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    {row.userBalance ? web3Lib.roundValue(web3Lib.toEther(row.userBalance.toString())) : 0}
+                    <Tooltip title={web3Lib.toEther(row.userBalance)} interactive>
+                      <Typography>{row.userBalance ? web3Lib.roundValue(web3Lib.toEther(row.userBalance.toString())) : 0}</Typography>
+                    </Tooltip>
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
-                    {web3Lib.roundValue(web3Lib.toEther(row.balance))}
+                    <Tooltip title={web3Lib.toEther(row.balance)} interactive>
+                      <Typography>{web3Lib.roundValue(web3Lib.toEther(row.balance))}</Typography>
+                    </Tooltip>
                   </TableCell>
                   <TableCell key={`wright${row.address}`}>
                     {web3Lib.roundValue(web3Lib.toEther(row.weight))}
