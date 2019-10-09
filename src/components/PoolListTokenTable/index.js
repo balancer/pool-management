@@ -1,5 +1,6 @@
 import React from 'react'
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles, Tooltip, Typography } from '@material-ui/core'
+import { TokenText } from 'components'
 import { web3Lib } from 'core/libs'
 import ToggleButton from '../ToggleButton'
 import PoolInvestView from '../../containers/PoolInvestView'
@@ -38,10 +39,8 @@ export default function PooListTokenTable(props) {
       address: token,
       addressStub: web3Lib.toAddressStub(token),
       balance,
-      balanceStub: web3Lib.roundValue(web3Lib.toEther(balance)),
       weight,
-      userBalance,
-      userBalanceStub: web3Lib.roundValue(web3Lib.toEther(userBalance))
+      userBalance
     }
   })
 
@@ -94,17 +93,13 @@ export default function PooListTokenTable(props) {
                     </Tooltip>
                   </TableCell>
                   <TableCell key={`mybalance${row.address}`}>
-                    <Tooltip title={web3Lib.toEther(row.userBalance)} interactive>
-                      <Typography>{row.userBalance ? web3Lib.roundValue(web3Lib.toEther(row.userBalance.toString())) : 0}</Typography>
-                    </Tooltip>
+                    <TokenText weiValue={row.userBalance} />
                   </TableCell>
                   <TableCell key={`poolbalance${row.address}`}>
-                    <Tooltip title={web3Lib.toEther(row.balance)} interactive>
-                      <Typography>{web3Lib.roundValue(web3Lib.toEther(row.balance))}</Typography>
-                    </Tooltip>
+                    <TokenText weiValue={row.balance} />
                   </TableCell>
-                  <TableCell key={`wright${row.address}`}>
-                    {web3Lib.roundValue(web3Lib.toEther(row.weight))}
+                  <TableCell key={`weight${row.address}`}>
+                    <TokenText weiValue={row.weight} />
                   </TableCell>
                   <TableCell key={`toggl${row.address}`}>
                     <ToggleButton token={row.address} provider={provider} address={address} />

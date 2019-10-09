@@ -11,10 +11,10 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function ValueDisplayGrid(props) {
+export default function SpotPriceGrid(props) {
   const {
- title, inputAmount, outputAmount, effectivePrice
-} = props
+    title, inputAmount, outputAmount, effectivePrice
+  } = props
 
   const classes = useStyles()
 

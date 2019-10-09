@@ -100,6 +100,11 @@ class PoolInvestView extends Component {
     })
   }
 
+  async updateParams() {
+    await this.getInvestParams()
+    await this.getTokenParams()
+  }
+
   render() {
     const {
       selectedAction, tokenAddress, tokenAmount, pool, address, provider
