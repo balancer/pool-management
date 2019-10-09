@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function TokenParametersTable(props) {
+export default function PoolList(props) {
   const {
     poolData,
     linkPath

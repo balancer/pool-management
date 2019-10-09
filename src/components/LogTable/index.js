@@ -15,7 +15,7 @@ const columns = [
   { id: 'log', label: 'Log', minWidth: 200 }
 ]
 
-export default function TokenParametersTable(props) {
+export default function LogTable(props) {
   const {
     logData
   } = props

@@ -13,7 +13,6 @@ import PoolParamsGrid from 'components/PoolParamsGrid'
 import InvestParamsGrid from 'components/InvestParamsGrid'
 import PoolTitleCard from 'components/PoolTitleCard'
 import SpotPriceGrid from 'components/SpotPriceGrid'
-import TokenParametersTable from 'components/TokenParametersTable'
 import ValueDisplayGrid from 'components/ValueDisplayGrid'
 import Loading from 'components/Loading'
 import SwapForm from 'components/SwapForm'
@@ -34,7 +33,6 @@ export {
   InvestParamsGrid,
   PoolTitleCard,
   SpotPriceGrid,
-  TokenParametersTable,
   ValueDisplayGrid,
   Loading,
   SwapForm
