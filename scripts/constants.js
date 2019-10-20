@@ -9,9 +9,9 @@ const TEN15 = new BN('1000000000000000');
 const TEN9 = new BN('1000000000');
 
 const schema = {
-    BPool: require('../external-contracts/BPool'),
-    BFactory: require('../external-contracts/BFactory'),
-    TestToken: require('../external-contracts/TestToken')
+    BPool: require('../src/abi/BPool'),
+    BFactory: require('../src/abi/BFactory'),
+    TestToken: require('../src/abi/TestToken')
 }
 
 module.exports = {

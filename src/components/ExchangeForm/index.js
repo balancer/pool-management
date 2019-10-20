@@ -87,7 +87,6 @@ export default function ExchangeForm(props) {
         <TextField
           id="amount-in"
           label="Input"
-          placeholder="0"
           value={values.inputAmount}
           onChange={handleChange('inputAmount')}
           type="number"
@@ -126,7 +125,6 @@ export default function ExchangeForm(props) {
         <TextField
           id="amount-out"
           label="Output (estimated)"
-          placeholder="0"
           value={values.outputAmount}
           type="number"
           className={classes.textField}

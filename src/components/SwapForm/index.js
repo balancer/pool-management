@@ -1,74 +1,95 @@
 import React from 'react'
-import { makeStyles, InputLabel, MenuItem, FormControl, Select, Grid } from '@material-ui/core'
-import { SwapFormHandler } from './forms'
+import { InputLabel, MenuItem, FormControl, Select, Grid } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles';
+import { observer, inject } from 'mobx-react'
+import SwapFormHandler from './SwapFormHandler'
+import { methodNames, labels } from 'stores/SwapForm'
 
-const useStyles = makeStyles(theme => ({
-  button: {
-    display: 'block',
-    marginTop: theme.spacing(2)
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120
-  }
-}))
+const styles = theme => ({
+    button: {
+        display: 'block',
+        marginTop: theme.spacing(2)
+    },
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120
+    }
+})
 
+@inject('root')
+@observer
+class SwapForm extends React.Component {
+    constructor(props) {
+        super(props)
 
-export default function SwapForm(props) {
-  const {
- address, provider, tokenParams, updateTokenParams, setSwapSelection
-} = props
-  const classes = useStyles()
-  const [method, setMethod] = React.useState('exactAmountIn')
-  const [open, setOpen] = React.useState(false)
+        this.state = {
+            method: 'exactAmountIn',
+            open: false
+        }
+    }
 
-  const handleDropdownChange = (event) => {
-    setMethod(event.target.value)
-    setSwapSelection(event.target.value)
-  }
+    handleClose = () => {
+        this.setState({ open: false })
+    }
 
-  const handleClose = () => {
-    setOpen(false)
-  }
+    handleOpen = () => {
+        this.setState({ open: true })
+    }
 
-  const handleOpen = () => {
-    setOpen(true)
-  }
+    handleDropdownChange = (event) => {
+        console.log(event.target.value)
+        const { swapFormStore } = this.props.root
+        swapFormStore.setSwapMethod(event.target.value)
+        this.setState({ method: event.target.value })
+    }
 
+    render() {
+        const { poolAddress, classes } = this.props
+        const { poolStore, tokenStore, swapFormStore } = this.props.root
+        const { open, method } = this.state
 
-  const methods = [
-    { label: 'Exact Amount In', name: 'exactAmountIn' },
-    { label: 'Exact Amount Out', name: 'exactAmountOut' },
-    { label: 'Exact Marginal Price', name: 'exactMarginalPrice' }
-  ]
-  return (
-    <Grid container style={{ marginBottom: '50px' }}>
-      <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="demo-controlled-open-select">Swap method</InputLabel>
-        <Select
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          value={method}
-          onChange={handleDropdownChange}
-          inputProps={{
-            name: 'method',
-            id: 'demo-controlled-open-select'
-          }}
-        >
-          {
-            methods.map((type, index) => {
-              const id = index * 1
-              return (
-                <MenuItem value={type.name} key={id}>
-                  {type.label}
-                </MenuItem>
-              )
-            })
-          }
-        </Select>
-      </FormControl>
-      <SwapFormHandler updateTokenParams={updateTokenParams} method={method} provider={provider} address={address} tokenParams={tokenParams} />
-    </Grid>
-  )
+        const pool = poolStore.getPool(poolAddress)
+
+        if (!pool || !pool.loadedTokenParams || !pool.loadedParams) {
+            return
+        }
+
+        const methods = [
+            { label: labels.methods.EXACT_AMOUNT_IN, name: methodNames.EXACT_AMOUNT_IN },
+            { label: labels.methods.EXACT_AMOUNT_OUT, name: methodNames.EXACT_AMOUNT_OUT },
+            { label: labels.methods.EXACT_MARGINAL_PRICE, name: methodNames.EXACT_MARGINAL_PRICE }
+        ]
+        return (
+            <Grid container style={{ marginBottom: '50px' }}>
+                <FormControl className={classes.formControl}>
+                    <InputLabel htmlFor="demo-controlled-open-select">Swap method</InputLabel>
+                    <Select
+                        open={open}
+                        onClose={this.handleClose}
+                        onOpen={this.handleOpen}
+                        value={method}
+                        onChange={this.handleDropdownChange}
+                        inputProps={{
+                            name: 'method',
+                            id: 'demo-controlled-open-select'
+                        }}
+                    >
+                        {
+                            methods.map((type, index) => {
+                                const id = index * 1
+                                return (
+                                    <MenuItem value={type.name} key={id}>
+                                        {type.label}
+                                    </MenuItem>
+                                )
+                            })
+                        }
+                    </Select>
+                </FormControl>
+                <SwapFormHandler poolAddress={poolAddress} />
+            </Grid>
+        )
+    }
 }
+
+export default withStyles(styles)(SwapForm)

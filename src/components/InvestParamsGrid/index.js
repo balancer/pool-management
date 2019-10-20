@@ -1,48 +1,58 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid'
+import { observer, inject } from 'mobx-react'
 import IconCard from 'components/IconCard'
-import { web3Lib } from 'core/libs'
+import * as helpers from 'utils/helpers'
 
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   root: {
     flexGrow: 1
   }
-}))
+})
 
-export default function InvestParamsGrid(props) {
-  const { pool } = props
-  const params = pool.investParams
-
-  console.log('here!')
-
-  let isSharedText
-
-  if (params.isFinalized) {
-    isSharedText = 'Shared'
-  } else {
-    isSharedText = 'Private'
+@inject('root')
+@observer
+class InvestParamsGrid extends React.Component {
+  constructor(props) {
+    super(props)
   }
 
-  const userBalance = web3Lib.toEther(params.userBalance)
-  const totalSupply = web3Lib.toEther(params.totalSupply)
+  render() {
+    const { poolAddress, classes } = this.props
+    const { poolStore, tokenStore, providerStore } = this.props.root
+    const pool = poolStore.getPool(poolAddress)
+    const params = pool.investParams
 
-  const classes = useStyles()
+    const userAddress = providerStore.getDefaultAccount()
+    const userBalance = helpers.roundValue(helpers.fromWei(tokenStore.getBalance(poolAddress, userAddress)), 7)
+    const totalSupply = helpers.roundValue(helpers.fromWei(params.totalSupply), 7)
 
-  return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={6} sm={4}>
-          <IconCard title="My Pool Tokens" text={userBalance} />
+    let isSharedText
+
+    if (params.isFinalized) {
+      isSharedText = 'Shared'
+    } else {
+      isSharedText = 'Private'
+    }
+
+    return (
+      <div className={classes.root}>
+        <Grid container spacing={3}>
+          <Grid item xs={6} sm={4}>
+            <IconCard title="My Pool Tokens" text={userBalance} />
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <IconCard title="Total Pool Tokens" text={totalSupply} />
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <IconCard title="Shared Status" text={isSharedText} />
+          </Grid>
         </Grid>
-        <Grid item xs={6} sm={4}>
-          <IconCard title="Total Pool Tokens" text={totalSupply} />
-        </Grid>
-        <Grid item xs={6} sm={4}>
-          <IconCard title="Shared Status" text={isSharedText} />
-        </Grid>
-      </Grid>
-    </div>
-  )
+      </div>
+    )
+  }
 }
+
+export default withStyles(styles)(InvestParamsGrid)

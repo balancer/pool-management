@@ -1,18 +1,18 @@
 import React from 'react'
 import { Tooltip, Typography } from '@material-ui/core'
-import { web3Lib } from 'core/libs'
+import * as helpers from 'utils/helpers'
 
 export default function TokenText(props) {
-    const {
-        weiValue
-    } = props
+  const {
+    weiValue
+  } = props
 
-    const etherValue = web3Lib.toEther(weiValue)
-    const roundedValue = web3Lib.roundValue(web3Lib.toEther(weiValue))
+  const etherValue = helpers.fromWei(weiValue)
+  const roundedValue = helpers.roundValue(helpers.fromWei(weiValue))
 
-    return (
-      <Tooltip title={etherValue} interactive>
-        <Typography>{roundedValue}</Typography>
-      </Tooltip>
-    )
+  return (
+    <Tooltip title={etherValue} interactive>
+      <Typography>{roundedValue}</Typography>
+    </Tooltip>
+  )
 }

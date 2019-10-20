@@ -1,8 +1,4 @@
-const CombinedSchema = require('../external-contracts/combined')
-const TestTokenSchema = require('../external-contracts/TestToken')
-
 const Web3 = require('web3')
-const networkConfig = require('../networks.js');
 const fs = require('fs');
 const schema = require('./constants').schema;
 
@@ -55,7 +51,7 @@ const params = {
 }
 
 function writeConfigFile(deployed) {
-    const filePath = process.cwd() + `/src/configs//deployed.json`;
+    const filePath = process.cwd() + `/src/deployed.json`;
 
     // let config = {
     //     factoryAddress: factoryAddress,
@@ -109,7 +105,7 @@ async function deployPreConfigured() {
     for (let i = 0; i < coinParams.length; i++) {
         console.log(`Deploying Coin ${i}...`)
         const coin = await TestToken.deploy({
-            data: TestTokenSchema.bytecode,
+            data: schema.TestToken.bytecode,
             arguments:
                 [coinParams[i].name, coinParams[i].symbol, 18, tokenSupply]
         }).send({ gas: MAX_GAS })
@@ -130,7 +126,7 @@ async function deployPreConfigured() {
     for (let i = 0; i < extraCoinParams.length; i++) {
         console.log(`Deploying Extra Coin ${i}...`)
         const coin = await TestToken.deploy({
-            data: TestTokenSchema.bytecode,
+            data: schema.TestToken.bytecode,
             arguments:
                 [extraCoinParams[i].name, extraCoinParams[i].symbol, 18, tokenSupply]
         }).send({ gas: MAX_GAS })

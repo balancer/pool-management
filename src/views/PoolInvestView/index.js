@@ -1,0 +1,74 @@
+import React, { Component } from 'react'
+import { observer, inject } from 'mobx-react'
+import { Typography, Container, Grid } from '@material-ui/core'
+import { PoolListTokenTable, PoolInvestForm, Loading, PoolParamsGrid, InvestParamsGrid, LoadingCard } from 'components'
+
+
+@inject('root')
+@observer
+class PoolInvestView extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      address: ''
+    }
+  }
+
+  async componentDidMount() {
+    const { address } = this.props.match.params
+    const { providerStore, poolStore } = this.props.root
+    poolStore.setCurrentPool(address)
+    this.setState({ address })
+
+    const userAddress = providerStore.getDefaultAccount()
+
+    // Get pool params
+    await poolStore.fetchParams(address)
+    await poolStore.fetchInvestParams(address, userAddress)
+    await poolStore.fetchTokenParams(address)
+  }
+
+  render() {
+    const { address } = this.state
+    const { poolStore, providerStore } = this.props.root
+    const userAddress = providerStore.getDefaultAccount()
+
+    const pool = poolStore.getPool(address)
+    const paramsLoaded = poolStore.isParamsLoaded(address)
+    const tokenParamsLoaded = poolStore.isTokenParamsLoaded(address)
+    const investParamsLoaded = poolStore.isInvestParamsLoaded(address, userAddress)
+
+    return (
+      <Container>
+        <br></br>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography variant="h3" component="h3">Invest</Typography>
+          </Grid>
+          {paramsLoaded && tokenParamsLoaded && investParamsLoaded ?
+            <React.Fragment>
+              <Grid item xs={12} sm={12}>
+                <PoolParamsGrid poolAddress={address} />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <InvestParamsGrid poolAddress={address} />
+              </Grid>
+              <Grid item xs={12}>
+                <PoolListTokenTable displayMode="pool" poolAddress={address} userAddress={userAddress} linkPath="logs" />
+              </Grid>
+              <Grid container>
+                <PoolInvestForm poolAddress={address} />
+              </Grid>
+            </React.Fragment> :
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <LoadingCard title={'Loading Pool'} />
+            </div>
+          }
+        </Grid>
+      </Container>
+    )
+  }
+}
+
+export default PoolInvestView
