@@ -209,24 +209,6 @@ class ExactAmountOutForm extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextValidator
-                                        id="limit-in"
-                                        name="inputLimit"
-                                        label={labels.inputs.INPUT_LIMIT}
-                                        value={inputs.inputLimit}
-                                        onChange={e => this.onChange(e, formNames.INPUT_FORM)}
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true
-                                        }}
-                                        margin="normal"
-                                        variant="outlined"
-                                        fullWidth
-                                        validators={validators.optionalTokenValueValidators}
-                                        errorMessages={validators.optionalTokenValueValidatorErrors}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextValidator
                                         id="limit-price"
                                         name="limitPrice"
                                         label={labels.inputs.LIMIT_PRICE}

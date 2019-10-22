@@ -2,8 +2,8 @@ import React from 'react'
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid'
 import { observer, inject } from 'mobx-react'
-import IconCard from 'components/IconCard'
 import * as helpers from 'utils/helpers'
+import TokenCard from 'components/TokenCard';
 
 const styles = theme => ({
   root: {
@@ -17,21 +17,24 @@ class InvestParamsGrid extends React.Component {
   render() {
     const { poolAddress, classes } = this.props
     const { poolStore, tokenStore, providerStore } = this.props.root
+    const userAddress = providerStore.getDefaultAccount()
     const pool = poolStore.getPool(poolAddress)
     const params = pool.investParams
 
-    const userAddress = providerStore.getDefaultAccount()
-    const userBalance = helpers.roundValue(helpers.fromWei(tokenStore.getBalance(poolAddress, userAddress)), 7)
-    const totalSupply = helpers.roundValue(helpers.fromWei(params.totalSupply), 7)
+    const userBalance = tokenStore.getBalance(poolAddress, userAddress)
+    const totalSupply = params.totalSupply
+
+    const userBalanceDisplay = helpers.roundValue(helpers.fromWei(userBalance), 7)
+    const totalSupplyDisplay = helpers.roundValue(helpers.fromWei(totalSupply), 7)
 
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs={6} sm={6}>
-            <IconCard title="My Pool Tokens" text={userBalance} />
+            <TokenCard title="My Pool Tokens" weiValue={userBalance} />
           </Grid>
           <Grid item xs={6} sm={6}>
-            <IconCard title="Total Pool Tokens" text={totalSupply} />
+            <TokenCard title="Total Pool Tokens" weiValue={totalSupply} />
           </Grid>
         </Grid>
       </div>

@@ -172,13 +172,19 @@ export default class PoolStore {
             const fees = await pool.methods.getFees().call()
             const numTokens = await pool.methods.getNumTokens().call()
             const isShared = await pool.methods.isFinalized().call()
+            const isPublicSwap = await pool.methods.isPublicSwap().call()
+            const isPublicJoin = await pool.methods.isPublicJoin().call()
+            const isPublicExit = await pool.methods.isPublicExit().call()
 
             this.setPoolDataProperty(poolAddress, 'params', {
                 swapFee: fees['0'],
                 exitFee: fees['1'],
                 manager,
                 numTokens,
-                isShared
+                isShared,
+                isPublicSwap,
+                isPublicJoin,
+                isPublicExit
             })
 
             this.setPoolDataProperty(poolAddress, 'paramsStatus', statusCodes.SUCCESS)
@@ -336,7 +342,6 @@ export default class PoolStore {
             }
 
             let tokenList = []
-            this.setPoolDataProperty(poolAddress, 'tokenWeights', tokenWeights)
 
             for (const key of Object.keys(tokenWeights)) {
                 await tokenStore.fetchBalanceOf(key, poolAddress)
@@ -345,6 +350,7 @@ export default class PoolStore {
                 tokenList.push(key)
             }
 
+            this.setPoolDataProperty(poolAddress, 'tokenWeights', tokenWeights)
             this.setPoolDataProperty(poolAddress, 'tokenList', tokenList)
             this.setPoolDataProperty(poolAddress, 'isTokenBound', isTokenBound)
 

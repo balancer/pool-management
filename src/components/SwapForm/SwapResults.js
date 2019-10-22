@@ -38,6 +38,7 @@ class SwapResults extends React.Component {
             inputAmount = '--'
             outputAmount = '--'
             effectivePrice = '--'
+            marginalPrice = '--'
         }
 
         if (swapMethod === methodNames.EXACT_AMOUNT_IN) {
