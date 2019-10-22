@@ -3,6 +3,10 @@ const fs = require('fs');
 const schema = require('./constants').schema;
 
 const web3 = new Web3("http://localhost:8545");
+const toHex = web3.utils.toHex;
+const toBN = web3.utils.toBN;
+const toWei = web3.utils.toWei;
+const fromWei = web3.utils.fromWei;
 
 const MAX_GAS = require('./constants').MAX_GAS;
 const MAX_UINT = require('./constants').MAX_UINT;
@@ -10,42 +14,48 @@ const MAX_UINT = require('./constants').MAX_UINT;
 const params = {
     coinParams: [
         {
-            name: 'CoinA',
-            symbol: 'CoinA',
-            balance: '1000000000000000000000',
-            weight: '1000000000000000000'
+            name: 'WETH',
+            symbol: 'WETH',
+            balance: toWei('50'),
+            weight: toWei('5'),
+            userBalance: toWei('50'),
+            initialSupply: toWei('300')
         },
         {
-            name: 'CoinB',
-            symbol: 'CoinB',
-            balance: '200000000000000000000',
-            weight: '2000000000000000000'
+            name: 'MKR',
+            symbol: 'MKR',
+            balance: toWei('20'),
+            weight: toWei('5'),
+            userBalance: toWei('24'),
+            initialSupply: toWei('120')
         },
         {
-            name: 'CoinC',
-            symbol: 'CoinC',
-            balance: '500000000000000000000',
-            weight: '5000000000000000000'
+            name: 'DAI',
+            symbol: 'DAI',
+            balance: toWei('1000'),
+            weight: toWei('5'),
+            userBalance: toWei('4000'),
+            initialSupply: toWei('17000')
         },
     ],
     extraCoinParams: [
         {
             name: 'CoinD',
             symbol: 'CoinD',
-            balance: '1000000000000000000000',
-            weight: '1000000000000000000'
+            userBalance: toWei('50'),
+            initialSupply: toWei('200'),
         },
         {
             name: 'CoinE',
             symbol: 'CoinE',
-            balance: '200000000000000000000',
-            weight: '2000000000000000000'
+            userBalance: toWei('24'),
+            initialSupply: toWei('100'),
         },
         {
             name: 'CoinF',
             symbol: 'CoinF',
-            balance: '500000000000000000000',
-            weight: '5000000000000000000'
+            userBalance: toWei('4000'),
+            initialSupply: toWei('17000'),
         },
     ]
 }
@@ -99,15 +109,13 @@ async function deployPreConfigured() {
     // Deploy Tokens
     let coins = [];
 
-    const tokenSupply = '4000000000000000000000'
-    const userSupply = '100000000000000000000'
-
     for (let i = 0; i < coinParams.length; i++) {
         console.log(`Deploying Coin ${i}...`)
+        const initialSupply = coinParams[i].initialSupply
         const coin = await TestToken.deploy({
             data: schema.TestToken.bytecode,
             arguments:
-                [coinParams[i].name, coinParams[i].symbol, 18, tokenSupply]
+                [coinParams[i].name, coinParams[i].symbol, 18, initialSupply]
         }).send({ gas: MAX_GAS })
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         coins.push(coin);
@@ -115,7 +123,7 @@ async function deployPreConfigured() {
 
     for (let i = 0; i < coins.length; i++) {
         console.log(`Distributing coin ${i} to test accounts...`)
-        const amount = userSupply
+        const amount = coinParams[i].userBalance
         await coins[i].methods.transfer(newManager, amount).send()
         await coins[i].methods.transfer(investor, amount).send()
         await coins[i].methods.transfer(user, amount).send()
@@ -125,10 +133,11 @@ async function deployPreConfigured() {
 
     for (let i = 0; i < extraCoinParams.length; i++) {
         console.log(`Deploying Extra Coin ${i}...`)
+        const initialSupply = extraCoinParams[i].initialSupply
         const coin = await TestToken.deploy({
             data: schema.TestToken.bytecode,
             arguments:
-                [extraCoinParams[i].name, extraCoinParams[i].symbol, 18, tokenSupply]
+                [extraCoinParams[i].name, extraCoinParams[i].symbol, 18, initialSupply]
         }).send({ gas: MAX_GAS })
         // const coin = new web3.eth.Contract(abi.TestToken, coinAddress)
         extraCoins.push(coin);
@@ -136,7 +145,7 @@ async function deployPreConfigured() {
 
     for (let i = 0; i < extraCoins.length; i++) {
         console.log(`Distributing extra coin ${i} to test accounts...`)
-        const amount = userSupply
+        const amount = extraCoinParams[i].userBalance
         await extraCoins[i].methods.transfer(newManager, amount).send()
         await extraCoins[i].methods.transfer(investor, amount).send()
         await extraCoins[i].methods.transfer(user, amount).send()
@@ -152,25 +161,13 @@ async function deployPreConfigured() {
     const poolAddress = tx.events['LOG_NEW_POOL'].returnValues.pool
     const bpool = new web3.eth.Contract(schema.BPool.abi, poolAddress, { from: defaultAccount });
 
-    // Set Initial Pool Params
-
-
-    // TODO: Multiply all weights by 100
-
-    // await bpool.methods.setParams(coins[0].options.address, coinParams[0].balance, coinParams[0].weight)
     // Set Token Approvals + Bind Tokens
     for (let i = 0; i < coins.length; i++) {
         console.log(`Approving Coin ${i} to Bind...`)
         await coins[i].methods.approve(bpool.options.address, MAX_UINT).send()
         console.log(`Binding Coin ${i} to BPool...`)
-        await bpool.methods.bind(coins[i].options.address).send({ gas: MAX_GAS })
-        console.log(`Setting BPool Parameters for Coin ${i}...`)
-        await bpool.methods.setParams(coins[i].options.address, coinParams[i].balance, coinParams[i].weight).send({ gas: MAX_GAS })
+        await bpool.methods.bind(coins[i].options.address, coinParams[i].balance, coinParams[i].weight).send({ gas: MAX_GAS })
     }
-
-    //Start Pool
-    console.log(`Starting BPool...`)
-    await bpool.methods.start().send()
 
     let deployed = {
         bFactory: toChecksum(factory.options.address),

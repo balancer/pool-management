@@ -151,10 +151,10 @@ class ExactAmountOutForm extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextValidator
-                                        id="amount-out"
-                                        name="outputAmount"
-                                        label={labels.inputs.OUTPUT_AMOUNT}
-                                        value={inputs.outputAmount}
+                                        id="limit-in"
+                                        name="inputLimit"
+                                        label={labels.inputs.INPUT_LIMIT}
+                                        value={inputs.inputLimit}
                                         onChange={e => this.onChange(e, formNames.INPUT_FORM)}
                                         type="number"
                                         InputLabelProps={{
@@ -163,8 +163,8 @@ class ExactAmountOutForm extends React.Component {
                                         margin="normal"
                                         variant="outlined"
                                         fullWidth
-                                        validators={validators.requiredTokenValueValidators}
-                                        errorMessages={validators.requiredTokenValueValidatorErrors}
+                                        validators={validators.optionalTokenValueValidators}
+                                        errorMessages={validators.optionalTokenValueValidatorErrors}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -188,6 +188,24 @@ class ExactAmountOutForm extends React.Component {
                                             </option>
                                         ))}
                                     </TextField>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextValidator
+                                        id="amount-out"
+                                        name="outputAmount"
+                                        label={labels.inputs.OUTPUT_AMOUNT}
+                                        value={inputs.outputAmount}
+                                        onChange={e => this.onChange(e, formNames.INPUT_FORM)}
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true
+                                        }}
+                                        margin="normal"
+                                        variant="outlined"
+                                        fullWidth
+                                        validators={validators.requiredTokenValueValidators}
+                                        errorMessages={validators.requiredTokenValueValidatorErrors}
+                                    />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextValidator

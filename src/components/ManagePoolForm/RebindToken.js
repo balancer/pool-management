@@ -81,7 +81,7 @@ class RebindToken extends Component {
                         <Button
                             type="submit"
                             variant="contained"
-                            onClick={() => poolStore.setTokenParams(poolAddress, tokenAddress, helpers.toWei(balance), helpers.toWei(weight))}
+                            onClick={() => poolStore.rebind(poolAddress, tokenAddress, helpers.toWei(balance), helpers.toWei(weight))}
                         >
                             Submit
                 </Button>

@@ -7,7 +7,7 @@ import Big from 'big.js/big.mjs';
 import * as log from 'loglevel'
 
 const bindSig = '0xe4e1e53800000000000000000000000000000000000000000000000000000000'
-const setParamsSig = '0x7ff1055200000000000000000000000000000000000000000000000000000000'
+const setParamsSig = '0x3fdddaa200000000000000000000000000000000000000000000000000000000'
 
 const LOG_NEW_POOL_EVENT = 'LOG_NEW_POOL'
 export const statusCodes = {
@@ -152,13 +152,13 @@ export default class PoolStore {
         await this.fetchKnownPools()
     }
 
-    @action bind = async (poolAddress, tokenAddress) => {
+    @action bind = async (poolAddress, tokenAddress, balance, weight) => {
         const pool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         console.log('[Action] Bind', poolAddress, tokenAddress)
         try {
-            await pool.methods.bind(tokenAddress).send()
+            await pool.methods.bind(tokenAddress, balance, weight).send()
             await this.fetchTokenParams(poolAddress)
-            await this.fetchParams(poolAddress)
+            await this.fetchAllWhitelistedTokenParams(poolAddress)
         } catch (e) {
             log.error(e)
         }
@@ -171,14 +171,14 @@ export default class PoolStore {
             const manager = await pool.methods.getController().call()
             const fees = await pool.methods.getFees().call()
             const numTokens = await pool.methods.getNumTokens().call()
-            const isPaused = await pool.methods.isPaused().call()
+            const isShared = await pool.methods.isFinalized().call()
 
             this.setPoolDataProperty(poolAddress, 'params', {
                 swapFee: fees['0'],
                 exitFee: fees['1'],
                 manager,
                 numTokens,
-                isPaused
+                isShared
             })
 
             this.setPoolDataProperty(poolAddress, 'paramsStatus', statusCodes.SUCCESS)
@@ -336,6 +336,7 @@ export default class PoolStore {
             }
 
             let tokenList = []
+            this.setPoolDataProperty(poolAddress, 'tokenWeights', tokenWeights)
 
             for (const key of Object.keys(tokenWeights)) {
                 await tokenStore.fetchBalanceOf(key, poolAddress)
@@ -344,7 +345,6 @@ export default class PoolStore {
                 tokenList.push(key)
             }
 
-            this.setPoolDataProperty(poolAddress, 'tokenWeights', tokenWeights)
             this.setPoolDataProperty(poolAddress, 'tokenList', tokenList)
             this.setPoolDataProperty(poolAddress, 'isTokenBound', isTokenBound)
 
@@ -397,11 +397,11 @@ export default class PoolStore {
         }
     }
 
-    @action setTokenParams = async (poolAddress, tokenAddress, tokenBalance, tokenWeight) => {
+    @action rebind = async (poolAddress, tokenAddress, tokenBalance, tokenWeight) => {
         const pool = blockchain.loadObject('BPool', poolAddress, 'BPool')
 
         try {
-            await pool.methods.setParams(tokenAddress, tokenBalance, tokenWeight).send()
+            await pool.methods.rebind(tokenAddress, tokenBalance, tokenWeight).send()
             await this.fetchTokenParams(poolAddress)
             await this.fetchAllWhitelistedTokenParams(poolAddress)
         } catch (e) {

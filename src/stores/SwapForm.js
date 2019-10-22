@@ -77,8 +77,7 @@ export default class ManageFormStore {
 
     resetInputs() {
         this.inputs = {
-            inputToken: '',
-            outputtoken: '',
+            ...this.inputs,
             inputAmount: '',
             outputAmount: '',
             outputLimit: '',

@@ -32,6 +32,7 @@ class SwapResults extends React.Component {
         let inputAmount = helpers.roundValue(outputs.inputAmount)
         let outputAmount = helpers.roundValue(outputs.outputAmount)
         let effectivePrice = helpers.roundValue(outputs.effectivePrice)
+        let marginalPrice = helpers.roundValue(outputs.marginalPrice)
 
         if (!validSwap) {
             inputAmount = '--'
@@ -44,6 +45,7 @@ class SwapResults extends React.Component {
                 <React.Fragment>
                     <Typography variant="body1">{`${labels.outputs.OUTPUT_AMOUNT}: ${outputAmount}`}</Typography>
                     <Typography variant="body1">{`${labels.outputs.EFFECTIVE_PRICE}: ${effectivePrice}`}</Typography>
+                    <Typography variant="body1">{`${labels.outputs.MARGINAL_PRICE}: ${marginalPrice}`}</Typography>
                 </React.Fragment>
             )
         } else if (swapMethod === methodNames.EXACT_AMOUNT_OUT) {
@@ -51,6 +53,7 @@ class SwapResults extends React.Component {
                 <React.Fragment>
                     <Typography variant="body1">{`${labels.outputs.INPUT_AMOUNT}: ${inputAmount}`}</Typography>
                     <Typography variant="body1">{`${labels.outputs.EFFECTIVE_PRICE}: ${effectivePrice}`}</Typography>
+                    <Typography variant="body1">{`${labels.outputs.MARGINAL_PRICE}: ${marginalPrice}`}</Typography>
                 </React.Fragment>
             )
         } else if (swapMethod === methodNames.EXACT_MARGINAL_PRICE) {

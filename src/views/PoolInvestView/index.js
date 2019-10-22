@@ -61,9 +61,15 @@ class PoolInvestView extends Component {
                 <PoolInvestForm poolAddress={address} />
               </Grid>
             </React.Fragment> :
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <LoadingCard title={'Loading Pool'} />
-            </div>
+            <Grid container spacing={3}>
+              <Grid item xs={4}></Grid>
+              <Grid item xs={4}>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <LoadingCard title={''} />
+                </div>
+              </Grid>
+              <Grid item xs={4}></Grid>
+            </Grid>
           }
         </Grid>
       </Container>

@@ -3,6 +3,8 @@ import { Container, Grid, Typography, TextField, Button } from '@material-ui/cor
 import * as helpers from 'utils/helpers'
 import { formNames } from 'stores/ManageForm'
 import { observer, inject } from 'mobx-react'
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
+import { validators } from '../validators'
 
 @inject('root')
 @observer
@@ -55,7 +57,7 @@ class BindToken extends Component {
                             ))}
                         </TextField>
                     </Grid>
-                    {/* <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={4}>
                         <TextField
                             label="Balance"
                             name="balance"
@@ -70,12 +72,12 @@ class BindToken extends Component {
                         type="number"
                         value={weight}
                         onChange={e => this.onChange(e, formNames.BIND_TOKEN_FORM)}
-                    /></Grid> */}
+                    /></Grid>
                     <Grid item xs={12} sm={4}>
                         <Button
                             type="submit"
                             variant="contained"
-                            onClick={() => poolStore.bind(poolAddress, tokenAddress)}
+                            onClick={() => poolStore.bind(poolAddress, tokenAddress, helpers.toWei(balance), helpers.toWei(weight))}
                         >
                             Submit
                   </Button>

@@ -24,12 +24,11 @@ class PoolParamsGrid extends React.Component {
 
     const pool = poolStore.poolData[poolAddress]
 
-    let activeText
-
-    if (pool.params.isPaused) {
-      activeText = 'No'
+    let sharedText
+    if (pool.params.isShared) {
+      sharedText = 'Yes'
     } else {
-      activeText = 'Yes'
+      sharedText = 'No'
     }
 
     const swapFee = helpers.fromFeeToPercentage(pool.params.swapFee)
@@ -45,7 +44,7 @@ class PoolParamsGrid extends React.Component {
             <IconCard title="Fees" text={`Swap Fee: ${swapFee}%`} text2={`Exit Fee: ${exitFee}%`} />
           </Grid>
           <Grid item xs={6} sm={3}>
-            <IconCard title="Active" text={activeText} addRows />
+            <IconCard title="Shared" text={sharedText} addRows />
           </Grid>
         </Grid>
       </div>
