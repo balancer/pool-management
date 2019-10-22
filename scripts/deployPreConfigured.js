@@ -169,6 +169,12 @@ async function deployPreConfigured() {
         await bpool.methods.bind(coins[i].options.address, coinParams[i].balance, coinParams[i].weight).send({ gas: MAX_GAS })
     }
 
+    console.log('Set Public Swap, Join, Exit on Pool...')
+
+    await bpool.methods.setPublicSwap(true).send()
+    await bpool.methods.setPublicJoin(true).send()
+    await bpool.methods.setPublicExit(true).send()
+
     let deployed = {
         bFactory: toChecksum(factory.options.address),
         bPool: toChecksum(bpool.options.address),
