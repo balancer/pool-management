@@ -28,17 +28,17 @@
     "absolutePath": "contracts/BColor.sol",
     "exportedSymbols": {
       "BBronze": [
-        4565
+        4631
       ],
       "BColor": [
-        4552
+        4618
       ]
     },
-    "id": 4566,
+    "id": 4632,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4546,
+        "id": 4612,
         "literals": [
           "solidity",
           "^",
@@ -54,9 +54,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 4552,
+        "id": 4618,
         "linearizedBaseContracts": [
-          4552
+          4618
         ],
         "name": "BColor",
         "nodeType": "ContractDefinition",
@@ -64,28 +64,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 4551,
+            "id": 4617,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getColor",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4547,
+              "id": 4613,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "706:2:11"
             },
             "returnParameters": {
-              "id": 4550,
+              "id": 4616,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4549,
+                  "id": 4615,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4551,
+                  "scope": 4617,
                   "src": "740:7:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -94,7 +94,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 4548,
+                    "id": 4614,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "740:7:11",
@@ -109,14 +109,14 @@
               ],
               "src": "739:9:11"
             },
-            "scope": 4552,
+            "scope": 4618,
             "src": "689:60:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 4566,
+        "scope": 4632,
         "src": "669:82:11"
       },
       {
@@ -125,38 +125,38 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 4553,
+              "id": 4619,
               "name": "BColor",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4552,
+              "referencedDeclaration": 4618,
               "src": "773:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_BColor_$4552",
+                "typeIdentifier": "t_contract$_BColor_$4618",
                 "typeString": "contract BColor"
               }
             },
-            "id": 4554,
+            "id": 4620,
             "nodeType": "InheritanceSpecifier",
             "src": "773:6:11"
           }
         ],
         "contractDependencies": [
-          4552
+          4618
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 4565,
+        "id": 4631,
         "linearizedBaseContracts": [
-          4565,
-          4552
+          4631,
+          4618
         ],
         "name": "BBronze",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 4563,
+              "id": 4629,
               "nodeType": "Block",
               "src": "844:41:11",
               "statements": [
@@ -167,7 +167,7 @@
                       {
                         "argumentTypes": null,
                         "hexValue": "42524f4e5a45",
-                        "id": 4560,
+                        "id": 4626,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -190,7 +190,7 @@
                           "typeString": "literal_string \"BRONZE\""
                         }
                       ],
-                      "id": 4559,
+                      "id": 4625,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -203,7 +203,7 @@
                       },
                       "typeName": "bytes32"
                     },
-                    "id": 4561,
+                    "id": 4627,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -217,36 +217,36 @@
                       "typeString": "bytes32"
                     }
                   },
-                  "functionReturnParameters": 4558,
-                  "id": 4562,
+                  "functionReturnParameters": 4624,
+                  "id": 4628,
                   "nodeType": "Return",
                   "src": "854:24:11"
                 }
               ]
             },
             "documentation": null,
-            "id": 4564,
+            "id": 4630,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "getColor",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4555,
+              "id": 4621,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "801:2:11"
             },
             "returnParameters": {
-              "id": 4558,
+              "id": 4624,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4557,
+                  "id": 4623,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4564,
+                  "scope": 4630,
                   "src": "835:7:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -255,7 +255,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 4556,
+                    "id": 4622,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "835:7:11",
@@ -270,14 +270,14 @@
               ],
               "src": "834:9:11"
             },
-            "scope": 4565,
+            "scope": 4631,
             "src": "784:101:11",
             "stateMutability": "view",
-            "superFunction": 4551,
+            "superFunction": 4617,
             "visibility": "public"
           }
         ],
-        "scope": 4566,
+        "scope": 4632,
         "src": "753:134:11"
       }
     ],
@@ -287,17 +287,17 @@
     "absolutePath": "contracts/BColor.sol",
     "exportedSymbols": {
       "BBronze": [
-        4565
+        4631
       ],
       "BColor": [
-        4552
+        4618
       ]
     },
-    "id": 4566,
+    "id": 4632,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4546,
+        "id": 4612,
         "literals": [
           "solidity",
           "^",
@@ -313,9 +313,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 4552,
+        "id": 4618,
         "linearizedBaseContracts": [
-          4552
+          4618
         ],
         "name": "BColor",
         "nodeType": "ContractDefinition",
@@ -323,28 +323,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 4551,
+            "id": 4617,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getColor",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4547,
+              "id": 4613,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "706:2:11"
             },
             "returnParameters": {
-              "id": 4550,
+              "id": 4616,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4549,
+                  "id": 4615,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4551,
+                  "scope": 4617,
                   "src": "740:7:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -353,7 +353,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 4548,
+                    "id": 4614,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "740:7:11",
@@ -368,14 +368,14 @@
               ],
               "src": "739:9:11"
             },
-            "scope": 4552,
+            "scope": 4618,
             "src": "689:60:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 4566,
+        "scope": 4632,
         "src": "669:82:11"
       },
       {
@@ -384,38 +384,38 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 4553,
+              "id": 4619,
               "name": "BColor",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4552,
+              "referencedDeclaration": 4618,
               "src": "773:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_BColor_$4552",
+                "typeIdentifier": "t_contract$_BColor_$4618",
                 "typeString": "contract BColor"
               }
             },
-            "id": 4554,
+            "id": 4620,
             "nodeType": "InheritanceSpecifier",
             "src": "773:6:11"
           }
         ],
         "contractDependencies": [
-          4552
+          4618
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 4565,
+        "id": 4631,
         "linearizedBaseContracts": [
-          4565,
-          4552
+          4631,
+          4618
         ],
         "name": "BBronze",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 4563,
+              "id": 4629,
               "nodeType": "Block",
               "src": "844:41:11",
               "statements": [
@@ -426,7 +426,7 @@
                       {
                         "argumentTypes": null,
                         "hexValue": "42524f4e5a45",
-                        "id": 4560,
+                        "id": 4626,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -449,7 +449,7 @@
                           "typeString": "literal_string \"BRONZE\""
                         }
                       ],
-                      "id": 4559,
+                      "id": 4625,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -462,7 +462,7 @@
                       },
                       "typeName": "bytes32"
                     },
-                    "id": 4561,
+                    "id": 4627,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -476,36 +476,36 @@
                       "typeString": "bytes32"
                     }
                   },
-                  "functionReturnParameters": 4558,
-                  "id": 4562,
+                  "functionReturnParameters": 4624,
+                  "id": 4628,
                   "nodeType": "Return",
                   "src": "854:24:11"
                 }
               ]
             },
             "documentation": null,
-            "id": 4564,
+            "id": 4630,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "getColor",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 4555,
+              "id": 4621,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "801:2:11"
             },
             "returnParameters": {
-              "id": 4558,
+              "id": 4624,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4557,
+                  "id": 4623,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4564,
+                  "scope": 4630,
                   "src": "835:7:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -514,7 +514,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 4556,
+                    "id": 4622,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "835:7:11",
@@ -529,14 +529,14 @@
               ],
               "src": "834:9:11"
             },
-            "scope": 4565,
+            "scope": 4631,
             "src": "784:101:11",
             "stateMutability": "view",
-            "superFunction": 4551,
+            "superFunction": 4617,
             "visibility": "public"
           }
         ],
-        "scope": 4566,
+        "scope": 4632,
         "src": "753:134:11"
       }
     ],
@@ -547,8 +547,8 @@
     "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.0.11",
-  "updatedAt": "2019-10-22T14:50:06.727Z",
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2019-10-29T00:16:43.922Z",
   "devdoc": {
     "methods": {}
   },
