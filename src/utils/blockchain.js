@@ -75,7 +75,7 @@ export const getTransactionCount = address => {
 }
 
 export const getNode = () => {
-  return promisify(web3.version.getNode)();
+  return promisify(web3.eth.getNodeInfo)();
 }
 
 export const getBlock = block => {
@@ -189,9 +189,7 @@ export const checkNetwork = (actualIsConnected, actualNetwork) => {
                 network = "main";
                 break;
               default:
-                console.log("setting network to private");
-                console.log("res.hash:", res.hash);
-                network = "private";
+                network = "ganache";
             }
             if (actualNetwork !== network) {
               resolve({

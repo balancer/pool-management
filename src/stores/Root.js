@@ -9,8 +9,8 @@ import UtilStore from "./Util"
 
 class RootStore {
     constructor() {
-        this.poolStore = new PoolStore(this);
         this.providerStore = new ProviderStore(this);
+        this.poolStore = new PoolStore(this);
         this.manageFormStore = new ManageFormStore(this);
         this.swapFormStore = new SwapFormStore(this);
         this.investFormStore = new InvestFormStore(this);

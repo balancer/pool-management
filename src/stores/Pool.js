@@ -126,8 +126,11 @@ export default class PoolStore {
     }
 
     @action fetchKnownPools = async () => {
-        console.log(`Getting pool for factory address ${deployed.bFactory}`)
-        const factory = blockchain.loadObject('BFactory', deployed.bFactory, 'BFactory')
+        const { providerStore } = this.rootStore
+        console.log(providerStore.network)
+        // TODO: fix so deployed is using provideStore.network
+        console.log(`Getting pool for factory address ${deployed['kovan'].bFactory}`)
+        const factory = blockchain.loadObject('BFactory', deployed['kovan'].bFactory, 'BFactory')
 
         const events = await factory.getPastEvents(LOG_NEW_POOL_EVENT, { fromBlock: 0, toBlock: 'latest' })
 
@@ -145,7 +148,7 @@ export default class PoolStore {
     }
 
     @action deployPool = async () => {
-        const factory = blockchain.loadObject('BFactory', deployed.bFactory, 'BFactory')
+        const factory = blockchain.loadObject('BFactory', deployed['kovan'].bFactory, 'BFactory')
         const defaultAccount = blockchain.getDefaultAccount()
 
         await factory.methods.newBPool().send({ from: defaultAccount })

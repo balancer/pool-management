@@ -1,13 +1,18 @@
 {
-  "bFactory":"0xD86C8F0327494034F60e25074420BcCF560D5610",
-  "allCoins": [
-    "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab",
-    "0x5b1869D9A4C187F2EAa108f3062412ecf0526b24",
-    "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
-  ],
-  "tokens": [
-    {"symbol":"WETH","address":"0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab"},
-    {"symbol":"MKR","address":"0x5b1869D9A4C187F2EAa108f3062412ecf0526b24"},
-    {"symbol":"DAI","address":"0xCfEB869F69431e42cdB54A4F4f105C19C080A601"}
-  ]
+  "ganache": {
+    "bFactory":"0xD86C8F0327494034F60e25074420BcCF560D5610",
+    "tokens": [
+      {"symbol":"MKR","address":"0x5b1869D9A4C187F2EAa108f3062412ecf0526b24"},
+      {"symbol":"DAI","address":"0xCfEB869F69431e42cdB54A4F4f105C19C080A601"}
+    ]
+  },
+  "kovan": {
+    "bFactory":"0x9c84391b443ea3a48788079a5f98e2ead55c9309",
+    "tokens": [
+      {"symbol":"MKR","address":"0x8fD2D32dCde13F41BC7e6D966Edde0DfF1f92E2E"},
+      {"symbol":"DAI","address":"0xbaB6D2bf6C4cae495a958507AAf0804feCa2b000"},
+      {"symbol":"USDC","address":"0x77Dac7778EF4d41Fa35810E62f6A00647c95Ae17"},
+      {"symbol":"BAT","address":"0xf5A64B7c340F4346Bf3158D1DAd89d7872213b03"}
+    ]
+  }
 }

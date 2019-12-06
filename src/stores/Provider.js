@@ -5,6 +5,10 @@ export default class ProviderStore {
     @observable provider = false;
     @observable accounts = [];
     @observable defaultAccount = null;
+    @observable isConnected = false;
+    @observable latestBlock = null;
+    @observable network = "";
+    @observable outOfSync = true;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
@@ -12,6 +16,8 @@ export default class ProviderStore {
 
     setNetwork = async () => {
         try {
+            const result = await blockchain.checkNetwork(this.isConnected, this.network);
+            Object.keys(result.data).forEach(key => { this[key] = result.data[key]; });
             await this.setAccount();
         } catch (e) {
             console.log(e);

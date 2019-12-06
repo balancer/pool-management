@@ -21,9 +21,10 @@ class RebindToken extends Component {
     render() {
         const { manageFormStore, poolStore, utilStore } = this.props.root
         const { poolAddress } = this.props
+        
+        // TODO: fix hardcoded network
+        const tokenList = deployed['kovan'].tokens
 
-        const pool = poolStore.poolData[poolAddress]
-        const tokenList = deployed.tokens
         const tokenInputData = utilStore.generateAllTokenDropdownData(tokenList)
 
         if (helpers.checkIsPropertyEmpty(manageFormStore.setTokenParamsForm.address)) {
