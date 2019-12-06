@@ -5,33 +5,28 @@ import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
 import { validators } from '../validators'
 import * as helpers from 'utils/helpers'
 import { labels, methodNames, formNames } from 'stores/InvestForm'
-import { isNumber } from 'util'
 
 @inject('root')
 @observer
 class InvestFormHandler extends React.Component {
-    constructor(props) {
-        super(props)
-    }
 
     updateProperty(form, key, value) {
         this.props.root.investFormStore[form][key] = value
     }
 
     onChange = async (event, form) => {
-        const { investFormStore } = this.props.root
         this.updateProperty(form, event.target.name, event.target.value)
     }
 
     setPropertyToMaxUintIfEmpty(value) {
-        if (!value || value == 0 || value == '') {
+        if (!value || value === 0 || value === '') {
             value = helpers.hexToNumberString(helpers.MAX_UINT)
         }
         return value
     }
 
     setPropertyToZeroIfEmpty(value) {
-        if (!value || value == '') {
+        if (!value || value === '') {
             value = '0'
         }
         return value
@@ -87,7 +82,7 @@ class InvestFormHandler extends React.Component {
     }
 
     buildTokenFormData(tokenList) {
-        const { tokenStore, investFormStore, utilStore } = this.props.root
+        const { investFormStore, utilStore } = this.props.root
         const tokenData = utilStore.generateTokenDropdownData(tokenList)
 
         if (helpers.checkIsPropertyEmpty(investFormStore.inputs.inputToken)) {
@@ -102,11 +97,8 @@ class InvestFormHandler extends React.Component {
     }
 
     buildJoinPoolForm = () => {
-        const { poolAddress } = this.props
-        const { poolStore, investFormStore } = this.props.root
+        const { investFormStore } = this.props.root
         const { inputs } = investFormStore
-
-        const pool = poolStore.getPool(poolAddress)
 
         return (
             <div>

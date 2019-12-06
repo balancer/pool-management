@@ -90,7 +90,7 @@ class ExactAmountOutForm extends React.Component {
         if (call.validSwap) {
             return {
                 inputAmount: helpers.fromWei(call.inputAmount),
-                marginalPrice: helpers.fromWei(call.marginalPrice),
+                spotPriceTarget: helpers.fromWei(call.spotPriceTarget),
                 effectivePrice: call.effectivePrice,
                 validSwap: call.validSwap
             }

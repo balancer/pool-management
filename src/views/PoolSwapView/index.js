@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Typography, Container, Grid } from '@material-ui/core'
 import { observer, inject } from 'mobx-react'
-import { SpotPriceCard, PoolParamsGrid, SwapForm, PoolListTokenTable, Loading } from 'components'
+import { PoolParamsGrid, SwapForm, PoolListTokenTable } from 'components'
 import { LoadingCard } from '../../components'
 
 @inject('root')
@@ -35,7 +35,6 @@ class PoolSwapView extends Component {
     const { poolStore, providerStore } = this.props.root
     const userAddress = providerStore.getDefaultAccount()
 
-    const pool = poolStore.getPool(address)
     const paramsLoaded = poolStore.isParamsLoaded(address)
     const tokenParamsLoaded = poolStore.isTokenParamsLoaded(address)
 

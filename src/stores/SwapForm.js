@@ -1,6 +1,4 @@
-import { observable, action, computed } from 'mobx'
-import * as deployed from "../deployed";
-import * as blockchain from "../utils/blockchain"
+import { observable, action } from 'mobx'
 
 export const formNames = {
     INPUT_FORM: 'inputs'
@@ -9,14 +7,12 @@ export const formNames = {
 export const methodNames = {
     EXACT_AMOUNT_IN: 'exactAmountIn',
     EXACT_AMOUNT_OUT: 'exactAmountOut',
-    EXACT_MARGINAL_PRICE: 'exactMarginalPrice',
 }
 
 export const labels = {
     methods: {
         EXACT_AMOUNT_IN: 'Exact Amount In',
         EXACT_AMOUNT_OUT: 'Exact Amount Out',
-        EXACT_MARGINAL_PRICE: 'Exact Marginal Price',
     },
     inputs: {
         INPUT_TOKEN: 'Input Token',

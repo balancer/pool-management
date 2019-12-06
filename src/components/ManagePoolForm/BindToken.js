@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { Container, Grid, Typography, TextField, Button } from '@material-ui/core'
+import { Grid, TextField, Button } from '@material-ui/core'
 import * as helpers from 'utils/helpers'
+import * as deployed from "../../deployed";
 import { formNames } from 'stores/ManageForm'
 import { observer, inject } from 'mobx-react'
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
-import { validators } from '../validators'
 
 @inject('root')
 @observer
@@ -21,8 +20,8 @@ class BindToken extends Component {
         const { manageFormStore, poolStore, utilStore } = this.props.root
         const { poolAddress } = this.props
         const pool = poolStore.poolData[poolAddress]
-        const tokenList = pool.whitelistTokens
-        const tokenInputData = utilStore.generateTokenDropdownData(tokenList)
+        const tokenList = deployed.tokens
+        const tokenInputData = utilStore.generateAllTokenDropdownData(tokenList)
 
         if (helpers.checkIsPropertyEmpty(manageFormStore.bindTokenForm.address)) {
             manageFormStore.bindTokenForm.address = tokenInputData[0].value

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check, Lock, LockOpen } from '@material-ui/icons'
+import { Lock, LockOpen } from '@material-ui/icons'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import { observer, inject } from 'mobx-react'
 import * as helpers from 'utils/helpers'
@@ -34,7 +34,7 @@ class TokenApproveToggle extends React.Component {
   }
 
   async approveToken() {
-    const { providerStore, tokenStore } = this.props.root
+    const { tokenStore } = this.props.root
     const { tokenAddress, poolAddress } = this.props
     const { selected } = this.state
 
@@ -49,7 +49,6 @@ class TokenApproveToggle extends React.Component {
 
   render() {
     const { selected } = this.state
-    const { tokenStore } = this.props.root
 
     return (
       <ToggleButton

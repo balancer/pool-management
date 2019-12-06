@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function SpotPriceGrid(props) {
   const {
-    title, inputAmount, outputAmount, effectivePrice
+    inputAmount, outputAmount, effectivePrice
   } = props
 
   const classes = useStyles()

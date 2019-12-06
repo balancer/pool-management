@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Grid, TextField, Button } from '@material-ui/core'
+import { Grid, Button } from '@material-ui/core'
 import * as helpers from 'utils/helpers'
 import { formNames } from 'stores/ManageForm'
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
@@ -24,12 +24,11 @@ class SetFees extends Component {
         const { poolAddress } = this.props
 
         const swapFee = manageFormStore.setFeeForm.swapFee
-        const exitFee = manageFormStore.setFeeForm.exitFee
 
         return (
             <ValidatorForm
                 ref="form"
-                onSubmit={() => { poolStore.setFees(poolAddress, helpers.fromPercentageToFee(swapFee), helpers.fromPercentageToFee(exitFee)) }}
+                onSubmit={() => { poolStore.setFees(poolAddress, helpers.fromPercentageToFee(swapFee)) }}
                 onError={errors => console.log(errors)}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
@@ -39,19 +38,6 @@ class SetFees extends Component {
                             type="number"
                             name="swapFee"
                             value={swapFee}
-                            onChange={e => this.onChange(e, formNames.SET_FEE_FORM)}
-                            fullWidth
-                            validators={validators.requiredTokenValueValidators}
-                            errorMessages={validators.requiredTokenValueValidatorErrors}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <TextValidator
-                            id="exit-fee-amount"
-                            label="Exit Fee"
-                            type="number"
-                            name="exitFee"
-                            value={exitFee}
                             onChange={e => this.onChange(e, formNames.SET_FEE_FORM)}
                             fullWidth
                             validators={validators.requiredTokenValueValidators}

@@ -14,9 +14,6 @@ import { Button } from '../../components'
 @inject('root')
 @observer
 class PoolCreatorView extends Component {
-  constructor(props) {
-    super(props)
-  }
 
   async componentWillMount() {
     const { providerStore } = this.props.root

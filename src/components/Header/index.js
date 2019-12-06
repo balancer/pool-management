@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { observer, inject } from 'mobx-react'
 import PropTypes from 'prop-types'
 import { withRouter, Link } from 'react-router-dom'
-import { Toolbar, Typography, IconButton, Menu, MenuItem } from '@material-ui/core'
+import { Toolbar, Typography, IconButton } from '@material-ui/core'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import AppBar from '../AppBar'
 import { styles } from './styles.scss'
@@ -47,7 +47,7 @@ class Header extends Component {
           <Toolbar>
             <Link className="menu-icon" href="/list" to="/list">
               <IconButton className="menu-icon" edge="start" color="inherit" aria-label="menu">
-                <Typography variant="h5" color="default">
+                <Typography variant="h5">
                   {appConfig.name}
                 </Typography>
               </IconButton>

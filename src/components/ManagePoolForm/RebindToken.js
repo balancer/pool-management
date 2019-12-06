@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Grid, TextField, Button } from '@material-ui/core'
 import * as helpers from 'utils/helpers'
+import * as deployed from "../../deployed"
 import { formNames } from 'stores/ManageForm'
 import { observer, inject } from 'mobx-react'
 
@@ -22,8 +23,8 @@ class RebindToken extends Component {
         const { poolAddress } = this.props
 
         const pool = poolStore.poolData[poolAddress]
-        const tokenList = pool.whitelistTokens
-        const tokenInputData = utilStore.generateTokenDropdownData(tokenList)
+        const tokenList = deployed.tokens
+        const tokenInputData = utilStore.generateAllTokenDropdownData(tokenList)
 
         if (helpers.checkIsPropertyEmpty(manageFormStore.setTokenParamsForm.address)) {
             manageFormStore.setTokenParamsForm.address = tokenInputData[0].value

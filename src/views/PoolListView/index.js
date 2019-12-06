@@ -6,9 +6,6 @@ import { PoolList, Loading } from 'components'
 @inject('root')
 @observer
 class PoolListView extends Component {
-  constructor(props) {
-    super(props)
-  }
 
   async componentDidMount() {
     const { providerStore, poolStore } = this.props.root

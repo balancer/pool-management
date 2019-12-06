@@ -11,7 +11,6 @@ import { observer, inject } from 'mobx-react'
 import { theme } from 'configs'
 import { Notification } from './components'
 import Header from 'components/Header'
-import Footer from 'components/Footer'
 import PoolListView from 'views/PoolListView'
 import PoolCreatorView from 'views/PoolCreator';
 import PoolManageView from 'views/PoolManageView';
@@ -25,9 +24,6 @@ import { Container } from '@material-ui/core'
 @inject('root')
 @observer
 class App extends Component {
-  constructor(props) {
-    super(props)
-  }
 
   // componentDidUpdate = prevProps => {
   //   if (this.props.location.pathname !== prevProps.location.pathname) {
@@ -92,7 +88,6 @@ class App extends Component {
           <HashRouter>
             <div>
               <Header />
-              <Footer />
               <Route component={this.NotificationComponent} />
               {providerLoaded ? this.renderViews() : <div></div>}
             </div>

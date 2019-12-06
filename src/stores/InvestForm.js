@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx'
+import { observable, action } from 'mobx'
 
 export const formNames = {
     INPUT_FORM: 'inputs'

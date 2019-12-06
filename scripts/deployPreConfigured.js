@@ -75,8 +75,8 @@ function writeConfigFile(deployed) {
 function printResults(deployed) {
     // That's it!
     console.log('-----------------')
-    console.log('Deployed Factory  :', deployed.bFactory)
-    console.log('Deployed Pool     :', deployed.bPool)
+    console.log('Deployed Factory      :', deployed.bFactory)
+    console.log('Deployed Pool         :', deployed.bPool)
     console.log('Coins (pre-added) : ')
     for (let i = 0; i < deployed.coins.length; i++) {
         console.log(`\t\t  ${deployed.coins[i]}`)
@@ -172,8 +172,6 @@ async function deployPreConfigured() {
     console.log('Set Public Swap, Join, Exit on Pool...')
 
     await bpool.methods.setPublicSwap(true).send()
-    await bpool.methods.setPublicJoin(true).send()
-    await bpool.methods.setPublicExit(true).send()
 
     let deployed = {
         bFactory: toChecksum(factory.options.address),

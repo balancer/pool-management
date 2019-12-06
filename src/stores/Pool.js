@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx'
+import { observable, action } from 'mobx'
 import * as deployed from "../deployed";
 import * as blockchain from "utils/blockchain"
 import * as helpers from "utils/helpers"
@@ -38,7 +38,7 @@ export default class PoolStore {
 
     //Reset the auto-loader if the current pool has changed
     setCurrentPool(poolAddress) {
-        if (this.currentPool != poolAddress) {
+        if (this.currentPool !== poolAddress) {
             this.currentPool = poolAddress
             const defaultAccount = this.rootStore.providerStore.getDefaultAccount()
             this.rootStore.setDataUpdateInterval(poolAddress, defaultAccount)
@@ -169,22 +169,17 @@ export default class PoolStore {
         this.setPoolDataProperty(poolAddress, 'paramsStatus', statusCodes.PENDING)
         try {
             const manager = await pool.methods.getController().call()
-            const fees = await pool.methods.getFees().call()
+            const swapFee = await pool.methods.getSwapFee().call()
             const numTokens = await pool.methods.getNumTokens().call()
             const isShared = await pool.methods.isFinalized().call()
             const isPublicSwap = await pool.methods.isPublicSwap().call()
-            const isPublicJoin = await pool.methods.isPublicJoin().call()
-            const isPublicExit = await pool.methods.isPublicExit().call()
 
             this.setPoolDataProperty(poolAddress, 'params', {
-                swapFee: fees['0'],
-                exitFee: fees['1'],
+                swapFee,
                 manager,
                 numTokens,
                 isShared,
-                isPublicSwap,
-                isPublicJoin,
-                isPublicExit
+                isPublicSwap
             })
 
             this.setPoolDataProperty(poolAddress, 'paramsStatus', statusCodes.SUCCESS)
@@ -196,10 +191,10 @@ export default class PoolStore {
         }
     }
 
-    @action setFees = async (poolAddress, swapFee, exitFee) => {
+    @action setSwapFee = async (poolAddress, swapFee) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         try {
-            await bPool.methods.setFees(swapFee, exitFee).send()
+            await bPool.methods.setSwapFee(swapFee).send()
             await this.fetchParams(poolAddress)
         } catch (e) {
 
@@ -362,47 +357,6 @@ export default class PoolStore {
         }
     }
 
-    @action fetchAllWhitelistedTokenParams = async (poolAddress) => {
-        const defaultAccount = blockchain.getDefaultAccount()
-        const { tokenStore } = this.rootStore
-
-        this.setPoolDataProperty(poolAddress, 'whitelistTokenParamsStatus', statusCodes.PENDING)
-
-        try {
-            const tokenWhitelist = deployed.allCoins
-            console.log('whitelist', tokenWhitelist)
-
-            await this.fetchTokenParams(poolAddress)
-
-            let tokenWeights = {
-                ...this.poolData[poolAddress].tokenWeights
-            }
-
-            console.log('pool token weights', tokenWeights)
-
-            // Add whitelisted tokens which aren't in pool to our data set
-            for (const token of tokenWhitelist) {
-                if (!tokenWeights[token]) {
-                    console.log('token not already in pool', token)
-                    await tokenStore.fetchBalanceOf(token, poolAddress)
-                    await tokenStore.fetchBalanceOf(token, defaultAccount)
-                    await tokenStore.fetchSymbol(token)
-                    tokenWeights[token] = '0'
-                } else {
-                    console.log('token already in pool', token)
-                }
-            }
-
-            this.setPoolDataProperty(poolAddress, 'whitelistTokenWeights', tokenWeights)
-            this.setPoolDataProperty(poolAddress, 'whitelistTokens', tokenWhitelist)
-            this.setPoolDataProperty(poolAddress, 'whitelistTokenParamsStatus', statusCodes.SUCCESS)
-            this.setPoolDataProperty(poolAddress, 'loadedWhitelistTokenParams', true)
-        } catch (e) {
-            console.log(e)
-            this.setPoolDataProperty(poolAddress, 'whitelistTokenParamsStatus', statusCodes.ERROR)
-        }
-    }
-
     @action rebind = async (poolAddress, tokenAddress, tokenBalance, tokenWeight) => {
         const pool = blockchain.loadObject('BPool', poolAddress, 'BPool')
 
@@ -419,31 +373,24 @@ export default class PoolStore {
     /* 
         Swap Methods - Action
     */
-    @action swapExactAmountIn = async (poolAddress, Ti, Ai, To, Lo, LP) => {
+    @action swapExactAmountIn = async (poolAddress, tokenIn, tokenAmountIn, tokenOut, minAmountOut, maxPrice) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).send()
+        await bPool.methods.swap_ExactAmountIn(tokenIn, tokenAmountIn, tokenOut, minAmountOut, maxPrice).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
-    @action swapExactAmountOut = async (poolAddress, Ti, Li, To, Ao, PL) => {
+    @action swapExactAmountOut = async (poolAddress, tokenIn, maxAmountIn, tokenOut, tokenAmountOut, maxPrice) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).send()
-        await this.fetchTokenParams(poolAddress)
-        await this.fetchInvestParams(poolAddress, defaultAccount)
-    }
-    @action swapExactMarginalPrice = async (poolAddress, Ti, Li, To, Lo, MP) => {
-        const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
-        const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).send()
+        await bPool.methods.swap_ExactAmountOut(tokenIn, maxAmountIn, tokenOut, tokenAmountOut, maxPrice).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
 
-    calcEffectivePrice(Ai, Ao) {
-        const amountIn = new Big(Ai)
-        const amountOut = new Big(Ao)
+    calcEffectivePrice(tokenAmountIn, tokenAmountOut) {
+        const amountIn = new Big(tokenAmountIn)
+        const amountOut = new Big(tokenAmountOut)
         const effectivePrice = amountIn.div(amountOut).toString()
 
         return effectivePrice
@@ -452,25 +399,25 @@ export default class PoolStore {
     /* 
         Swap Methods - Preview
     */
-    previewSwapExactAmountIn = async (poolAddress, Ti, Ai, To, Lo, LP) => {
+    previewSwapExactAmountIn = async (poolAddress, tokenIn, tokenAmountIn, tokenOut, minAmountOut, maxPrice) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
-        console.log('[Action] previewSwapExactAmountIn', poolAddress, Ti, Ai, To, Lo, LP)
+        console.log('[Action] previewSwapExactAmountIn', poolAddress, tokenIn, tokenAmountIn, tokenOut, minAmountOut, maxPrice)
 
         try {
             this.setPreviewPending(true)
-            const preview = await bPool.methods.swap_ExactAmountIn(Ti, Ai, To, Lo, LP).call()
-            const effectivePrice = this.calcEffectivePrice(Ai, preview['Ao'])
+            const preview = await bPool.methods.swap_ExactAmountIn(tokenIn, tokenAmountIn, tokenOut, minAmountOut, maxPrice).call()
+            const effectivePrice = this.calcEffectivePrice(tokenAmountIn, preview['tokenAmountOut'])
 
             const data = {
-                outputAmount: preview['Ao'],
-                marginalPrice: preview['MP'],
+                outputAmount: preview['tokenAmountOut'],
+                spotPriceTarget: preview['spotPriceTarget'],
                 effectivePrice,
                 validSwap: true
             }
             this.setPreviewPending(false)
             return data
         } catch (e) {
-            log.error('[Error] previewSwapExactMarginalPrice', e)
+            log.error('[Error] previewSwapExactAmountIn', e)
             this.setPreviewPending(false)
             return {
                 validSwap: false
@@ -478,58 +425,31 @@ export default class PoolStore {
         }
 
     }
-    previewSwapExactAmountOut = async (poolAddress, Ti, Li, To, Ao, PL) => {
+    previewSwapExactAmountOut = async (poolAddress, tokenIn, maxAmountIn, tokenOut, tokenAmountOut, maxPrice) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
-        console.log('[Action] previewSwapExactAmountOut', poolAddress, Ti, Li, To, Ao, PL)
+        console.log('[Action] previewSwapExactAmountOut', poolAddress, tokenIn, maxAmountIn, tokenOut, tokenAmountOut, maxPrice)
 
         try {
             this.setPreviewPending(true)
-            const preview = await bPool.methods.swap_ExactAmountOut(Ti, Li, To, Ao, PL).call()
-            const effectivePrice = this.calcEffectivePrice(preview['Ai'], Ao)
+            const preview = await bPool.methods.swap_ExactAmountOut(tokenIn, maxAmountIn, tokenOut, tokenAmountOut, maxPrice).call()
+            const effectivePrice = this.calcEffectivePrice(preview['tokenAmountIn'], tokenAmountOut)
 
             const data = {
-                inputAmount: preview['Ai'],
-                marginalPrice: preview['MP'],
+                inputAmount: preview['tokenAmountIn'],
+                spotPriceTarget: preview['spotPriceTarget'],
                 effectivePrice,
                 validSwap: true
             }
             this.setPreviewPending(false)
             return data
         } catch (e) {
-            log.error('[Error] previewSwapExactMarginalPrice', e)
+            log.error('[Error] previewSwapExactAmountOut', e)
             this.setPreviewPending(false)
             return {
                 validSwap: false
             }
         }
 
-    }
-    previewSwapExactMarginalPrice = async (poolAddress, Ti, Li, To, Lo, MP) => {
-        const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
-        console.log('[Action] previewSwapExactMarginalPrice', poolAddress, Ti, Li, To, Lo, MP)
-
-        try {
-            this.setPreviewPending(true)
-            const preview = await bPool.methods.swap_ExactMarginalPrice(Ti, Li, To, Lo, MP).call()
-            const effectivePrice = this.calcEffectivePrice(preview['Ai'], preview['Ao'])
-
-            const data = {
-                inputAmount: preview['Ai'],
-                outputAmount: preview['Ao'],
-                effectivePrice,
-                validSwap: true
-            }
-
-            this.setPreviewPending(false)
-            return data
-        } catch (e) {
-            log.error('[Error] previewSwapExactMarginalPrice', e)
-            this.setPreviewPending(false)
-            return {
-                validSwap: false
-            }
-
-        }
     }
 
     /* 
@@ -542,17 +462,17 @@ export default class PoolStore {
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
-    @action joinswapExternAmountIn = async (poolAddress, Ti, Ai) => {
+    @action joinswapExternAmountIn = async (poolAddress, tokenIn, tokenAmountIn) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.joinswap_ExternAmountIn(Ti, Ai).send()
+        await bPool.methods.joinswap_ExternAmountIn(tokenIn, tokenAmountIn).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
-    @action joinswapPoolAmountOut = async (poolAddress, Ti, poolAo) => {
+    @action joinswapPoolAmountOut = async (poolAddress, tokenIn, poolAmountOut) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.joinswap_PoolAmountOut(poolAo, Ti).send()
+        await bPool.methods.joinswap_PoolAmountOut(poolAmountOut, tokenIn).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
@@ -560,24 +480,24 @@ export default class PoolStore {
     /* 
         Invest Methods - Exit
     */
-    @action exitPool = async (poolAddress, poolAi) => {
+    @action exitPool = async (poolAddress, poolAmountIn) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.exitPool(poolAi).send()
+        await bPool.methods.exitPool(poolAmountIn).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
-    @action exitswapPoolAmountIn = async (poolAddress, To, poolAi) => {
+    @action exitswapPoolAmountIn = async (poolAddress, tokenOut, poolAmountIn) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.exitswap_PoolAmountIn(poolAi, To).send()
+        await bPool.methods.exitswap_PoolAmountIn(poolAmountIn, tokenOut).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }
-    @action exitswapExternAmountOut = async (poolAddress, To, Ao) => {
+    @action exitswapExternAmountOut = async (poolAddress, tokenOut, tokenAmountOut) => {
         const bPool = blockchain.loadObject('BPool', poolAddress, 'BPool')
         const defaultAccount = blockchain.getDefaultAccount()
-        await bPool.methods.exitswap_ExternAmountOut(To, Ao).send()
+        await bPool.methods.exitswap_ExternAmountOut(tokenOut, tokenAmountOut).send()
         await this.fetchTokenParams(poolAddress)
         await this.fetchInvestParams(poolAddress, defaultAccount)
     }

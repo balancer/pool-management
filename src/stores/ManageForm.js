@@ -1,6 +1,4 @@
-import { observable, action, computed } from 'mobx'
-import * as deployed from "../deployed";
-import * as blockchain from "../utils/blockchain"
+import { observable } from 'mobx'
 
 export const formNames = {
     BIND_TOKEN_FORM: 'bindTokenForm',
@@ -21,8 +19,7 @@ export default class ManageFormStore {
         weight: 0
     }
     @observable setFeeForm = {
-        swapFee: '',
-        exitFee: ''
+        swapFee: ''
     }
     @observable makeSharedForm = {
         initialSupply: ''

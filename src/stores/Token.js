@@ -1,9 +1,6 @@
 import { observable, action, computed } from 'mobx'
-import * as deployed from "../deployed";
 import * as helpers from "utils/helpers"
 import * as blockchain from "utils/blockchain"
-
-const LOG_NEW_POOL_EVENT = 'LOG_NEW_POOL'
 
 export default class PoolStore {
     @observable symbols = {}

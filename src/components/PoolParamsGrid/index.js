@@ -14,9 +14,6 @@ const styles = theme => ({
 @inject('root')
 @observer
 class PoolParamsGrid extends React.Component {
-  constructor(props) {
-    super(props)
-  }
 
   render() {
     const { poolAddress, classes } = this.props
@@ -32,7 +29,6 @@ class PoolParamsGrid extends React.Component {
     }
 
     const swapFee = helpers.fromFeeToPercentage(pool.params.swapFee)
-    const exitFee = helpers.fromFeeToPercentage(pool.params.exitFee)
 
     return (
       <div className={classes.root}>
@@ -41,7 +37,7 @@ class PoolParamsGrid extends React.Component {
             <IconCard title="Pool" text={poolAddress} addRows />
           </Grid>
           <Grid item xs={6} sm={3}>
-            <IconCard title="Fees" text={`Swap Fee: ${swapFee}%`} text2={`Exit Fee: ${exitFee}%`} />
+            <IconCard title="Fees" text={`Swap Fee: ${swapFee}%`} />
           </Grid>
           <Grid item xs={6} sm={3}>
             <IconCard title="Shared" text={sharedText} addRows />

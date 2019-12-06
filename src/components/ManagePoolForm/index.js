@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Grid, Typography, TextField, Button } from '@material-ui/core'
-import * as helpers from 'utils/helpers'
-import { formNames } from 'stores/ManageForm'
+import { Grid, Typography } from '@material-ui/core'
 import { observer, inject } from 'mobx-react'
 import BindToken from './BindToken'
 import RebindToken from './RebindToken'

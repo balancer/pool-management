@@ -1,7 +1,7 @@
 import React from 'react'
-import { Grid, TextField, Button, Card, CardContent, Typography } from '@material-ui/core'
+import { Card, CardContent, Typography } from '@material-ui/core'
 import { observer, inject } from 'mobx-react'
-import { labels, methodNames, formNames } from 'stores/SwapForm'
+import { labels, methodNames } from 'stores/SwapForm'
 import * as helpers from 'utils/helpers'
 import { withStyles } from '@material-ui/core/styles';
 
@@ -20,9 +20,6 @@ const styles = theme => ({
 @inject('root')
 @observer
 class SwapResults extends React.Component {
-    constructor(props) {
-        super(props)
-    }
 
     buildCardContentByMethod() {
         const { swapFormStore } = this.props.root

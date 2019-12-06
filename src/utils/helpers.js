@@ -5,17 +5,12 @@ import jazzicon from "jazzicon";
 // Utils
 import web3 from "./web3";
 
-// Settings
-import settings from "../settings.json";
-
 export const { toBN, toWei, fromWei, isAddress, BN } = web3.utils;
 
 export const MAX_GAS = 0xffffffff;
 export const MAX_UINT = web3.utils.toTwosComplement('-1');
 
 const TEN18 = new BN('1000000000000000000');
-const TEN15 = new BN('1000000000000000');
-const TEN9 = new BN('1000000000');
 
 export const WAD = TEN18
 
@@ -82,21 +77,21 @@ export const fromRaytoWad = (x) => {
 }
 
 export function setPropertyToMaxUintIfEmpty(value) {
-  if (!value || value == 0 || value == '') {
+  if (!value || value === 0 || value === '') {
     value = hexToNumberString(MAX_UINT)
   }
   return value
 }
 
 export function setPropertyToZeroIfEmpty(value) {
-  if (!value || value == '') {
+  if (!value || value === '') {
     value = '0'
   }
   return value
 }
 
 export function checkIsPropertyEmpty(value) {
-  if (!value || value == 0 || value == '') {
+  if (!value || value === 0 || value === '') {
     return true
   }
   return false
@@ -180,16 +175,6 @@ export const generateIcon = (address) => {
   return jazzicon(28, address.substr(0, 10));
 }
 
-export const fetchETHPriceInUSD = () => {
-  return fetch("https://api.coinmarketcap.com/v2/ticker/1027/")
-    .then(data => {
-      return data.json();
-    })
-    .then((json) => {
-      return json.data.quotes.USD.price;
-    });
-}
-
 export const getGasPriceFromETHGasStation = () => {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
@@ -206,39 +191,4 @@ export const getGasPriceFromETHGasStation = () => {
       reject(e);
     });
   })
-};
-
-//TODO: eventually find a better solution
-export const quotation = (from, to) => {
-  if (to === "dai" || from === "dai") {
-    const quote = "dai";
-    const base = to === "dai" ? from : to;
-    const isCounter = from !== "dai";
-
-    return { base, quote, isCounter };
-  }
-
-  if (to === "eth" || from === "eth") {
-    const quote = "eth";
-    const base = to === "eth" ? from : to;
-    const isCounter = from !== "eth";
-
-    return { base, quote, isCounter };
-  }
-};
-
-export const calculateTradePrice = (tokenSell, amountSell, tokenBuy, amountBuy) => {
-  return (tokenSell === "dai" || (tokenSell === "eth" && tokenBuy !== "dai"))
-    ?
-    { price: amountSell.div(amountBuy), priceUnit: `${tokenBuy}/${tokenSell}` }
-    :
-    { price: amountBuy.div(amountSell), priceUnit: `${tokenSell}/${tokenBuy}` };
-}
-
-export const threshold = (network, from, to) => {
-  return settings.chain[network].threshold[[from, to].sort((a, b) => {
-    if (a > b) return 1;
-    if (a < b) return -1;
-    return 0;
-  }).join("")];
 };

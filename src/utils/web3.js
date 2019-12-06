@@ -1,15 +1,5 @@
 // Libraries
-import * as RpcSource from "web3-provider-engine/dist/es5/subproviders/rpc";
-import Transport from "@ledgerhq/hw-transport-u2f";
 import Web3 from "web3";
-import * as Web3ProviderEngine from "web3-provider-engine/dist/es5";
-
-// Utils
-import LedgerSubProvider from "./ledger-subprovider";
-import TrezorSubProvider from "./trezor-subprovider";
-
-// Settings
-import * as settings from "../settings";
 
 export const getCurrentProviderName = (provider = window.web3.currentProvider) => {
   if (provider.isMetaMask)

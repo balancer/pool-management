@@ -45,7 +45,7 @@ class SwapForm extends React.Component {
 
     render() {
         const { poolAddress, classes } = this.props
-        const { poolStore, tokenStore, swapFormStore } = this.props.root
+        const { poolStore } = this.props.root
         const { open, method } = this.state
 
         const pool = poolStore.getPool(poolAddress)
@@ -56,8 +56,7 @@ class SwapForm extends React.Component {
 
         const methods = [
             { label: labels.methods.EXACT_AMOUNT_IN, name: methodNames.EXACT_AMOUNT_IN },
-            { label: labels.methods.EXACT_AMOUNT_OUT, name: methodNames.EXACT_AMOUNT_OUT },
-            { label: labels.methods.EXACT_MARGINAL_PRICE, name: methodNames.EXACT_MARGINAL_PRICE }
+            { label: labels.methods.EXACT_AMOUNT_OUT, name: methodNames.EXACT_AMOUNT_OUT }
         ]
         return (
             <Grid container style={{ marginBottom: '50px' }}>

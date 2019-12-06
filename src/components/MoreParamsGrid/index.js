@@ -1,6 +1,4 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import { Typography, CardContent } from '@material-ui/core'
@@ -16,7 +14,6 @@ class MoreParamsGrid extends React.Component {
     const pool = poolStore.poolData[poolAddress]
 
     const swapFee = helpers.fromWei(pool.params.swapFee)
-    const exitFee = helpers.fromWei(pool.params.exitFee)
 
     return (
       <div>
@@ -27,7 +24,6 @@ class MoreParamsGrid extends React.Component {
                 <Typography variant="h5">Pool Details</Typography>
                 <Typography variant="body1">{`Manager    : ${pool.params.manager}\n`}</Typography>
                 <Typography variant="body1">{`Swap Fee: ${swapFee}\n`}</Typography>
-                <Typography variant="body1">{`Exit Fee: ${exitFee}\n`}</Typography>
                 <Typography variant="body1">{`Token Count: ${pool.params.numTokens}\n`}</Typography>
               </CardContent>
             </Card>

@@ -101,7 +101,7 @@ class ExactAmountInForm extends React.Component {
         if (call.validSwap) {
             return {
                 outputAmount: helpers.fromWei(call.outputAmount),
-                marginalPrice: helpers.fromWei(call.marginalPrice),
+                spotPriceTarget: helpers.fromWei(call.spotPriceTarget),
                 effectivePrice: call.effectivePrice,
                 validSwap: call.validSwap
             }

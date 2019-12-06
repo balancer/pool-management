@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, makeStyles, Tooltip, Typography } from '@material-ui/core'
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, Tooltip, Typography } from '@material-ui/core'
 import { TokenText } from '../index'
 import * as helpers from 'utils/helpers'
 import TokenApproveToggle from 'components/TokenApproveToggle'
@@ -81,8 +81,6 @@ class PooListTokenTable extends React.Component {
     })
 
     return rows
-
-    this.setState({ rows })
   }
 
   setPage(value) {
@@ -105,7 +103,6 @@ class PooListTokenTable extends React.Component {
   render() {
     const { columns, page, rowsPerPage } = this.state
     const { poolAddress, classes } = this.props
-    const { poolStore } = this.props.root
 
     const rows = this.buildRowValues()
 

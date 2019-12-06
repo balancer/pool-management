@@ -1,12 +1,11 @@
 import React from 'react'
-import { Grid, TextField, Button } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { observer, inject } from 'mobx-react'
 import { methodNames } from 'stores/SwapForm'
 import SwapResults from './SwapResults'
 import { withStyles } from '@material-ui/core/styles';
 import ExactAmountInForm from './ExactAmountInForm'
 import ExactAmountOutForm from './ExactAmountOutForm'
-import ExactMargincalPriceForm from './ExactMargincalPriceForm'
 
 const styles = theme => ({
     formControl: {
@@ -30,8 +29,6 @@ class SwapFormHandler extends React.Component {
             return <ExactAmountInForm poolAddress={poolAddress} />
         } else if (swapFormStore.swapMethod === methodNames.EXACT_AMOUNT_OUT) {
             return <ExactAmountOutForm poolAddress={poolAddress} />
-        } else if (swapFormStore.swapMethod === methodNames.EXACT_MARGINAL_PRICE) {
-            return <ExactMargincalPriceForm poolAddress={poolAddress} />
         }
     }
 

@@ -2,7 +2,6 @@ import React from 'react'
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid'
 import { observer, inject } from 'mobx-react'
-import * as helpers from 'utils/helpers'
 import TokenCard from 'components/TokenCard';
 
 const styles = theme => ({
@@ -23,9 +22,6 @@ class InvestParamsGrid extends React.Component {
 
     const userBalance = tokenStore.getBalance(poolAddress, userAddress)
     const totalSupply = params.totalSupply
-
-    const userBalanceDisplay = helpers.roundValue(helpers.fromWei(userBalance), 7)
-    const totalSupplyDisplay = helpers.roundValue(helpers.fromWei(totalSupply), 7)
 
     return (
       <div className={classes.root}>

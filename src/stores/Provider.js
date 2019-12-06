@@ -1,6 +1,4 @@
-import { observable, action, computed } from 'mobx'
-import web3 from '../utils/web3'
-import * as settings from '../settings'
+import { observable, action } from 'mobx'
 import * as blockchain from '../utils/blockchain'
 
 export default class ProviderStore {

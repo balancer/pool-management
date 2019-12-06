@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { observer, inject } from 'mobx-react'
 import { Typography, Container, Grid } from '@material-ui/core'
-import { PoolListTokenTable, PoolInvestForm, Loading, PoolParamsGrid, InvestParamsGrid, LoadingCard } from 'components'
+import { PoolListTokenTable, PoolInvestForm, PoolParamsGrid, InvestParamsGrid, LoadingCard } from 'components'
 
 
 @inject('root')
@@ -34,7 +34,6 @@ class PoolInvestView extends Component {
     const { poolStore, providerStore } = this.props.root
     const userAddress = providerStore.getDefaultAccount()
 
-    const pool = poolStore.getPool(address)
     const paramsLoaded = poolStore.isParamsLoaded(address)
     const tokenParamsLoaded = poolStore.isTokenParamsLoaded(address)
     const investParamsLoaded = poolStore.isInvestParamsLoaded(address, userAddress)

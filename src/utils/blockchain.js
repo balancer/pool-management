@@ -1,10 +1,8 @@
 // Libraries
 import Promise from "bluebird";
-import Web3 from "web3";
 
 // Utils
 import web3 from "./web3";
-import { excludes } from "./tokens";
 
 const promisify = Promise.promisify;
 
@@ -101,9 +99,11 @@ export const resetFilters = bool => {
 }
 
 export const fetchBalanceOf = (token, address) => {
-  if (token === 'eth') return getEthBalanceOf(address);
-  if (excludes("eth").includes(token)) return getTokenBalanceOf(token, address);
-  return null;
+  if (token === 'eth') {
+    return getEthBalanceOf(address);
+  } else {
+    return getTokenBalanceOf(token, address);
+  }
 }
 
 
@@ -139,32 +139,6 @@ export const setTokenAllowance = (token, to, allowedAmount) => {
       }
     });
   });
-}
-
-export const getTokenTrusted = (token, from, to) => {
-  return promisify(objects[token].allowance.call)(from, to)
-    .then((result) => result.eq(web3.toBN(2).pow(256).minus(1)));
-}
-
-export function isEmptyProxy(address) {
-  return !address || address === "0x0000000000000000000000000000000000000000" || address === "0x0" || address === "0x"
-}
-
-export const getProxy = account => {
-  return promisify(objects.proxyRegistry.proxies)(account).then(r => isEmptyProxy(r) ? null : getProxyOwner(r).then(r2 => r2 === account ? r : null));
-}
-
-/*
-   On the contract side, there is a mapping (address) -> []DsProxy
-   A given address can have multiple proxies. Since lists cannot be
-   iterated, the way to access a give element is access it by index
- */
-export const legacy_getProxy = (registry, account, proxyIndex) => {
-  return promisify(registry.proxies)(account, proxyIndex);
-}
-
-export const getProxyOwner = proxy => {
-  return promisify(loadObject("dsproxy", proxy).owner)();
 }
 
 export const isMetamask = () => web3.currentProvider.isMetaMask || web3.currentProvider.constructor.name === "MetamaskInpageProvider";
