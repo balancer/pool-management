@@ -47,6 +47,20 @@ export default class PoolStore {
         return this.balances[tokenAddress][account]
     }
 
+    @action mint = async (tokenAddress, amount) => {
+        const token = blockchain.loadObject('TestToken', tokenAddress, 'TestToken')
+        const account = await blockchain.getDefaultAccount()
+        
+        try {
+            await token.methods.mint(amount).send()
+            const balance = await token.methods.balanceOf(account).call()
+            this.setBalanceProperty(tokenAddress, account, balance)
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     @action approveMax = async (tokenAddress, spender) => {
         const token = blockchain.loadObject('TestToken', tokenAddress, 'TestToken')
         const account = await blockchain.getDefaultAccount()

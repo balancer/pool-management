@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, Tooltip, Typography } from '@material-ui/core'
+import { Button, Paper, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, Tooltip, Typography } from '@material-ui/core'
 import { TokenText } from '../index'
 import * as helpers from 'utils/helpers'
 import TokenApproveToggle from 'components/TokenApproveToggle'
@@ -31,7 +31,8 @@ class PooListTokenTable extends React.Component {
         { label: 'My balance', id: 'My balance', minWidth: 20 },
         { label: 'Pool balance', id: 'Pool balance', minWidth: 20 },
         { label: 'Weight', id: 'Weight', minWidth: 20 },
-        { label: 'Lock/Unlock', id: 'lockable', minWidth: 20 }
+        { label: 'Lock/Unlock', id: 'lockable', minWidth: 20 },
+        { label: 'Mint', id: 'mint', minWidth: 20}
       ],
       rows: [],
       page: 0,
@@ -102,6 +103,7 @@ class PooListTokenTable extends React.Component {
 
   render() {
     const { columns, page, rowsPerPage } = this.state
+    const { tokenStore } = this.props.root
     const { poolAddress, classes } = this.props
 
     const rows = this.buildRowValues()
@@ -145,6 +147,11 @@ class PooListTokenTable extends React.Component {
                     </TableCell>
                     <TableCell key={`toggl${row.address}`}>
                       <TokenApproveToggle tokenAddress={row.address} poolAddress={poolAddress} />
+                    </TableCell>
+                    <TableCell key={`mint${row.address}`}>
+                      <Button
+                        onClick={() => tokenStore.mint(row.address, helpers.toWei('10'))}
+                      > + </Button>
                     </TableCell>
                   </TableRow>
                 )

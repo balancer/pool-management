@@ -21,7 +21,7 @@ class SwapFormHandler extends React.Component {
         const { poolStore, swapFormStore } = this.props.root
         const pool = poolStore.poolData[poolAddress]
 
-        if (!pool || !pool.loadedTokenParams || !pool.loadedParams) {
+        if (!pool || !pool.loadedTokenParams || !pool.loadedParams || pool.tokenList.length < 2) {
             return <div></div>
         }
 
