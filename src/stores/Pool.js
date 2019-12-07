@@ -360,6 +360,48 @@ export default class PoolStore {
         }
     }
 
+    @action fetchAllWhitelistedTokenParams = async (poolAddress) => {
+        const defaultAccount = blockchain.getDefaultAccount()
+        const { tokenStore } = this.rootStore
+
+        this.setPoolDataProperty(poolAddress, 'whitelistTokenParamsStatus', statusCodes.PENDING)
+
+        try {
+            const tokenWhitelist = deployed['kovan'].tokens
+            console.log('whitelist', tokenWhitelist)
+
+            await this.fetchTokenParams(poolAddress)
+
+            let tokenWeights = {
+                ...this.poolData[poolAddress].tokenWeights
+            }
+
+            console.log('pool token weights', tokenWeights)
+
+            // Add whitelisted tokens which aren't in pool to our data set
+            for (const token of tokenWhitelist) {
+                if (!tokenWeights[token.address]) {
+                    console.log('token not already in pool', token.address)
+                    await tokenStore.fetchBalanceOf(token.address, poolAddress)
+                    await tokenStore.fetchBalanceOf(token.address, defaultAccount)
+                    tokenStore.symbols[token.address] = token.symbol
+                    // await tokenStore.fetchSymbol(token)
+                    tokenWeights[token.address] = '0'
+                } else {
+                    console.log('token already in pool', token.address)
+                }
+            }
+
+            this.setPoolDataProperty(poolAddress, 'whitelistTokenWeights', tokenWeights)
+            this.setPoolDataProperty(poolAddress, 'whitelistTokens', tokenWhitelist)
+            this.setPoolDataProperty(poolAddress, 'whitelistTokenParamsStatus', statusCodes.SUCCESS)
+            this.setPoolDataProperty(poolAddress, 'loadedWhitelistTokenParams', true)
+        } catch (e) {
+            console.log(e)
+            this.setPoolDataProperty(poolAddress, 'whitelistTokenParamsStatus', statusCodes.ERROR)
+        }
+    }
+
     @action rebind = async (poolAddress, tokenAddress, tokenBalance, tokenWeight) => {
         const pool = blockchain.loadObject('BPool', poolAddress, 'BPool')
 

@@ -27,7 +27,7 @@ class PoolSwapView extends Component {
 
     // Get pool params
     await poolStore.fetchParams(address)
-    await poolStore.fetchTokenParams(address)
+    await poolStore.fetchAllWhitelistedTokenParams(address)
   }
 
   render() {
@@ -36,7 +36,7 @@ class PoolSwapView extends Component {
     const userAddress = providerStore.getDefaultAccount()
 
     const paramsLoaded = poolStore.isParamsLoaded(address)
-    const tokenParamsLoaded = poolStore.isTokenParamsLoaded(address)
+    const tokenParamsLoaded = poolStore.isWhitelistTokenParamsLoaded(address)
 
     return (
       <Container>
@@ -52,7 +52,7 @@ class PoolSwapView extends Component {
               </Grid>
               <Grid item xs={12} sm={12}>
                 <Typography variant="h5" component="h5" > Tokens</Typography >
-                <PoolListTokenTable displayMode="pool" poolAddress={address} userAddress={userAddress} linkPath="logs" />
+                <PoolListTokenTable displayMode="whitelist+pool" poolAddress={address} userAddress={userAddress} linkPath="logs" />
               </Grid>
               <Grid item xs={12} sm={12}>
                 <ManagePoolForm poolAddress={address} />
