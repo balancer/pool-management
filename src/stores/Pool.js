@@ -344,7 +344,7 @@ export default class PoolStore {
             for (const key of Object.keys(tokenWeights)) {
                 await tokenStore.fetchBalanceOf(key, poolAddress)
                 await tokenStore.fetchBalanceOf(key, defaultAccount)
-                await tokenStore.fetchSymbol(key)
+                tokenStore.symbols[key] = deployed['kovan'].tokens.find(x => x.address === key).symbol
                 tokenList.push(key)
             }
 
