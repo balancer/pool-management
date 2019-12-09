@@ -28,7 +28,7 @@ class SetFees extends Component {
         return (
             <ValidatorForm
                 ref="form"
-                onSubmit={() => { poolStore.setFees(poolAddress, helpers.fromPercentageToFee(swapFee)) }}
+                onSubmit={() => { poolStore.setSwapFee(poolAddress, helpers.fromPercentageToFee(swapFee)) }}
                 onError={errors => console.log(errors)}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>

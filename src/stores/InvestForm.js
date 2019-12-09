@@ -6,11 +6,11 @@ export const formNames = {
 
 export const methodNames = {
     JOIN_POOL: 'joinPool',
-    JOINSWAP_EXTERN_AMOUNT_IN: 'joinswap_ExternAmountIn',
-    JOINSWAP_POOL_AMOUNT_OUT: 'joinswap_PoolAmountOut',
+    JOINSWAP_EXTERN_AMOUNT_IN: 'joinswapExternAmountIn',
+    JOINSWAP_POOL_AMOUNT_OUT: 'joinswapPoolAmountOut',
     EXIT_POOL: 'exitPool',
-    EXITSWAP_POOL_AMOUNT_IN: 'exitswap_PoolAmountIn',
-    EXITSWAP_EXTERN_AMOUNT_OUT: 'exitswap_ExternAmountOut'
+    EXITSWAP_POOL_AMOUNT_IN: 'exitswapPoolAmountIn',
+    EXITSWAP_EXTERN_AMOUNT_OUT: 'exitswapExternAmountOut'
 }
 
 export const labels = {
