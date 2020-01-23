@@ -9,10 +9,15 @@
   "kovan": {
     "bFactory":"0x9c84391b443ea3a48788079a5f98e2ead55c9309",
     "tokens": [
-      {"symbol":"MKR","address":"0x8fD2D32dCde13F41BC7e6D966Edde0DfF1f92E2E"},
-      {"symbol":"DAI","address":"0xbaB6D2bf6C4cae495a958507AAf0804feCa2b000"},
-      {"symbol":"SNX","address":"0x16f23e3d18d498131bAb2D8843f5c2855448121d"},
-      {"symbol":"BAT","address":"0xf5A64B7c340F4346Bf3158D1DAd89d7872213b03"}
+      {"symbol":"WETH","address":"0xd0A1E359811322d97991E03f863a0C30C2cF029C"},
+      {"symbol":"DAI","address":"0x1528F3FCc26d13F7079325Fb78D9442607781c8C"},
+      {"symbol":"MKR","address":"0xef13C0c8abcaf5767160018d268f9697aE4f5375"},
+      {"symbol":"USDC","address":"0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5"},
+      {"symbol":"REP","address":"0x8c9e6c40d3402480ACE624730524fACC5482798c"},
+      {"symbol":"BAT","address":"0x1f1f156E0317167c11Aa412E3d1435ea29Dc3cCE"},
+      {"symbol":"SNX","address":"0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4"},
+      {"symbol":"ANT","address":"0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9"},
+      {"symbol":"ZRX","address":"0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244"}
     ]
   }
 }
