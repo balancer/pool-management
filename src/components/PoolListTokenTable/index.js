@@ -32,7 +32,7 @@ class PooListTokenTable extends React.Component {
         { label: 'Pool balance', id: 'Pool balance', minWidth: 20 },
         { label: 'Weight', id: 'Weight', minWidth: 20 },
         { label: 'Lock/Unlock', id: 'lockable', minWidth: 20 },
-        { label: 'Mint', id: 'mint', minWidth: 20}
+        { label: 'Drip (Token Faucet)', id: 'mint', minWidth: 20}
       ],
       rows: [],
       page: 0,
@@ -103,7 +103,7 @@ class PooListTokenTable extends React.Component {
 
   render() {
     const { columns, page, rowsPerPage } = this.state
-    const { tokenStore } = this.props.root
+    const { faucetStore } = this.props.root
     const { poolAddress, classes } = this.props
 
     const rows = this.buildRowValues()
@@ -148,9 +148,9 @@ class PooListTokenTable extends React.Component {
                     <TableCell key={`toggl${row.address}`}>
                       <TokenApproveToggle tokenAddress={row.address} poolAddress={poolAddress} />
                     </TableCell>
-                    <TableCell key={`mint${row.address}`}>
+                    <TableCell key={`drip${row.address}`}>
                       <Button
-                        onClick={() => tokenStore.mint(row.address, helpers.toWei('10'))}
+                        onClick={() => faucetStore.drip(row.address)}
                       > + </Button>
                     </TableCell>
                   </TableRow>

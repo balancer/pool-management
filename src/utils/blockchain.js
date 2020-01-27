@@ -9,7 +9,8 @@ const promisify = Promise.promisify;
 export const schema = {
   BPool: require('../abi/BPool'),
   BFactory: require('../abi/BFactory'),
-  TestToken: require('../abi/TestToken')
+  TestToken: require('../abi/TestToken'),
+  Faucet: require('../abi/Faucet')
 }
 
 export const objects = {}

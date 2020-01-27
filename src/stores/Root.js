@@ -5,6 +5,7 @@ import ManageFormStore from "./ManageForm"
 import SwapFormStore from "./SwapForm"
 import InvestFormStore from './InvestForm'
 import TokenStore from "./Token"
+import FaucetStore from "./Faucet"
 import UtilStore from "./Util"
 
 class RootStore {
@@ -15,6 +16,7 @@ class RootStore {
         this.swapFormStore = new SwapFormStore(this);
         this.investFormStore = new InvestFormStore(this);
         this.tokenStore = new TokenStore(this);
+        this.faucetStore = new FaucetStore(this);
         this.utilStore = new UtilStore(this);
         this.asyncSetup()
     }
