@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react';
 import './App.css';
 import { Container } from '@material-ui/core';
 
-import PoolListView from 'views/PoolListView';
+import Home from 'views/Home';
 
 const App = () => {
 
@@ -14,7 +14,7 @@ const App = () => {
             <Container>
                 <div className="app-shell">
                     <Switch>
-                        <Route path="/list" component={PoolListView} />
+                        <Route path="/list" component={Home} />
                         <Redirect from="/" to="/list" />
                     </Switch>
                 </div>
