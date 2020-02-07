@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { HashRouter, Route, Redirect, Switch } from 'react-router-dom';
-import Header from 'components/Header';
+import Header from 'components/Common/Header';
 import { observer, inject } from 'mobx-react';
 import './App.css';
 import { Container } from '@material-ui/core';
