@@ -11,7 +11,7 @@ const HeaderFrame = styled.div`
 `;
 
 const HeaderElement = styled.div`
-    margin: 20px 0px 20px 30px;
+    margin: 19px 0px 19px 30px;
     display: flex;
     min-width: 0;
     display: flex;
@@ -22,6 +22,7 @@ const Title = styled.div`
     display: flex;
     align-items: center;
     cursor: pointer;
+    height: 32px;
     a {
         display: inline;
         font-size: 15px;
