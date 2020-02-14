@@ -9,6 +9,7 @@
     --link-text: #8c9eff;
     --pie-chart-color: #b388ff;
     --token-balance-text: #90a4ae;
+    --warning: #FF8A80;
 
     /* Input Fields */
     --input-text: #FAFAFA;
@@ -49,6 +50,11 @@ body {
 
 #root::-webkit-scrollbar {
     display: none;
+}
+
+.app-shell {
+    background-color: var(--background);
+    width: calc(100% - 270px);
 }
 
 .popup-content {

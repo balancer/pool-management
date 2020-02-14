@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import WarningMessage from '../components/Home/WarningMessage'
 
 const HomeWrapper = styled.div`
-`
-
-const WarningMessage = styled.div`
 `
 
 const MyLiquidity = styled.div`
