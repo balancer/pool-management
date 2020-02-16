@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-	padding: 32px 30px 0px 30px;
 `
 
 const Warning = styled.div`
