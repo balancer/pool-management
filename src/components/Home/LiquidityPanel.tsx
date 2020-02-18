@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Identicon from '../Common/Identicon';
 
 const Wrapper = styled.div`
 	border: 1px solid var(--panel-border);
@@ -39,6 +40,7 @@ const FooterRow = styled.div`
 `
 
 const TableCell = styled.div`
+	display: flex;
 	align-items: center;
 	width: 20%;
 `
@@ -49,6 +51,10 @@ const AssetCell = styled(TableCell)`
 
 const TableCellRight = styled(TableCell)`
 	text-align: right;
+`
+
+const IdenticonText = styled.div`
+	margin-left: 10px;
 `
 
 const LiquidityPanel = () => {
@@ -63,14 +69,20 @@ const LiquidityPanel = () => {
         		<TableCellRight>Trade Volume (24h)</TableCellRight>
         	</HeaderRow>
         	<PoolRow>
-        		<TableCell>0xA4D4...fcd8</TableCell>
+        		<TableCell>
+        			<Identicon address="0xc011a72400e58ecd99ee497cf89e3775d4bd732f" />
+        			<IdenticonText>0xA4D4...fcd8</IdenticonText>
+        		</TableCell>
         		<AssetCell>Assets</AssetCell>
         		<TableCell>$8,024,093</TableCell>
         		<TableCell>$802,409</TableCell>
         		<TableCellRight>$564,346.44</TableCellRight>
         	</PoolRow>
         	<PoolRow>
-        		<TableCell>0xA4D4...fcd8</TableCell>
+        		<TableCell>
+        			<Identicon address="0x0d8775f648430679a709e98d2b0cb6250d2887ef" />
+        			<IdenticonText>0xA4D4...fcd8</IdenticonText>
+        		</TableCell>
         		<AssetCell>Assets</AssetCell>
         		<TableCell>$8,024,093</TableCell>
         		<TableCell>$802,409</TableCell>
