@@ -7,13 +7,12 @@ const Wrapper = styled.div`
 const Warning = styled.div`
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
 	align-items: center;
 	color: var(--warning);
 	height: 67px;
 	border: 1px solid var(--warning);
 	border-radius: 4px;
-	padding-left: 26px;
+	padding-left: 20px;
 `
 
 const Message = styled.div`
@@ -23,12 +22,13 @@ const Message = styled.div`
 	font-weight: normal;
 	font-size: 14px;
 	line-height: 16px;
+	letter-spacing: 0.2px;
 `
 
 const WarningIcon = styled.img`
 	width: 22px;
 	height: 26px;
-	margin-righ: 26px;
+	margin-right: 20px;
 	color: var(--warning)
 `
 

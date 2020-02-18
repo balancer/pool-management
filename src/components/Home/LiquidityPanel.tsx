@@ -60,7 +60,7 @@ const LiquidityPanel = () => {
         		<AssetCell>Assets</AssetCell>
         		<TableCell>Liquidity</TableCell>
         		<TableCell>My Liquidity</TableCell>
-        		<TableCell>Trade Volume (24h)</TableCell>
+        		<TableCellRight>Trade Volume (24h)</TableCellRight>
         	</HeaderRow>
         	<PoolRow>
         		<TableCell>0xA4D4...fcd8</TableCell>
