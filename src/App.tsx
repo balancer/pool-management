@@ -15,7 +15,6 @@ const Container = styled.div`
 const LeftContainer = styled.div`
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 70px);
     width: 270px;
     border-right: 1px solid var(--panel-border);
     background-color: var(--panel-background);

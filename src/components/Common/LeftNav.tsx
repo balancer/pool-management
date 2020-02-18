@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-	height: 202px;
+	height: 201px;
 	border-bottom: 1px solid var(--panel-border);
 `
 
