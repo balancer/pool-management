@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -23,7 +23,7 @@ const HeaderRow = styled.div`
 const PoolRow = styled.div`
 	display: flex;
 	flex-direction: row;
-	color: var(--header-text);
+	color: var(--panel-row-text);
 	text-align: left;
 	border-bottom: 1px solid var(--panel-border);
 	padding: 20px 25px 20px 25px;

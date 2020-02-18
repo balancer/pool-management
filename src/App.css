@@ -4,7 +4,8 @@
     --body-text: #90a4ae;
     --exit-modal-color: #dfe3e9;
     --error-color: #ff8a80;
-    --header-text: #fafafa;
+    --header-text: #ffffff;
+    --app-header-text: #fafafa;
     --info-border: #ffffff;
     --link-text: #8c9eff;
     --pie-chart-color: #b388ff;
@@ -34,6 +35,7 @@
     --panel-hover-border: #4C5480;
     --panel-hover-background: #31313B;
     --panel-header-background: #282932;
+    --panel-row-text: #fafafa;
 
     /* Selector Styles */
     --highlighted-selector-background: #41476b;

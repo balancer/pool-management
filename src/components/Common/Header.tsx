@@ -42,7 +42,7 @@ const AppName = styled.div`
     font-size: 15px;
     line-height: 18px;
     letter-spacing: 1px;
-    color: var(--header-text);
+    color: var(--app-header-text);
     margin-left: 12px;
 `;
 
