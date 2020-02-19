@@ -5,11 +5,12 @@ import { Pie } from 'react-chartjs-2';
 const Wrapper = styled.div`
 	display: flex;
 	flex-direction: row;
-	padding: 25px;
+	padding: 20px 10px 20px 20px;
 	background: var(--panel-background);
 	border: 1px solid var(--panel-border);
 	border-radius: 4px;
-	width: 35%;
+	width: 33%;
+    min-width: 246px;
 `
 
 const PieChartWrapper = styled.div`
@@ -21,7 +22,7 @@ const BreakdownContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	margin-left: 25px;
+	margin-left: 5px;
 `
 
 const AssetPercentageContainer = styled.div`

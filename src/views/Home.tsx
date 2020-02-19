@@ -5,6 +5,7 @@ import MyLiquidity from '../components/Home/MyLiquidity'
 import AllPools from '../components/Home/AllPools'
 
 const HomeWrapper = styled.div`
+	position: relative;
 	padding: 32px 30px 0px 30px;
 `
 

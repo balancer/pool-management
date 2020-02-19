@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import ChartPanel   from '../components/Pool/ChartPanel';
+import AddRemovePanel   from '../components/Pool/AddRemovePanel';
 
 const PoolViewWrapper = styled.div`
-    padding: 32px 30px 0px 30px;
+    padding: 27px 25px 0px 25px;
 `
 
 const InfoPanelWrapper = styled.div`
-`
-
-const AddRemovePanel = styled.div`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 `
 
 const InfoPanel = styled.div`
