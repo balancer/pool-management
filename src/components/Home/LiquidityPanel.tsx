@@ -63,13 +63,6 @@ const PieChartWrapper = styled.div`
     height: 40px;
 `
 
-const PieChart = styled.div`
-    width: 40px;
-    height: 40px;
-    border: 1px solid #b388ff;
-    border-radius: 50px;
-`
-
 const BreakdownContainer = styled.div`
 	display: flex;
 	flex-direction: row;

@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import ChartPanel   from '../components/Pool/ChartPanel';
 
 const PoolViewWrapper = styled.div`
+    padding: 32px 30px 0px 30px;
 `
 
 const InfoPanelWrapper = styled.div`
-`
-
-const ChartPanel = styled.div`
 `
 
 const AddRemovePanel = styled.div`

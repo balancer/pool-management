@@ -4,12 +4,14 @@ import styled from 'styled-components';
 import './App.css';
 import Header from 'components/Common/Header';
 import Home from 'views/Home';
+import Pool from 'views/Pool';
 import LeftNav from 'components/Common/LeftNav'
 import WalletBalances from 'components/Common/WalletBalances'
 
 const Container = styled.div`
     display: flex;
     flex-direction: row;
+    min-height: 100vh;
 `
 
 const LeftContainer = styled.div`
@@ -26,6 +28,7 @@ const App = () => {
             <div className="app-shell">
                 <Switch>
                     <Route path="/list" component={Home} />
+                    <Route path="/pool" component={Pool} />
                     <Redirect from="/" to="/list" />
                 </Switch>
             </div>
