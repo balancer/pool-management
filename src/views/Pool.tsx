@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import ChartPanel   from '../components/Pool/ChartPanel';
 import AddRemovePanel   from '../components/Pool/AddRemovePanel';
 import InfoPanel from '../components/Pool/InfoPanel';
+import BalancesTable from '../components/Pool/BalancesTable';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -19,9 +20,6 @@ const InfoPanelWrapper = styled.div`
     justify-content: flex-start;
     div {
     }
-`
-
-const BalancesTable = styled.div`
 `
 
 const SwapsTable = styled.div`

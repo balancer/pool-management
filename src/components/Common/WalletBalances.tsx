@@ -43,7 +43,7 @@ const IconAndNameContainer = styled.div`
 	align-items: center;
 `;
 
-const TokenIconAddress = address => {
+export const TokenIconAddress = address => {
     if (address === 'ether') {
         return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png`;
     } else {
@@ -52,6 +52,7 @@ const TokenIconAddress = address => {
         )}/logo.png`;
     }
 };
+
 const TokenIcon = styled.img`
     width: 20px;
     height: 20px;
