@@ -4,6 +4,7 @@ import ChartPanel   from '../components/Pool/ChartPanel';
 import AddRemovePanel   from '../components/Pool/AddRemovePanel';
 import InfoPanel from '../components/Pool/InfoPanel';
 import BalancesTable from '../components/Pool/BalancesTable';
+import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -26,11 +27,13 @@ const SwapsTable = styled.div`
 `
 
 const Pool = () => {
+    const [modelOpen, setModalOpen] = React.useState({ state: false });
 
     return (
         <PoolViewWrapper>
+            <AddLiquidityModal modelOpen={modelOpen} setModalOpen={setModalOpen} />
         	<ChartPanel />
-        	<AddRemovePanel />
+        	<AddRemovePanel setModalOpen={setModalOpen} />
             <InfoPanelWrapper>
             	<InfoPanel text="$ 8,024,093.89" subText="Liquidity" />
                 <InfoPanel text="$ 1,252,425.65" subText="Trade Volume (24hr)" />

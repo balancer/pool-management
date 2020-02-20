@@ -56,7 +56,7 @@ const InformationContainer = styled.div`
 	line-height: 16px;
 `
 
-const AddRemovePanel = () => {
+const AddRemovePanel = ({ setModalOpen }) => {
 
     return (
         <Wrapper>
@@ -75,7 +75,9 @@ const AddRemovePanel = () => {
         		<Button
                     buttonText={"Add Liquidity"}
                     active={true}
-                    onClick={() => { }}
+                    onClick={() => { 
+						setModalOpen({ state: true });
+                    }}
         		/>
         		<Spacer />
         		<Button
