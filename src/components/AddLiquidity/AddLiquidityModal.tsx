@@ -57,7 +57,6 @@ const ExitComponent = styled.div`
 const AddLiquidityContent = styled.div`
 	display: flex;
 	flex-direction: row;
-    padding: 0px 20px 0px 20px;
 `
 
 const Notification = styled.div`
