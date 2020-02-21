@@ -34,7 +34,7 @@ const TableRow = styled.div`
 	flex-direction: row;
 	color: var(--panel-row-text);
 	text-align: left;
-	padding: 20px 25px 20px 25px;
+	padding: 16px 20px;
 	font-family: Roboto;
 	font-style: normal;
 	font-weight: normal;
@@ -58,6 +58,28 @@ const TokenIcon = styled.img`
     margin-right: 13px;
 `
 
+const DepositAmount = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	height: 30px;
+	border: 1px solid var(--panel-border);
+	border-radius: 4px;
+	width: 80%;
+	padding: 0px 17px;
+`
+
+const MaxLink = styled.div`
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    display: flex;
+    text-decoration-line: underline;
+    color: var(--link-text);
+    cursor: pointer;
+`;
+
 const AddAssetTable = () => {
 
     return (
@@ -75,7 +97,12 @@ const AddAssetTable = () => {
         		</TableCell>
         		<TableCell></TableCell>
         		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				1,500
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
@@ -83,8 +110,13 @@ const AddAssetTable = () => {
         			MKR
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 MKR</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				0.25
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
@@ -92,8 +124,13 @@ const AddAssetTable = () => {
         			USDC
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 USDC</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				25
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
@@ -101,17 +138,27 @@ const AddAssetTable = () => {
         			REP
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 REP</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				430
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
-        			<TokenIcon src={TokenIconAddress("0x6b175474e89094c44da98b954eedeac495271d0f")} />
-        			Dai
+        			<TokenIcon src={TokenIconAddress("0x960b236A07cf122663c4303350609A66A7B288C0")} />
+        			ANT
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 ANT</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				100,000
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
@@ -119,8 +166,13 @@ const AddAssetTable = () => {
         			wBTC
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 wBTC</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				340
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
@@ -128,8 +180,13 @@ const AddAssetTable = () => {
         			BAT
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 BAT</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				700
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         	<TableRow>
         		<TableCell>
@@ -137,8 +194,13 @@ const AddAssetTable = () => {
         			SNX
         		</TableCell>
         		<TableCell></TableCell>
-        		<TableCell>100,393.44 DAI</TableCell>
-        		<TableCellRight>$100,420.10</TableCellRight>
+        		<TableCell>100,393.44 SNX</TableCell>
+        		<TableCellRight>
+        			<DepositAmount>
+        				<MaxLink>Max</MaxLink>
+        				1,500
+        			</DepositAmount>
+        		</TableCellRight>
         	</TableRow>
         </Wrapper>
     );
