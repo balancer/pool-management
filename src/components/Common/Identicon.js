@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import Jazzicon from 'jazzicon';
+import React, { useEffect, useRef } from "react";
+import styled from "styled-components";
+import Jazzicon from "jazzicon";
 
 const StyledIdenticon = styled.div`
     height: 1rem;
@@ -22,6 +22,6 @@ const Identicon = ({ address }) => {
     });
 
     return <StyledIdenticon ref={ref} />;
-}
+};
 
-export default Identicon
+export default Identicon;

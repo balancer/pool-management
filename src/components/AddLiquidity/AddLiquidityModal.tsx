@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import PoolOverview from '../Common/PoolOverview';
-import Button from '../Common/Button';
-import AddAssetTable from './AddAssetTable';
+import React from "react";
+import styled from "styled-components";
+import PoolOverview from "../Common/PoolOverview";
+import Button from "../Common/Button";
+import AddAssetTable from "./AddAssetTable";
 
 const Container = styled.div`
     display: block;
@@ -42,8 +42,8 @@ const AddLiquidityHeader = styled.div`
 `;
 
 const AddLiquidityBody = styled.div`
-    padding: 0px 20px 32px 20px;	
-`
+    padding: 0px 20px 32px 20px;
+`;
 
 const HeaderContent = styled.div``;
 
@@ -55,24 +55,23 @@ const ExitComponent = styled.div`
 `;
 
 const AddLiquidityContent = styled.div`
-	display: flex;
-	flex-direction: row;
-`
+    display: flex;
+    flex-direction: row;
+`;
 
 const Notification = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 50px;
-	width: 100%;
-	border: 1px solid var(--panel-border);
-	background: var(--panel-background);
-	margin-top: 20px;
-	margin-bottom: 30px;
-`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 100%;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-background);
+    margin-top: 20px;
+    margin-bottom: 30px;
+`;
 
 const AddLiquidityModal = ({ modelOpen, setModalOpen }) => {
-
     return (
         <Container style={{ display: modelOpen.state ? 'block' : 'none' }}>
             <ModalContent>
@@ -87,20 +86,18 @@ const AddLiquidityModal = ({ modelOpen, setModalOpen }) => {
                     </ExitComponent>
                 </AddLiquidityHeader>
                 <AddLiquidityBody>
-	                <AddLiquidityContent>
-	                	<PoolOverview />
-	                	<AddAssetTable />
-	                </AddLiquidityContent>
-	                <Notification>
-	                	Please unlock Dai to continue
-	                </Notification>
-	        		<Button
-	                    buttonText={"Unlock Dai"}
-	                    active={true}
-	                    onClick={() => { 
-							// 
-	                    }}
-	        		/>
+                    <AddLiquidityContent>
+                        <PoolOverview />
+                        <AddAssetTable />
+                    </AddLiquidityContent>
+                    <Notification>Please unlock Dai to continue</Notification>
+                    <Button
+                        buttonText={'Unlock Dai'}
+                        active={true}
+                        onClick={() => {
+                            //
+                        }}
+                    />
                 </AddLiquidityBody>
             </ModalContent>
         </Container>
