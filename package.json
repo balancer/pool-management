@@ -95,8 +95,6 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "scripts": {
-    "ganache": " ganache-cli --deterministic -l 4294967295 --allowUnlimitedContractSize",
-    "deploy": "node scripts/deployPreConfigured.js",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
