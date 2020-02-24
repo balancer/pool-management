@@ -5,7 +5,7 @@ import jazzicon from "jazzicon";
 // Utils
 import web3 from "./web3";
 
-export const { toBN, toWei, fromWei, isAddress, BN } = web3.utils;
+export const { toBN, toWei, fromWei, BN } = web3.utils;
 
 export const MAX_GAS = 0xffffffff;
 export const MAX_UINT = web3.utils.toTwosComplement('-1');
@@ -126,6 +126,14 @@ export function fromPercentageToFee(value) {
   const weiValue = new BN(web3.utils.toWei(value, 'ether'))
   const feeValue = weiValue.div(new BN(100))
   return feeValue.toString()
+}
+
+export function isAddress(value) {
+    try {
+        return web3.utils.toChecksumAddress(value.toLowerCase());
+    } catch {
+        return false;
+    }
 }
 
 export const copyToClipboard = e => {

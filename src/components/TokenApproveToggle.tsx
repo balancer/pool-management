@@ -30,11 +30,11 @@ class TokenApproveToggle extends React.Component<any, any> {
             poolAddress
         );
 
-        if (allowance >= helpers.MAX_UINT / 2) {
-            this.setState({ selected: true });
-        } else {
-            this.setState({ selected: false });
-        }
+        // if (allowance >= helpers.MAX_UINT / 2) {
+        //     this.setState({ selected: true });
+        // } else {
+        //     this.setState({ selected: false });
+        // }
     }
 
     async approveToken() {

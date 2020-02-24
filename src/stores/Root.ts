@@ -28,12 +28,12 @@ class RootStore {
         this.tokenStore = new TokenStore(this);
         this.faucetStore = new FaucetStore(this);
         this.utilStore = new UtilStore(this);
-        this.asyncSetup();
+        // this.asyncSetup();
     }
 
-    asyncSetup = async () => {
-        await this.providerStore.setWeb3WebClient();
-    };
+    // asyncSetup = async () => {
+    //     await this.providerStore.setWeb3WebClient();
+    // };
 
     setDataUpdateInterval = async (poolAddress, userAddress) => {
         this.dataUpdateInterval = setInterval(async () => {
