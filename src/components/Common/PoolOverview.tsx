@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Pie } from 'react-chartjs-2';
+import React from "react";
+import styled from "styled-components";
+import { Pie } from "react-chartjs-2";
 
 const Wrapper = styled.div`
     display: flex;

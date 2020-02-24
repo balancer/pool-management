@@ -1,7 +1,7 @@
-import { action, observable } from 'mobx';
-import RootStore from 'stores/Root';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import { supportedChainId } from '../provider/connectors';
+import { action, observable } from "mobx";
+import RootStore from "stores/Root";
+import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
+import { supportedChainId } from "../provider/connectors";
 
 export default class BlockchainFetchStore {
     @observable activeFetchLoop: any;

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useWeb3React as useWeb3ReactCore } from '@web3-react/core';
-import { isMobile } from 'react-device-detect';
-import { injected, web3ContextNames } from 'provider/connectors';
-import { supportedChainId } from './connectors';
+import { useEffect, useState } from "react";
+import { useWeb3React as useWeb3ReactCore } from "@web3-react/core";
+import { isMobile } from "react-device-detect";
+import { injected, web3ContextNames } from "provider/connectors";
+import { supportedChainId } from "./connectors";
 
 /*  Attempt to connect to & activate injected connector
     If we're on mobile and have an injected connector, attempt even if not authorized (legacy support)

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { isAddress } from '../../utils/helpers';
+import React from "react";
+import styled from "styled-components";
+import { isAddress } from "../../utils/helpers";
 
 const Wrapper = styled.div``;
 

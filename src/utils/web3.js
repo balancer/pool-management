@@ -1,5 +1,5 @@
 // Libraries
-import Web3 from 'web3';
+import Web3 from "web3";
 
 class Web3Extended extends Web3 {
     stop = () => {

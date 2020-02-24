@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import LiquidityPanel from './LiquidityPanel';
+import React from "react";
+import styled from "styled-components";
+import LiquidityPanel from "./LiquidityPanel";
 
 const Wrapper = styled.div`
     padding-top: 8px;

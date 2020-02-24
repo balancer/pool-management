@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 import Web3ConnectStatus from "../Web3ConnectStatus";
 
 const HeaderFrame = styled.div`

@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import PoolOverview from '../Common/PoolOverview';
-import Button from '../Common/Button';
-import AddAssetTable from './AddAssetTable';
+import React from "react";
+import styled from "styled-components";
+import PoolOverview from "../Common/PoolOverview";
+import Button from "../Common/Button";
+import AddAssetTable from "./AddAssetTable";
 
 const Container = styled.div`
     display: block;

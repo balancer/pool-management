@@ -1,7 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 import {
-    TablePagination,
     Button,
     makeStyles,
     Paper,
@@ -9,8 +8,9 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    TableRow,
-} from '@material-ui/core';
+    TablePagination,
+    TableRow
+} from "@material-ui/core";
 
 const columns = [
     { id: 'address', label: 'Address', minWidth: 50 },

@@ -1,8 +1,8 @@
-import { action, observable } from 'mobx';
-import { providers } from 'ethers';
-import RootStore from 'stores/Root';
-import { TransactionResponse } from 'ethers/providers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import { action, observable } from "mobx";
+import { providers } from "ethers";
+import RootStore from "stores/Root";
+import { TransactionResponse } from "ethers/providers";
+import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
 
 export interface TransactionRecord {
     hash: string;

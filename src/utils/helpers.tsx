@@ -1,9 +1,9 @@
 // Libraries
-import React from 'react';
-import jazzicon from 'jazzicon';
-import { ethers, utils } from 'ethers';
-import { BigNumber } from 'utils/bignumber';
-import { SUPPORTED_THEMES } from '../theme';
+import React from "react";
+import jazzicon from "jazzicon";
+import { ethers, utils } from "ethers";
+import { BigNumber } from "utils/bignumber";
+import { SUPPORTED_THEMES } from "../theme";
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');

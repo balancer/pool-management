@@ -1,11 +1,7 @@
-import React, { useEffect } from 'react';
-import {
-    createGlobalStyle,
-    css,
-    ThemeProvider as StyledComponentsThemeProvider,
-} from 'styled-components';
-import { checkSupportedTheme, getQueryParam } from 'utils/helpers';
-import { useStores } from '../contexts/storesContext';
+import React, { useEffect } from "react";
+import { createGlobalStyle, css, ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
+import { checkSupportedTheme, getQueryParam } from "utils/helpers";
+import { useStores } from "../contexts/storesContext";
 
 export * from './components';
 

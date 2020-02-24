@@ -1,10 +1,10 @@
 // Stores
-import ProviderStore from 'stores/Provider';
-import BlockchainFetchStore from 'stores/BlockchainFetch';
-import TokenStore from 'stores/Token';
-import TransactionStore from './Transaction';
-import { supportedNetworks } from 'provider/connectors';
-import PoolStore from './Pool';
+import ProviderStore from "stores/Provider";
+import BlockchainFetchStore from "stores/BlockchainFetch";
+import TokenStore from "stores/Token";
+import TransactionStore from "./Transaction";
+import { supportedNetworks } from "provider/connectors";
+import PoolStore from "./Pool";
 import ModalStore from "./Modal";
 import AppSettingsStore from "./AppSettings";
 

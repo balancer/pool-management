@@ -1,4 +1,4 @@
-import { TokenBalance, UserAllowance } from '../Token';
+import { TokenBalance, UserAllowance } from "../Token";
 
 export enum AsyncStatus {
     SUCCESS,

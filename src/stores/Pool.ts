@@ -1,4 +1,4 @@
-import RootStore from 'stores/Root';
+import RootStore from "stores/Root";
 
 export default class PoolStore {
     rootStore: RootStore;

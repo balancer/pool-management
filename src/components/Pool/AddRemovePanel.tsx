@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import Identicon from '../Common/Identicon';
-import Button from '../Common/Button';
+import React from "react";
+import styled from "styled-components";
+import Identicon from "../Common/Identicon";
+import Button from "../Common/Button";
 
 const Wrapper = styled.div`
     display: flex;
