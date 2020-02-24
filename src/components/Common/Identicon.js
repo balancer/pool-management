@@ -22,6 +22,6 @@ const Identicon = ({ address }) => {
     });
 
     return <StyledIdenticon ref={ref} />;
-}
+};
 
-export default Identicon
+export default Identicon;

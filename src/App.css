@@ -7,18 +7,18 @@
     --header-text: #ffffff;
     --app-header-text: #fafafa;
     --info-border: #ffffff;
-    --link-text: #82B1FF;
+    --link-text: #82b1ff;
     --pie-chart-color: #b388ff;
     --token-balance-text: #90a4ae;
-    --warning: #FF8A80;
-    --address-color: #82B1FF;
+    --warning: #ff8a80;
+    --address-color: #82b1ff;
 
     /* Input Fields */
-    --input-text: #FAFAFA;
+    --input-text: #fafafa;
     --input-placeholder-text: #575860;
-    --input-hover-background: #31313B;
+    --input-hover-background: #31313b;
     --input-hover-placeholder-text: #818187;
-    --input-hover-border: #4C5480;
+    --input-hover-border: #4c5480;
 
     /* Button Styles */
     --button-text: #fafafa;
@@ -33,13 +33,13 @@
     /* Panel Styles */
     --panel-border: #41476b;
     --panel-background: #282932;
-    --panel-hover-border: #4C5480;
-    --panel-hover-background: #31313B;
+    --panel-hover-border: #4c5480;
+    --panel-hover-background: #31313b;
     --panel-header-background: #282932;
     --panel-row-text: #fafafa;
 
     /* Selector Styles */
-    --slider-main: #8C9EFF;
+    --slider-main: #8c9eff;
     --highlighted-selector-background: #41476b;
     --highlighted-selector-border: #7785d5;
     --highlighted-selector-text: #ffffff;
@@ -49,7 +49,6 @@
 }
 
 body {
-    
 }
 
 #root::-webkit-scrollbar {
@@ -62,11 +61,11 @@ body {
 }
 
 .popup-content {
-  color: var(--background);
-  border-radius: 4px;
-  height: 60px;
-  width: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    color: var(--background);
+    border-radius: 4px;
+    height: 60px;
+    width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
