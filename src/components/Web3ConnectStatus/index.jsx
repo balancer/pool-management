@@ -1,20 +1,20 @@
-import React from "react";
-import styled from "styled-components";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-import { darken } from "polished";
-import { Activity } from "react-feather";
-import { observer } from "mobx-react";
-import { shortenAddress } from "utils/helpers";
-import WalletModal from "components/WalletModal";
-import { Spinner } from "../../theme";
-import Circle from "assets/images/circle.svg";
-import { injected, web3ContextNames } from "provider/connectors";
-import Identicon from "../Identicon";
-import { useStores } from "../../contexts/storesContext";
-import Button from "../Button";
-import Web3PillBox from "../Web3PillBox";
-import { isChainIdSupported } from "../../provider/connectors";
-import { useActiveWeb3React } from "../../provider/providerHooks";
+import React from 'react';
+import styled from 'styled-components';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { darken } from 'polished';
+import { Activity } from 'react-feather';
+import { observer } from 'mobx-react';
+import { shortenAddress } from 'utils/helpers';
+import WalletModal from 'components/WalletModal';
+import { Spinner } from '../../theme';
+import Circle from 'assets/images/circle.svg';
+import { injected, web3ContextNames } from 'provider/connectors';
+import Identicon from '../Identicon';
+import { useStores } from '../../contexts/storesContext';
+import Button from '../Button';
+import Web3PillBox from '../Web3PillBox';
+import { isChainIdSupported } from '../../provider/connectors';
+import { useActiveWeb3React } from '../../provider/providerHooks';
 
 const Web3StatusGeneric = styled.button`
     ${({ theme }) => theme.flexRowNoWrap}

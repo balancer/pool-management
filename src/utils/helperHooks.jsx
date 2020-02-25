@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import copy from "copy-to-clipboard";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import copy from 'copy-to-clipboard';
 
 export function useInterval(callback, delay) {
     const savedCallback = useRef();

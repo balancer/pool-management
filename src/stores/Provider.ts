@@ -1,10 +1,10 @@
-import { action, observable, ObservableMap } from "mobx";
-import RootStore from "stores/Root";
-import { ethers } from "ethers";
-import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
-import UncheckedJsonRpcSigner from "provider/UncheckedJsonRpcSigner";
-import { sendAction } from "./actions/actions";
-import { supportedChainId, web3ContextNames } from "../provider/connectors";
+import { action, observable, ObservableMap } from 'mobx';
+import RootStore from 'stores/Root';
+import { ethers } from 'ethers';
+import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
+import { sendAction } from './actions/actions';
+import { supportedChainId, web3ContextNames } from '../provider/connectors';
 
 export enum ContractTypes {
     BPool = 'BPool',
@@ -40,44 +40,27 @@ export default class ProviderStore {
     @observable provider: any;
     @observable accounts: string[];
     @observable defaultAccount: string | null;
-    @observable contexts: object;
+    @observable web3Contexts: object;
     @observable blockNumber: number;
     @observable supportedNetworks: number[];
-    @observable chainData: ChainDataMap;
+    @observable chainData: ChainData;
     @observable activeChainId: number;
     @observable activeFetchLoop: any;
     @observable activeAccount: string;
     rootStore: RootStore;
 
-    constructor(rootStore, networkIds: number[]) {
+    constructor(rootStore) {
         this.rootStore = rootStore;
-        this.contexts = {};
-        this.supportedNetworks = networkIds;
-        this.chainData = new ObservableMap<number, ChainData>();
-
-        networkIds.forEach(networkId => {
-            this.chainData.set(networkId, {
-                currentBlockNumber: -1,
-            });
-        });
+        this.web3Contexts = {};
+        this.chainData = { currentBlockNumber: -1 } as ChainData;
     }
 
-    private safeGetChainData(chainId): ChainData {
-        const chainData = this.chainData.get(chainId);
-        if (!chainData) {
-            throw new Error(ERRORS.UntrackedChainId);
-        }
-        return chainData;
+    getCurrentBlockNumber(): number {
+        return this.chainData.currentBlockNumber;
     }
 
-    getCurrentBlockNumber(chainId): number {
-        const chainData = this.safeGetChainData(chainId);
-        return chainData.currentBlockNumber;
-    }
-
-    @action setCurrentBlockNumber(chainId, blockNumber): void {
-        const chainData = this.safeGetChainData(chainId);
-        chainData.currentBlockNumber = blockNumber;
+    @action setCurrentBlockNumber(blockNumber): void {
+        this.chainData.currentBlockNumber = blockNumber;
     }
 
     @action setActiveAccount(account: string) {
@@ -86,25 +69,20 @@ export default class ProviderStore {
 
     @action fetchUserBlockchainData = async (
         web3React: Web3ReactContextInterface,
-        chainId: number,
         account: string
     ) => {
         const { transactionStore, tokenStore } = this.rootStore;
 
         console.debug('[Fetch Start - User Blockchain Data]', {
-            chainId,
             account,
         });
 
-        transactionStore.checkPendingTransactions(web3React, chainId, account);
-        tokenStore
-            .fetchBalancerTokenData(web3React, account, chainId)
-            .then(result => {
-                console.debug('[Fetch End - User Blockchain Data]', {
-                    chainId,
-                    account,
-                });
+        transactionStore.checkPendingTransactions(web3React, account);
+        tokenStore.fetchBalancerTokenData(web3React, account).then(result => {
+            console.debug('[Fetch End - User Blockchain Data]', {
+                account,
             });
+        });
     };
 
     // account is optional
@@ -140,8 +118,8 @@ export default class ProviderStore {
     }
 
     getActiveWeb3React(): Web3ReactContextInterface {
-        const contextBackup = this.contexts[web3ContextNames.backup];
-        const contextInjected = this.contexts[web3ContextNames.injected];
+        const contextBackup = this.web3Contexts[web3ContextNames.backup];
+        const contextInjected = this.web3Contexts[web3ContextNames.injected];
 
         return contextInjected.active &&
             contextInjected.chainId === supportedChainId
@@ -150,15 +128,15 @@ export default class ProviderStore {
     }
 
     getWeb3React(name): Web3ReactContextInterface {
-        if (!this.contexts[name]) {
+        if (!this.web3Contexts[name]) {
             throw new Error(ERRORS.ContextNotFound);
         }
-        return this.contexts[name];
+        return this.web3Contexts[name];
     }
 
     @action setWeb3Context(name, context: Web3ReactContextInterface) {
         console.log('[setWeb3Context]', name, context);
-        this.contexts[name] = context;
+        this.web3Contexts[name] = context;
     }
 
     @action sendTransaction = async (

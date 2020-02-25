@@ -1,6 +1,6 @@
-import React from "react";
-import { Button as MuiButton } from "@material-ui/core";
-import PropTypes from "prop-types";
+import React from 'react';
+import { Button as MuiButton } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 const Button = props => {
     const { children, ...other } = props;

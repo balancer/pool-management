@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { isMobile } from "react-device-detect";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-import { observer } from "mobx-react";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { isMobile } from 'react-device-detect';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { observer } from 'mobx-react';
 
-import Modal from "../Modal";
-import AccountDetails from "../AccountDetails";
-import PendingView from "./PendingView";
-import Option from "./Option";
-import { usePrevious } from "utils/helperHooks";
-import { Link } from "../../theme";
-import MetamaskIcon from "assets/images/metamask.png";
-import { ReactComponent as Close } from "../../assets/images/x.svg";
-import { injected, SUPPORTED_WALLETS } from "provider/connectors";
-import { useStores } from "contexts/storesContext";
-import { isChainIdSupported, web3ContextNames } from "../../provider/connectors";
-import { useActiveWeb3React } from "provider/providerHooks";
+import Modal from '../Modal';
+import AccountDetails from '../AccountDetails';
+import PendingView from './PendingView';
+import Option from './Option';
+import { usePrevious } from 'utils/helperHooks';
+import { Link } from '../../theme';
+import MetamaskIcon from 'assets/images/metamask.png';
+import { ReactComponent as Close } from '../../assets/images/x.svg';
+import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
+import { useStores } from 'contexts/storesContext';
+import {
+    isChainIdSupported,
+    web3ContextNames,
+} from '../../provider/connectors';
+import { useActiveWeb3React } from 'provider/providerHooks';
 
 const CloseIcon = styled.div`
     position: absolute;
@@ -120,12 +123,7 @@ const WalletModal = observer(
         const {
             root: { modalStore },
         } = useStores();
-        const {
-            active,
-            connector,
-            error,
-            activate,
-        } = useActiveWeb3React();
+        const { active, connector, error, activate } = useActiveWeb3React();
 
         const { account, chainId: injectedChainId } = useWeb3React(
             web3ContextNames.injected

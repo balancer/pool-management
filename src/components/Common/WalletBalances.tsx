@@ -1,6 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { isAddress } from "../../utils/helpers";
+import React from 'react';
+import styled from 'styled-components';
+import { formatBalanceTruncated, isAddress } from '../../utils/helpers';
+import { observer } from 'mobx-react';
+import { useStores } from '../../contexts/storesContext';
+import { BigNumber } from 'utils/bignumber';
 
 const Wrapper = styled.div``;
 
@@ -69,41 +72,79 @@ const TokenBalance = styled.div`
     text-align: center;
 `;
 
-const WalletBalances = () => {
+const WalletBalances = observer(() => {
+    const {
+        root: { tokenStore, contractMetadataStore, providerStore },
+    } = useStores();
+
+    const { account } = providerStore.getActiveWeb3React();
+
+    const renderWalletBalances = () => {
+        const whitelistedTokens = contractMetadataStore.getWhitelistedTokenMetadata();
+
+        //Are all balances initially loaded?
+
+        //Load and cache icons upon start - they must be loaded too
+
+        //If not, display loading
+        return (
+            <React.Fragment>
+                {whitelistedTokens.map(token => {
+                    let balanceToDisplay: string;
+                    if (account) {
+                        const userBalance = tokenStore.getBalance(
+                            token.address,
+                            account
+                        );
+                        if (userBalance) {
+                            balanceToDisplay = formatBalanceTruncated(
+                                userBalance,
+                                4,
+                                20
+                            );
+                        }
+                    }
+
+                    if (account && balanceToDisplay) {
+                        return renderBalance(
+                            token.iconAddress,
+                            token.symbol,
+                            balanceToDisplay
+                        );
+                    }
+
+                    return <React.Fragment></React.Fragment>;
+                })}
+            </React.Fragment>
+        );
+    };
+
+    const renderBalance = (
+        iconUrl: string,
+        tokenName: string,
+        tokenBalance: string
+    ) => {
+        return (
+            <BalanceElement>
+                <IconAndNameContainer>
+                    <TokenIcon src={TokenIconAddress(iconUrl)} />
+                    <TokenName>{tokenName}</TokenName>
+                </IconAndNameContainer>
+                <TokenBalance>{tokenBalance}</TokenBalance>
+            </BalanceElement>
+        );
+    };
+
     return (
         <Wrapper>
             <BalanceHeader>My Wallet</BalanceHeader>
-            <BalanceElement>
-                <IconAndNameContainer>
-                    <TokenIcon src={TokenIconAddress('ether')} />
-                    <TokenName>ETH</TokenName>
-                </IconAndNameContainer>
-                <TokenBalance>2,512.624</TokenBalance>
-            </BalanceElement>
-            <BalanceElement>
-                <IconAndNameContainer>
-                    <TokenIcon
-                        src={TokenIconAddress(
-                            '0x6b175474e89094c44da98b954eedeac495271d0f'
-                        )}
-                    />
-                    <TokenName>DAI</TokenName>
-                </IconAndNameContainer>
-                <TokenBalance>21,252.62</TokenBalance>
-            </BalanceElement>
-            <BalanceElement>
-                <IconAndNameContainer>
-                    <TokenIcon
-                        src={TokenIconAddress(
-                            '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2'
-                        )}
-                    />
-                    <TokenName>MKR</TokenName>
-                </IconAndNameContainer>
-                <TokenBalance>510.624</TokenBalance>
-            </BalanceElement>
+            {account ? (
+                renderWalletBalances()
+            ) : (
+                <BalanceElement>Connect Wallet to see balances</BalanceElement>
+            )}
         </Wrapper>
     );
-};
+});
 
 export default WalletBalances;

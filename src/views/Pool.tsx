@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import ChartPanel from "../components/Pool/ChartPanel";
-import AddRemovePanel from "../components/Pool/AddRemovePanel";
-import InfoPanel from "../components/Pool/InfoPanel";
-import BalancesTable from "../components/Pool/BalancesTable";
-import AddLiquidityModal from "../components/AddLiquidity/AddLiquidityModal";
+import React from 'react';
+import styled from 'styled-components';
+import ChartPanel from '../components/Pool/ChartPanel';
+import AddRemovePanel from '../components/Pool/AddRemovePanel';
+import InfoPanel from '../components/Pool/InfoPanel';
+import BalancesTable from '../components/Pool/BalancesTable';
+import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 
 const PoolViewWrapper = styled.div`
     display: flex;

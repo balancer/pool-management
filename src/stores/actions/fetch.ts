@@ -1,4 +1,4 @@
-import { TokenBalance, UserAllowance } from "../Token";
+import { TokenBalance, UserAllowance } from '../Token';
 
 export enum AsyncStatus {
     SUCCESS,
@@ -8,7 +8,6 @@ export enum AsyncStatus {
 }
 
 export interface TokenBalanceFetchRequest {
-    chainId: number;
     tokenAddress: string;
     account: string;
     fetchBlock: number;
@@ -27,7 +26,6 @@ export class TokenBalanceFetch {
 }
 
 export interface UserAllowanceFetchRequest {
-    chainId: number;
     tokenAddress: string;
     owner: string;
     spender: string;

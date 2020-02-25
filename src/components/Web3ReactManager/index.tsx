@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
-import styled from "styled-components";
-import { backup, isChainIdSupported, web3ContextNames } from "provider/connectors";
-import { useEagerConnect, useInactiveListener } from "provider/providerHooks";
-import { useStores } from "contexts/storesContext";
-import { observer } from "mobx-react";
-import { useInterval } from "utils/helperHooks";
+import React, { useEffect, useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import styled from 'styled-components';
+import {
+    backup,
+    isChainIdSupported,
+    web3ContextNames,
+} from 'provider/connectors';
+import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
+import { useStores } from 'contexts/storesContext';
+import { observer } from 'mobx-react';
+import { useInterval } from 'utils/helperHooks';
 
 const MessageWrapper = styled.div`
     display: flex;

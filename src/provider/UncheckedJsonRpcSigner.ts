@@ -1,4 +1,4 @@
-import * as ethers from "ethers";
+import * as ethers from 'ethers';
 
 class UncheckedJsonRpcSigner extends ethers.Signer {
     signer: any;

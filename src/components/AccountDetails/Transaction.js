@@ -1,15 +1,15 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
-import { Check } from "react-feather";
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
+import { Check } from 'react-feather';
 
-import { getEtherscanLink } from "utils/helpers";
-import { Link, Spinner } from "../../theme";
-import Copy from "./Copy";
-import Circle from "../../assets/images/circle.svg";
+import { getEtherscanLink } from 'utils/helpers';
+import { Link, Spinner } from '../../theme';
+import Copy from './Copy';
+import Circle from '../../assets/images/circle.svg';
 
-import { transparentize } from "polished";
-import { useStores } from "../../contexts/storesContext";
-import { useActiveWeb3React } from "provider/providerHooks";
+import { transparentize } from 'polished';
+import { useStores } from '../../contexts/storesContext';
+import { useActiveWeb3React } from 'provider/providerHooks';
 
 const TransactionStatusWrapper = styled.div`
     display: flex;

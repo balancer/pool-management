@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
     Button,
     makeStyles,
@@ -9,8 +9,8 @@ import {
     TableCell,
     TableHead,
     TablePagination,
-    TableRow
-} from "@material-ui/core";
+    TableRow,
+} from '@material-ui/core';
 
 const columns = [
     { id: 'address', label: 'Address', minWidth: 50 },

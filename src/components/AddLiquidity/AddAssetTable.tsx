@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { TokenIconAddress } from "../Common/WalletBalances";
+import React from 'react';
+import styled from 'styled-components';
+import { TokenIconAddress } from '../Common/WalletBalances';
 
 const Wrapper = styled.div`
     width: calc(80% - 20px);
