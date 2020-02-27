@@ -217,21 +217,8 @@ const AddAssetTable = observer(() => {
     if (pool) {
         userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
     }
-    console.log('Read Pool', pool);
 
     const renderAssetTable = (pool: Pool, userBalances: undefined | BigNumberMap) => {
-
-        console.log(pool);
-        pool.tokensList.forEach(tokenAddress => {
-            console.log('tokenAddress', tokenAddress);
-
-            const token = pool.tokens.find(token => {
-                return token.address === tokenAddress
-            });
-
-            console.log(token);
-        });
-
         return <React.Fragment>
             {pool.tokensList.map(tokenAddress => {
 

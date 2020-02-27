@@ -27,17 +27,14 @@ export default class PoolStore {
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        console.log('[fetchPublicPools] Fetch pools');
+        console.debug('[fetchPublicPools] Fetch pools');
         const pools = await getPublicPools();
-
-        console.log(pools);
 
         pools.forEach(pool => {
             this.setPool(pool.address, pool, currentBlock);
         });
 
-        console.log('[fetchPublicPools] Pools fetched & stored');
-        console.log({...this.pools})
+        console.debug('[fetchPublicPools] Pools fetched & stored');
     }
 
     @action private setPool(poolAddress: string, newPool: Pool, blockFetched: number) {
