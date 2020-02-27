@@ -1,7 +1,7 @@
-import { action, observable } from 'mobx';
+import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import { supportedChainId } from '../provider/connectors';
+import {Web3ReactContextInterface} from '@web3-react/core/dist/types';
+import {supportedChainId} from '../provider/connectors';
 
 export default class BlockchainFetchStore {
     @observable activeFetchLoop: any;
@@ -21,7 +21,7 @@ export default class BlockchainFetchStore {
             web3React.chainId === supportedChainId
         ) {
             const { library, account, chainId } = web3React;
-            const { providerStore } = this.rootStore;
+            const { providerStore, poolStore } = this.rootStore;
 
             library
                 .getBlockNumber()
@@ -49,7 +49,7 @@ export default class BlockchainFetchStore {
                         providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        // None
+                        poolStore.fetchPublicPools();
 
                         // Get user-specific blockchain data
                         if (account) {

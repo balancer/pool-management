@@ -55,6 +55,10 @@ export default class ProviderStore {
         this.chainData = { currentBlockNumber: -1 } as ChainData;
     }
 
+    isBlockStale(blockNumber: number) {
+        return blockNumber < this.chainData.currentBlockNumber;
+    }
+
     getCurrentBlockNumber(): number {
         return this.chainData.currentBlockNumber;
     }

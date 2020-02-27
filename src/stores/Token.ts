@@ -13,6 +13,7 @@ import {
     UserAllowanceFetch,
 } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import {BigNumberMap} from "../types";
 
 export interface ContractMetadata {
     bFactory: string;
@@ -35,10 +36,6 @@ interface TokenBalanceMap {
     [index: string]: {
         [index: string]: TokenBalance;
     };
-}
-
-export interface BigNumberMap {
-    [index: string]: BigNumber;
 }
 
 export interface TokenMetadata {
@@ -77,14 +74,14 @@ export default class TokenStore {
         this.allowances = {} as UserAllowanceMap;
     }
 
-    getAccountBalances(tokens: TokenMetadata[], account: string): BigNumberMap {
+    getAccountBalances(tokenAddresses: string[], account: string): BigNumberMap {
         const result: BigNumberMap = {};
-        tokens.forEach(value => {
+        tokenAddresses.forEach(tokenAddress => {
             if (
-                this.balances[value.address] &&
-                this.balances[value.address][account]
+                this.balances[tokenAddress] &&
+                this.balances[tokenAddress][account]
             ) {
-                result[value.address] = this.balances[value.address][
+                result[tokenAddress] = this.balances[tokenAddress][
                     account
                 ].balance;
             }
