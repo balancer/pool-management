@@ -204,7 +204,7 @@ const CheckBox = styled.input`
 const AddAssetTable = observer(() => {
 
     const {
-        root: { poolStore, tokenStore, providerStore },
+        root: { poolStore, tokenStore, providerStore, contractMetadataStore },
     } = useStores();
 
     const {account} = providerStore.getActiveWeb3React();
@@ -220,12 +220,26 @@ const AddAssetTable = observer(() => {
     console.log('Read Pool', pool);
 
     const renderAssetTable = (pool: Pool, userBalances: undefined | BigNumberMap) => {
+
+        console.log(pool);
+        pool.tokensList.forEach(tokenAddress => {
+            console.log('tokenAddress', tokenAddress);
+
+            const token = pool.tokens.find(token => {
+                return token.address === tokenAddress
+            });
+
+            console.log(token);
+        });
+
         return <React.Fragment>
             {pool.tokensList.map(tokenAddress => {
 
                 const token = pool.tokens.find(token => {
                     return token.address === tokenAddress
-                })
+                });
+
+                const tokenMetadata = contractMetadataStore.getTokenMetadata(tokenAddress);
 
                 const balanceToDisplay: string = userBalances && userBalances[tokenAddress] ? formatBalanceTruncated(userBalances[tokenAddress], 4, 20) : "-";
 
@@ -233,7 +247,7 @@ const AddAssetTable = observer(() => {
                     <TableCell>
                         <TokenIcon
                             src={TokenIconAddress(
-                                tokenAddress
+                                tokenMetadata.iconAddress
                             )}
                         />
                         {token.symbol}
