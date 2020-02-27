@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import Identicon from "../Common/Identicon";
-import { Pie } from "react-chartjs-2";
+import React from 'react';
+import styled from 'styled-components';
+import Identicon from '../Common/Identicon';
+import { Pie } from 'react-chartjs-2';
 
 const Wrapper = styled.div`
     border: 1px solid var(--panel-border);

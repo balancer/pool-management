@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import QRCode from "qrcode.react";
-import { useDarkModeManager } from "../../contexts/LocalStorage";
+import React from 'react';
+import styled from 'styled-components';
+import QRCode from 'qrcode.react';
+import { useDarkModeManager } from '../../contexts/LocalStorage';
 
 const QRCodeWrapper = styled.div`
     ${({ theme }) => theme.flexColumnNoWrap};

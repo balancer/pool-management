@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Web3ConnectStatus from "../Web3ConnectStatus";
+import React from 'react';
+import styled from 'styled-components';
+import Web3ConnectStatus from '../Web3ConnectStatus';
 
 const HeaderFrame = styled.div`
     display: flex;
@@ -58,9 +58,9 @@ const Header = () => {
                     <AppName>Balancer</AppName>
                 </Title>
             </HeaderElement>
-          <HeaderElement>
-            <Web3ConnectStatus />
-          </HeaderElement>
+            <HeaderElement>
+                <Web3ConnectStatus />
+            </HeaderElement>
         </HeaderFrame>
     );
 };

@@ -1,7 +1,7 @@
-import { action, observable } from "mobx";
-import RootStore from "stores/Root";
-import { Web3ReactContextInterface } from "@web3-react/core/dist/types";
-import { supportedChainId } from "../provider/connectors";
+import {action, observable} from 'mobx';
+import RootStore from 'stores/Root';
+import {Web3ReactContextInterface} from '@web3-react/core/dist/types';
+import {supportedChainId} from '../provider/connectors';
 
 export default class BlockchainFetchStore {
     @observable activeFetchLoop: any;
@@ -21,14 +21,12 @@ export default class BlockchainFetchStore {
             web3React.chainId === supportedChainId
         ) {
             const { library, account, chainId } = web3React;
-            const { providerStore, tokenStore } = this.rootStore;
+            const { providerStore, poolStore } = this.rootStore;
 
             library
                 .getBlockNumber()
                 .then(blockNumber => {
-                    const lastCheckedBlock = providerStore.getCurrentBlockNumber(
-                        web3React.chainId
-                    );
+                    const lastCheckedBlock = providerStore.getCurrentBlockNumber();
 
                     // console.debug('[Fetch Loop] Staleness Evaluation', {
                     //     blockNumber,
@@ -44,24 +42,19 @@ export default class BlockchainFetchStore {
                     if (doFetch) {
                         console.log('[Fetch Loop] Fetch Blockchain Data', {
                             blockNumber,
-                            chainId,
                             account,
                         });
 
                         // Set block number
-                        providerStore.setCurrentBlockNumber(
-                            chainId,
-                            blockNumber
-                        );
+                        providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        // None
+                        poolStore.fetchPublicPools();
 
                         // Get user-specific blockchain data
                         if (account) {
                             providerStore.fetchUserBlockchainData(
                                 web3React,
-                                chainId,
                                 account
                             );
                         }
@@ -77,7 +70,7 @@ export default class BlockchainFetchStore {
                         library,
                         error,
                     });
-                    providerStore.setCurrentBlockNumber(chainId, undefined);
+                    providerStore.setCurrentBlockNumber(undefined);
                 });
         }
     }

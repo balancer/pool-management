@@ -1,18 +1,18 @@
-import React from "react";
-import styled from "styled-components";
-import { isMobile } from "react-device-detect";
-import Copy from "./Copy";
-import Transaction from "./Transaction";
-import { injected, SUPPORTED_WALLETS } from "provider/connectors";
+import React from 'react';
+import styled from 'styled-components';
+import { isMobile } from 'react-device-detect';
+import Copy from './Copy';
+import Transaction from './Transaction';
+import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
 //@ts-ignore
-import { ReactComponent as Close } from "../../assets/images/x.svg";
-import { getEtherscanLink } from "utils/helpers";
-import Identicon from "../Identicon";
-import { web3Window as window } from "provider/Web3Window";
+import { ReactComponent as Close } from '../../assets/images/x.svg';
+import { getEtherscanLink } from 'utils/helpers';
+import Identicon from '../Identicon';
+import { web3Window as window } from 'provider/Web3Window';
 
-import { Link } from "../../theme";
-import { TransactionRecord } from "stores/Transaction";
-import { useStores } from "../../contexts/storesContext";
+import { Link } from '../../theme';
+import { TransactionRecord } from 'stores/Transaction';
+import { useStores } from '../../contexts/storesContext';
 
 const OptionButton = styled.div`
     ${({ theme }) => theme.flexColumnNoWrap}

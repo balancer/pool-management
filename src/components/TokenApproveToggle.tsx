@@ -1,7 +1,7 @@
-import React from "react";
-import { Lock, LockOpen } from "@material-ui/icons";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import { inject, observer } from "mobx-react";
+import React from 'react';
+import { Lock, LockOpen } from '@material-ui/icons';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import { inject, observer } from 'mobx-react';
 
 @inject('root')
 @observer

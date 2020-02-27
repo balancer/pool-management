@@ -1,5 +1,5 @@
-import { Contract } from "ethers";
-import { TransactionResponse } from "ethers/providers";
+import { Contract } from 'ethers';
+import { TransactionResponse } from 'ethers/providers';
 
 interface ActionRequest {
     contract: Contract;

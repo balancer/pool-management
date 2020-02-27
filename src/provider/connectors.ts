@@ -1,9 +1,5 @@
-import { InjectedConnector } from "@web3-react/injected-connector";
-import { NetworkConnector } from "provider/NetworkConnector";
-
-export const supportedNetworks = [
-    Number(process.env.REACT_APP_SUPPORTED_NETWORK_ID),
-];
+import { InjectedConnector } from '@web3-react/injected-connector';
+import { NetworkConnector } from 'provider/NetworkConnector';
 
 export const supportedChainId = Number(
     process.env.REACT_APP_SUPPORTED_NETWORK_ID
@@ -19,7 +15,7 @@ export const chainNameById = {
 };
 
 export const isChainIdSupported = (chainId: number): boolean => {
-    return !!supportedNetworks.find(id => id === chainId);
+    return supportedChainId === chainId;
 };
 
 const POLLING_INTERVAL = 1000;

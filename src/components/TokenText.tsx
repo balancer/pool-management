@@ -1,6 +1,6 @@
-import React from "react";
-import { Tooltip, Typography } from "@material-ui/core";
-import * as helpers from "utils/helpers";
+import React from 'react';
+import { Tooltip, Typography } from '@material-ui/core';
+import * as helpers from 'utils/helpers';
 
 export default function TokenText(props) {
     const { weiValue } = props;

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
     Button,
     Paper,
@@ -9,11 +9,11 @@ import {
     TablePagination,
     TableRow,
     Tooltip,
-    Typography
-} from "@material-ui/core";
-import * as helpers from "utils/helpers";
-import { TokenApproveToggle, TokenText } from "components";
-import { inject, observer } from "mobx-react";
+    Typography,
+} from '@material-ui/core';
+import * as helpers from 'utils/helpers';
+import { TokenApproveToggle, TokenText } from 'components';
+import { inject, observer } from 'mobx-react';
 
 @inject('root')
 @observer

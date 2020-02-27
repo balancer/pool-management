@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { useCopyClipboard } from "../../utils/helperHooks";
+import React from 'react';
+import styled from 'styled-components';
+import { useCopyClipboard } from '../../utils/helperHooks';
 
-import { Link } from "../../theme";
-import { CheckCircle, Copy } from "react-feather";
+import { Link } from '../../theme';
+import { CheckCircle, Copy } from 'react-feather';
 
 const CopyIcon = styled(Link)`
     color: ${({ theme }) => theme.silverGray};

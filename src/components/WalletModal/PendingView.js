@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import Option from "./Option";
-import { injected, SUPPORTED_WALLETS } from "provider/connectors";
-import { Spinner } from "../../theme";
-import Circle from "../../assets/images/circle.svg";
-import { darken } from "polished";
+import React from 'react';
+import styled from 'styled-components';
+import Option from './Option';
+import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
+import { Spinner } from '../../theme';
+import Circle from '../../assets/images/circle.svg';
+import { darken } from 'polished';
 
 const PendingSection = styled.div`
     ${({ theme }) => theme.flexColumnNoWrap};

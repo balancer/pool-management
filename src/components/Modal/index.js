@@ -1,12 +1,12 @@
-import React from "react";
-import styled, { css } from "styled-components";
-import { animated, useSpring, useTransition } from "react-spring";
-import { Spring } from "react-spring/renderprops";
+import React from 'react';
+import styled, { css } from 'styled-components';
+import { animated, useSpring, useTransition } from 'react-spring';
+import { Spring } from 'react-spring/renderprops';
 
-import { DialogContent, DialogOverlay } from "@reach/dialog";
-import { isMobile } from "react-device-detect";
-import "@reach/dialog/styles.css";
-import { useGesture } from "react-use-gesture";
+import { DialogContent, DialogOverlay } from '@reach/dialog';
+import { isMobile } from 'react-device-detect';
+import '@reach/dialog/styles.css';
+import { useGesture } from 'react-use-gesture';
 
 const AnimatedDialogOverlay = animated(DialogOverlay);
 const WrappedDialogOverlay = ({

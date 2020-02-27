@@ -1,5 +1,5 @@
-import { action, observable } from "mobx";
-import RootStore from "stores/Root";
+import { action, observable } from 'mobx';
+import RootStore from 'stores/Root';
 
 export default class ModalStore {
     @observable walletModalVisible: boolean;
