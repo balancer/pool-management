@@ -96,14 +96,31 @@ interface Props {
     poolAddress: string;
 }
 
+export const getUserShareText = (pool: Pool, account: string): string => {
+    let shareText = '-';
+
+    if (account && pool) {
+        const userShare = pool.shares.find(share => share.account === account);
+        if (userShare) {
+            shareText = formatPercentage(userShare.balanceProportion, 1);
+        } else {
+            shareText = '0%';
+        }
+    }
+
+    return shareText;
+};
+
 const PoolOverview = observer((props: Props) => {
     const { poolAddress } = props;
     const {
-        root: { poolStore },
+        root: { poolStore, providerStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
+    const { account } = providerStore.getActiveWeb3React();
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
+    const shareText = getUserShareText(pool, account);
 
     const options = {
         maintainAspectRatio: false,
@@ -140,7 +157,7 @@ const PoolOverview = observer((props: Props) => {
         <Wrapper>
             <Header>Pool Overview</Header>
             <Address>{shortenAddress(poolAddress)}</Address>
-            <PoolInfo>My Pool Share: 99.52%</PoolInfo>
+            <PoolInfo>My Pool Share: {shareText}</PoolInfo>
             <PoolInfo>Pool Swap Fee: {feeText}</PoolInfo>
             <ChartAndBreakdownWrapper>
                 <PieChartWrapper>

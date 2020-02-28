@@ -13,6 +13,7 @@ export interface Pool {
     swapFee: BigNumber;
     tokens: PoolToken[];
     tokensList: string[];
+    shares: PoolShare[];
 }
 
 export interface PoolToken {
@@ -22,4 +23,10 @@ export interface PoolToken {
     denormWeight: BigNumber;
     denormWeightProportion: BigNumber;
     symbol: string;
+}
+
+export interface PoolShare {
+    account: string;
+    balance: BigNumber;
+    balanceProportion: BigNumber;
 }

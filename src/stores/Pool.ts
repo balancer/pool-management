@@ -1,6 +1,6 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { getPublicPools } from 'provider/subgraph';
+import { fetchPublicPools } from 'provider/subgraph';
 import { Pool } from 'types';
 
 interface PoolData {
@@ -27,7 +27,7 @@ export default class PoolStore {
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await getPublicPools();
+        const pools = await fetchPublicPools();
 
         pools.forEach(pool => {
             this.setPool(pool.address, pool, currentBlock);

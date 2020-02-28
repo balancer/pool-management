@@ -8,6 +8,7 @@ import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { formatFee } from '../utils/helpers';
+import { getUserShareText } from '../components/Common/PoolOverview';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -32,11 +33,13 @@ const Pool = observer(() => {
     const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
     const [modalOpen, setModalOpen] = React.useState({ state: false });
     const {
-        root: { poolStore },
+        root: { poolStore, providerStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
+    const { account } = providerStore.getActiveWeb3React();
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
+    const shareText = getUserShareText(pool, account);
 
     return (
         <PoolViewWrapper>
@@ -57,7 +60,7 @@ const Pool = observer(() => {
                     subText="Trade Volume (24hr)"
                 />
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />
-                <InfoPanel text="10.00%" subText="My Pool Share" />
+                <InfoPanel text={shareText} subText="My Pool Share" />
             </InfoPanelWrapper>
             <BalancesTable poolAddress={poolAddress} />
             <SwapsTable />
