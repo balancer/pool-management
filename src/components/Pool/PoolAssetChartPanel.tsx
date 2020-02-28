@@ -3,10 +3,8 @@ import styled from 'styled-components';
 import { Pie } from 'react-chartjs-2';
 import { observer } from 'mobx-react';
 import {
-    formatFee,
     formatPercentage,
     formatPoolAssetChartData,
-    shortenAddress,
 } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
@@ -14,53 +12,25 @@ import { poolAssetColors } from '../index';
 
 const Wrapper = styled.div`
     display: flex;
-    flex-direction: column;
-    width: 20%;
+    flex-direction: row;
+    padding: 20px 10px 20px 20px;
+    background: var(--panel-background);
     border: 1px solid var(--panel-border);
     border-radius: 4px;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 16px;
-    margin-top: 32px;
-    padding: 20px;
-`;
-
-const Header = styled.div`
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--body-text);
-    text-transform: uppercase;
-`;
-
-const Address = styled.div`
-    color: var(--address-color);
-    margin-top: 14px;
-`;
-
-const PoolInfo = styled.div`
-    color: var(--panel-row-text);
-    margin-top: 10px;
-`;
-
-const ChartAndBreakdownWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 33%;
+    min-width: 246px;
 `;
 
 const PieChartWrapper = styled.div`
-    width: 100px;
-    height: 100px;
-    margin-top: 30px;
+    width: 125px;
+    height: 125px;
 `;
 
 const BreakdownContainer = styled.div`
     display: flex;
-    flex-direction: column;
-    margin-top: 14px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 5px;
 `;
 
 const AssetPercentageContainer = styled.div`
@@ -72,23 +42,23 @@ const AssetPercentageContainer = styled.div`
     font-size: 14px;
     line-height: 18px;
     margin-left: 12px;
-    margin-top: 10px;
+    width: 78px;
 `;
 
 const AssetPercentageText = styled.div`
     font-family: Roboto;
     font-style: normal;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 18px;
     color: var(--panel-row-text);
-    margin-left: 12px;
+    margin-left: 6px;
 `;
 
 const AssetDot = styled.div`
-    height: 8px;
-    width: 8px;
-    border-radius: 10px;
+    height: 4px;
+    width: 4px;
+    border-radius: 6px;
     background: ${props => props.dotColor};
 `;
 
@@ -96,14 +66,12 @@ interface Props {
     poolAddress: string;
 }
 
-const PoolOverview = observer((props: Props) => {
+const PoolAssetChartPanel = observer((props: Props) => {
     const { poolAddress } = props;
     const {
         root: { poolStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
-
-    const feeText = pool ? formatFee(pool.swapFee) : '-';
 
     const options = {
         maintainAspectRatio: false,
@@ -138,28 +106,22 @@ const PoolOverview = observer((props: Props) => {
 
     return (
         <Wrapper>
-            <Header>Pool Overview</Header>
-            <Address>{shortenAddress(poolAddress)}</Address>
-            <PoolInfo>My Pool Share: 99.52%</PoolInfo>
-            <PoolInfo>Pool Swap Fee: {feeText}</PoolInfo>
-            <ChartAndBreakdownWrapper>
-                <PieChartWrapper>
-                    {pool ? (
-                        <Pie
-                            type={'doughnut'}
-                            data={formatPoolAssetChartData(pool)}
-                            options={options}
-                        />
-                    ) : (
-                        <div>Loading</div>
-                    )}
-                </PieChartWrapper>
-                <BreakdownContainer>
-                    {pool ? renderAssetPercentages(pool) : <div>Loading</div>}
-                </BreakdownContainer>
-            </ChartAndBreakdownWrapper>
+            <PieChartWrapper>
+                {pool ? (
+                    <Pie
+                        type={'doughnut'}
+                        data={formatPoolAssetChartData(pool)}
+                        options={options}
+                    />
+                ) : (
+                    <div>Loading</div>
+                )}
+            </PieChartWrapper>
+            <BreakdownContainer>
+                {pool ? renderAssetPercentages(pool) : <div>Loading</div>}
+            </BreakdownContainer>
         </Wrapper>
     );
 });
 
-export default PoolOverview;
+export default PoolAssetChartPanel;

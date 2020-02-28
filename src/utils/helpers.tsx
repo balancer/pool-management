@@ -4,6 +4,8 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
+import { Pool } from '../types';
+import { poolAssetColors } from '../components';
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
@@ -102,10 +104,20 @@ export function isAddress(value) {
     }
 }
 
-export function fromFeeToPercentage(value) {
-    const etherValue = bnum(fromWei(value));
-    const percentageValue = etherValue.times(100);
-    return percentageValue;
+export function formatFee(fee: BigNumber) {
+    return fee.times(100).toString() + '%';
+}
+
+export function formatPercentage(
+    value: BigNumber,
+    decimals: number,
+    useLowerLimit = true
+): string {
+    if (value.lte(0.01) && value.gt(0) && useLowerLimit) {
+        return '<0.01%';
+    }
+
+    return `${value.times(100).toFormat(decimals, BigNumber.ROUND_HALF_EVEN)}%`;
 }
 
 export function formatPctString(value: BigNumber): string {
@@ -222,6 +234,50 @@ export const normalizePriceValues = (
         normalizedInput: bnum(1),
         normalizedOutput: outputValue.times(multiplier),
     };
+};
+
+export const formatPoolAssetChartData = (pool: Pool) => {
+    const data = formatPoolTokenWeightsForChart(pool);
+    return {
+        datasets: [
+            {
+                data: [1],
+                borderAlign: 'center',
+                borderColor: '#B388FF',
+                borderWidth: '1',
+                weight: 0,
+            },
+            {
+                data: data,
+                borderAlign: 'center',
+                backgroundColor: poolAssetColors,
+                borderColor: poolAssetColors,
+                borderWidth: '0',
+                weight: 95,
+            },
+        ],
+    };
+};
+
+export const formatPoolTokenWeightsForChart = (pool: Pool): number[] => {
+    return pool.tokens.map(token => {
+        return token.denormWeightProportion.times(100).toNumber();
+    });
+};
+
+export const formatTokenValue = (
+    normalizedBalance: BigNumber,
+    displayPrecision: number
+): string => {
+    if (normalizedBalance.eq(0)) {
+        return bnum(0).toFixed(2);
+    }
+
+    const result = bnum(normalizedBalance)
+        .decimalPlaces(displayPrecision)
+        .toString();
+
+    return padToDecimalPlaces(result, 2);
 };
 
 export const formatBalanceTruncated = (

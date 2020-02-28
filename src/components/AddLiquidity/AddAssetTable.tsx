@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
-import {observer} from "mobx-react";
-import {useStores} from "../../contexts/storesContext";
-import {Pool, BigNumberMap} from "../../types";
-import {formatBalanceTruncated} from "../../utils/helpers";
+import { observer } from 'mobx-react';
+import { useStores } from '../../contexts/storesContext';
+import { BigNumberMap, Pool } from '../../types';
+import { formatBalanceTruncated } from '../../utils/helpers';
 
 const Wrapper = styled.div`
     width: calc(80% - 20px);
@@ -202,14 +202,13 @@ const CheckBox = styled.input`
 `;
 
 const AddAssetTable = observer(() => {
-
     const {
         root: { poolStore, tokenStore, providerStore, contractMetadataStore },
     } = useStores();
 
-    const {account} = providerStore.getActiveWeb3React();
+    const { account } = providerStore.getActiveWeb3React();
 
-    const poolAddress = "0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF";
+    const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
@@ -218,43 +217,60 @@ const AddAssetTable = observer(() => {
         userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
     }
 
-    const renderAssetTable = (pool: Pool, userBalances: undefined | BigNumberMap) => {
-        return <React.Fragment>
-            {pool.tokensList.map(tokenAddress => {
+    const renderAssetTable = (
+        pool: Pool,
+        userBalances: undefined | BigNumberMap
+    ) => {
+        return (
+            <React.Fragment>
+                {pool.tokensList.map(tokenAddress => {
+                    const token = pool.tokens.find(token => {
+                        return token.address === tokenAddress;
+                    });
 
-                const token = pool.tokens.find(token => {
-                    return token.address === tokenAddress
-                });
+                    const tokenMetadata = contractMetadataStore.getTokenMetadata(
+                        tokenAddress
+                    );
 
-                const tokenMetadata = contractMetadataStore.getTokenMetadata(tokenAddress);
+                    const balanceToDisplay: string =
+                        userBalances && userBalances[tokenAddress]
+                            ? formatBalanceTruncated(
+                                  userBalances[tokenAddress],
+                                  tokenMetadata.precision,
+                                  20
+                              )
+                            : '-';
 
-                const balanceToDisplay: string = userBalances && userBalances[tokenAddress] ? formatBalanceTruncated(userBalances[tokenAddress], 4, 20) : "-";
-
-                return <TableRow>
-                    <TableCell>
-                        <TokenIcon
-                            src={TokenIconAddress(
-                                tokenMetadata.iconAddress
-                            )}
-                        />
-                        {token.symbol}
-                    </TableCell>
-                    <TableCell>
-                        <Toggle>
-                            <ToggleInput type="checkbox" />
-                            <ToggleSlider></ToggleSlider>
-                        </Toggle>
-                    </TableCell>
-                    <TableCell>{balanceToDisplay} {token.symbol}</TableCell>
-                    <TableCellRight>
-                        <DepositAmount>
-                            <MaxLink>Max</MaxLink>
-                            1,500
-                        </DepositAmount>
-                    </TableCellRight>
-                </TableRow>
-            })}
-        </React.Fragment>
+                    return (
+                        <TableRow>
+                            <TableCell>
+                                <TokenIcon
+                                    src={TokenIconAddress(
+                                        tokenMetadata.iconAddress
+                                    )}
+                                />
+                                {token.symbol}
+                            </TableCell>
+                            <TableCell>
+                                <Toggle>
+                                    <ToggleInput type="checkbox" />
+                                    <ToggleSlider></ToggleSlider>
+                                </Toggle>
+                            </TableCell>
+                            <TableCell>
+                                {balanceToDisplay} {token.symbol}
+                            </TableCell>
+                            <TableCellRight>
+                                <DepositAmount>
+                                    <MaxLink>Max</MaxLink>
+                                    1,500
+                                </DepositAmount>
+                            </TableCellRight>
+                        </TableRow>
+                    );
+                })}
+            </React.Fragment>
+        );
     };
     return (
         <Wrapper>
@@ -264,7 +280,11 @@ const AddAssetTable = observer(() => {
                 <TableCell>Wallet Balance</TableCell>
                 <TableCellRight>Deposit Amount</TableCellRight>
             </HeaderRow>
-            {pool ? renderAssetTable(pool, userBalances): <TableRow>Loading</TableRow>}
+            {pool ? (
+                renderAssetTable(pool, userBalances)
+            ) : (
+                <TableRow>Loading</TableRow>
+            )}
         </Wrapper>
     );
 });

@@ -9,21 +9,27 @@ import CircularIndeterminate from './CircularIndeterminate';
 import LoadingCard from './LoadingCard';
 import TokenApproveToggle from './TokenApproveToggle';
 
+const poolAssetColors = [
+    '#E7983D',
+    '#536DFE',
+    '#E7983D',
+    '#64FFDA',
+    '#B388FF',
+    '#F4FF81',
+    '#BDBDBD',
+    '#602A52',
+];
+
 export {
     Button,
     IconCard,
-    MoreParamsGrid,
     PoolListTokenTable,
     PoolList,
-    PoolParamsGrid,
-    InvestParamsGrid,
     PoolTitleCard,
-    PoolInvestForm,
     TokenText,
     SpotPriceGrid,
-    ManagePoolForm,
     CircularIndeterminate,
     LoadingCard,
-    SwapForm,
     TokenApproveToggle,
+    poolAssetColors,
 };

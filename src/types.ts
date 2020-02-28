@@ -1,4 +1,4 @@
-import {BigNumber} from "utils/bignumber";
+import { BigNumber } from 'utils/bignumber';
 
 export interface BigNumberMap {
     [index: string]: BigNumber;
@@ -11,8 +11,8 @@ export interface Pool {
     totalWeight: BigNumber;
     totalShares: BigNumber;
     swapFee: BigNumber;
-    tokens: PoolToken[]
-    tokensList: string[]
+    tokens: PoolToken[];
+    tokensList: string[];
 }
 
 export interface PoolToken {
@@ -20,6 +20,6 @@ export interface PoolToken {
     balance: BigNumber;
     decimals: number;
     denormWeight: BigNumber;
+    denormWeightProportion: BigNumber;
     symbol: string;
 }
-

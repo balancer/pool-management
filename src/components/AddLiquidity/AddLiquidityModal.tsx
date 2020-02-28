@@ -71,9 +71,16 @@ const Notification = styled.div`
     margin-bottom: 30px;
 `;
 
-const AddLiquidityModal = ({ modelOpen, setModalOpen }) => {
+interface Props {
+    modalOpen: any;
+    setModalOpen: any;
+    poolAddress: string;
+}
+
+const AddLiquidityModal = (props: Props) => {
+    const { modalOpen, setModalOpen, poolAddress } = props;
     return (
-        <Container style={{ display: modelOpen.state ? 'block' : 'none' }}>
+        <Container style={{ display: modalOpen.state ? 'block' : 'none' }}>
             <ModalContent>
                 <AddLiquidityHeader>
                     <HeaderContent>Add Liquidity</HeaderContent>
@@ -87,7 +94,7 @@ const AddLiquidityModal = ({ modelOpen, setModalOpen }) => {
                 </AddLiquidityHeader>
                 <AddLiquidityBody>
                     <AddLiquidityContent>
-                        <PoolOverview />
+                        <PoolOverview poolAddress={poolAddress} />
                         <AddAssetTable />
                     </AddLiquidityContent>
                     <Notification>Please unlock Dai to continue</Notification>

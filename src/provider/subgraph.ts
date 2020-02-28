@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch';
-import { getAddress} from "ethers/utils";
-import {Pool, PoolToken} from "../types";
-import {bnum} from "../utils/helpers";
+import { getAddress } from 'ethers/utils';
+import { Pool, PoolToken } from '../types';
+import { bnum } from '../utils/helpers';
 
 const SUBGRAPH_URL =
     process.env.REACT_APP_SUBGRAPH_URL ||
@@ -52,7 +52,7 @@ export async function getPublicPools(): Promise<Pool[]> {
             totalWeight: bnum(pool.totalWeight),
             totalShares: bnum(pool.totalShares),
             tokensList: pool.tokensList.map(tokenAddress => {
-                return getAddress(tokenAddress)
+                return getAddress(tokenAddress);
             }),
             tokens: pool.tokens.map(token => {
                 return {
@@ -60,9 +60,12 @@ export async function getPublicPools(): Promise<Pool[]> {
                     balance: bnum(token.balance),
                     decimals: token.decimals,
                     denormWeight: bnum(token.denormWeight),
-                    symbol: token.symbol
-                } as PoolToken
-            })
+                    denormWeightProportion: bnum(token.denormWeight).div(
+                        bnum(pool.totalWeight)
+                    ),
+                    symbol: token.symbol,
+                } as PoolToken;
+            }),
         } as Pool;
-    })
+    });
 }

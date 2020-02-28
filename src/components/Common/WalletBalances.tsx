@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { formatBalanceTruncated, isAddress } from '../../utils/helpers';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { BigNumber } from 'utils/bignumber';
 
 const Wrapper = styled.div``;
 

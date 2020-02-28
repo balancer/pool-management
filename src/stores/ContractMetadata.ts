@@ -1,18 +1,6 @@
-import { action, observable, ObservableMap } from 'mobx';
+import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
-import { ContractTypes } from 'stores/Provider';
-import * as helpers from 'utils/helpers';
-import { bnum } from 'utils/helpers';
-import { parseEther } from 'ethers/utils';
 import * as deployed from 'deployed.json';
-import { FetchCode } from './Transaction';
-import { BigNumber } from 'utils/bignumber';
-import {
-    AsyncStatus,
-    TokenBalanceFetch,
-    UserAllowanceFetch,
-} from './actions/fetch';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 
 export interface ContractMetadata {
     bFactory: string;
