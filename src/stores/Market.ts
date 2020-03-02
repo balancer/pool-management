@@ -35,6 +35,7 @@ export default class MarketStore {
 
         console.log('fetchAssetPrices Complete', response);
         this.setAssetPrices(response);
+        this.assetPricesLoaded = true;
     }
 
     @action async fetchAssetList(symbolsToFetch: string[]) {

@@ -48,7 +48,7 @@ const Pool = observer(() => {
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
     const shareText = getUserShareText(pool, account);
-    const liquidityTest = marketStore.assetsLoaded && pool ? formatBalanceTruncated(toWei(marketStore.getPortfolioValue(poolSymbols, poolBalances)), 4, 20): '-';
+    const liquidityText = marketStore.assetPricesLoaded && pool ? formatBalanceTruncated(toWei(marketStore.getPortfolioValue(poolSymbols, poolBalances)), 4, 20): '-';
 
     return (
         <PoolViewWrapper>
@@ -63,7 +63,7 @@ const Pool = observer(() => {
                 poolAddress={poolAddress}
             />
             <InfoPanelWrapper>
-                <InfoPanel text={`$ ${liquidityTest}`} subText="Liquidity" />
+                <InfoPanel text={`$ ${liquidityText}`} subText="Liquidity" />
                 <InfoPanel
                     text="$ -"
                     subText="Trade Volume (24hr)"
