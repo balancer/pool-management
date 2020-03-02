@@ -5,9 +5,10 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import {
+    bnum, formatBalance,
     formatBalanceTruncated,
     formatPercentage,
-    formatTokenValue,
+    formatTokenValue, fromWei, scale, toWei,
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -85,7 +86,7 @@ const BalancesTable = observer((props: Props) => {
     const { poolAddress } = props;
 
     const {
-        root: { poolStore, tokenStore, providerStore, contractMetadataStore },
+        root: { poolStore, tokenStore, providerStore, contractMetadataStore, marketStore },
     } = useStores();
 
     const { account } = providerStore.getActiveWeb3React();
@@ -121,6 +122,13 @@ const BalancesTable = observer((props: Props) => {
                               )
                             : '-';
 
+                    let valueToDisplay = '-';
+                    if (userBalances && userBalances[tokenAddress] && marketStore.assetsLoaded) {
+                        const userBalanceScaled = bnum(fromWei(userBalances[tokenAddress]));
+
+                        valueToDisplay = formatBalance(toWei(marketStore.getValue(tokenMetadata.symbol, userBalanceScaled)), 2)
+                    }
+
                     return (
                         <TableRow>
                             <TableCell>
@@ -147,7 +155,7 @@ const BalancesTable = observer((props: Props) => {
                             <TableCell>
                                 {balanceToDisplay} {token.symbol}
                             </TableCell>
-                            <TableCellRight>$100,420.10</TableCellRight>
+                            <TableCellRight>$ {valueToDisplay}</TableCellRight>
                         </TableRow>
                     );
                 })}

@@ -21,7 +21,7 @@ export default class BlockchainFetchStore {
             web3React.chainId === supportedChainId
         ) {
             const { library, account, chainId } = web3React;
-            const { providerStore, poolStore } = this.rootStore;
+            const { providerStore, poolStore, marketStore, contractMetadataStore } = this.rootStore;
 
             library
                 .getBlockNumber()
@@ -50,6 +50,10 @@ export default class BlockchainFetchStore {
 
                         // Get global blockchain data
                         poolStore.fetchPublicPools();
+                        if (marketStore.assetsLoaded) {
+                            console.log('blockchainFetch', marketStore.assetsLoaded);
+                            marketStore.fetchAssetPrices(contractMetadataStore.tokenSymbols);
+                        }
 
                         // Get user-specific blockchain data
                         if (account) {

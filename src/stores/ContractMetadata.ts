@@ -1,6 +1,7 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import * as deployed from 'deployed.json';
+import {StringMap} from "../types";
 
 export interface ContractMetadata {
     bFactory: string;
@@ -19,12 +20,27 @@ export interface TokenMetadata {
 
 export default class ContractMetadataStore {
     @observable contractMetadata: ContractMetadata;
+    @observable tokenSymbols: string[];
+    @observable symbolToAddressMap: StringMap;
+    @observable addressToSymbolMap: StringMap;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.contractMetadata = {} as ContractMetadata;
         this.loadWhitelistedTokenMetadata();
+
+        this.tokenSymbols = this.getWhitelistedTokenMetadata().map(value => {
+            return value.symbol
+        });
+
+        this.symbolToAddressMap = {} as StringMap;
+        this.addressToSymbolMap = {} as StringMap;
+
+        this.getWhitelistedTokenMetadata().forEach(value => {
+            this.symbolToAddressMap[value.symbol] = value.address;
+            this.addressToSymbolMap[value.address] = value.symbol;
+        });
     }
 
     // Take the data from the JSON and get it into the store, so we access it just like other data

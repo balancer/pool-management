@@ -316,7 +316,7 @@ export const padToDecimalPlaces = (
     const zerosToPad = split[1] ? minDecimals - split[1].length : minDecimals;
 
     if (zerosToPad > 0) {
-        let pad = '.';
+        let pad = '';
         for (let i = 0; i < zerosToPad; i++) {
             pad += '0';
         }

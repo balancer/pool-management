@@ -4,6 +4,10 @@ export interface BigNumberMap {
     [index: string]: BigNumber;
 }
 
+export interface StringMap {
+    [index: string]: string;
+}
+
 export interface Pool {
     address: string;
     publicSwap: boolean;
@@ -29,4 +33,21 @@ export interface PoolShare {
     account: string;
     balance: BigNumber;
     balanceProportion: BigNumber;
+}
+
+export interface MarketAsset {
+    id: string;
+    symbol: string;
+    name: string;
+    price?: MarketAssetPrice;
+}
+
+export interface MarketAssetPrice {
+    value: BigNumber;
+    currency: string;
+}
+
+// Indexed by Symbol
+export interface MarketAssetPriceMap {
+    [index: string]: MarketAssetPrice;
 }

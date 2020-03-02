@@ -7,7 +7,7 @@ import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import { formatFee } from '../utils/helpers';
+import {formatBalanceTruncated, formatFee, toWei} from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 
 const PoolViewWrapper = styled.div`
@@ -33,13 +33,22 @@ const Pool = observer(() => {
     const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
     const [modalOpen, setModalOpen] = React.useState({ state: false });
     const {
-        root: { poolStore, providerStore },
+        root: { poolStore, providerStore, marketStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
     const { account } = providerStore.getActiveWeb3React();
 
+    let poolSymbols;
+    let poolBalances;
+
+    if (pool) {
+        poolSymbols = pool.tokens.map(token => token.symbol);
+        poolBalances = pool.tokens.map(token => token.balance);
+    };
+
     const feeText = pool ? formatFee(pool.swapFee) : '-';
     const shareText = getUserShareText(pool, account);
+    const liquidityTest = marketStore.assetsLoaded && pool ? formatBalanceTruncated(toWei(marketStore.getPortfolioValue(poolSymbols, poolBalances)), 4, 20): '-';
 
     return (
         <PoolViewWrapper>
@@ -54,9 +63,9 @@ const Pool = observer(() => {
                 poolAddress={poolAddress}
             />
             <InfoPanelWrapper>
-                <InfoPanel text="$ 8,024,093.89" subText="Liquidity" />
+                <InfoPanel text={`$ ${liquidityTest}`} subText="Liquidity" />
                 <InfoPanel
-                    text="$ 1,252,425.65"
+                    text="$ -"
                     subText="Trade Volume (24hr)"
                 />
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />

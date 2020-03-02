@@ -7,12 +7,15 @@ import PoolStore from './Pool';
 import ModalStore from './Modal';
 import AppSettingsStore from './AppSettings';
 import ContractMetadataStore from './ContractMetadata';
+import MarketStore from "./Market";
+import {observable} from "mobx";
 
 export default class RootStore {
     providerStore: ProviderStore;
     blockchainFetchStore: BlockchainFetchStore;
     tokenStore: TokenStore;
     poolStore: PoolStore;
+    marketStore: MarketStore;
     transactionStore: TransactionStore;
     modalStore: ModalStore;
     appSettingsStore: AppSettingsStore;
@@ -23,9 +26,17 @@ export default class RootStore {
         this.blockchainFetchStore = new BlockchainFetchStore(this);
         this.tokenStore = new TokenStore(this);
         this.poolStore = new PoolStore(this);
+        this.marketStore = new MarketStore(this);
         this.transactionStore = new TransactionStore(this);
         this.modalStore = new ModalStore(this);
         this.appSettingsStore = new AppSettingsStore(this);
         this.contractMetadataStore = new ContractMetadataStore(this);
+
+        this.asyncSetup();
+    }
+
+    async asyncSetup() {
+        await this.marketStore.fetchAssetList(this.contractMetadataStore.tokenSymbols);
+        await this.marketStore.fetchAssetPrices(this.contractMetadataStore.tokenSymbols);
     }
 }
