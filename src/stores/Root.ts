@@ -7,8 +7,9 @@ import PoolStore from './Pool';
 import ModalStore from './Modal';
 import AppSettingsStore from './AppSettings';
 import ContractMetadataStore from './ContractMetadata';
-import MarketStore from "./Market";
-import {observable} from "mobx";
+import MarketStore from './Market';
+import { observable } from 'mobx';
+import AddLiquidityFormStore from './AddLiquidityForm';
 
 export default class RootStore {
     providerStore: ProviderStore;
@@ -20,6 +21,7 @@ export default class RootStore {
     modalStore: ModalStore;
     appSettingsStore: AppSettingsStore;
     contractMetadataStore: ContractMetadataStore;
+    addLiquidityFormStore: AddLiquidityFormStore;
 
     constructor() {
         this.providerStore = new ProviderStore(this);
@@ -31,12 +33,20 @@ export default class RootStore {
         this.modalStore = new ModalStore(this);
         this.appSettingsStore = new AppSettingsStore(this);
         this.contractMetadataStore = new ContractMetadataStore(this);
+        this.addLiquidityFormStore = new AddLiquidityFormStore(this);
 
-        this.asyncSetup();
+        this.asyncSetup().catch(e => {
+            //TODO: Add retry on these fetches
+            throw new Error('Async Setup Failed ' + e);
+        });
     }
 
     async asyncSetup() {
-        await this.marketStore.fetchAssetList(this.contractMetadataStore.tokenSymbols);
-        await this.marketStore.fetchAssetPrices(this.contractMetadataStore.tokenSymbols);
+        await this.marketStore.fetchAssetList(
+            this.contractMetadataStore.tokenSymbols
+        );
+        await this.marketStore.fetchAssetPrices(
+            this.contractMetadataStore.tokenSymbols
+        );
     }
 }

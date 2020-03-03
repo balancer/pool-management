@@ -203,10 +203,17 @@ const CheckBox = styled.input`
 
 const AddAssetTable = observer(() => {
     const {
-        root: { poolStore, tokenStore, providerStore, contractMetadataStore },
+        root: {
+            poolStore,
+            tokenStore,
+            providerStore,
+            contractMetadataStore,
+            addLiquidityFormStore,
+        },
     } = useStores();
 
-    const { account } = providerStore.getActiveWeb3React();
+    const web3React = providerStore.getActiveWeb3React();
+    const { account } = web3React;
 
     const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
 
@@ -215,6 +222,44 @@ const AddAssetTable = observer(() => {
 
     if (pool) {
         userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
+    }
+
+    const handleCheckboxChange = async (event, tokenAddress: string) => {
+        const { checked } = event.target;
+        console.log('handleCheckboxChange', checked);
+
+        addLiquidityFormStore.setApprovalCheckboxTouched(tokenAddress, true);
+        addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
+
+        if (checked) {
+            await tokenStore.approveMax(web3React, tokenAddress, account);
+        } else {
+            await tokenStore.revokeApproval(web3React, tokenAddress, account);
+        }
+    };
+    let loading = true;
+
+    // Init checkbox form status for pool
+    if (pool && account && !addLiquidityFormStore.approvalCheckboxStatusLoaded && !addLiquidityFormStore.isActivePool(pool.address)) {
+        const tokenAddresses: string[] = pool.tokens.map(
+            token => token.address
+        );
+        let checkedStatus: boolean[] = [];
+
+        tokenAddresses.forEach(tokenAddress => {
+            const hasMaxApproval = tokenStore.hasMaxApproval(
+                tokenAddress,
+                account,
+                pool.address
+            );
+            checkedStatus.push(hasMaxApproval);
+        });
+
+        addLiquidityFormStore.setBulkApprovalCheckboxStatus(
+            pool.address,
+            tokenAddresses,
+            checkedStatus
+        );
     }
 
     const renderAssetTable = (
@@ -231,6 +276,14 @@ const AddAssetTable = observer(() => {
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         tokenAddress
                     );
+
+                    let checked = false;
+
+                    // If touched, display state based on user actions
+                    checked = addLiquidityFormStore.isChecked(tokenAddress);
+
+                    // checked = tokenStore.hasMaxApproval(tokenAddress, account, pool.address);
+                    // TODO: If neither, we should be in the loading state and never get here
 
                     const balanceToDisplay: string =
                         userBalances && userBalances[tokenAddress]
@@ -253,7 +306,16 @@ const AddAssetTable = observer(() => {
                             </TableCell>
                             <TableCell>
                                 <Toggle>
-                                    <ToggleInput type="checkbox" />
+                                    <ToggleInput
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={e =>
+                                            handleCheckboxChange(
+                                                e,
+                                                tokenAddress
+                                            )
+                                        }
+                                    />
                                     <ToggleSlider></ToggleSlider>
                                 </Toggle>
                             </TableCell>

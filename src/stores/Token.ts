@@ -430,6 +430,15 @@ export default class TokenStore {
         }
     };
 
+    hasMaxApproval = (tokenAddress, account, spender): boolean => {
+        const allowance = this.getAllowance(tokenAddress, account, spender);
+        if (allowance) {
+            return allowance.gte(bnum(helpers.MAX_UINT.div(2).toString()));
+        } else {
+            return false;
+        }
+    }
+
     getAllowance = (tokenAddress, account, spender): BigNumber | undefined => {
         const chainApprovals = this.allowances;
         if (chainApprovals) {

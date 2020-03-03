@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import AddAssetTable from './AddAssetTable';
+import {observer} from "mobx-react";
 
 const Container = styled.div`
     display: block;
@@ -77,7 +78,7 @@ interface Props {
     poolAddress: string;
 }
 
-const AddLiquidityModal = (props: Props) => {
+const AddLiquidityModal = observer((props: Props) => {
     const { modalOpen, setModalOpen, poolAddress } = props;
     return (
         <Container style={{ display: modalOpen.state ? 'block' : 'none' }}>
@@ -109,6 +110,6 @@ const AddLiquidityModal = (props: Props) => {
             </ModalContent>
         </Container>
     );
-};
+});
 
 export default AddLiquidityModal;
