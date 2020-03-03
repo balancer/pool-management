@@ -317,6 +317,11 @@ export const padToDecimalPlaces = (
 
     if (zerosToPad > 0) {
         let pad = '';
+
+        // Add decimal point if no decimal portion in original number
+        if (zerosToPad === minDecimals) {
+            pad += '.'
+        }
         for (let i = 0; i < zerosToPad; i++) {
             pad += '0';
         }
