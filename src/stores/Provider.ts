@@ -139,7 +139,7 @@ export default class ProviderStore {
     }
 
     @action setWeb3Context(name, context: Web3ReactContextInterface) {
-        console.log('[setWeb3Context]', name, context);
+        console.debug('[setWeb3Context]', name, context);
         this.web3Contexts[name] = context;
     }
 
@@ -180,7 +180,7 @@ export default class ProviderStore {
         });
 
         if (error) {
-            console.log('[Send Transaction Error', error);
+            console.debug('[Send Transaction Error', error);
         } else if (txResponse) {
             transactionStore.addTransactionRecord(account, txResponse);
         } else {

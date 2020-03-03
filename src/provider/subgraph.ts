@@ -1,13 +1,13 @@
 import fetch from 'isomorphic-fetch';
-import { getAddress} from "ethers/utils";
-import {Pool, PoolToken} from "../types";
-import {bnum} from "../utils/helpers";
+import { getAddress } from 'ethers/utils';
+import { Pool, PoolShare, PoolToken } from '../types';
+import { bnum } from '../utils/helpers';
 
 const SUBGRAPH_URL =
     process.env.REACT_APP_SUBGRAPH_URL ||
     'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-kovan';
 
-export async function getPublicPools(): Promise<Pool[]> {
+export async function fetchPublicPools(): Promise<Pool[]> {
     const query = `
       query ($tokens: [Bytes!]) {
           pools (where: {publicSwap: true}) {
@@ -25,6 +25,16 @@ export async function getPublicPools(): Promise<Pool[]> {
               decimals
               symbol
               denormWeight
+            }
+            shares {
+              id
+              poolId {
+                id
+              }
+              userAddress {
+                id
+              }
+              balance
             }
           }
         }
@@ -52,7 +62,7 @@ export async function getPublicPools(): Promise<Pool[]> {
             totalWeight: bnum(pool.totalWeight),
             totalShares: bnum(pool.totalShares),
             tokensList: pool.tokensList.map(tokenAddress => {
-                return getAddress(tokenAddress)
+                return getAddress(tokenAddress);
             }),
             tokens: pool.tokens.map(token => {
                 return {
@@ -60,9 +70,21 @@ export async function getPublicPools(): Promise<Pool[]> {
                     balance: bnum(token.balance),
                     decimals: token.decimals,
                     denormWeight: bnum(token.denormWeight),
-                    symbol: token.symbol
-                } as PoolToken
-            })
+                    denormWeightProportion: bnum(token.denormWeight).div(
+                        bnum(pool.totalWeight)
+                    ),
+                    symbol: token.symbol,
+                } as PoolToken;
+            }),
+            shares: pool.shares.map(share => {
+                return {
+                    account: getAddress(share.userAddress.id),
+                    balance: bnum(share.balance),
+                    balanceProportion: bnum(share.balance).div(
+                        bnum(pool.totalShares)
+                    ),
+                } as PoolShare;
+            }),
         } as Pool;
-    })
+    });
 }

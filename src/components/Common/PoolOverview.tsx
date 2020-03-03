@@ -1,6 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Pie } from 'react-chartjs-2';
+import { observer } from 'mobx-react';
+import {
+    formatFee,
+    formatPercentage,
+    formatPoolAssetChartData,
+    shortenAddress,
+} from '../../utils/helpers';
+import { useStores } from '../../contexts/storesContext';
+import { Pool } from '../../types';
+import { poolAssetColors } from '../index';
 
 const Wrapper = styled.div`
     display: flex;
@@ -82,7 +92,36 @@ const AssetDot = styled.div`
     background: ${props => props.dotColor};
 `;
 
-const PoolOverview = () => {
+interface Props {
+    poolAddress: string;
+}
+
+export const getUserShareText = (pool: Pool, account: string): string => {
+    let shareText = '-';
+
+    if (account && pool) {
+        const userShare = pool.shares.find(share => share.account === account);
+        if (userShare) {
+            shareText = formatPercentage(userShare.balanceProportion, 1);
+        } else {
+            shareText = '0%';
+        }
+    }
+
+    return shareText;
+};
+
+const PoolOverview = observer((props: Props) => {
+    const { poolAddress } = props;
+    const {
+        root: { poolStore, providerStore },
+    } = useStores();
+    const pool = poolStore.getPool(poolAddress);
+    const { account } = providerStore.getActiveWeb3React();
+
+    const feeText = pool ? formatFee(pool.swapFee) : '-';
+    const shareText = getUserShareText(pool, account);
+
     const options = {
         maintainAspectRatio: false,
         legend: {
@@ -93,98 +132,51 @@ const PoolOverview = () => {
         },
     };
 
-    const formatPieData = () => {
-        const pieData = {
-            datasets: [
-                {
-                    data: [1],
-                    borderAlign: 'center',
-                    borderColor: '#B388FF',
-                    borderWidth: '1',
-                    weight: 0,
-                },
-                {
-                    data: [10, 10, 10, 10, 10, 10, 10, 10],
-                    borderAlign: 'center',
-                    backgroundColor: [
-                        '#E7983D',
-                        '#536DFE',
-                        '#E7983D',
-                        '#64FFDA',
-                        '#B388FF',
-                        '#F4FF81',
-                        '#BDBDBD',
-                        '#602A52',
-                    ],
-                    borderColor: [
-                        '#E7983D',
-                        '#536DFE',
-                        '#E7983D',
-                        '#64FFDA',
-                        '#B388FF',
-                        '#F4FF81',
-                        '#BDBDBD',
-                        '#602A52',
-                    ],
-                    borderWidth: '0',
-                    weight: 95,
-                },
-            ],
-        };
-        return pieData;
+    const renderAssetPercentages = (pool: Pool) => {
+        return (
+            <React.Fragment>
+                {pool.tokens.map((token, index) => {
+                    return (
+                        <AssetPercentageContainer>
+                            <AssetDot dotColor={poolAssetColors[index]} />
+                            <AssetPercentageText>
+                                {formatPercentage(
+                                    token.denormWeightProportion,
+                                    2
+                                )}{' '}
+                                {token.symbol}
+                            </AssetPercentageText>
+                        </AssetPercentageContainer>
+                    );
+                })}
+            </React.Fragment>
+        );
     };
 
     return (
         <Wrapper>
             <Header>Pool Overview</Header>
-            <Address>0xA4D4...fcd8</Address>
-            <PoolInfo>My Pool Share: 99.52%</PoolInfo>
-            <PoolInfo>Pool Swap Fee: 0.1%</PoolInfo>
+            <Address>{shortenAddress(poolAddress)}</Address>
+            <PoolInfo>My Pool Share: {shareText}</PoolInfo>
+            <PoolInfo>Pool Swap Fee: {feeText}</PoolInfo>
             <ChartAndBreakdownWrapper>
                 <PieChartWrapper>
-                    <Pie
-                        type={'doughnut'}
-                        data={formatPieData()}
-                        options={options}
-                    />
+                    {pool ? (
+                        <Pie
+                            type={'doughnut'}
+                            data={formatPoolAssetChartData(pool)}
+                            options={options}
+                        />
+                    ) : (
+                        <div>Loading</div>
+                    )}
                 </PieChartWrapper>
                 <BreakdownContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#E7983D" />
-                        <AssetPercentageText>12.5% DAI</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#536DFE" />
-                        <AssetPercentageText>12.5% WBTC</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#E7983D" />
-                        <AssetPercentageText>12.5% DGD</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#64FFDA" />
-                        <AssetPercentageText>12.5% GNT</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#B388FF" />
-                        <AssetPercentageText>12.5% ETH</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#F4FF81" />
-                        <AssetPercentageText>12.5% OMG</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#BDBDBD" />
-                        <AssetPercentageText>12.5% 0x</AssetPercentageText>
-                    </AssetPercentageContainer>
-                    <AssetPercentageContainer>
-                        <AssetDot dotColor="#602A52" />
-                        <AssetPercentageText>12.5% REP</AssetPercentageText>
-                    </AssetPercentageContainer>
+                    {pool ? renderAssetPercentages(pool) : <div>Loading</div>}
                 </BreakdownContainer>
             </ChartAndBreakdownWrapper>
         </Wrapper>
     );
-};
+});
 
 export default PoolOverview;

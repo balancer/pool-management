@@ -1,10 +1,9 @@
-import { action, observable, ObservableMap } from 'mobx';
+import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
 import { bnum } from 'utils/helpers';
 import { parseEther } from 'ethers/utils';
-import * as deployed from 'deployed.json';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
 import {
@@ -13,7 +12,7 @@ import {
     UserAllowanceFetch,
 } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import {BigNumberMap} from "../types";
+import { BigNumberMap } from '../types';
 
 export interface ContractMetadata {
     bFactory: string;
@@ -74,7 +73,10 @@ export default class TokenStore {
         this.allowances = {} as UserAllowanceMap;
     }
 
-    getAccountBalances(tokenAddresses: string[], account: string): BigNumberMap {
+    getAccountBalances(
+        tokenAddresses: string[],
+        account: string
+    ): BigNumberMap {
         const result: BigNumberMap = {};
         tokenAddresses.forEach(tokenAddress => {
             if (
@@ -250,7 +252,7 @@ export default class TokenStore {
             });
 
             if (allFetchesSuccess) {
-                console.log('[All Fetches Success]');
+                console.debug('[All Fetches Success]');
             }
         } catch (e) {
             console.error('[Fetch] Balancer Token Data', { error: e });

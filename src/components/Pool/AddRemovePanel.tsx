@@ -56,15 +56,19 @@ const InformationContainer = styled.div`
     line-height: 16px;
 `;
 
-const AddRemovePanel = ({ setModalOpen }) => {
+interface Props {
+    setModalOpen: any;
+    poolAddress: string;
+}
+
+const AddRemovePanel = (props: Props) => {
+    const { setModalOpen, poolAddress } = props;
     return (
         <Wrapper>
             <LeftColumn>
                 <AddressContainer>
-                    <Identicon address="0x0d8775f648430679a709e98d2b0cb6250d2887ef" />
-                    <IdenticonText>
-                        0x0d8775f648430679a709e98d2b0cb6250d2887ef
-                    </IdenticonText>
+                    <Identicon address={poolAddress} />
+                    <IdenticonText>{poolAddress}</IdenticonText>
                 </AddressContainer>
                 <InformationContainer>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed

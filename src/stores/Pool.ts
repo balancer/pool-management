@@ -1,7 +1,7 @@
 import RootStore from 'stores/Root';
-import {action, observable} from "mobx";
-import {getPublicPools} from "provider/subgraph";
-import {Pool} from "types";
+import { action, observable } from 'mobx';
+import { fetchPublicPools } from 'provider/subgraph';
+import { Pool } from 'types';
 
 interface PoolData {
     blockLastFetched: number;
@@ -9,7 +9,7 @@ interface PoolData {
 }
 
 interface PoolMap {
-    [index: string]: PoolData
+    [index: string]: PoolData;
 }
 
 export default class PoolStore {
@@ -19,16 +19,15 @@ export default class PoolStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.pools = {} as PoolMap;
-
     }
 
     @action async fetchPublicPools() {
-        const {providerStore} = this.rootStore;
+        const { providerStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await getPublicPools();
+        const pools = await fetchPublicPools();
 
         pools.forEach(pool => {
             this.setPool(pool.address, pool, currentBlock);
@@ -37,21 +36,25 @@ export default class PoolStore {
         console.debug('[fetchPublicPools] Pools fetched & stored');
     }
 
-    @action private setPool(poolAddress: string, newPool: Pool, blockFetched: number) {
+    @action private setPool(
+        poolAddress: string,
+        newPool: Pool,
+        blockFetched: number
+    ) {
         const poolData = this.getPoolData(poolAddress);
-         // If already exists, only overwrite if stale
+        // If already exists, only overwrite if stale
         if (poolData) {
-            if(blockFetched > poolData.blockLastFetched) {
+            if (blockFetched > poolData.blockLastFetched) {
                 this.pools[poolAddress] = {
                     blockLastFetched: blockFetched,
-                    data: newPool
-                }
+                    data: newPool,
+                };
             }
         } else {
             this.pools[poolAddress] = {
                 blockLastFetched: blockFetched,
-                data: newPool
-            }
+                data: newPool,
+            };
         }
     }
 

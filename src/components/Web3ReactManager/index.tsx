@@ -47,7 +47,7 @@ const Web3ReactManager = observer(({ children }) => {
 
     const web3React = providerStore.getActiveWeb3React();
 
-    console.log('[Web3ReactManager] Start of render', {
+    console.debug('[Web3ReactManager] Start of render', {
         injected: web3ContextInjected,
         backup: web3ContextBackup,
         web3React: web3React,
@@ -61,7 +61,7 @@ const Web3ReactManager = observer(({ children }) => {
     // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
     // TODO think about not doing this at all
     useEffect(() => {
-        console.log(
+        console.debug(
             '[Web3ReactManager] Activate backup if conditions are met',
             {
                 triedEager,
@@ -77,7 +77,7 @@ const Web3ReactManager = observer(({ children }) => {
         );
         if (!networkActive && !networkError) {
             activateNetwork(backup);
-            console.log('[Web3ReactManager] Backup activation started');
+            console.debug('[Web3ReactManager] Backup activation started');
         }
     }, [
         triedEager,
@@ -89,7 +89,7 @@ const Web3ReactManager = observer(({ children }) => {
 
     // 'pause' the network connector if we're ever connected to an account and it's active
     useEffect(() => {
-        console.log(
+        console.debug(
             '[Web3ReactManager] Pause backup if injected & backup both active',
             {
                 injectedActive,
@@ -98,14 +98,14 @@ const Web3ReactManager = observer(({ children }) => {
             }
         );
         if (injectedActive && networkActive) {
-            console.log('[Web3ReactManager] Pause backup provider');
+            console.debug('[Web3ReactManager] Pause backup provider');
             backup.pause();
         }
     }, [injectedActive, networkActive]);
 
     // 'resume' the network connector if we're ever not connected to an account and it's active
     useEffect(() => {
-        console.log(
+        console.debug(
             '[Web3ReactManager] Resume backup if injected not active & backup is active',
             {
                 injectedActive,
@@ -114,7 +114,7 @@ const Web3ReactManager = observer(({ children }) => {
             }
         );
         if (!injectedActive && networkActive) {
-            console.log('[Web3ReactManager] Resume backup provider');
+            console.debug('[Web3ReactManager] Resume backup provider');
             backup.resume();
         }
     }, [injectedActive, networkActive]);
@@ -145,7 +145,7 @@ const Web3ReactManager = observer(({ children }) => {
             web3React.account &&
             web3React.account !== providerStore.activeAccount
         ) {
-            console.log('[Fetch Loop] - Extra fetch on account switch', {
+            console.debug('[Fetch Loop] - Extra fetch on account switch', {
                 account: web3React.account,
                 prevAccount: providerStore.activeAccount,
             });
@@ -155,7 +155,7 @@ const Web3ReactManager = observer(({ children }) => {
 
     // on page load, do nothing until we've tried to connect to the injected connector
     if (!triedEager) {
-        console.log('[Web3ReactManager] Render: Eager load not tried');
+        console.debug('[Web3ReactManager] Render: Eager load not tried');
         return null;
     }
 
@@ -170,7 +170,7 @@ const Web3ReactManager = observer(({ children }) => {
 
     // if neither context is active, spin
     if (!injectedActive && !networkActive) {
-        console.log(
+        console.debug(
             '[Web3ReactManager] Render: No active network, show loading'
         );
         return showLoader ? (
@@ -180,7 +180,7 @@ const Web3ReactManager = observer(({ children }) => {
         ) : null;
     }
 
-    console.log('[Web3ReactManager] Render: Active network, render children', {
+    console.debug('[Web3ReactManager] Render: Active network, render children', {
         injectedActive,
         networkActive,
     });

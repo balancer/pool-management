@@ -109,7 +109,7 @@ const Web3ConnectStatus = observer(() => {
     }
 
     function getWeb3Status() {
-        console.log('[GetWeb3Status]', {
+        console.debug('[GetWeb3Status]', {
             account,
             isChainIdSupported: isChainIdSupported(injectedChainId),
             error,
