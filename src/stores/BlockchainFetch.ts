@@ -40,7 +40,7 @@ export default class BlockchainFetchStore {
                         blockNumber !== lastCheckedBlock || forceFetch;
 
                     if (doFetch) {
-                        console.log('[Fetch Loop] Fetch Blockchain Data', {
+                        console.debug('[Fetch Loop] Fetch Blockchain Data', {
                             blockNumber,
                             account,
                         });
@@ -51,7 +51,6 @@ export default class BlockchainFetchStore {
                         // Get global blockchain data
                         poolStore.fetchPublicPools();
                         if (marketStore.assetsLoaded) {
-                            console.log('blockchainFetch', marketStore.assetsLoaded);
                             marketStore.fetchAssetPrices(contractMetadataStore.tokenSymbols);
                         }
 
@@ -65,7 +64,7 @@ export default class BlockchainFetchStore {
                     }
                 })
                 .catch(error => {
-                    console.log('[Fetch Loop Failure]', {
+                    console.error('[Fetch Loop Failure]', {
                         web3React,
                         providerStore,
                         forceFetch,

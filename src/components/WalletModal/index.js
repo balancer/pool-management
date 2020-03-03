@@ -172,7 +172,7 @@ const WalletModal = observer(
             setPendingWallet(connector); // set wallet for pending view
             setWalletView(WALLET_VIEWS.PENDING);
             activate(connector, undefined, true).catch(e => {
-                console.log('[Activation Error]', e);
+                console.error('[Activation Error]', e);
                 setPendingError(true);
             });
         };

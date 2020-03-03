@@ -252,7 +252,7 @@ export default class TokenStore {
             });
 
             if (allFetchesSuccess) {
-                console.log('[All Fetches Success]');
+                console.debug('[All Fetches Success]');
             }
         } catch (e) {
             console.error('[Fetch] Balancer Token Data', { error: e });

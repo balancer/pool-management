@@ -19,7 +19,7 @@ interface ActionResponse {
 }
 
 const preLog = (params: ActionRequest) => {
-    console.log(`[@action start: ${params.action}]`, {
+    console.debug(`[@action start: ${params.action}]`, {
         contract: params.contract,
         action: params.action,
         sender: params.sender,
@@ -29,7 +29,7 @@ const preLog = (params: ActionRequest) => {
 };
 
 const postLog = (result: ActionResponse) => {
-    console.log(`[@action end: ${result.action}]`, {
+    console.debug(`[@action end: ${result.action}]`, {
         contract: result.contract,
         action: result.action,
         sender: result.sender,

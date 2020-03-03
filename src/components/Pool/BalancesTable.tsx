@@ -124,9 +124,11 @@ const BalancesTable = observer((props: Props) => {
 
                     let valueToDisplay = '-';
                     if (userBalances && userBalances[tokenAddress] && marketStore.assetPricesLoaded) {
+                        // TODO: Scale this using token decimals
                         const userBalanceScaled = bnum(fromWei(userBalances[tokenAddress]));
+                        const userBalanceValue = marketStore.getValue(tokenMetadata.symbol, userBalanceScaled);
 
-                        valueToDisplay = formatBalance(toWei(marketStore.getValue(tokenMetadata.symbol, userBalanceScaled)), 2)
+                        valueToDisplay = formatBalance(userBalanceValue, 2)
                     }
 
                     return (

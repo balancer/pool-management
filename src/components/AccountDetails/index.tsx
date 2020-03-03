@@ -250,7 +250,6 @@ export default function AccountDetails(props: Props) {
     const { chainId, account, connector } = providerStore.getActiveWeb3React();
 
     function renderTransactions(transactions: TransactionRecord[], pending) {
-        console.log('[renderTransactions]', transactions, pending);
         return (
             <TransactionListWrapper>
                 {transactions.map((value, i) => {

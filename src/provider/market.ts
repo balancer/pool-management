@@ -9,7 +9,6 @@ const MARKET_API_URL =
 export async function fetchAssetPrices(symbolsToFetch: string[], assetData: MarketAssetMap, idToSymbolMap: StringMap
 ): Promise<MarketAssetPriceMap> {
 
-    console.log('fetchAssetPrices', {...assetData});
     let idQueryString = '';
     symbolsToFetch.forEach((symbol, index) => {
         if (index === symbolsToFetch.length - 1) {
@@ -29,8 +28,6 @@ export async function fetchAssetPrices(symbolsToFetch: string[], assetData: Mark
     });
 
     const prices = await response.json();
-    console.log(idQueryString);
-    console.log(prices);
 
     const priceMap: MarketAssetPriceMap = {};
     Object.keys(prices).forEach(key => {
