@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
+import { useStores } from '../../contexts/storesContext';
 
 const Wrapper = styled.div`
     display: flex;
@@ -57,12 +58,17 @@ const InformationContainer = styled.div`
 `;
 
 interface Props {
-    setModalOpen: any;
     poolAddress: string;
 }
 
 const AddRemovePanel = (props: Props) => {
-    const { setModalOpen, poolAddress } = props;
+    const { poolAddress } = props;
+    const {
+        root: { providerStore, addLiquidityFormStore, poolStore },
+    } = useStores();
+    const { account } = providerStore.getActiveWeb3React();
+
+    const pool = poolStore.getPool(poolAddress);
     return (
         <Wrapper>
             <LeftColumn>
@@ -79,9 +85,15 @@ const AddRemovePanel = (props: Props) => {
             <RightColumn>
                 <Button
                     buttonText={'Add Liquidity'}
-                    active={true}
+                    active={!!pool}
                     onClick={() => {
-                        setModalOpen({ state: true });
+                        if (pool) {
+                            addLiquidityFormStore.openModal(
+                                poolAddress,
+                                account,
+                                pool.tokensList
+                            );
+                        }
                     }}
                 />
                 <Spacer />

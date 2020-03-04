@@ -11,6 +11,34 @@ export default class BlockchainFetchStore {
         this.rootStore = rootStore;
     }
 
+    @action onActivePoolChanged(web3React: Web3ReactContextInterface) {
+        if (
+            web3React.active &&
+            web3React.account &&
+            web3React.chainId === supportedChainId
+        ) {
+            this.fetchActivePoolAllowances(web3React);
+        }
+    }
+
+    @action async fetchActivePoolAllowances(web3React) {
+        const { account } = web3React;
+        const {
+            appSettingsStore,
+            poolStore,
+            tokenStore
+        } = this.rootStore;
+        const poolAddress = appSettingsStore.getActivePoolAddress();
+        const tokenAddresses = poolStore.getPoolTokens(poolAddress);
+        await tokenStore
+            .fetchAccountApprovals(
+                web3React,
+                tokenAddresses,
+                account,
+                poolAddress
+            );
+    }
+
     @action setFetchLoop(
         web3React: Web3ReactContextInterface,
         forceFetch?: boolean
@@ -21,7 +49,13 @@ export default class BlockchainFetchStore {
             web3React.chainId === supportedChainId
         ) {
             const { library, account, chainId } = web3React;
-            const { providerStore, poolStore, marketStore, contractMetadataStore } = this.rootStore;
+            const {
+                providerStore,
+                poolStore,
+                marketStore,
+                contractMetadataStore,
+                appSettingsStore,
+            } = this.rootStore;
 
             library
                 .getBlockNumber()
@@ -51,7 +85,9 @@ export default class BlockchainFetchStore {
                         // Get global blockchain data
                         poolStore.fetchPublicPools();
                         if (marketStore.assetsLoaded) {
-                            marketStore.fetchAssetPrices(contractMetadataStore.tokenSymbols);
+                            marketStore.fetchAssetPrices(
+                                contractMetadataStore.tokenSymbols
+                            );
                         }
 
                         // Get user-specific blockchain data
@@ -60,6 +96,10 @@ export default class BlockchainFetchStore {
                                 web3React,
                                 account
                             );
+
+                            if (appSettingsStore.hasActivePool()) {
+                                this.fetchActivePoolAllowances(web3React);
+                            }
                         }
                     }
                 })

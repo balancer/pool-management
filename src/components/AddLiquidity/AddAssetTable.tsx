@@ -219,48 +219,34 @@ const AddAssetTable = observer(() => {
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
+    let accountApprovalsLoaded = false;
 
     if (pool) {
         userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
+        accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
+            poolStore.getPoolTokens(pool.address),
+            account,
+            pool.address
+        );
     }
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
         const { checked } = event.target;
-        console.log('handleCheckboxChange', checked);
 
         addLiquidityFormStore.setApprovalCheckboxTouched(tokenAddress, true);
         addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
 
         if (checked) {
-            await tokenStore.approveMax(web3React, tokenAddress, account);
+            await tokenStore.approveMax(web3React, tokenAddress, pool.address);
         } else {
-            await tokenStore.revokeApproval(web3React, tokenAddress, account);
+            await tokenStore.revokeApproval(
+                web3React,
+                tokenAddress,
+                pool.address
+            );
         }
     };
     let loading = true;
-
-    // Init checkbox form status for pool
-    if (pool && account && !addLiquidityFormStore.approvalCheckboxStatusLoaded && !addLiquidityFormStore.isActivePool(pool.address)) {
-        const tokenAddresses: string[] = pool.tokens.map(
-            token => token.address
-        );
-        let checkedStatus: boolean[] = [];
-
-        tokenAddresses.forEach(tokenAddress => {
-            const hasMaxApproval = tokenStore.hasMaxApproval(
-                tokenAddress,
-                account,
-                pool.address
-            );
-            checkedStatus.push(hasMaxApproval);
-        });
-
-        addLiquidityFormStore.setBulkApprovalCheckboxStatus(
-            pool.address,
-            tokenAddresses,
-            checkedStatus
-        );
-    }
 
     const renderAssetTable = (
         pool: Pool,
@@ -277,10 +263,32 @@ const AddAssetTable = observer(() => {
                         tokenAddress
                     );
 
-                    let checked = false;
+                    const checked = addLiquidityFormStore.isChecked(
+                        tokenAddress
+                    );
+                    const touched = addLiquidityFormStore.isTouched(
+                        tokenAddress
+                    );
 
-                    // If touched, display state based on user actions
-                    checked = addLiquidityFormStore.isChecked(tokenAddress);
+                    let hasMaxApproval = false;
+
+                    if (accountApprovalsLoaded) {
+                        hasMaxApproval = tokenStore.hasMaxApproval(
+                            tokenAddress,
+                            account,
+                            pool.address
+                        );
+                    }
+
+                    let visuallyChecked;
+
+                    if (touched) {
+                        visuallyChecked = checked;
+                    } else if (accountApprovalsLoaded) {
+                        visuallyChecked = hasMaxApproval;
+                    } else {
+                        visuallyChecked = false;
+                    }
 
                     // checked = tokenStore.hasMaxApproval(tokenAddress, account, pool.address);
                     // TODO: If neither, we should be in the loading state and never get here
@@ -308,7 +316,7 @@ const AddAssetTable = observer(() => {
                                 <Toggle>
                                     <ToggleInput
                                         type="checkbox"
-                                        checked={checked}
+                                        checked={visuallyChecked}
                                         onChange={e =>
                                             handleCheckboxChange(
                                                 e,

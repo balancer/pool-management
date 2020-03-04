@@ -71,4 +71,11 @@ export default class PoolStore {
         }
         return undefined;
     }
+
+    getPoolTokens(poolAddress: string): string[] {
+        if (!this.pools[poolAddress]) {
+            throw new Error(`Pool ${poolAddress} not loaded`);
+        }
+        return this.pools[poolAddress].data.tokensList;
+    }
 }

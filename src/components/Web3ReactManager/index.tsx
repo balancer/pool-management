@@ -180,10 +180,13 @@ const Web3ReactManager = observer(({ children }) => {
         ) : null;
     }
 
-    console.debug('[Web3ReactManager] Render: Active network, render children', {
-        injectedActive,
-        networkActive,
-    });
+    console.debug(
+        '[Web3ReactManager] Render: Active network, render children',
+        {
+            injectedActive,
+            networkActive,
+        }
+    );
     return children;
 });
 

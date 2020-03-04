@@ -92,6 +92,92 @@ export default class TokenStore {
         return result;
     }
 
+    areAccountApprovalsLoaded(
+        tokenAddresses: string[],
+        account: string,
+        spender: string
+    ): boolean {
+        const approvals = this.getAllowances(tokenAddresses, account, spender);
+        return Object.keys(approvals).length === tokenAddresses.length;
+    }
+
+    @action async fetchAccountApprovals(
+        web3React,
+        tokenAddresses: string[],
+        account: string,
+        spender: string
+    ) {
+        const { providerStore } = this.rootStore;
+
+        const promises: Promise<any>[] = [];
+        const fetchBlock = providerStore.getCurrentBlockNumber();
+        tokenAddresses.forEach(tokenAddress => {
+            promises.push(
+                this.fetchAllowance(
+                    web3React,
+                    tokenAddress,
+                    account,
+                    spender,
+                    fetchBlock
+                )
+            );
+        });
+
+        let allFetchesSuccess = true;
+
+        try {
+            const responses = await Promise.all(promises);
+            responses.forEach(response => {
+                if (response instanceof UserAllowanceFetch) {
+                    const { status, request, payload } = response;
+                    if (status === AsyncStatus.SUCCESS) {
+                        this.setAllowanceProperty(
+                            request.tokenAddress,
+                            request.owner,
+                            request.spender,
+                            payload.allowance,
+                            payload.lastFetched
+                        );
+                    } else {
+                        allFetchesSuccess = false;
+                    }
+                }
+            });
+
+            if (allFetchesSuccess) {
+                console.debug('[Fetch Account Approvals] All Fetches Success');
+            }
+        } catch (e) {
+            console.error(
+                '[Fetch Account Approvals] Failure in one or more fetches',
+                { error: e }
+            );
+            return FetchCode.FAILURE;
+        }
+        return FetchCode.SUCCESS;
+    }
+
+    getAllowances(
+        tokenAddresses: string[],
+        account: string,
+        spender: string
+    ): BigNumberMap {
+        const result: BigNumberMap = {};
+        tokenAddresses.forEach(tokenAddress => {
+            if (
+                this.allowances[tokenAddress] &&
+                this.allowances[tokenAddress][account] &&
+                this.allowances[tokenAddress][account][spender]
+            ) {
+                result[tokenAddress] = this.allowances[tokenAddress][account][
+                    spender
+                ].allowance;
+            }
+        });
+
+        return result;
+    }
+
     private setAllowanceProperty(
         tokenAddress: string,
         owner: string,
@@ -189,7 +275,7 @@ export default class TokenStore {
         );
     };
 
-    @action fetchBalancerTokenData = async (
+    @action fetchWhitelistedTokenBalances = async (
         web3React,
         account
     ): Promise<FetchCode> => {
@@ -207,15 +293,6 @@ export default class TokenStore {
                     fetchBlock
                 )
             );
-            promises.push(
-                this.fetchAllowance(
-                    web3React,
-                    value.address,
-                    account,
-                    contractMetadataStore.getProxyAddress(),
-                    fetchBlock
-                )
-            );
         });
 
         let allFetchesSuccess = true;
@@ -230,19 +307,6 @@ export default class TokenStore {
                             request.tokenAddress,
                             request.account,
                             payload.balance,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                } else if (response instanceof UserAllowanceFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setAllowanceProperty(
-                            request.tokenAddress,
-                            request.owner,
-                            request.spender,
-                            payload.allowance,
                             payload.lastFetched
                         );
                     } else {
@@ -384,30 +448,45 @@ export default class TokenStore {
             fetchBlock <=
             this.getAllowanceLastFetched(tokenAddress, owner, spender);
         if (!stale) {
-            const allowance = bnum(await token.allowance(owner, spender));
-            const stale =
-                fetchBlock <=
-                this.getAllowanceLastFetched(tokenAddress, owner, spender);
-            if (!stale) {
-                console.debug('[Allowance Fetch]', {
-                    tokenAddress,
-                    owner,
-                    spender,
-                    allowance: allowance.toString(),
-                    fetchBlock,
-                });
+            try {
+                const allowance = bnum(await token.allowance(owner, spender));
+
+                const stale =
+                    fetchBlock <=
+                    this.getAllowanceLastFetched(tokenAddress, owner, spender);
+                if (!stale) {
+                    console.debug('[Allowance Fetch]', {
+                        tokenAddress,
+                        owner,
+                        spender,
+                        allowance: allowance.toString(),
+                        fetchBlock,
+                    });
+                    return new UserAllowanceFetch({
+                        status: AsyncStatus.SUCCESS,
+                        request: {
+                            tokenAddress,
+                            owner,
+                            spender,
+                            fetchBlock,
+                        },
+                        payload: {
+                            allowance,
+                            lastFetched: fetchBlock,
+                        },
+                    });
+                }
+            } catch (e) {
                 return new UserAllowanceFetch({
-                    status: AsyncStatus.SUCCESS,
+                    status: AsyncStatus.FAILURE,
                     request: {
                         tokenAddress,
                         owner,
                         spender,
                         fetchBlock,
                     },
-                    payload: {
-                        allowance,
-                        lastFetched: fetchBlock,
-                    },
+                    payload: undefined,
+                    error: e.message,
                 });
             }
         } else {
@@ -432,12 +511,13 @@ export default class TokenStore {
 
     hasMaxApproval = (tokenAddress, account, spender): boolean => {
         const allowance = this.getAllowance(tokenAddress, account, spender);
-        if (allowance) {
-            return allowance.gte(bnum(helpers.MAX_UINT.div(2).toString()));
-        } else {
-            return false;
+        if (!allowance) {
+            throw new Error(
+                `Allowance not loaded for ${tokenAddress} ${account} ${spender}`
+            );
         }
-    }
+        return helpers.hasMaxApproval(allowance);
+    };
 
     getAllowance = (tokenAddress, account, spender): BigNumber | undefined => {
         const chainApprovals = this.allowances;

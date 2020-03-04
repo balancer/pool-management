@@ -8,7 +8,6 @@ import ModalStore from './Modal';
 import AppSettingsStore from './AppSettings';
 import ContractMetadataStore from './ContractMetadata';
 import MarketStore from './Market';
-import { observable } from 'mobx';
 import AddLiquidityFormStore from './AddLiquidityForm';
 
 export default class RootStore {
