@@ -306,7 +306,7 @@ export const formatBalance = (
     }
 
     const result = bnum(fromWei(balance))
-        .decimalPlaces(precision)
+        .decimalPlaces(precision, BigNumber.ROUND_DOWN)
         .toString();
 
     return padToDecimalPlaces(result, 2);
