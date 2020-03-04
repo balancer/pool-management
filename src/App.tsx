@@ -29,7 +29,7 @@ const App = () => {
             <div className="app-shell">
                 <Switch>
                     <Route path="/list" component={Home} />
-                    <Route path="/pool" component={Pool} />
+                    <Route path="/pool/:poolAddress" component={Pool} />
                     <Redirect from="/" to="/list" />
                 </Switch>
             </div>

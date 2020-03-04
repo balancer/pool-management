@@ -7,8 +7,9 @@ import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import { formatBalanceTruncated, formatFee, toWei } from '../utils/helpers';
+import {formatBalanceTruncated, formatFee, isAddress, toWei} from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
+import {withRouter, RouteComponentProps} from "react-router";
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -29,18 +30,26 @@ const InfoPanelWrapper = styled.div`
 
 const SwapsTable = styled.div``;
 
-const Pool = observer(() => {
-    const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
+const Pool = observer((props: RouteComponentProps) => {
+    console.log(props);
+    const poolAddress = props.match.params.poolAddress;
     const {
         root: {
             poolStore,
             providerStore,
             marketStore,
-            tokenStore,
             appSettingsStore,
             blockchainFetchStore,
+            addLiquidityFormStore
         },
     } = useStores();
+
+    if (!isAddress(poolAddress)) {
+        return <PoolViewWrapper>
+            Please input a valid Pool address
+        </PoolViewWrapper>
+    }
+
     const pool = poolStore.getPool(poolAddress);
     const web3React = providerStore.getActiveWeb3React();
     const { account } = web3React;
@@ -48,16 +57,20 @@ const Pool = observer(() => {
     let poolSymbols;
     let poolBalances;
 
+    if (poolStore.poolsLoaded && !pool) {
+        return <PoolViewWrapper>
+            Pool with specified address not found
+        </PoolViewWrapper>
+    }
+
     if (pool) {
         if (appSettingsStore.activePoolAddress !== poolAddress) {
             console.log(['Set Active Pool Address']);
             appSettingsStore.setActivePoolAddress(poolAddress);
             blockchainFetchStore.onActivePoolChanged(web3React);
         }
-
         poolSymbols = pool.tokens.map(token => token.symbol);
         poolBalances = pool.tokens.map(token => token.balance);
-
     }
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
@@ -75,10 +88,10 @@ const Pool = observer(() => {
 
     return (
         <PoolViewWrapper>
-            {pool ? (
+            {addLiquidityFormStore.modalOpen ? (
                 <AddLiquidityModal poolAddress={poolAddress} />
             ) : (
-                <div></div>
+                <div/>
             )}
             <PoolAssetChartPanel poolAddress={poolAddress} />
             <AddRemovePanel poolAddress={poolAddress} />
@@ -94,4 +107,4 @@ const Pool = observer(() => {
     );
 });
 
-export default Pool;
+export default withRouter(Pool);
