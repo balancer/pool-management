@@ -14,6 +14,7 @@ interface PoolMap {
 
 export default class PoolStore {
     @observable pools: PoolMap;
+    @observable poolsLoaded: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -32,6 +33,7 @@ export default class PoolStore {
         pools.forEach(pool => {
             this.setPool(pool.address, pool, currentBlock);
         });
+        this.poolsLoaded = true;
 
         console.debug('[fetchPublicPools] Pools fetched & stored');
     }
@@ -70,5 +72,12 @@ export default class PoolStore {
             return this.pools[poolAddress].data;
         }
         return undefined;
+    }
+
+    getPoolTokens(poolAddress: string): string[] {
+        if (!this.pools[poolAddress]) {
+            throw new Error(`Pool ${poolAddress} not loaded`);
+        }
+        return this.pools[poolAddress].data.tokensList;
     }
 }

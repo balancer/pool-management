@@ -60,6 +60,10 @@ export function setPropertyToZeroIfEmpty(value?): string {
     return value;
 }
 
+export function hasMaxApproval(amount: BigNumber): boolean {
+    return amount.gte(bnum(MAX_UINT.div(2).toString()));
+}
+
 export function toAddressStub(address) {
     const start = address.slice(0, 5);
     const end = address.slice(-3);
@@ -302,7 +306,7 @@ export const formatBalance = (
     }
 
     const result = bnum(fromWei(balance))
-        .decimalPlaces(precision)
+        .decimalPlaces(precision, BigNumber.ROUND_DOWN)
         .toString();
 
     return padToDecimalPlaces(result, 2);
@@ -320,7 +324,7 @@ export const padToDecimalPlaces = (
 
         // Add decimal point if no decimal portion in original number
         if (zerosToPad === minDecimals) {
-            pad += '.'
+            pad += '.';
         }
         for (let i = 0; i < zerosToPad; i++) {
             pad += '0';

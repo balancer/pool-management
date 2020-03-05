@@ -82,11 +82,13 @@ export default class ProviderStore {
         });
 
         transactionStore.checkPendingTransactions(web3React, account);
-        tokenStore.fetchBalancerTokenData(web3React, account).then(result => {
-            console.debug('[Fetch End - User Blockchain Data]', {
-                account,
+        tokenStore
+            .fetchWhitelistedTokenBalances(web3React, account)
+            .then(result => {
+                console.debug('[Fetch End - User Blockchain Data]', {
+                    account,
+                });
             });
-        });
     };
 
     // account is optional

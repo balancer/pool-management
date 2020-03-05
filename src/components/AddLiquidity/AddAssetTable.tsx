@@ -4,7 +4,12 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import { formatBalanceTruncated } from '../../utils/helpers';
+import {
+    formatBalance,
+    formatBalanceTruncated,
+    fromWei,
+} from '../../utils/helpers';
+import { BigNumber } from '../../utils/bignumber';
 
 const Wrapper = styled.div`
     width: calc(80% - 20px);
@@ -201,21 +206,124 @@ const CheckBox = styled.input`
     }
 `;
 
-const AddAssetTable = observer(() => {
+const InputWrapper = styled.div`
+    height: 60px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 21px;
+    padding-right: 21px;
+    border-top: 1px solid var(--panel-border);
+    border-radius: 0px 0px 4px 4px;
+    input {
+        width: 100px;
+        color: var(--input-text);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 19px;
+        background-color: var(--panel-background);
+        border: none;
+        box-shadow: inset 0 0 0 1px var(--panel-background),
+            inset 0 0 0 100px var(--panel-background);
+        :-webkit-autofill,
+        :-webkit-autofill:hover,
+        :-webkit-autofill:focus,
+        :-webkit-autofill:active,
+        :-internal-autofill-selected {
+            -webkit-text-fill-color: var(--body-text);
+        }
+        ::placeholder {
+            color: var(--input-placeholder-text);
+        }
+        :focus {
+            outline: none;
+        }
+    }
+    border: ${props =>
+        props.errorBorders ? '1px solid var(--error-color)' : ''};
+    margin-left: ${props => (props.errorBorders ? '-1px' : '0px')}
+    margin-right: ${props => (props.errorBorders ? '-1px' : '0px')}
+    :hover {
+        background-color: var(--input-hover-background);
+        border: ${props =>
+            props.errorBorders
+                ? '1px solid var(--error-color)'
+                : '1px solid var(--input-hover-border);'};
+        margin-left: -1px;
+        margin-right: -1px;
+        input {
+            background-color: var(--input-hover-background);
+            box-shadow: inset 0 0 0 1px var(--input-hover-background),
+                inset 0 0 0 100px var(--input-hover-background);
+            ::placeholder {
+                color: var(--input-hover-placeholder-text);
+                background-color: var(--input-hover-background);
+            }
+        }
+    }
+`;
+
+const AddAssetTable = observer((props: any) => {
     const {
-        root: { poolStore, tokenStore, providerStore, contractMetadataStore },
+        root: {
+            poolStore,
+            tokenStore,
+            providerStore,
+            contractMetadataStore,
+            addLiquidityFormStore,
+        },
     } = useStores();
 
-    const { account } = providerStore.getActiveWeb3React();
+    const web3React = providerStore.getActiveWeb3React();
+    const { account } = web3React;
 
     const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
+    let accountApprovalsLoaded = false;
 
     if (pool) {
         userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
+        accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
+            poolStore.getPoolTokens(pool.address),
+            account,
+            pool.address
+        );
     }
+
+    const handleMaxLinkClick = async (
+        tokenAddress: string,
+        balance: BigNumber
+    ) => {
+        const maxValue = fromWei(balance);
+        addLiquidityFormStore.setAmountInputValue(tokenAddress, maxValue);
+    };
+
+    const handleCheckboxChange = async (event, tokenAddress: string) => {
+        const { checked } = event.target;
+
+        addLiquidityFormStore.setApprovalCheckboxTouched(tokenAddress, true);
+        addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
+
+        if (checked) {
+            await tokenStore.approveMax(web3React, tokenAddress, pool.address);
+        } else {
+            await tokenStore.revokeApproval(
+                web3React,
+                tokenAddress,
+                pool.address
+            );
+        }
+    };
+
+    const handleAmountInputChange = async (event, tokenAddress: string) => {
+        const { value } = event.target;
+        addLiquidityFormStore.setAmountInputValue(tokenAddress, value);
+    };
 
     const renderAssetTable = (
         pool: Pool,
@@ -231,6 +339,36 @@ const AddAssetTable = observer(() => {
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         tokenAddress
                     );
+
+                    const checked = addLiquidityFormStore.isCheckboxChecked(
+                        tokenAddress
+                    );
+                    const touched = addLiquidityFormStore.isCheckboxTouched(
+                        tokenAddress
+                    );
+
+                    let hasMaxApproval = false;
+
+                    if (accountApprovalsLoaded) {
+                        hasMaxApproval = tokenStore.hasMaxApproval(
+                            tokenAddress,
+                            account,
+                            pool.address
+                        );
+                    }
+
+                    let visuallyChecked;
+
+                    if (touched) {
+                        visuallyChecked = checked;
+                    } else if (accountApprovalsLoaded) {
+                        visuallyChecked = hasMaxApproval;
+                    } else {
+                        visuallyChecked = false;
+                    }
+
+                    // checked = tokenStore.hasMaxApproval(tokenAddress, account, pool.address);
+                    // TODO: If neither, we should be in the loading state and never get here
 
                     const balanceToDisplay: string =
                         userBalances && userBalances[tokenAddress]
@@ -253,7 +391,16 @@ const AddAssetTable = observer(() => {
                             </TableCell>
                             <TableCell>
                                 <Toggle>
-                                    <ToggleInput type="checkbox" />
+                                    <ToggleInput
+                                        type="checkbox"
+                                        checked={visuallyChecked}
+                                        onChange={e =>
+                                            handleCheckboxChange(
+                                                e,
+                                                tokenAddress
+                                            )
+                                        }
+                                    />
                                     <ToggleSlider></ToggleSlider>
                                 </Toggle>
                             </TableCell>
@@ -262,8 +409,42 @@ const AddAssetTable = observer(() => {
                             </TableCell>
                             <TableCellRight>
                                 <DepositAmount>
-                                    <MaxLink>Max</MaxLink>
-                                    1,500
+                                    <InputWrapper errorBorders={false}>
+                                        {userBalances &&
+                                        userBalances[tokenAddress] ? (
+                                            <MaxLink
+                                                onClick={() => {
+                                                    handleMaxLinkClick(
+                                                        tokenAddress,
+                                                        userBalances[
+                                                            tokenAddress
+                                                        ]
+                                                    );
+                                                }}
+                                            >
+                                                Max
+                                            </MaxLink>
+                                        ) : (
+                                            <div />
+                                        )}
+                                        <input
+                                            id={`input-${tokenAddress}`}
+                                            name={`input-name-${tokenAddress}`}
+                                            defaultValue={
+                                                addLiquidityFormStore.getAmountInput(
+                                                    tokenAddress
+                                                ).value
+                                            }
+                                            onChange={e => {
+                                                handleAmountInputChange(
+                                                    e,
+                                                    tokenAddress
+                                                );
+                                            }}
+                                            // ref={textInput}
+                                            placeholder=""
+                                        />
+                                    </InputWrapper>
                                 </DepositAmount>
                             </TableCellRight>
                         </TableRow>
@@ -272,6 +453,7 @@ const AddAssetTable = observer(() => {
             </React.Fragment>
         );
     };
+
     return (
         <Wrapper>
             <HeaderRow>
@@ -280,7 +462,9 @@ const AddAssetTable = observer(() => {
                 <TableCell>Wallet Balance</TableCell>
                 <TableCellRight>Deposit Amount</TableCellRight>
             </HeaderRow>
-            {pool ? (
+            {pool &&
+            addLiquidityFormStore.isActivePool(poolAddress) &&
+            addLiquidityFormStore.isActiveAccount(account) ? (
                 renderAssetTable(pool, userBalances)
             ) : (
                 <TableRow>Loading</TableRow>

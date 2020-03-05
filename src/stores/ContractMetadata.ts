@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import * as deployed from 'deployed.json';
-import {StringMap} from "../types";
+import { StringMap } from '../types';
 
 export interface ContractMetadata {
     bFactory: string;
@@ -31,7 +31,7 @@ export default class ContractMetadataStore {
         this.loadWhitelistedTokenMetadata();
 
         this.tokenSymbols = this.getWhitelistedTokenMetadata().map(value => {
-            return value.symbol
+            return value.symbol;
         });
 
         this.symbolToAddressMap = {} as StringMap;

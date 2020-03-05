@@ -1,20 +1,22 @@
 import fetch from 'isomorphic-fetch';
-import {MarketAsset, MarketAssetPriceMap, StringMap} from '../types';
+import { MarketAsset, MarketAssetPriceMap, StringMap } from '../types';
 import { MarketAssetMap } from '../stores/Market';
-import {bnum} from "../utils/helpers";
+import { bnum } from '../utils/helpers';
 
 const MARKET_API_URL =
     process.env.MARKET_API_URL || 'https://api.coingecko.com/api/v3';
 
-export async function fetchAssetPrices(symbolsToFetch: string[], assetData: MarketAssetMap, idToSymbolMap: StringMap
+export async function fetchAssetPrices(
+    symbolsToFetch: string[],
+    assetData: MarketAssetMap,
+    idToSymbolMap: StringMap
 ): Promise<MarketAssetPriceMap> {
-
     let idQueryString = '';
     symbolsToFetch.forEach((symbol, index) => {
         if (index === symbolsToFetch.length - 1) {
-            idQueryString += `${assetData[symbol].id}`
+            idQueryString += `${assetData[symbol].id}`;
         } else {
-            idQueryString += `${assetData[symbol].id}%2C`
+            idQueryString += `${assetData[symbol].id}%2C`;
         }
     });
 
@@ -35,8 +37,8 @@ export async function fetchAssetPrices(symbolsToFetch: string[], assetData: Mark
         const symbol = idToSymbolMap[key];
         priceMap[symbol] = {
             value: bnum(price),
-            currency: 'usd'
-        }
+            currency: 'usd',
+        };
     });
     return priceMap;
 }
@@ -74,6 +76,5 @@ export async function fetchAssetList(
         }
     });
 
-    console.log('fetchAssetList', result);
     return result;
 }

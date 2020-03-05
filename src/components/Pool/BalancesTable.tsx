@@ -5,10 +5,13 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import {
-    bnum, formatBalance,
+    bnum,
+    formatBalance,
     formatBalanceTruncated,
     formatPercentage,
-    formatTokenValue, fromWei, scale, toWei,
+    formatTokenValue,
+    fromWei,
+    toWei,
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -86,7 +89,13 @@ const BalancesTable = observer((props: Props) => {
     const { poolAddress } = props;
 
     const {
-        root: { poolStore, tokenStore, providerStore, contractMetadataStore, marketStore },
+        root: {
+            poolStore,
+            tokenStore,
+            providerStore,
+            contractMetadataStore,
+            marketStore,
+        },
     } = useStores();
 
     const { account } = providerStore.getActiveWeb3React();
@@ -123,12 +132,23 @@ const BalancesTable = observer((props: Props) => {
                             : '-';
 
                     let valueToDisplay = '-';
-                    if (userBalances && userBalances[tokenAddress] && marketStore.assetPricesLoaded) {
+                    if (
+                        userBalances &&
+                        userBalances[tokenAddress] &&
+                        marketStore.assetPricesLoaded
+                    ) {
                         // TODO: Scale this using token decimals
-                        const userBalanceScaled = bnum(fromWei(userBalances[tokenAddress]));
-                        const userBalanceValue = toWei(marketStore.getValue(tokenMetadata.symbol, userBalanceScaled));
+                        const userBalanceScaled = bnum(
+                            fromWei(userBalances[tokenAddress])
+                        );
+                        const userBalanceValue = toWei(
+                            marketStore.getValue(
+                                tokenMetadata.symbol,
+                                userBalanceScaled
+                            )
+                        );
 
-                        valueToDisplay = formatBalance(userBalanceValue, 2)
+                        valueToDisplay = formatBalance(userBalanceValue, 2);
                     }
 
                     return (

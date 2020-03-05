@@ -81,7 +81,9 @@ export default class MarketStore {
         let portfolioValue = bnum(0);
 
         symbols.forEach((symbol, index) => {
-            portfolioValue = portfolioValue.plus(this.getValue(symbol, balances[index]));
+            portfolioValue = portfolioValue.plus(
+                this.getValue(symbol, balances[index])
+            );
         });
 
         return portfolioValue;

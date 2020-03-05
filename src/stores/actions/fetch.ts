@@ -13,6 +13,18 @@ export interface TokenBalanceFetchRequest {
     fetchBlock: number;
 }
 
+export class Fetch {
+    status: AsyncStatus;
+    request: any;
+    payload: any;
+
+    constructor({ status, request, payload }) {
+        this.status = status;
+        this.request = request;
+        this.payload = payload;
+    }
+}
+
 export class TokenBalanceFetch {
     status: AsyncStatus;
     request: TokenBalanceFetchRequest;
@@ -36,10 +48,14 @@ export class UserAllowanceFetch {
     status: AsyncStatus;
     request: UserAllowanceFetchRequest;
     payload: UserAllowance | undefined;
+    error?: string;
 
-    constructor({ status, request, payload }) {
-        this.status = status;
-        this.request = request;
-        this.payload = payload;
+    constructor(params) {
+        this.status = params.status;
+        this.request = params.request;
+        this.payload = params.payload;
+        if (params.error) {
+            this.error = params.error;
+        }
     }
 }

@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import AddAssetTable from './AddAssetTable';
+import { observer } from 'mobx-react';
+import { useStores } from '../../contexts/storesContext';
+import { Pool, PoolToken } from '../../types';
 
 const Container = styled.div`
     display: block;
@@ -71,23 +74,112 @@ const Notification = styled.div`
     margin-bottom: 30px;
 `;
 
+enum ButtonAction {
+    UNLOCK,
+    ADD_LIQUIDITY,
+}
+
 interface Props {
-    modalOpen: any;
-    setModalOpen: any;
     poolAddress: string;
 }
 
-const AddLiquidityModal = (props: Props) => {
-    const { modalOpen, setModalOpen, poolAddress } = props;
+const AddLiquidityModal = observer((props: Props) => {
+    const findLockedToken = (
+        pool: Pool,
+        account: string
+    ): PoolToken | undefined => {
+        return pool.tokens.find(token => {
+            return !tokenStore.hasMaxApproval(
+                token.address,
+                account,
+                pool.address
+            );
+        });
+    };
+
+    const { poolAddress } = props;
+    const {
+        root: { poolStore, tokenStore, providerStore, addLiquidityFormStore },
+    } = useStores();
+
+    const web3React = providerStore.getActiveWeb3React();
+    const { account } = web3React;
+
+    const pool = poolStore.getPool(poolAddress);
+
+    let loading = true;
+    let lockedToken: PoolToken | undefined = undefined;
+
+    if (pool) {
+        const tokenAddresses = poolStore.getPoolTokens(pool.address);
+        const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
+            tokenAddresses,
+            account,
+            pool.address
+        );
+
+        if (accountApprovalsLoaded) {
+            loading = false;
+            lockedToken = findLockedToken(pool, account);
+        }
+    }
+
+    const actionButtonHandler = async (
+        action: ButtonAction,
+        token?: PoolToken
+    ) => {
+        if (action === ButtonAction.UNLOCK) {
+            await tokenStore.approveMax(web3React, token.address, pool.address);
+        } else if (action === ButtonAction.ADD_LIQUIDITY) {
+            // Add Liquidity
+        }
+    };
+
+    const renderNotification = () => {
+        if (lockedToken) {
+            return (
+                <Notification>
+                    Please unlock {lockedToken.symbol} to continue
+                </Notification>
+            );
+        } else {
+            return <React.Fragment />;
+        }
+    };
+
+    const renderActionButton = () => {
+        if (lockedToken) {
+            return (
+                <Button
+                    buttonText={`Unlock ${lockedToken.symbol}`}
+                    active={true}
+                    onClick={e =>
+                        actionButtonHandler(ButtonAction.UNLOCK, lockedToken)
+                    }
+                />
+            );
+        } else {
+            return (
+                <Button
+                    buttonText={`Add Liquidity`}
+                    active={true}
+                    onClick={e =>
+                        actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
+                    }
+                />
+            );
+        }
+    };
+
+    const modalOpen = addLiquidityFormStore.modalOpen;
+
     return (
-        <Container style={{ display: modalOpen.state ? 'block' : 'none' }}>
+        <Container style={{ display: modalOpen ? 'block' : 'none' }}>
             <ModalContent>
                 <AddLiquidityHeader>
                     <HeaderContent>Add Liquidity</HeaderContent>
                     <ExitComponent
-                        onClick={() => {
-                            setModalOpen({ state: false });
-                        }}
+                        onClick={() => addLiquidityFormStore.closeModal()}
                     >
                         +
                     </ExitComponent>
@@ -97,18 +189,18 @@ const AddLiquidityModal = (props: Props) => {
                         <PoolOverview poolAddress={poolAddress} />
                         <AddAssetTable />
                     </AddLiquidityContent>
-                    <Notification>Please unlock Dai to continue</Notification>
-                    <Button
-                        buttonText={'Unlock Dai'}
-                        active={true}
-                        onClick={() => {
-                            //
-                        }}
-                    />
+                    {loading ? (
+                        <div>Loading</div>
+                    ) : (
+                        <React.Fragment>
+                            {renderNotification()}
+                            {renderActionButton()}
+                        </React.Fragment>
+                    )}
                 </AddLiquidityBody>
             </ModalContent>
         </Container>
     );
-};
+});
 
 export default AddLiquidityModal;
