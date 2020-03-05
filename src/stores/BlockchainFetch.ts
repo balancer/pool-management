@@ -23,20 +23,15 @@ export default class BlockchainFetchStore {
 
     @action async fetchActivePoolAllowances(web3React) {
         const { account } = web3React;
-        const {
-            appSettingsStore,
-            poolStore,
-            tokenStore
-        } = this.rootStore;
+        const { appSettingsStore, poolStore, tokenStore } = this.rootStore;
         const poolAddress = appSettingsStore.getActivePoolAddress();
         const tokenAddresses = poolStore.getPoolTokens(poolAddress);
-        await tokenStore
-            .fetchAccountApprovals(
-                web3React,
-                tokenAddresses,
-                account,
-                poolAddress
-            );
+        await tokenStore.fetchAccountApprovals(
+            web3React,
+            tokenAddresses,
+            account,
+            poolAddress
+        );
     }
 
     @action setFetchLoop(

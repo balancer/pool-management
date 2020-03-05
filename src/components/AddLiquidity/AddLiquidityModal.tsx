@@ -120,11 +120,6 @@ const AddLiquidityModal = observer((props: Props) => {
 
         if (accountApprovalsLoaded) {
             loading = false;
-            const approvals = tokenStore.getAllowances(
-                tokenAddresses,
-                account,
-                pool.address
-            );
             lockedToken = findLockedToken(pool, account);
         }
     }

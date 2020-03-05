@@ -7,9 +7,14 @@ import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import {formatBalanceTruncated, formatFee, isAddress, toWei} from '../utils/helpers';
+import {
+    formatBalanceTruncated,
+    formatFee,
+    isAddress,
+    toWei,
+} from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
-import {withRouter, RouteComponentProps} from "react-router";
+import { withRouter, RouteComponentProps } from 'react-router';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -40,14 +45,14 @@ const Pool = observer((props: RouteComponentProps) => {
             marketStore,
             appSettingsStore,
             blockchainFetchStore,
-            addLiquidityFormStore
+            addLiquidityFormStore,
         },
     } = useStores();
 
     if (!isAddress(poolAddress)) {
-        return <PoolViewWrapper>
-            Please input a valid Pool address
-        </PoolViewWrapper>
+        return (
+            <PoolViewWrapper>Please input a valid Pool address</PoolViewWrapper>
+        );
     }
 
     const pool = poolStore.getPool(poolAddress);
@@ -58,9 +63,11 @@ const Pool = observer((props: RouteComponentProps) => {
     let poolBalances;
 
     if (poolStore.poolsLoaded && !pool) {
-        return <PoolViewWrapper>
-            Pool with specified address not found
-        </PoolViewWrapper>
+        return (
+            <PoolViewWrapper>
+                Pool with specified address not found
+            </PoolViewWrapper>
+        );
     }
 
     if (pool) {
@@ -91,7 +98,7 @@ const Pool = observer((props: RouteComponentProps) => {
             {addLiquidityFormStore.modalOpen ? (
                 <AddLiquidityModal poolAddress={poolAddress} />
             ) : (
-                <div/>
+                <div />
             )}
             <PoolAssetChartPanel poolAddress={poolAddress} />
             <AddRemovePanel poolAddress={poolAddress} />

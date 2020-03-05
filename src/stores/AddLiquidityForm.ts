@@ -2,20 +2,34 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { BigNumberMap } from '../types';
 import { hasMaxApproval } from '../utils/helpers';
+import { validateTokenValue, ValidationStatus } from './actions/validators';
 
 // Token Address -> checked
-interface CheckboxStatusMap {
-    [index: string]: CheckboxStatus;
+interface CheckboxMap {
+    [index: string]: Checkbox;
 }
 
-interface CheckboxStatus {
+// Token -> amount
+interface AmountInputMap {
+    [index: string]: AmountInput;
+}
+
+interface AmountInput {
+    value: string;
+    touched: boolean;
+    valid: ValidationStatus;
+}
+
+interface Checkbox {
     checked: boolean;
     touched: boolean;
 }
 
 export default class AddLiquidityFormStore {
-    @observable approvalCheckboxStatus: CheckboxStatusMap;
-    @observable approvalCheckboxStatusLoaded: boolean;
+    @observable checkboxes: CheckboxMap;
+    @observable checkboxesLoaded: boolean;
+    @observable amountInputs: AmountInputMap;
+    @observable activeAmountInputKey: string | undefined;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
@@ -31,7 +45,8 @@ export default class AddLiquidityFormStore {
         this.resetApprovalCheckboxStatusMap();
         this.activePool = poolAddress;
         this.activeAccount = account;
-        this.initializeApprovalCheckboxStatus(tokenAddresses);
+        this.initializeCheckboxes(tokenAddresses);
+        this.initializeAmountInputs(tokenAddresses);
     }
 
     @action closeModal() {
@@ -40,8 +55,10 @@ export default class AddLiquidityFormStore {
     }
 
     @action resetApprovalCheckboxStatusMap() {
-        this.approvalCheckboxStatus = {} as CheckboxStatusMap;
-        this.approvalCheckboxStatusLoaded = false;
+        this.checkboxes = {} as CheckboxMap;
+        this.amountInputs = {} as AmountInputMap;
+        this.activeAmountInputKey = undefined;
+        this.checkboxesLoaded = false;
     }
 
     isActivePool(poolAddress: string) {
@@ -52,17 +69,52 @@ export default class AddLiquidityFormStore {
         return this.activeAccount === account;
     }
 
-    isChecked(tokenAddress: string) {
-        if (this.approvalCheckboxStatus[tokenAddress]) {
-            return this.approvalCheckboxStatus[tokenAddress].checked;
+    private validateAmountInputAddress(tokenAddress) {
+        if (!this.amountInputs[tokenAddress]) {
+            throw new Error(`Amount input for ${tokenAddress} not initialized`);
+        }
+    }
+
+    getAmountInput(tokenAddress): AmountInput {
+        this.validateAmountInputAddress(tokenAddress);
+        return this.amountInputs[tokenAddress];
+    }
+
+    @action setAmountInputValue(tokenAddress: string, value: string) {
+        console.log('setAmountInputValue', {
+            tokenAddress,
+            value,
+        });
+        this.validateAmountInputAddress(tokenAddress);
+        this.amountInputs[tokenAddress].value = value;
+        const status = validateTokenValue(value);
+        this.setAmountInputStatus(tokenAddress, status);
+    }
+
+    @action setAmountInputStatus(
+        tokenAddress: string,
+        status: ValidationStatus
+    ) {
+        this.validateAmountInputAddress(tokenAddress);
+        this.amountInputs[tokenAddress].valid = status;
+    }
+
+    @action setAmountInputTouched(tokenAddress: string, touched: boolean) {
+        this.validateAmountInputAddress(tokenAddress);
+        this.amountInputs[tokenAddress].touched = touched;
+    }
+
+    isCheckboxChecked(tokenAddress: string) {
+        if (this.checkboxes[tokenAddress]) {
+            return this.checkboxes[tokenAddress].checked;
         } else {
             return false;
         }
     }
 
-    isTouched(tokenAddress: string) {
-        if (this.approvalCheckboxStatus[tokenAddress]) {
-            return this.approvalCheckboxStatus[tokenAddress].touched;
+    isCheckboxTouched(tokenAddress: string) {
+        if (this.checkboxes[tokenAddress]) {
+            return this.checkboxes[tokenAddress].touched;
         } else {
             return false;
         }
@@ -76,7 +128,7 @@ export default class AddLiquidityFormStore {
         this.activeAccount = account;
     }
 
-    initApprovalCheckbox(): CheckboxStatus {
+    initApprovalCheckbox(): Checkbox {
         return {
             checked: false,
             touched: false,
@@ -84,23 +136,19 @@ export default class AddLiquidityFormStore {
     }
 
     @action setApprovalCheckboxTouched(tokenAddress: string, touched: boolean) {
-        if (!this.approvalCheckboxStatus[tokenAddress]) {
-            this.approvalCheckboxStatus[
-                tokenAddress
-            ] = this.initApprovalCheckbox();
+        if (!this.checkboxes[tokenAddress]) {
+            this.checkboxes[tokenAddress] = this.initApprovalCheckbox();
         }
 
-        this.approvalCheckboxStatus[tokenAddress].touched = touched;
+        this.checkboxes[tokenAddress].touched = touched;
     }
 
     @action setApprovalCheckboxChecked(tokenAddress: string, checked: boolean) {
-        if (!this.approvalCheckboxStatus[tokenAddress]) {
-            this.approvalCheckboxStatus[
-                tokenAddress
-            ] = this.initApprovalCheckbox();
+        if (!this.checkboxes[tokenAddress]) {
+            this.checkboxes[tokenAddress] = this.initApprovalCheckbox();
         }
 
-        this.approvalCheckboxStatus[tokenAddress].checked = checked;
+        this.checkboxes[tokenAddress].checked = checked;
     }
 
     @action setBulkApprovalCheckboxStatusByApprovals(
@@ -119,16 +167,26 @@ export default class AddLiquidityFormStore {
             );
         });
 
-        this.approvalCheckboxStatusLoaded = true;
+        this.checkboxesLoaded = true;
     }
 
-    @action initializeApprovalCheckboxStatus(tokenAddresses: string[]) {
+    @action initializeCheckboxes(tokenAddresses: string[]) {
         tokenAddresses.forEach(tokenAddress => {
-            this.approvalCheckboxStatus[tokenAddress] = {
+            this.checkboxes[tokenAddress] = {
                 checked: false,
                 touched: false,
             };
         });
-        this.approvalCheckboxStatusLoaded = true;
+        this.checkboxesLoaded = true;
+    }
+
+    @action initializeAmountInputs(tokenAddresses: string[]) {
+        tokenAddresses.forEach(tokenAddress => {
+            this.amountInputs[tokenAddress] = {
+                value: '',
+                touched: false,
+                valid: ValidationStatus.EMPTY,
+            };
+        });
     }
 }
