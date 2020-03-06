@@ -204,8 +204,15 @@ const LiquidityPanel = observer((props: Props) => {
                         );
 
                         if (account) {
-                            const userLiquidity = poolStore.calcUserLiquidity(pool.address, account);
-                            userLiquidityText = formatBalanceTruncated(toWei(userLiquidity), 4, 20);
+                            const userLiquidity = poolStore.calcUserLiquidity(
+                                pool.address,
+                                account
+                            );
+                            userLiquidityText = formatBalanceTruncated(
+                                toWei(userLiquidity),
+                                4,
+                                20
+                            );
                         }
                     }
 

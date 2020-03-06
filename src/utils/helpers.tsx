@@ -4,7 +4,7 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
-import { BigNumberMap, Pool } from '../types';
+import { Pool } from '../types';
 import { poolAssetColors } from '../components';
 
 // Utils
