@@ -2,6 +2,7 @@ import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
 import { Pool } from 'types';
+import { BigNumber } from '../utils/bignumber';
 
 interface PoolData {
     blockLastFetched: number;
@@ -60,11 +61,29 @@ export default class PoolStore {
         }
     }
 
+    getPoolSymbols(poolAddress: string): string[] {
+        return this.getPool(poolAddress).tokens.map(token => token.symbol);
+    }
+
+    getPoolBalances(poolAddress: string): BigNumber[] {
+        return this.getPool(poolAddress).tokens.map(token => token.balance);
+    }
+
     getPoolData(poolAddress: string): PoolData | undefined {
         if (this.pools[poolAddress]) {
             return this.pools[poolAddress];
         }
         return undefined;
+    }
+
+    getPublicPools(filter?: object): Pool[] {
+        let pools: Pool[] = [];
+        Object.keys(this.pools).forEach(key => {
+            if (this.pools[key].data.finalized) {
+                pools.push(this.pools[key].data);
+            }
+        });
+        return pools;
     }
 
     getPool(poolAddress: string): Pool | undefined {

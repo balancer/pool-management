@@ -1,6 +1,6 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { MarketAsset, MarketAssetPriceMap, StringMap } from 'types';
+import { MarketAsset, MarketAssetPriceMap, Pool, StringMap } from 'types';
 import { fetchAssetList, fetchAssetPrices } from 'provider/market';
 import { BigNumber } from 'utils/bignumber';
 import { bnum } from '../utils/helpers';
@@ -71,6 +71,13 @@ export default class MarketStore {
         }
 
         return this.assets[symbol].price.value.times(balance);
+    }
+
+    getPoolPortfolioValue(pool: Pool) {
+        return this.getPortfolioValue(
+            pool.tokens.map(token => token.symbol),
+            pool.tokens.map(token => token.balance)
+        );
     }
 
     getPortfolioValue(symbols: string[], balances: BigNumber[]): BigNumber {

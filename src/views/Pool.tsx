@@ -14,7 +14,7 @@ import {
     toWei,
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -59,9 +59,6 @@ const Pool = observer((props: RouteComponentProps) => {
     const web3React = providerStore.getActiveWeb3React();
     const { account } = web3React;
 
-    let poolSymbols;
-    let poolBalances;
-
     if (poolStore.poolsLoaded && !pool) {
         return (
             <PoolViewWrapper>
@@ -76,8 +73,6 @@ const Pool = observer((props: RouteComponentProps) => {
             appSettingsStore.setActivePoolAddress(poolAddress);
             blockchainFetchStore.onActivePoolChanged(web3React);
         }
-        poolSymbols = pool.tokens.map(token => token.symbol);
-        poolBalances = pool.tokens.map(token => token.balance);
     }
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
@@ -85,9 +80,7 @@ const Pool = observer((props: RouteComponentProps) => {
     const liquidityText =
         marketStore.assetPricesLoaded && pool
             ? formatBalanceTruncated(
-                  toWei(
-                      marketStore.getPortfolioValue(poolSymbols, poolBalances)
-                  ),
+                  toWei(marketStore.getPoolPortfolioValue(pool)),
                   4,
                   20
               )

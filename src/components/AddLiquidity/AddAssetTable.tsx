@@ -4,11 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import {
-    formatBalance,
-    formatBalanceTruncated,
-    fromWei,
-} from '../../utils/helpers';
+import { formatBalanceTruncated, fromWei } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 
 const Wrapper = styled.div`
