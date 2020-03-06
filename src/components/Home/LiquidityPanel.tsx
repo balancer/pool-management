@@ -2,6 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import { Pie } from 'react-chartjs-2';
+import { poolAssetColors } from '../index';
+import { observer } from 'mobx-react';
+import { useStores } from '../../contexts/storesContext';
+import { Pool } from '../../types';
+import {
+    formatBalanceTruncated,
+    formatPercentage,
+    formatPoolAssetChartData,
+    shortenAddress,
+    toWei,
+} from '../../utils/helpers';
 
 const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
@@ -99,7 +110,29 @@ const AssetDot = styled.div`
     background: ${props => props.dotColor};
 `;
 
-const LiquidityPanel = () => {
+interface Props {
+    pools: Pool[];
+    dataSource: LiquidityPanelDataSource;
+}
+
+export enum LiquidityPanelDataSource {
+    ACCOUNT_PUBLIC,
+    ALL_PUBLIC,
+}
+
+enum Messages {
+    noAccount = 'Connect Wallet to see your liquidity',
+    accountButNoPools = 'This account has no public liquidity contributions',
+    noPublicPools = 'No public pools found',
+}
+
+const LiquidityPanel = observer((props: Props) => {
+    const {
+        root: { poolStore, providerStore, marketStore, tokenStore },
+    } = useStores();
+    const { pools, dataSource } = props;
+    const { account } = providerStore.getActiveWeb3React();
+
     const options = {
         maintainAspectRatio: false,
         legend: {
@@ -111,7 +144,7 @@ const LiquidityPanel = () => {
     };
 
     const formatPieData = () => {
-        const pieData = {
+        return {
             datasets: [
                 {
                     data: [1],
@@ -123,32 +156,133 @@ const LiquidityPanel = () => {
                 {
                     data: [10, 10, 10, 10, 10, 10, 10, 10],
                     borderAlign: 'center',
-                    backgroundColor: [
-                        '#E7983D',
-                        '#536DFE',
-                        '#E7983D',
-                        '#64FFDA',
-                        '#B388FF',
-                        '#F4FF81',
-                        '#BDBDBD',
-                        '#602A52',
-                    ],
-                    borderColor: [
-                        '#E7983D',
-                        '#536DFE',
-                        '#E7983D',
-                        '#64FFDA',
-                        '#B388FF',
-                        '#F4FF81',
-                        '#BDBDBD',
-                        '#602A52',
-                    ],
+                    backgroundColor: poolAssetColors,
+                    borderColor: poolAssetColors,
                     borderWidth: '0',
                     weight: 95,
                 },
             ],
         };
-        return pieData;
+    };
+
+    const renderAssetPercentages = (pool: Pool) => {
+        return (
+            <React.Fragment>
+                {pool.tokens.map((token, index) => {
+                    return (
+                        <AssetPercentageContainer>
+                            <AssetDot dotColor={poolAssetColors[index]} />
+                            <AssetPercentageText>
+                                {formatPercentage(
+                                    token.denormWeightProportion,
+                                    2
+                                )}{' '}
+                                {token.symbol}
+                            </AssetPercentageText>
+                        </AssetPercentageContainer>
+                    );
+                })}
+            </React.Fragment>
+        );
+    };
+
+    const renderPoolsChart = () => {
+        return (
+            <React.Fragment>
+                {pools.map(pool => {
+                    let liquidityText = '-';
+                    let userLiquidityText = '-';
+
+                    if (marketStore.assetPricesLoaded) {
+                        const poolLiquidity = marketStore.getPoolPortfolioValue(
+                            pool
+                        );
+                        liquidityText = formatBalanceTruncated(
+                            toWei(poolLiquidity),
+                            4,
+                            20
+                        );
+
+                        if (account) {
+                            const userLiquidity = poolStore.calcUserLiquidity(
+                                pool.address,
+                                account
+                            );
+                            userLiquidityText = formatBalanceTruncated(
+                                toWei(userLiquidity),
+                                4,
+                                20
+                            );
+                        }
+                    }
+
+                    return (
+                        <PoolRow>
+                            <TableCell width="15%">
+                                <Identicon address={pool.address} />
+                                <IdenticonText>
+                                    <a href={`/#/pool/${pool.address}`}>
+                                        {shortenAddress(pool.address)}
+                                    </a>
+                                </IdenticonText>
+                            </TableCell>
+                            <AssetCell>
+                                <PieChartWrapper>
+                                    <Pie
+                                        type={'doughnut'}
+                                        data={formatPoolAssetChartData(pool)}
+                                        options={options}
+                                    />
+                                </PieChartWrapper>
+                                <BreakdownContainer>
+                                    {renderAssetPercentages(pool)}
+                                </BreakdownContainer>
+                            </AssetCell>
+                            <TableCell width="12%">{`$ ${liquidityText}`}</TableCell>
+                            <TableCell width="12%">{`$ ${userLiquidityText}`}</TableCell>
+                            <TableCellRight width="15%">$ -</TableCellRight>
+                        </PoolRow>
+                    );
+                })}
+            </React.Fragment>
+        );
+    };
+
+    const renderPools = () => {
+        // Has pool data to display and data has loaded
+        if (poolStore.poolsLoaded && pools.length > 0) {
+            return renderPoolsChart();
+        }
+
+        // Has pool data to display and data has NOT loaded
+        else if (!poolStore.poolsLoaded && pools.length > 0) {
+            return <PoolRow>Loading</PoolRow>;
+        }
+
+        // Has no account to display pools for
+        else if (
+            !account &&
+            dataSource === LiquidityPanelDataSource.ACCOUNT_PUBLIC
+        ) {
+            return <PoolRow>{Messages.noAccount}</PoolRow>;
+        }
+
+        // Has no pool data to display for an account
+        else if (
+            account &&
+            pools.length === 0 &&
+            dataSource === LiquidityPanelDataSource.ACCOUNT_PUBLIC
+        ) {
+            return <PoolRow>{Messages.accountButNoPools}</PoolRow>;
+        }
+
+        // Has no public pools to display
+        else if (
+            pools.length === 0 &&
+            dataSource === LiquidityPanelDataSource.ALL_PUBLIC
+        ) {
+            return <PoolRow>{Messages.noPublicPools}</PoolRow>;
+        }
     };
 
     return (
@@ -160,117 +294,10 @@ const LiquidityPanel = () => {
                 <TableCell width="12%">My Liquidity</TableCell>
                 <TableCellRight width="15%">Trade Volume (24h)</TableCellRight>
             </HeaderRow>
-            <PoolRow>
-                <TableCell width="15%">
-                    <Identicon address="0xc011a72400e58ecd99ee497cf89e3775d4bd732f" />
-                    <IdenticonText>0xA4D4...fcd8</IdenticonText>
-                </TableCell>
-                <AssetCell>
-                    <PieChartWrapper>
-                        <Pie
-                            type={'doughnut'}
-                            data={formatPieData()}
-                            options={options}
-                        />
-                    </PieChartWrapper>
-                    <BreakdownContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#E7983D" />
-                            <AssetPercentageText>12.5% DAI</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#536DFE" />
-                            <AssetPercentageText>
-                                12.5% WBTC
-                            </AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#E7983D" />
-                            <AssetPercentageText>12.5% DGD</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#64FFDA" />
-                            <AssetPercentageText>12.5% GNT</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#B388FF" />
-                            <AssetPercentageText>12.5% ETH</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#F4FF81" />
-                            <AssetPercentageText>12.5% OMG</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#BDBDBD" />
-                            <AssetPercentageText>12.5% 0x</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#602A52" />
-                            <AssetPercentageText>12.5% REP</AssetPercentageText>
-                        </AssetPercentageContainer>
-                    </BreakdownContainer>
-                </AssetCell>
-                <TableCell width="12%">$8,024,093</TableCell>
-                <TableCell width="12%">$802,409</TableCell>
-                <TableCellRight width="15%">$564,346.44</TableCellRight>
-            </PoolRow>
-            <PoolRow>
-                <TableCell width="15%">
-                    <Identicon address="0x0d8775f648430679a709e98d2b0cb6250d2887ef" />
-                    <IdenticonText>0xA4D4...fcd8</IdenticonText>
-                </TableCell>
-                <AssetCell>
-                    <PieChartWrapper>
-                        <Pie
-                            type={'doughnut'}
-                            data={formatPieData()}
-                            options={options}
-                        />
-                    </PieChartWrapper>
-                    <BreakdownContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#E7983D" />
-                            <AssetPercentageText>12.5% DAI</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#536DFE" />
-                            <AssetPercentageText>
-                                12.5% WBTC
-                            </AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#E7983D" />
-                            <AssetPercentageText>12.5% DGD</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#64FFDA" />
-                            <AssetPercentageText>12.5% GNT</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#B388FF" />
-                            <AssetPercentageText>12.5% ETH</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#F4FF81" />
-                            <AssetPercentageText>12.5% OMG</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#BDBDBD" />
-                            <AssetPercentageText>12.5% 0x</AssetPercentageText>
-                        </AssetPercentageContainer>
-                        <AssetPercentageContainer>
-                            <AssetDot dotColor="#602A52" />
-                            <AssetPercentageText>12.5% REP</AssetPercentageText>
-                        </AssetPercentageContainer>
-                    </BreakdownContainer>
-                </AssetCell>
-                <TableCell width="12%">$8,024,093</TableCell>
-                <TableCell width="12%">$802,409</TableCell>
-                <TableCellRight width="15%">$564,346.44</TableCellRight>
-            </PoolRow>
+            {renderPools()}
             <FooterRow />
         </Wrapper>
     );
-};
+});
 
 export default LiquidityPanel;

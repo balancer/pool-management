@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import LiquidityPanel from './LiquidityPanel';
+import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
+import { observer } from 'mobx-react';
+import { useStores } from '../../contexts/storesContext';
+import { Pool } from '../../types';
 
 const Wrapper = styled.div`
     padding-top: 8px;
@@ -16,13 +19,27 @@ const Header = styled.div`
     padding: 24px 0px 24px 0px;
 `;
 
-const MyLiquidity = () => {
+const MyLiquidity = observer(() => {
+    const {
+        root: { poolStore, providerStore },
+    } = useStores();
+    const { account } = providerStore.getActiveWeb3React();
+
+    let pools: Pool[] = [];
+
+    if (account) {
+        // pools = poolStore.getPublicPools({address: account})
+    }
+
     return (
         <Wrapper>
             <Header>My Liquidity</Header>
-            <LiquidityPanel />
+            <LiquidityPanel
+                pools={pools}
+                dataSource={LiquidityPanelDataSource.ACCOUNT_PUBLIC}
+            />
         </Wrapper>
     );
-};
+});
 
 export default MyLiquidity;
