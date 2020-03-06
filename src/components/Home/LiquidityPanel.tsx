@@ -191,8 +191,9 @@ const LiquidityPanel = observer((props: Props) => {
             <React.Fragment>
                 {pools.map(pool => {
                     let liquidityText = '-';
+                    let userLiquidityText = '-';
 
-                    if (marketStore.assetPricesLoaded && pool) {
+                    if (marketStore.assetPricesLoaded) {
                         const poolLiquidity = marketStore.getPoolPortfolioValue(
                             pool
                         );
@@ -201,31 +202,11 @@ const LiquidityPanel = observer((props: Props) => {
                             4,
                             20
                         );
-                    }
 
-                    let userLiquidityText = '-';
-
-                    if (account && marketStore.assetPricesLoaded) {
-                        userLiquidityText = '0';
-                        //TODO: getNormalizedBalances
-                        // const userBalances = bnumMapToNormalizedArray(
-                        //     tokenStore.getAccountBalances(
-                        //         pool.tokensList,
-                        //         account
-                        //     )
-                        // );
-                        //
-                        // if (userBalances.length === pool.tokensList.length) {
-                        //     const userLiquidity = marketStore.getPortfolioValue(
-                        //         poolStore.getPoolSymbols(pool.address),
-                        //         userBalances
-                        //     );
-                        //     userLiquidityText = formatBalanceTruncated(
-                        //         toWei(userLiquidity),
-                        //         4,
-                        //         20
-                        //     );
-                        // }
+                        if (account) {
+                            const userLiquidity = poolStore.calcUserLiquidity(pool.address, account);
+                            userLiquidityText = formatBalanceTruncated(toWei(userLiquidity), 4, 20);
+                        }
                     }
 
                     return (

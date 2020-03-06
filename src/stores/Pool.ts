@@ -3,6 +3,7 @@ import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
 import { Pool } from 'types';
 import { BigNumber } from '../utils/bignumber';
+import {bnum} from "../utils/helpers";
 
 interface PoolData {
     blockLastFetched: number;
@@ -58,6 +59,26 @@ export default class PoolStore {
                 blockLastFetched: blockFetched,
                 data: newPool,
             };
+        }
+    }
+
+    getUserShare(poolAddress: string, account: string): BigNumber | undefined {
+        const userShare = this.getPool(poolAddress).shares.find(share => share.account === account);
+        if (userShare) {
+            console.log('userShare', userShare);
+            return userShare.balance;
+        } else {
+            return undefined;
+        }
+    }
+
+    calcUserLiquidity(poolAddress: string, account: string): BigNumber {
+        const poolValue = this.rootStore.marketStore.getPortfolioValue(this.getPoolSymbols(poolAddress), this.getPoolBalances(poolAddress));
+        const userShare = this.getUserShare(poolAddress, account);
+        if (userShare) {
+            return userShare.div(this.getPool(poolAddress).totalShares).times(poolValue);
+        } else {
+            return bnum(0);
         }
     }
 
