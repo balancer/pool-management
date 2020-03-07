@@ -319,6 +319,8 @@ const AddAssetTable = observer((props: any) => {
     const handleAmountInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
         addLiquidityFormStore.setAmountInputValue(tokenAddress, value);
+        const ratio = addLiquidityFormStore.calcRatio(pool, tokenAddress, value);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const renderAssetTable = (

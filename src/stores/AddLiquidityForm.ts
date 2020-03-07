@@ -1,8 +1,9 @@
-import { action, observable } from 'mobx';
+import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import { BigNumberMap } from '../types';
-import { hasMaxApproval } from '../utils/helpers';
-import { validateTokenValue, ValidationStatus } from './actions/validators';
+import {BigNumberMap, Pool} from '../types';
+import {bnum, hasMaxApproval} from '../utils/helpers';
+import {validateTokenValue, ValidationStatus} from './actions/validators';
+import {BigNumber} from "../utils/bignumber";
 
 // Token Address -> checked
 interface CheckboxMap {
@@ -69,6 +70,18 @@ export default class AddLiquidityFormStore {
         return this.activeAccount === account;
     }
 
+    // Assumes balances are loaded - don't execute without that condition already met
+    private isBalanceInputValid(tokenAddress: string, account: string, inputBalance: BigNumber): ValidationStatus {
+        const {tokenStore} = this.rootStore;
+        const accountBalance = tokenStore.normalizeBalance(tokenStore.getBalance(tokenAddress, account), tokenAddress);
+        console.log('accountBalance', {
+            inputBalance: inputBalance.toString(),
+            accountBalance: accountBalance.toString()
+        });
+
+        return inputBalance.lte(accountBalance) ? ValidationStatus.VALID : ValidationStatus.INSUFFICIENT_BALANCE;
+    }
+
     private validateAmountInputAddress(tokenAddress) {
         if (!this.amountInputs[tokenAddress]) {
             throw new Error(`Amount input for ${tokenAddress} not initialized`);
@@ -133,6 +146,31 @@ export default class AddLiquidityFormStore {
             checked: false,
             touched: false,
         };
+    }
+
+    calcRatio(pool: Pool, activeInputAddress: string, activeInputAmount: string): BigNumber {
+        const activeToken  = pool.tokens.find(token => token.address === activeInputAddress);
+        console.log({
+            activeInputAmount: activeInputAmount,
+            activeTokenBalance: activeToken.balance,
+            ratio: bnum(activeInputAmount).div(activeToken.balance).toString(),
+        });
+        return bnum(activeInputAmount).div(activeToken.balance);
+    }
+
+    @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
+        pool.tokens.forEach(token => {
+
+            const requiredBalance = token.balance.times(ratio);
+            this.amountInputs[token.address].value = requiredBalance.toString();
+            this.amountInputs[token.address].valid = this.isBalanceInputValid(token.address, account, ratio);
+            console.log({
+                token: token.address,
+                ratio: ratio.toString(),
+                value: token.balance.times(ratio).toString(),
+                valid: this.amountInputs[token.address].valid
+            });
+        });
     }
 
     @action setApprovalCheckboxTouched(tokenAddress: string, touched: boolean) {
