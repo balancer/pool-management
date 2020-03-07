@@ -8,6 +8,10 @@ export interface StringMap {
     [index: string]: string;
 }
 
+export interface NumberMap {
+    [index: string]: number;
+}
+
 export interface Pool {
     address: string;
     publicSwap: boolean;
