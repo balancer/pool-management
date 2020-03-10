@@ -94,7 +94,6 @@ const AssetPercentageContainer = styled.div`
     font-size: 12px;
     line-height: 18px;
     margin-left: 12px;
-    width: 78px;
 `;
 
 const AssetPercentageText = styled.div`
