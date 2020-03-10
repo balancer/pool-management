@@ -67,6 +67,10 @@ const TableCellRight = styled(TableCell)`
 
 const IdenticonText = styled.div`
     margin-left: 10px;
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 `;
 
 const PieChartWrapper = styled.div`
@@ -90,7 +94,6 @@ const AssetPercentageContainer = styled.div`
     font-size: 12px;
     line-height: 18px;
     margin-left: 12px;
-    width: 78px;
 `;
 
 const AssetPercentageText = styled.div`
@@ -141,28 +144,6 @@ const LiquidityPanel = observer((props: Props) => {
         tooltips: {
             enabled: false,
         },
-    };
-
-    const formatPieData = () => {
-        return {
-            datasets: [
-                {
-                    data: [1],
-                    borderAlign: 'center',
-                    borderColor: '#B388FF',
-                    borderWidth: '1',
-                    weight: 0,
-                },
-                {
-                    data: [10, 10, 10, 10, 10, 10, 10, 10],
-                    borderAlign: 'center',
-                    backgroundColor: poolAssetColors,
-                    borderColor: poolAssetColors,
-                    borderWidth: '0',
-                    weight: 95,
-                },
-            ],
-        };
     };
 
     const renderAssetPercentages = (pool: Pool) => {
