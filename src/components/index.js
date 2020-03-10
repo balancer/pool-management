@@ -12,12 +12,12 @@ import TokenApproveToggle from './TokenApproveToggle';
 const poolAssetColors = [
     '#E7983D',
     '#536DFE',
-    '#E7983D',
+    '#602A52',
     '#64FFDA',
     '#B388FF',
     '#F4FF81',
     '#BDBDBD',
-    '#602A52',
+    '#E7983D',
 ];
 
 export {

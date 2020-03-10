@@ -245,19 +245,11 @@ export const formatPoolAssetChartData = (pool: Pool) => {
     return {
         datasets: [
             {
-                data: [1],
-                borderAlign: 'center',
-                borderColor: '#B388FF',
-                borderWidth: '1',
-                weight: 0,
-            },
-            {
                 data: data,
                 borderAlign: 'center',
                 backgroundColor: poolAssetColors,
-                borderColor: poolAssetColors,
-                borderWidth: '0',
-                weight: 95,
+                borderColor: '#282932',
+                borderWidth: '2',
             },
         ],
     };
