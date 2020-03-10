@@ -146,28 +146,6 @@ const LiquidityPanel = observer((props: Props) => {
         },
     };
 
-    const formatPieData = () => {
-        return {
-            datasets: [
-                {
-                    data: [1],
-                    borderAlign: 'center',
-                    borderColor: '#B388FF',
-                    borderWidth: '1',
-                    weight: 0,
-                },
-                {
-                    data: [10, 10, 10, 10, 10, 10, 10, 10],
-                    borderAlign: 'center',
-                    backgroundColor: poolAssetColors,
-                    borderColor: poolAssetColors,
-                    borderWidth: '0',
-                    weight: 95,
-                },
-            ],
-        };
-    };
-
     const renderAssetPercentages = (pool: Pool) => {
         return (
             <React.Fragment>
