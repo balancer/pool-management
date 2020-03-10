@@ -158,12 +158,17 @@ export default class AddLiquidityFormStore {
         return bnum(activeInputAmount).div(activeToken.balance);
     }
 
+    // TODO: If no account, don't check validation
     @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
         pool.tokens.forEach(token => {
-
             const requiredBalance = token.balance.times(ratio);
             this.amountInputs[token.address].value = requiredBalance.toString();
+
+            if (account) {
             this.amountInputs[token.address].valid = this.isBalanceInputValid(token.address, account, ratio);
+            } else {
+                this.amountInputs[token.address].valid = ValidationStatus.VALID;
+            }
             console.log({
                 token: token.address,
                 ratio: ratio.toString(),
