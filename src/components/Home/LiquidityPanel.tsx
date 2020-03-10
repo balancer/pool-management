@@ -67,6 +67,10 @@ const TableCellRight = styled(TableCell)`
 
 const IdenticonText = styled.div`
     margin-left: 10px;
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 `;
 
 const PieChartWrapper = styled.div`
