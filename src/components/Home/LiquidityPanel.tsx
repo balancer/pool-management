@@ -9,10 +9,10 @@ import { Pool } from '../../types';
 import {
     formatBalanceTruncated,
     formatPercentage,
-    formatPoolAssetChartData,
     shortenAddress,
     toWei,
 } from '../../utils/helpers';
+import {formatPoolAssetChartData} from "../../utils/chartFormatter";
 
 const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
@@ -67,6 +67,10 @@ const TableCellRight = styled(TableCell)`
 
 const IdenticonText = styled.div`
     margin-left: 10px;
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 `;
 
 const PieChartWrapper = styled.div`
@@ -90,7 +94,6 @@ const AssetPercentageContainer = styled.div`
     font-size: 12px;
     line-height: 18px;
     margin-left: 12px;
-    width: 78px;
 `;
 
 const AssetPercentageText = styled.div`
@@ -128,7 +131,7 @@ enum Messages {
 
 const LiquidityPanel = observer((props: Props) => {
     const {
-        root: { poolStore, providerStore, marketStore, tokenStore },
+        root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
     const { pools, dataSource } = props;
     const { account } = providerStore.getActiveWeb3React();
@@ -143,35 +146,13 @@ const LiquidityPanel = observer((props: Props) => {
         },
     };
 
-    const formatPieData = () => {
-        return {
-            datasets: [
-                {
-                    data: [1],
-                    borderAlign: 'center',
-                    borderColor: '#B388FF',
-                    borderWidth: '1',
-                    weight: 0,
-                },
-                {
-                    data: [10, 10, 10, 10, 10, 10, 10, 10],
-                    borderAlign: 'center',
-                    backgroundColor: poolAssetColors,
-                    borderColor: poolAssetColors,
-                    borderWidth: '0',
-                    weight: 95,
-                },
-            ],
-        };
-    };
-
     const renderAssetPercentages = (pool: Pool) => {
         return (
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
                     return (
                         <AssetPercentageContainer>
-                            <AssetDot dotColor={poolAssetColors[index]} />
+                            <AssetDot dotColor={contractMetadataStore.getTokenColor(token.address)} />
                             <AssetPercentageText>
                                 {formatPercentage(
                                     token.denormWeightProportion,
@@ -230,7 +211,7 @@ const LiquidityPanel = observer((props: Props) => {
                                 <PieChartWrapper>
                                     <Pie
                                         type={'doughnut'}
-                                        data={formatPoolAssetChartData(pool)}
+                                        data={formatPoolAssetChartData(pool, contractMetadataStore.contractMetadata)}
                                         options={options}
                                     />
                                 </PieChartWrapper>

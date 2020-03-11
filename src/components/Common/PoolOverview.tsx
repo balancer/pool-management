@@ -5,12 +5,12 @@ import { observer } from 'mobx-react';
 import {
     formatFee,
     formatPercentage,
-    formatPoolAssetChartData,
     shortenAddress,
 } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
 import { poolAssetColors } from '../index';
+import {formatPoolAssetChartData} from "../../utils/chartFormatter";
 
 const Wrapper = styled.div`
     display: flex;
@@ -114,7 +114,7 @@ export const getUserShareText = (pool: Pool, account: string): string => {
 const PoolOverview = observer((props: Props) => {
     const { poolAddress } = props;
     const {
-        root: { poolStore, providerStore },
+        root: { poolStore, providerStore, contractMetadataStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
     const { account } = providerStore.getActiveWeb3React();
@@ -138,7 +138,7 @@ const PoolOverview = observer((props: Props) => {
                 {pool.tokens.map((token, index) => {
                     return (
                         <AssetPercentageContainer>
-                            <AssetDot dotColor={poolAssetColors[index]} />
+                            <AssetDot dotColor={contractMetadataStore.getTokenColor(token.address)} />
                             <AssetPercentageText>
                                 {formatPercentage(
                                     token.denormWeightProportion,
@@ -153,6 +153,8 @@ const PoolOverview = observer((props: Props) => {
         );
     };
 
+    const metadata = contractMetadataStore.contractMetadata;
+
     return (
         <Wrapper>
             <Header>Pool Overview</Header>
@@ -164,7 +166,7 @@ const PoolOverview = observer((props: Props) => {
                     {pool ? (
                         <Pie
                             type={'doughnut'}
-                            data={formatPoolAssetChartData(pool)}
+                            data={formatPoolAssetChartData(pool, metadata)}
                             options={options}
                         />
                     ) : (

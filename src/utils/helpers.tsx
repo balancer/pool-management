@@ -240,35 +240,6 @@ export const normalizePriceValues = (
     };
 };
 
-export const formatPoolAssetChartData = (pool: Pool) => {
-    const data = formatPoolTokenWeightsForChart(pool);
-    return {
-        datasets: [
-            {
-                data: [1],
-                borderAlign: 'center',
-                borderColor: '#B388FF',
-                borderWidth: '1',
-                weight: 0,
-            },
-            {
-                data: data,
-                borderAlign: 'center',
-                backgroundColor: poolAssetColors,
-                borderColor: poolAssetColors,
-                borderWidth: '0',
-                weight: 95,
-            },
-        ],
-    };
-};
-
-export const formatPoolTokenWeightsForChart = (pool: Pool): number[] => {
-    return pool.tokens.map(token => {
-        return token.denormWeightProportion.times(100).toNumber();
-    });
-};
-
 export const formatTokenValue = (
     normalizedBalance: BigNumber,
     displayPrecision: number
