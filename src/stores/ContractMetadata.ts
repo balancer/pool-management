@@ -2,6 +2,7 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import * as deployed from 'deployed.json';
 import { StringMap } from '../types';
+import {getSupportedChainName} from "../provider/connectors";
 
 export interface ContractMetadata {
     bFactory: string;
@@ -46,12 +47,14 @@ export default class ContractMetadataStore {
 
     // Take the data from the JSON and get it into the store, so we access it just like other data
     @action loadWhitelistedTokenMetadata() {
-        const tokenMetadata = deployed['kovan'].tokens;
+        const chainName = getSupportedChainName();
+        const metadata = JSON.parse(JSON.stringify(deployed));
+        const tokenMetadata = metadata.default[chainName].tokens;
 
         const contractMetadata = {
-            bFactory: deployed['kovan'].bFactory,
-            proxy: deployed['kovan'].proxy,
-            weth: deployed['kovan'].weth,
+            bFactory: metadata.default[chainName].bFactory,
+            proxy: metadata.default[chainName].proxy,
+            weth: metadata.default[chainName].weth,
             tokens: [] as TokenMetadata[],
         };
 
