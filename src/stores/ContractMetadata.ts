@@ -16,6 +16,7 @@ export interface TokenMetadata {
     decimals: number;
     iconAddress: string;
     precision: number;
+    chartColor: string;
 }
 
 export default class ContractMetadataStore {
@@ -55,17 +56,23 @@ export default class ContractMetadataStore {
         };
 
         tokenMetadata.forEach(token => {
-            const { address, symbol, decimals, iconAddress, precision } = token;
+            const { address, symbol, decimals, iconAddress, precision, chartColor } = token;
             contractMetadata.tokens.push({
                 address,
                 symbol,
                 decimals,
                 iconAddress,
                 precision,
+                chartColor
             });
         });
 
         this.contractMetadata = contractMetadata;
+    }
+
+    getTokenColor(tokenAddress: string): string {
+        return this.getTokenMetadata(tokenAddress).chartColor;
+
     }
 
     getProxyAddress(): string {
