@@ -9,6 +9,10 @@ export const getSupportedChainId = () => {
     return supportedChainId;
 };
 
+export const getSupportedChainName = () => {
+    return chainNameById[supportedChainId];
+};
+
 export const chainNameById = {
     '1': 'mainnet',
     '42': 'kovan',

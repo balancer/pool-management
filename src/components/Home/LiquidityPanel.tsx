@@ -9,10 +9,10 @@ import { Pool } from '../../types';
 import {
     formatBalanceTruncated,
     formatPercentage,
-    formatPoolAssetChartData,
     shortenAddress,
     toWei,
 } from '../../utils/helpers';
+import {formatPoolAssetChartData} from "../../utils/chartFormatter";
 
 const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
@@ -131,7 +131,7 @@ enum Messages {
 
 const LiquidityPanel = observer((props: Props) => {
     const {
-        root: { poolStore, providerStore, marketStore, tokenStore },
+        root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
     const { pools, dataSource } = props;
     const { account } = providerStore.getActiveWeb3React();
@@ -152,7 +152,7 @@ const LiquidityPanel = observer((props: Props) => {
                 {pool.tokens.map((token, index) => {
                     return (
                         <AssetPercentageContainer>
-                            <AssetDot dotColor={poolAssetColors[index]} />
+                            <AssetDot dotColor={contractMetadataStore.getTokenColor(token.address)} />
                             <AssetPercentageText>
                                 {formatPercentage(
                                     token.denormWeightProportion,
@@ -211,7 +211,7 @@ const LiquidityPanel = observer((props: Props) => {
                                 <PieChartWrapper>
                                     <Pie
                                         type={'doughnut'}
-                                        data={formatPoolAssetChartData(pool)}
+                                        data={formatPoolAssetChartData(pool, contractMetadataStore.contractMetadata)}
                                         options={options}
                                     />
                                 </PieChartWrapper>
