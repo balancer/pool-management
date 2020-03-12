@@ -9,8 +9,7 @@ import {
 } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
-import { poolAssetColors } from '../index';
-import {formatPoolAssetChartData} from "../../utils/chartFormatter";
+import { formatPoolAssetChartData } from '../../utils/chartFormatter';
 
 const Wrapper = styled.div`
     display: flex;
@@ -138,7 +137,11 @@ const PoolOverview = observer((props: Props) => {
                 {pool.tokens.map((token, index) => {
                     return (
                         <AssetPercentageContainer>
-                            <AssetDot dotColor={contractMetadataStore.getTokenColor(token.address)} />
+                            <AssetDot
+                                dotColor={contractMetadataStore.getTokenColor(
+                                    token.address
+                                )}
+                            />
                             <AssetPercentageText>
                                 {formatPercentage(
                                     token.denormWeightProportion,

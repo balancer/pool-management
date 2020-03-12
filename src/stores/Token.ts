@@ -2,7 +2,7 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
-import { bnum } from 'utils/helpers';
+import {bnum, scale} from 'utils/helpers';
 import { parseEther } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
@@ -508,6 +508,18 @@ export default class TokenStore {
             });
         }
     };
+
+    // Token Scale -> Wei Scale
+    denormalizeBalance(amount: BigNumber, tokenAddress: string): BigNumber {
+        const {contractMetadataStore} = this.rootStore;
+        return scale(bnum(amount), contractMetadataStore.getTokenMetadata(tokenAddress).decimals);
+    }
+
+    // Wei Scale -> Token Scale
+    normalizeBalance(amount: BigNumber, tokenAddress: string): BigNumber {
+        const {contractMetadataStore} = this.rootStore;
+        return scale(bnum(amount), -contractMetadataStore.getTokenMetadata(tokenAddress).decimals);
+    }
 
     hasMaxApproval = (tokenAddress, account, spender): boolean => {
         const allowance = this.getAllowance(tokenAddress, account, spender);

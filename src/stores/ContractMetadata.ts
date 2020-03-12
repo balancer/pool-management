@@ -1,8 +1,8 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import * as deployed from 'deployed.json';
-import { StringMap } from '../types';
-import {getSupportedChainName} from "../provider/connectors";
+import { NumberMap, StringMap } from '../types';
+import { getSupportedChainName } from '../provider/connectors';
 
 export interface ContractMetadata {
     bFactory: string;
@@ -23,6 +23,7 @@ export interface TokenMetadata {
 export default class ContractMetadataStore {
     @observable contractMetadata: ContractMetadata;
     @observable tokenSymbols: string[];
+    @observable tokenIndex: NumberMap;
     @observable symbolToAddressMap: StringMap;
     @observable addressToSymbolMap: StringMap;
     rootStore: RootStore;
@@ -36,13 +37,19 @@ export default class ContractMetadataStore {
             return value.symbol;
         });
 
+        this.tokenIndex = {} as NumberMap;
         this.symbolToAddressMap = {} as StringMap;
         this.addressToSymbolMap = {} as StringMap;
 
-        this.getWhitelistedTokenMetadata().forEach(value => {
+        this.getWhitelistedTokenMetadata().forEach((value, index) => {
             this.symbolToAddressMap[value.symbol] = value.address;
             this.addressToSymbolMap[value.address] = value.symbol;
+            this.tokenIndex[value.symbol] = index;
         });
+    }
+
+    getTokenIndex(symbol: string) {
+        return this.tokenIndex[symbol] ? this.tokenIndex[symbol] : -1;
     }
 
     // Take the data from the JSON and get it into the store, so we access it just like other data
@@ -59,14 +66,21 @@ export default class ContractMetadataStore {
         };
 
         tokenMetadata.forEach(token => {
-            const { address, symbol, decimals, iconAddress, precision, chartColor } = token;
+            const {
+                address,
+                symbol,
+                decimals,
+                iconAddress,
+                precision,
+                chartColor,
+            } = token;
             contractMetadata.tokens.push({
                 address,
                 symbol,
                 decimals,
                 iconAddress,
                 precision,
-                chartColor
+                chartColor,
             });
         });
 
@@ -75,7 +89,6 @@ export default class ContractMetadataStore {
 
     getTokenColor(tokenAddress: string): string {
         return this.getTokenMetadata(tokenAddress).chartColor;
-
     }
 
     getProxyAddress(): string {

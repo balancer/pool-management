@@ -2,13 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { Pie } from 'react-chartjs-2';
 import { observer } from 'mobx-react';
-import {
-    formatPercentage,
-} from '../../utils/helpers';
-import {formatPoolAssetChartData} from "../../utils/chartFormatter";
+import { formatPercentage } from '../../utils/helpers';
+import { formatPoolAssetChartData } from '../../utils/chartFormatter';
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
-import { poolAssetColors } from '../index';
 
 const Wrapper = styled.div`
     display: flex;
@@ -89,7 +86,11 @@ const PoolAssetChartPanel = observer((props: Props) => {
                 {pool.tokens.map((token, index) => {
                     return (
                         <AssetPercentageContainer>
-                            <AssetDot dotColor={contractMetadataStore.getTokenColor(token.address)} />
+                            <AssetDot
+                                dotColor={contractMetadataStore.getTokenColor(
+                                    token.address
+                                )}
+                            />
                             <AssetPercentageText>
                                 {formatPercentage(
                                     token.denormWeightProportion,
@@ -110,7 +111,10 @@ const PoolAssetChartPanel = observer((props: Props) => {
                 {pool ? (
                     <Pie
                         type={'doughnut'}
-                        data={formatPoolAssetChartData(pool, contractMetadataStore.contractMetadata)}
+                        data={formatPoolAssetChartData(
+                            pool,
+                            contractMetadataStore.contractMetadata
+                        )}
                         options={options}
                     />
                 ) : (

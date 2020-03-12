@@ -4,8 +4,6 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
-import { Pool } from '../types';
-import { poolAssetColors } from '../components';
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');

@@ -1,13 +1,13 @@
 import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
-import { Pool, PoolShare, PoolToken } from '../types';
+import { NumberMap, Pool, PoolShare, PoolToken } from '../types';
 import { bnum } from '../utils/helpers';
 
 const SUBGRAPH_URL =
     process.env.REACT_APP_SUBGRAPH_URL ||
     'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-kovan';
 
-export async function fetchPublicPools(): Promise<Pool[]> {
+export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
     const query = `
       query ($tokens: [Bytes!]) {
           pools (where: {publicSwap: true}) {
@@ -54,7 +54,7 @@ export async function fetchPublicPools(): Promise<Pool[]> {
     const { data } = await response.json();
 
     return data.pools.map(pool => {
-        return {
+        const parsedPool: Pool = {
             address: getAddress(pool.id),
             publicSwap: pool.publicSwap,
             finalized: pool.finalized,
@@ -85,6 +85,16 @@ export async function fetchPublicPools(): Promise<Pool[]> {
                     ),
                 } as PoolShare;
             }),
-        } as Pool;
+        };
+
+        parsedPool.tokensList = parsedPool.tokensList.sort((a, b) =>
+            tokenIndex[a] < tokenIndex[b] ? -1 : 1
+        );
+
+        parsedPool.tokens = parsedPool.tokens.sort((a, b) =>
+            tokenIndex[a.symbol] < tokenIndex[b.symbol] ? -1 : 1
+        );
+
+        return parsedPool;
     });
 }

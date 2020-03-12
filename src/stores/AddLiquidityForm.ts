@@ -1,8 +1,9 @@
-import { action, observable } from 'mobx';
+import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import { BigNumberMap } from '../types';
-import { hasMaxApproval } from '../utils/helpers';
-import { validateTokenValue, ValidationStatus } from './actions/validators';
+import {BigNumberMap, Pool} from '../types';
+import {bnum, hasMaxApproval} from '../utils/helpers';
+import {validateTokenValue, ValidationStatus} from './actions/validators';
+import {BigNumber} from 'utils/bignumber';
 
 // Token Address -> checked
 interface CheckboxMap {
@@ -10,11 +11,11 @@ interface CheckboxMap {
 }
 
 // Token -> amount
-interface AmountInputMap {
-    [index: string]: AmountInput;
+interface InputMap {
+    [index: string]: Input;
 }
 
-interface AmountInput {
+interface Input {
     value: string;
     touched: boolean;
     valid: ValidationStatus;
@@ -28,11 +29,13 @@ interface Checkbox {
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;
-    @observable amountInputs: AmountInputMap;
-    @observable activeAmountInputKey: string | undefined;
+    @observable inputs: InputMap;
+    @observable activeInputKey: string | undefined;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable joinRatio: BigNumber;
+    @observable hasInputExceedUserBalance: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -46,7 +49,7 @@ export default class AddLiquidityFormStore {
         this.activePool = poolAddress;
         this.activeAccount = account;
         this.initializeCheckboxes(tokenAddresses);
-        this.initializeAmountInputs(tokenAddresses);
+        this.initializeInputs(tokenAddresses);
     }
 
     @action closeModal() {
@@ -56,8 +59,8 @@ export default class AddLiquidityFormStore {
 
     @action resetApprovalCheckboxStatusMap() {
         this.checkboxes = {} as CheckboxMap;
-        this.amountInputs = {} as AmountInputMap;
-        this.activeAmountInputKey = undefined;
+        this.inputs = {} as InputMap;
+        this.activeInputKey = undefined;
         this.checkboxesLoaded = false;
     }
 
@@ -69,39 +72,75 @@ export default class AddLiquidityFormStore {
         return this.activeAccount === account;
     }
 
-    private validateAmountInputAddress(tokenAddress) {
-        if (!this.amountInputs[tokenAddress]) {
+    // Assumes balances are loaded - don't execute without that condition already met
+    private getInputValidationStatus(
+        tokenAddress: string,
+        account: string,
+        inputBalance: BigNumber
+    ): ValidationStatus {
+        const { tokenStore } = this.rootStore;
+        const accountBalance = tokenStore.normalizeBalance(
+            tokenStore.getBalance(tokenAddress, account),
+            tokenAddress
+        );
+
+        let status = validateTokenValue(inputBalance.toString());
+
+        console.log('inputBalance is valid', {
+            tokenAddress,
+            inputBalance: inputBalance.toString(),
+            accountBalance: accountBalance.toString(),
+            result: inputBalance.lte(accountBalance),
+        });
+
+        if (status === ValidationStatus.VALID) {
+            status = inputBalance.lte(accountBalance)
+                ? ValidationStatus.VALID
+                : ValidationStatus.INSUFFICIENT_BALANCE;
+        }
+
+        return status;
+    }
+
+    private validateInputAddress(tokenAddress) {
+        if (!this.inputs[tokenAddress]) {
             throw new Error(`Amount input for ${tokenAddress} not initialized`);
         }
     }
 
-    getAmountInput(tokenAddress): AmountInput {
-        this.validateAmountInputAddress(tokenAddress);
-        return this.amountInputs[tokenAddress];
+    getInput(tokenAddress): Input {
+        this.validateInputAddress(tokenAddress);
+        return this.inputs[tokenAddress];
     }
 
-    @action setAmountInputValue(tokenAddress: string, value: string) {
-        console.log('setAmountInputValue', {
+    @action setInputValue(tokenAddress: string, value: string) {
+        console.log('setInputValue', {
             tokenAddress,
             value,
         });
-        this.validateAmountInputAddress(tokenAddress);
-        this.amountInputs[tokenAddress].value = value;
+        this.validateInputAddress(tokenAddress);
+        this.inputs[tokenAddress].value = value;
         const status = validateTokenValue(value);
-        this.setAmountInputStatus(tokenAddress, status);
+        this.setInputStatus(tokenAddress, status);
     }
 
-    @action setAmountInputStatus(
-        tokenAddress: string,
-        status: ValidationStatus
-    ) {
-        this.validateAmountInputAddress(tokenAddress);
-        this.amountInputs[tokenAddress].valid = status;
+    @action setInputStatus(tokenAddress: string, status: ValidationStatus) {
+        this.validateInputAddress(tokenAddress);
+        this.inputs[tokenAddress].valid = status;
     }
 
-    @action setAmountInputTouched(tokenAddress: string, touched: boolean) {
-        this.validateAmountInputAddress(tokenAddress);
-        this.amountInputs[tokenAddress].touched = touched;
+    @action setInputTouched(tokenAddress: string, touched: boolean) {
+        this.validateInputAddress(tokenAddress);
+        this.inputs[tokenAddress].touched = touched;
+    }
+
+    getCheckbox(tokenAddress: string): Checkbox {
+        if (!this.checkboxes[tokenAddress]) {
+            throw new Error(
+                `No checkbox found for tokenAddress ${tokenAddress}`
+            );
+        }
+        return this.checkboxes[tokenAddress];
     }
 
     isCheckboxChecked(tokenAddress: string) {
@@ -133,6 +172,67 @@ export default class AddLiquidityFormStore {
             checked: false,
             touched: false,
         };
+    }
+
+    calcRatio(
+        pool: Pool,
+        activeInputAddress: string,
+        activeInputAmount: string
+    ): BigNumber {
+        const activeToken = pool.tokens.find(
+            token => token.address === activeInputAddress
+        );
+        console.log({
+            activeInputAmount: activeInputAmount,
+            activeTokenBalance: activeToken.balance,
+            ratio: bnum(activeInputAmount)
+                .div(activeToken.balance)
+                .toString(),
+        });
+        return bnum(activeInputAmount).div(activeToken.balance);
+    }
+
+    setJoinRatio(ratio: BigNumber) {
+        console.log('setJoinRatio', ratio.toString());
+        this.joinRatio = ratio;
+    }
+
+    // TODO: If no account, don't check validation
+    @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
+        pool.tokens.forEach(token => {
+            const requiredBalance = token.balance.times(ratio);
+            this.inputs[token.address].value = requiredBalance.toString();
+
+            let hasInputExceedUserBalance = false;
+
+            if (account) {
+                const validationStatus = this.getInputValidationStatus(
+                    token.address,
+                    account,
+                    requiredBalance
+                );
+
+                this.inputs[
+                    token.address
+                ].valid = validationStatus;
+
+                if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+                    hasInputExceedUserBalance = true;
+                }
+            } else {
+                this.inputs[token.address].valid = ValidationStatus.VALID;
+            }
+
+            this.hasInputExceedUserBalance = hasInputExceedUserBalance;
+        });
+    }
+
+    formatInputsForJoin(): BigNumber[] {
+        const {tokenStore} = this.rootStore;
+        return Object.keys(this.inputs).map(key => {
+            const tokenAddress = key;
+            return tokenStore.denormalizeBalance(bnum(this.inputs[tokenAddress].value), tokenAddress);
+        });
     }
 
     @action setApprovalCheckboxTouched(tokenAddress: string, touched: boolean) {
@@ -180,9 +280,9 @@ export default class AddLiquidityFormStore {
         this.checkboxesLoaded = true;
     }
 
-    @action initializeAmountInputs(tokenAddresses: string[]) {
+    @action initializeInputs(tokenAddresses: string[]) {
         tokenAddresses.forEach(tokenAddress => {
-            this.amountInputs[tokenAddress] = {
+            this.inputs[tokenAddress] = {
                 value: '',
                 touched: false,
                 valid: ValidationStatus.EMPTY,

@@ -4,6 +4,8 @@ import { fetchPublicPools } from 'provider/subgraph';
 import { Pool } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import { bnum } from '../utils/helpers';
+import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import { ContractTypes } from './Provider';
 
 interface PoolData {
     blockLastFetched: number;
@@ -25,12 +27,12 @@ export default class PoolStore {
     }
 
     @action async fetchPublicPools() {
-        const { providerStore } = this.rootStore;
+        const { providerStore, contractMetadataStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await fetchPublicPools();
+        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
             this.setPool(pool.address, pool, currentBlock);
@@ -127,4 +129,23 @@ export default class PoolStore {
         }
         return this.pools[poolAddress].data.tokensList;
     }
+
+    @action joinPool = async (
+        web3React: Web3ReactContextInterface,
+        poolAddress: string,
+        poolAmountOut: BigNumber,
+        maxAmountsIn: BigNumber[]
+    ) => {
+        const { providerStore } = this.rootStore;
+        await providerStore.sendTransaction(
+            web3React,
+            ContractTypes.BPool,
+            poolAddress,
+            'joinPool',
+            [
+                poolAmountOut.toString(),
+                maxAmountsIn.map(amount => amount.toString()),
+            ]
+        );
+    };
 }
