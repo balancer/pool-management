@@ -329,6 +329,7 @@ const AddAssetTable = observer((props: Props) => {
             tokenAddress,
             value
         );
+        addLiquidityFormStore.setJoinRatio(ratio);
         addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 

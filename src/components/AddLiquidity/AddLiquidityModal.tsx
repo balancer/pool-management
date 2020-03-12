@@ -162,7 +162,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={true}
+                    active={!addLiquidityFormStore.hasInputExceedUserBalance}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }

@@ -1,9 +1,9 @@
-import { action, observable } from 'mobx';
+import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import { BigNumberMap, Pool } from '../types';
-import { bnum, hasMaxApproval } from '../utils/helpers';
-import { validateTokenValue, ValidationStatus } from './actions/validators';
-import { BigNumber } from 'utils/bignumber';
+import {BigNumberMap, Pool} from '../types';
+import {bnum, hasMaxApproval} from '../utils/helpers';
+import {validateTokenValue, ValidationStatus} from './actions/validators';
+import {BigNumber} from 'utils/bignumber';
 
 // Token Address -> checked
 interface CheckboxMap {
@@ -34,6 +34,8 @@ export default class AddLiquidityFormStore {
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable joinRatio: BigNumber;
+    @observable hasInputExceedUserBalance: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -190,23 +192,46 @@ export default class AddLiquidityFormStore {
         return bnum(activeInputAmount).div(activeToken.balance);
     }
 
+    setJoinRatio(ratio: BigNumber) {
+        console.log('setJoinRatio', ratio.toString());
+        this.joinRatio = ratio;
+    }
+
     // TODO: If no account, don't check validation
     @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
         pool.tokens.forEach(token => {
             const requiredBalance = token.balance.times(ratio);
             this.inputs[token.address].value = requiredBalance.toString();
 
+            let hasInputExceedUserBalance = false;
+
             if (account) {
-                this.inputs[
-                    token.address
-                ].valid = this.getInputValidationStatus(
+                const validationStatus = this.getInputValidationStatus(
                     token.address,
                     account,
                     requiredBalance
                 );
+
+                this.inputs[
+                    token.address
+                ].valid = validationStatus;
+
+                if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+                    hasInputExceedUserBalance = true;
+                }
             } else {
                 this.inputs[token.address].valid = ValidationStatus.VALID;
             }
+
+            this.hasInputExceedUserBalance = hasInputExceedUserBalance;
+        });
+    }
+
+    formatInputsForJoin(): BigNumber[] {
+        const {tokenStore} = this.rootStore;
+        return Object.keys(this.inputs).map(key => {
+            const tokenAddress = key;
+            return tokenStore.denormalizeBalance(bnum(this.inputs[tokenAddress].value), tokenAddress);
         });
     }
 
