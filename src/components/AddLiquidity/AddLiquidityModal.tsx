@@ -187,7 +187,7 @@ const AddLiquidityModal = observer((props: Props) => {
                 <AddLiquidityBody>
                     <AddLiquidityContent>
                         <PoolOverview poolAddress={poolAddress} />
-                        <AddAssetTable />
+                        <AddAssetTable poolAddress={poolAddress} />
                     </AddLiquidityContent>
                     {loading ? (
                         <div>Loading</div>

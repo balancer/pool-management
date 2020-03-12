@@ -2,7 +2,7 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import * as deployed from 'deployed.json';
 import { NumberMap, StringMap } from '../types';
-import {getSupportedChainName} from "../provider/connectors";
+import { getSupportedChainName } from '../provider/connectors';
 
 export interface ContractMetadata {
     bFactory: string;
@@ -66,14 +66,21 @@ export default class ContractMetadataStore {
         };
 
         tokenMetadata.forEach(token => {
-            const { address, symbol, decimals, iconAddress, precision, chartColor } = token;
+            const {
+                address,
+                symbol,
+                decimals,
+                iconAddress,
+                precision,
+                chartColor,
+            } = token;
             contractMetadata.tokens.push({
                 address,
                 symbol,
                 decimals,
                 iconAddress,
                 precision,
-                chartColor
+                chartColor,
             });
         });
 
@@ -82,7 +89,6 @@ export default class ContractMetadataStore {
 
     getTokenColor(tokenAddress: string): string {
         return this.getTokenMetadata(tokenAddress).chartColor;
-
     }
 
     getProxyAddress(): string {

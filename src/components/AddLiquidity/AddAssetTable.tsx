@@ -6,6 +6,7 @@ import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import { formatBalanceTruncated, fromWei } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
+import { ValidationStatus } from '../../stores/actions/validators';
 
 const Wrapper = styled.div`
     width: calc(80% - 20px);
@@ -262,7 +263,13 @@ const InputWrapper = styled.div`
     }
 `;
 
-const AddAssetTable = observer((props: any) => {
+interface Props {
+    poolAddress: string;
+}
+
+const AddAssetTable = observer((props: Props) => {
+    const { poolAddress } = props;
+
     const {
         root: {
             poolStore,
@@ -275,8 +282,6 @@ const AddAssetTable = observer((props: any) => {
 
     const web3React = providerStore.getActiveWeb3React();
     const { account } = web3React;
-
-    const poolAddress = '0xa25bA3D820e9b572c0018Bb877e146d76af6a9cF';
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
@@ -296,7 +301,7 @@ const AddAssetTable = observer((props: any) => {
         balance: BigNumber
     ) => {
         const maxValue = fromWei(balance);
-        addLiquidityFormStore.setAmountInputValue(tokenAddress, maxValue);
+        addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
     };
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
@@ -316,10 +321,14 @@ const AddAssetTable = observer((props: any) => {
         }
     };
 
-    const handleAmountInputChange = async (event, tokenAddress: string) => {
+    const handleInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
-        addLiquidityFormStore.setAmountInputValue(tokenAddress, value);
-        const ratio = addLiquidityFormStore.calcRatio(pool, tokenAddress, value);
+        addLiquidityFormStore.setInputValue(tokenAddress, value);
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            tokenAddress,
+            value
+        );
         addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
@@ -338,12 +347,10 @@ const AddAssetTable = observer((props: any) => {
                         tokenAddress
                     );
 
-                    const checked = addLiquidityFormStore.isCheckboxChecked(
+                    const checkbox = addLiquidityFormStore.getCheckbox(
                         tokenAddress
                     );
-                    const touched = addLiquidityFormStore.isCheckboxTouched(
-                        tokenAddress
-                    );
+                    const input = addLiquidityFormStore.getInput(tokenAddress);
 
                     let hasMaxApproval = false;
 
@@ -357,25 +364,37 @@ const AddAssetTable = observer((props: any) => {
 
                     let visuallyChecked;
 
-                    if (touched) {
-                        visuallyChecked = checked;
+                    if (checkbox.touched) {
+                        visuallyChecked = checkbox.checked;
                     } else if (accountApprovalsLoaded) {
                         visuallyChecked = hasMaxApproval;
                     } else {
                         visuallyChecked = false;
                     }
 
-                    // checked = tokenStore.hasMaxApproval(tokenAddress, account, pool.address);
-                    // TODO: If neither, we should be in the loading state and never get here
+                    let normalizedUserBalance = '0';
+                    let userBalanceToDisplay = '-';
 
-                    const balanceToDisplay: string =
-                        userBalances && userBalances[tokenAddress]
-                            ? formatBalanceTruncated(
-                                  userBalances[tokenAddress],
-                                  tokenMetadata.precision,
-                                  20
-                              )
-                            : '-';
+                    if (userBalances && userBalances[tokenAddress]) {
+                        normalizedUserBalance = formatBalanceTruncated(
+                            userBalances[tokenAddress],
+                            tokenMetadata.precision,
+                            20
+                        );
+
+                        userBalanceToDisplay = normalizedUserBalance;
+                    }
+
+                    const hasError =
+                        input.valid === ValidationStatus.INSUFFICIENT_BALANCE;
+
+                    console.log('hasError', {
+                        userBalances,
+                        userBalance: normalizedUserBalance,
+                        inputAmount: input.value,
+                        inputStatus: input.valid,
+                        hasError: hasError,
+                    });
 
                     return (
                         <TableRow>
@@ -403,11 +422,11 @@ const AddAssetTable = observer((props: any) => {
                                 </Toggle>
                             </TableCell>
                             <TableCell>
-                                {balanceToDisplay} {token.symbol}
+                                {userBalanceToDisplay} {token.symbol}
                             </TableCell>
                             <TableCellRight>
                                 <DepositAmount>
-                                    <InputWrapper errorBorders={false}>
+                                    <InputWrapper errorBorders={hasError}>
                                         {userBalances &&
                                         userBalances[tokenAddress] ? (
                                             <MaxLink
@@ -429,12 +448,12 @@ const AddAssetTable = observer((props: any) => {
                                             id={`input-${tokenAddress}`}
                                             name={`input-name-${tokenAddress}`}
                                             defaultValue={
-                                                addLiquidityFormStore.getAmountInput(
+                                                addLiquidityFormStore.getInput(
                                                     tokenAddress
                                                 ).value
                                             }
                                             onChange={e => {
-                                                handleAmountInputChange(
+                                                handleInputChange(
                                                     e,
                                                     tokenAddress
                                                 );

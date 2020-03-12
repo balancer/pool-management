@@ -1,7 +1,10 @@
-import {Pool} from "../types";
-import {ContractMetadata} from "../stores/ContractMetadata";
+import { Pool } from '../types';
+import { ContractMetadata } from '../stores/ContractMetadata';
 
-export const formatPoolAssetChartData = (pool: Pool, contractMetadata: ContractMetadata) => {
+export const formatPoolAssetChartData = (
+    pool: Pool,
+    contractMetadata: ContractMetadata
+) => {
     const data = getPoolTokenWeights(pool);
     return {
         datasets: [
@@ -16,19 +19,15 @@ export const formatPoolAssetChartData = (pool: Pool, contractMetadata: ContractM
     };
 };
 
-const getPoolTokenColors = (pool: Pool, contractMetadata: ContractMetadata): string[] => {
-    console.log('getPoolTokenColors');
+const getPoolTokenColors = (
+    pool: Pool,
+    contractMetadata: ContractMetadata
+): string[] => {
     return pool.tokens.map(token => {
         const metadata = contractMetadata.tokens.find(metadata => {
-            console.log({
-                metadata: metadata.address,
-                token: token.address,
-                color: metadata.chartColor
-            })
-            return metadata.address === token.address
-
+            return metadata.address === token.address;
         });
-        return metadata.chartColor
+        return metadata.chartColor;
     });
 };
 
