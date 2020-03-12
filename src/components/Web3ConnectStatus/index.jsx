@@ -11,7 +11,7 @@ import Circle from 'assets/images/circle.svg';
 import { injected, web3ContextNames } from 'provider/connectors';
 import Identicon from '../Identicon';
 import { useStores } from '../../contexts/storesContext';
-import Button from '../Button';
+import Button from '../Common/Button';
 import Web3PillBox from '../Web3PillBox';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from '../../provider/providerHooks';
