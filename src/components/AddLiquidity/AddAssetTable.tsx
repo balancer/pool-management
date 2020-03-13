@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import { formatBalanceTruncated, fromWei } from '../../utils/helpers';
+import {bnum, formatBalanceTruncated, fromWei} from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -324,6 +324,7 @@ const AddAssetTable = observer((props: Props) => {
     const handleInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
         addLiquidityFormStore.setInputValue(tokenAddress, value);
+        addLiquidityFormStore.setActiveInputKey(tokenAddress);
         const ratio = addLiquidityFormStore.calcRatio(
             pool,
             tokenAddress,
@@ -387,15 +388,7 @@ const AddAssetTable = observer((props: Props) => {
                     }
 
                     const hasError =
-                        input.valid === ValidationStatus.INSUFFICIENT_BALANCE;
-
-                    console.log('hasError', {
-                        userBalances,
-                        userBalance: normalizedUserBalance,
-                        inputAmount: input.value,
-                        inputStatus: input.valid,
-                        hasError: hasError,
-                    });
+                        input.validation === ValidationStatus.INSUFFICIENT_BALANCE;
 
                     return (
                         <TableRow>
@@ -448,7 +441,7 @@ const AddAssetTable = observer((props: Props) => {
                                         <input
                                             id={`input-${tokenAddress}`}
                                             name={`input-name-${tokenAddress}`}
-                                            defaultValue={
+                                            value={
                                                 addLiquidityFormStore.getInput(
                                                     tokenAddress
                                                 ).value
