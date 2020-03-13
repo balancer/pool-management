@@ -1,35 +1,35 @@
-import AppBar from './AppBar'
-import Button from './Button'
-import IconCard from './IconCard'
-import MoreParamsGrid from './MoreParamsGrid'
-import PoolList from './PoolList'
-import PoolListTokenTable from './PoolListTokenTable'
-import PoolParamsGrid from './PoolParamsGrid'
-import InvestParamsGrid from './InvestParamsGrid'
-import PoolInvestForm from './PoolInvestForm'
-import PoolTitleCard from './PoolTitleCard'
-import TokenText from './TokenText'
-import SpotPriceGrid from './SpotPriceGrid'
-import Loading from './Loading'
-import LoadingCard from './LoadingCard'
-import SwapForm from './SwapForm'
-import ManagePoolForm from './ManagePoolForm'
+import Button from './Button';
+import IconCard from './IconCard';
+import PoolList from './PoolList';
+import PoolListTokenTable from './PoolListTokenTable';
+import PoolTitleCard from './PoolTitleCard';
+import TokenText from './TokenText';
+import SpotPriceGrid from './SpotPriceGrid';
+import CircularIndeterminate from './CircularIndeterminate';
+import LoadingCard from './LoadingCard';
+import TokenApproveToggle from './TokenApproveToggle';
+
+const poolAssetColors = [
+    '#E7983D',
+    '#536DFE',
+    '#602A52',
+    '#64FFDA',
+    '#B388FF',
+    '#F4FF81',
+    '#BDBDBD',
+    '#E7983D',
+];
 
 export {
-  AppBar,
-  Button,
-  IconCard,
-  MoreParamsGrid,
-  PoolListTokenTable,
-  PoolList,
-  PoolParamsGrid,
-  InvestParamsGrid,
-  PoolTitleCard,
-  PoolInvestForm,
-  TokenText,
-  SpotPriceGrid,
-  ManagePoolForm,
-  Loading,
-  LoadingCard,
-  SwapForm
-}
+    Button,
+    IconCard,
+    PoolListTokenTable,
+    PoolList,
+    PoolTitleCard,
+    TokenText,
+    SpotPriceGrid,
+    CircularIndeterminate,
+    LoadingCard,
+    TokenApproveToggle,
+    poolAssetColors,
+};
