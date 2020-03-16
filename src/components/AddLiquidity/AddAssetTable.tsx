@@ -422,6 +422,7 @@ const AddAssetTable = observer((props: Props) => {
                                     <ToggleInput
                                         type="checkbox"
                                         checked={visuallyChecked}
+                                        disabled={!account}
                                         onChange={e =>
                                             handleCheckboxChange(
                                                 e,
