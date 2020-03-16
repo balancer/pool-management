@@ -13,7 +13,7 @@ export const formatPoolAssetChartData = (
                 borderAlign: 'center',
                 backgroundColor: getPoolTokenColors(pool, contractMetadata),
                 borderColor: '#282932',
-                borderWidth: '2',
+                borderWidth: '1',
             },
         ],
     };

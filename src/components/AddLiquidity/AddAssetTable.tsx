@@ -70,10 +70,7 @@ const DepositAmount = styled.div`
     justify-content: space-between;
     align-items: center;
     height: 30px;
-    border: 1px solid var(--panel-border);
     border-radius: 4px;
-    width: 80%;
-    padding: 0px 17px;
 `;
 
 const MaxLink = styled.div`
@@ -204,27 +201,30 @@ const CheckBox = styled.input`
 `;
 
 const InputWrapper = styled.div`
-    height: 60px;
+    height: 30px;
+    padding: 0px 17px;
     font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding-left: 21px;
-    padding-right: 21px;
-    border-top: 1px solid var(--panel-border);
-    border-radius: 0px 0px 4px 4px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
     input {
-        width: 100px;
+        width: 70px;
+        text-align: right;
         color: var(--input-text);
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 500;
-        line-height: 19px;
+        line-height: 16px;
+        letter-spacing: 0.2px;
+        padding-left: 5px;
         background-color: var(--panel-background);
         border: none;
         box-shadow: inset 0 0 0 1px var(--panel-background),
-            inset 0 0 0 100px var(--panel-background);
+            inset 0 0 0 70px var(--panel-background);
         :-webkit-autofill,
         :-webkit-autofill:hover,
         :-webkit-autofill:focus,
@@ -254,7 +254,7 @@ const InputWrapper = styled.div`
         input {
             background-color: var(--input-hover-background);
             box-shadow: inset 0 0 0 1px var(--input-hover-background),
-                inset 0 0 0 100px var(--input-hover-background);
+                inset 0 0 0 70px var(--input-hover-background);
             ::placeholder {
                 color: var(--input-hover-placeholder-text);
                 background-color: var(--input-hover-background);
