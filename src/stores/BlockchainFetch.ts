@@ -129,13 +129,12 @@ export default class BlockchainFetchStore {
                         providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        poolStore.fetchPublicPools().then(result => {
+                        poolStore.fetchPublicPools().then(() => {
                             // Fetch user pool shares after pools loaded
-                            this.fetchPoolTotalSupplies(web3React)
+                            this.fetchPoolTotalSupplies(web3React);
 
                             if (account) {
                                 this.fetchPoolUserBalances(web3React);
-
                             }
 
                             if (account && appSettingsStore.hasActivePool()) {

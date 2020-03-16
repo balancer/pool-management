@@ -73,7 +73,7 @@ const AddRemovePanel = (props: Props) => {
     let userProportion = undefined;
 
     if (pool) {
-        poolStore.getUserShareProportion(pool.address, account);
+        userProportion = poolStore.getUserShareProportion(pool.address, account);
     }
 
     return (

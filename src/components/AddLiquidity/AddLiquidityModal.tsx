@@ -79,6 +79,7 @@ const Notification = styled.div`
 enum ButtonAction {
     UNLOCK,
     ADD_LIQUIDITY,
+    REMOVE_LIQUIDITY
 }
 
 interface Props {
@@ -199,7 +200,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     //TODO: Add this for remove liquidity: When pool tokens <= that!
                     active={!addLiquidityFormStore.hasInputExceedUserBalance}
                     onClick={e =>
-                        actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
+                        actionButtonHandler(ButtonAction.REMOVE_LIQUIDITY)
                     }
                 />
             );
