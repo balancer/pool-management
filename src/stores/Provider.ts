@@ -75,7 +75,7 @@ export default class ProviderStore {
         web3React: Web3ReactContextInterface,
         account: string
     ) => {
-        const { transactionStore, tokenStore } = this.rootStore;
+        const { transactionStore, tokenStore, contractMetadataStore} = this.rootStore;
 
         console.debug('[Fetch Start - User Blockchain Data]', {
             account,
@@ -83,7 +83,7 @@ export default class ProviderStore {
 
         transactionStore.checkPendingTransactions(web3React, account);
         tokenStore
-            .fetchWhitelistedTokenBalances(web3React, account)
+            .fetchTokenBalances(web3React, account, contractMetadataStore.getWhiteListedTokenAddresses())
             .then(result => {
                 console.debug('[Fetch End - User Blockchain Data]', {
                     account,

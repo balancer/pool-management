@@ -192,11 +192,14 @@ const LiquidityPanel = observer((props: Props) => {
                                 pool.address,
                                 account
                             );
-                            userLiquidityText = formatBalanceTruncated(
-                                toWei(userLiquidity),
-                                4,
-                                20
-                            );
+
+                            if (userLiquidity) {
+                                userLiquidityText = formatBalanceTruncated(
+                                    toWei(userLiquidity),
+                                    4,
+                                    20
+                                );
+                            }
                         }
                     }
 

@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
-import { useStores } from '../../contexts/storesContext';
+import {useStores} from '../../contexts/storesContext';
+import {ModalMode} from "../../stores/AddLiquidityForm";
 
 const Wrapper = styled.div`
     display: flex;
@@ -69,6 +70,12 @@ const AddRemovePanel = (props: Props) => {
     const { account } = providerStore.getActiveWeb3React();
 
     const pool = poolStore.getPool(poolAddress);
+    let userProportion = undefined;
+
+    if (pool) {
+        userProportion = poolStore.getUserShareProportion(pool.address, account);
+    }
+
     return (
         <Wrapper>
             <LeftColumn>
@@ -91,7 +98,8 @@ const AddRemovePanel = (props: Props) => {
                             addLiquidityFormStore.openModal(
                                 poolAddress,
                                 account,
-                                pool.tokensList
+                                pool.tokensList,
+                                ModalMode.ADD_LIQUIDITY
                             );
                         }
                     }}
@@ -99,8 +107,17 @@ const AddRemovePanel = (props: Props) => {
                 <Spacer />
                 <Button
                     buttonText={'Remove Liquidity'}
-                    active={false}
-                    onClick={() => {}}
+                    active={!!pool && account && userProportion && userProportion.gt(0)}
+                    onClick={() => {
+                        if (pool) {
+                            addLiquidityFormStore.openModal(
+                                poolAddress,
+                                account,
+                                pool.tokensList,
+                                ModalMode.REMOVE_LIQUIDITY
+                            );
+                        }
+                    }}
                 />
             </RightColumn>
         </Wrapper>

@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import AddAssetTable from './AddAssetTable';
-import { observer } from 'mobx-react';
-import { useStores } from '../../contexts/storesContext';
-import { Pool, PoolToken } from '../../types';
+import {observer} from 'mobx-react';
+import {useStores} from '../../contexts/storesContext';
+import {Pool, PoolToken} from '../../types';
+import {ContractTypes} from "../../stores/Provider";
+import {ModalMode} from "../../stores/AddLiquidityForm";
 
 const Container = styled.div`
     display: block;
@@ -77,6 +79,7 @@ const Notification = styled.div`
 enum ButtonAction {
     UNLOCK,
     ADD_LIQUIDITY,
+    REMOVE_LIQUIDITY
 }
 
 interface Props {
@@ -132,6 +135,28 @@ const AddLiquidityModal = observer((props: Props) => {
             await tokenStore.approveMax(web3React, token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
+            console.log('pre-contract');
+
+            const { account } = web3React;
+
+            const contract = providerStore.getContract(
+                web3React,
+                ContractTypes.BPool,
+                poolAddress,
+                account
+            );
+
+            const poolTokens = poolStore.calcPoolTokensByRatio(addLiquidityFormStore.joinRatio).toString();
+
+            const inputs = addLiquidityFormStore.formatInputsForJoin();
+            console.log('joinPool', {
+                poolTokens: poolTokens.toString(),
+                inputs: addLiquidityFormStore.formatInputsForJoin()
+            });
+
+            await contract.joinPool(poolTokens, inputs);
+
+            // await poolStore.joinPool(web3React, pool.address, addLiquidityFormStore.joinRatio, addLiquidityFormStore.formatInputsForJoin())
         }
     };
 
@@ -148,7 +173,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderActionButton = () => {
-        if (lockedToken) {
+        if (lockedToken && addLiquidityFormStore.modalMode === ModalMode.ADD_LIQUIDITY) {
             return (
                 <Button
                     buttonText={`Unlock ${lockedToken.symbol}`}
@@ -158,13 +183,24 @@ const AddLiquidityModal = observer((props: Props) => {
                     }
                 />
             );
-        } else {
+        } else if (addLiquidityFormStore.modalMode === ModalMode.ADD_LIQUIDITY) {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
                     active={!addLiquidityFormStore.hasInputExceedUserBalance}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
+                    }
+                />
+            );
+        } else if (addLiquidityFormStore.modalMode === ModalMode.REMOVE_LIQUIDITY) {
+            return (
+                <Button
+                    buttonText={`Remove Liquidity`}
+                    //TODO: Add this for remove liquidity: When pool tokens <= that!
+                    active={!addLiquidityFormStore.hasInputExceedUserBalance}
+                    onClick={e =>
+                        actionButtonHandler(ButtonAction.REMOVE_LIQUIDITY)
                     }
                 />
             );

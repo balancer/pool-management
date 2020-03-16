@@ -1,4 +1,4 @@
-import { TokenBalance, UserAllowance } from '../Token';
+import {TokenBalance, TotalSupply, UserAllowance} from '../Token';
 
 export enum AsyncStatus {
     SUCCESS,
@@ -59,3 +59,25 @@ export class UserAllowanceFetch {
         }
     }
 }
+
+export interface TotalSupplyFetchRequest {
+    tokenAddress: string;
+    fetchBlock: number;
+}
+
+export class TotalSupplyFetch {
+    status: AsyncStatus;
+    request: TotalSupplyFetchRequest;
+    payload: TotalSupply | undefined;
+    error?: string;
+
+    constructor(params) {
+        this.status = params.status;
+        this.request = params.request;
+        this.payload = params.payload;
+        if (params.error) {
+            this.error = params.error;
+        }
+    }
+}
+
