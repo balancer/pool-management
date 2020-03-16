@@ -70,6 +70,12 @@ const AddRemovePanel = (props: Props) => {
     const { account } = providerStore.getActiveWeb3React();
 
     const pool = poolStore.getPool(poolAddress);
+    let userProportion = undefined;
+
+    if (pool) {
+        poolStore.getUserShareProportion(pool.address, account);
+    }
+
     return (
         <Wrapper>
             <LeftColumn>
@@ -101,7 +107,7 @@ const AddRemovePanel = (props: Props) => {
                 <Spacer />
                 <Button
                     buttonText={'Remove Liquidity'}
-                    active={!!pool && account && poolStore.getUserShare(pool.address, account).gt(0)}
+                    active={!!pool && account && userProportion && userProportion.gt(0)}
                     onClick={() => {
                         if (pool) {
                             addLiquidityFormStore.openModal(

@@ -65,29 +65,38 @@ export default class PoolStore {
         }
     }
 
-    getUserShare(poolAddress: string, account: string): BigNumber {
-        const userShare = this.getPool(poolAddress).shares.find(
-            share => share.account === account
-        );
+    getUserShare(poolAddress: string, account: string): BigNumber | undefined{
+        const {tokenStore} = this.rootStore;
+        const userShare = tokenStore.getBalance(poolAddress, account);
         if (userShare) {
-            return userShare.balance;
+            return userShare;
         } else {
-            return bnum(0);
+            return undefined;
         }
     }
 
-    calcUserLiquidity(poolAddress: string, account: string): BigNumber {
+    getUserShareProportion(poolAddress: string, account: string): BigNumber | undefined {
+        const {tokenStore} = this.rootStore;
+        const userShare = tokenStore.getBalance(poolAddress, account);
+        const totalShares = tokenStore.getTotalSupply(poolAddress);
+
+        if (userShare && totalShares) {
+            return userShare.div(totalShares);
+        } else {
+            return undefined;
+        }
+    }
+
+    calcUserLiquidity(poolAddress: string, account: string): BigNumber | undefined {
         const poolValue = this.rootStore.marketStore.getPortfolioValue(
             this.getPoolSymbols(poolAddress),
             this.getPoolBalances(poolAddress)
         );
-        const userShare = this.getUserShare(poolAddress, account);
-        if (userShare) {
-            return userShare
-                .div(this.getPool(poolAddress).totalShares)
-                .times(poolValue);
+        const userProportion = this.getUserShareProportion(poolAddress, account);
+        if (userProportion) {
+            return userProportion.times(poolValue);
         } else {
-            return bnum(0);
+            return undefined;
         }
     }
 
