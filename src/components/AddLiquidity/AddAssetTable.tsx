@@ -399,8 +399,13 @@ const AddAssetTable = observer((props: Props) => {
                         userBalanceToDisplay = normalizedUserBalance;
                     }
 
-                    const hasError =
+                    let hasError =
                         input.validation === ValidationStatus.INSUFFICIENT_BALANCE;
+
+                    if (addLiquidityFormStore.activeInputKey === token.address) {
+                        hasError = input.validation !== ValidationStatus.VALID && input.validation !== ValidationStatus.EMPTY;
+                    }
+
 
                     return (
                         <TableRow>
