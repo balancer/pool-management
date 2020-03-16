@@ -3,7 +3,7 @@ import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
 import { Pool } from 'types';
 import { BigNumber } from '../utils/bignumber';
-import { bnum } from '../utils/helpers';
+import {bnum, POOL_TOKENS_DECIMALS, printPool, scale} from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
 
@@ -35,6 +35,7 @@ export default class PoolStore {
         const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
+            printPool(pool);
             this.setPool(pool.address, pool, currentBlock);
         });
         this.poolsLoaded = true;
@@ -64,15 +65,14 @@ export default class PoolStore {
         }
     }
 
-    getUserShare(poolAddress: string, account: string): BigNumber | undefined {
+    getUserShare(poolAddress: string, account: string): BigNumber {
         const userShare = this.getPool(poolAddress).shares.find(
             share => share.account === account
         );
         if (userShare) {
-            console.log('userShare', userShare);
             return userShare.balance;
         } else {
-            return undefined;
+            return bnum(0);
         }
     }
 
@@ -123,6 +123,14 @@ export default class PoolStore {
         return undefined;
     }
 
+    calcExitMinAmountOut() {
+
+    }
+
+    calcPoolTokensByRatio(ratio: BigNumber): BigNumber {
+        return scale(ratio.times(90), POOL_TOKENS_DECIMALS).integerValue(BigNumber.ROUND_DOWN);
+    }
+
     getPoolTokens(poolAddress: string): string[] {
         if (!this.pools[poolAddress]) {
             throw new Error(`Pool ${poolAddress} not loaded`);
@@ -137,15 +145,25 @@ export default class PoolStore {
         maxAmountsIn: BigNumber[]
     ) => {
         const { providerStore } = this.rootStore;
-        await providerStore.sendTransaction(
+        const { chainId, account } = web3React;
+
+        const contract = providerStore.getContract(
             web3React,
             ContractTypes.BPool,
             poolAddress,
-            'joinPool',
-            [
-                poolAmountOut.toString(),
-                maxAmountsIn.map(amount => amount.toString()),
-            ]
+            account
         );
+
+        console.log(contract);
+        // await providerStore.sendTransaction(
+        //     web3React,
+        //     ContractTypes.BPool,
+        //     poolAddress,
+        //     'joinPool',
+        //     [
+        //         poolAmountOut.toString(),
+        //         maxAmountsIn.map(amount => amount.toString()),
+        //     ]
+        // );
     };
 }

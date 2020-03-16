@@ -4,10 +4,12 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
+import {Pool} from "../types";
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
 export const MAX_UINT = utils.bigNumberify(ethers.constants.MaxUint256);
+export const POOL_TOKENS_DECIMALS = 18;
 
 export function toChecksum(address) {
     return utils.getAddress(address);
@@ -322,4 +324,8 @@ export const getGasPriceFromETHGasStation = () => {
             }
         );
     });
+};
+
+export const printPool = (pool: Pool) => {
+    // console.log(pool);
 };

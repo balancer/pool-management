@@ -111,6 +111,10 @@ export default class ContractMetadataStore {
         return address;
     }
 
+    getWhiteListedTokenAddresses(): string[] {
+        return this.contractMetadata.tokens.map(token => token.address);
+    }
+
     getWhitelistedTokenMetadata(): TokenMetadata[] {
         return this.contractMetadata.tokens;
     }

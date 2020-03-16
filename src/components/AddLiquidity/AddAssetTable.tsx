@@ -300,8 +300,20 @@ const AddAssetTable = observer((props: Props) => {
         tokenAddress: string,
         balance: BigNumber
     ) => {
-        const maxValue = fromWei(balance);
+        let maxValue = fromWei(balance);
+        if (bnum(maxValue).eq(0)) {
+            maxValue = '0.00';
+        }
+
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
+        addLiquidityFormStore.setActiveInputKey(tokenAddress);
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            tokenAddress,
+            maxValue
+        );
+        addLiquidityFormStore.setJoinRatio(ratio);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {

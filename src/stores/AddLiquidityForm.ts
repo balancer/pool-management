@@ -26,6 +26,11 @@ interface Checkbox {
     touched: boolean;
 }
 
+export enum ModalMode {
+    ADD_LIQUIDITY,
+    REMOVE_LIQUIDITY
+}
+
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;
@@ -34,6 +39,7 @@ export default class AddLiquidityFormStore {
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable modalMode: ModalMode;
     @observable joinRatio: BigNumber;
     @observable hasInputExceedUserBalance: boolean;
     rootStore: RootStore;
@@ -43,8 +49,9 @@ export default class AddLiquidityFormStore {
         this.resetApprovalCheckboxStatusMap();
     }
 
-    @action openModal(poolAddress, account, tokenAddresses: string[]) {
+    @action openModal(poolAddress, account, tokenAddresses: string[], modalMode: ModalMode) {
         this.modalOpen = true;
+        this.modalMode = modalMode;
         this.resetApprovalCheckboxStatusMap();
         this.activePool = poolAddress;
         this.activeAccount = account;
@@ -86,13 +93,6 @@ export default class AddLiquidityFormStore {
 
         let status = validateTokenValue(inputBalance.toString());
 
-        console.log('inputBalance is valid', {
-            tokenAddress,
-            inputBalance: inputBalance.toString(),
-            accountBalance: accountBalance.toString(),
-            result: inputBalance.lte(accountBalance),
-        });
-
         if (status === ValidationStatus.VALID) {
             status = inputBalance.lte(accountBalance)
                 ? ValidationStatus.VALID
@@ -114,10 +114,6 @@ export default class AddLiquidityFormStore {
     }
 
     @action setInputValue(tokenAddress: string, value: string) {
-        console.log('setInputValue', {
-            tokenAddress,
-            value,
-        });
         this.requireValidAddress(tokenAddress);
         this.inputs[tokenAddress].value = value;
         const status = validateTokenValue(value);
@@ -190,6 +186,8 @@ export default class AddLiquidityFormStore {
     }
 
     setJoinRatio(ratio: BigNumber) {
+        console.log('joinRatio', ratio.toString()
+        );
         this.joinRatio = ratio;
     }
 
@@ -249,11 +247,11 @@ export default class AddLiquidityFormStore {
         });
     }
 
-    formatInputsForJoin(): BigNumber[] {
+    formatInputsForJoin(): string[] {
         const {tokenStore} = this.rootStore;
         return Object.keys(this.inputs).map(key => {
             const tokenAddress = key;
-            return tokenStore.denormalizeBalance(bnum(this.inputs[tokenAddress].value), tokenAddress);
+            return tokenStore.denormalizeBalance(bnum(this.inputs[tokenAddress].value), tokenAddress).integerValue(BigNumber.ROUND_DOWN).toString();
         });
     }
 
