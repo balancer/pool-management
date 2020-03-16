@@ -62,6 +62,7 @@ const ExitComponent = styled.div`
 const AddLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
+    margin-bottom: 20px
 `;
 
 const Notification = styled.div`
@@ -72,7 +73,6 @@ const Notification = styled.div`
     width: 100%;
     border: 1px solid var(--panel-border);
     background: var(--panel-background);
-    margin-top: 20px;
     margin-bottom: 30px;
 `;
 
