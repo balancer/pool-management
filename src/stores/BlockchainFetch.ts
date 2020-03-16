@@ -17,8 +17,6 @@ export default class BlockchainFetchStore {
             web3React.account &&
             web3React.chainId === supportedChainId
         ) {
-
-            console.log('pool Switch')
             this.fetchActivePoolAllowances(web3React);
         }
     }
@@ -90,7 +88,6 @@ export default class BlockchainFetchStore {
     ) {
         if (
             web3React.active &&
-            web3React.account &&
             web3React.chainId === supportedChainId
         ) {
             const { library, account, chainId } = web3React;

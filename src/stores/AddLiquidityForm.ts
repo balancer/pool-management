@@ -1,6 +1,6 @@
 import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import {BigNumberMap, Pool, PoolToken} from '../types';
+import {BigNumberMap, Pool} from '../types';
 import {bnum, hasMaxApproval} from '../utils/helpers';
 import {validateTokenValue, ValidationStatus} from './actions/validators';
 import {BigNumber} from 'utils/bignumber';
@@ -82,10 +82,16 @@ export default class AddLiquidityFormStore {
     // Assumes balances are loaded - don't execute without that condition already met
     private getInputValidationStatus(
         tokenAddress: string,
-        account: string,
+        account: string | undefined,
         inputBalance: BigNumber
     ): ValidationStatus {
         const { tokenStore } = this.rootStore;
+
+        // Always valid if no account
+        if (!account) {
+            return ValidationStatus.VALID;
+        }
+
         const accountBalance = tokenStore.normalizeBalance(
             tokenStore.getBalance(tokenAddress, account),
             tokenAddress
@@ -200,11 +206,10 @@ export default class AddLiquidityFormStore {
             const isActiveInputValid = this.inputs[this.activeInputKey].validation === ValidationStatus.VALID;
 
             /* Only calculate other token balances if
-                1. User logged in
                 2. This token is not for the active input field
                 3. The active input is valid
              */
-            if (hasAccount && !isTokenActive && isActiveInputValid) {
+            if (!isTokenActive && isActiveInputValid) {
                 const requiredBalance = token.balance.times(ratio);
                 this.inputs[token.address].value = requiredBalance.toString();
 
@@ -224,15 +229,15 @@ export default class AddLiquidityFormStore {
             }
 
             // Reset other input fields on invalid active input
-            else if (hasAccount && !isTokenActive && !isActiveInputValid) {
+            else if (!isTokenActive && !isActiveInputValid) {
                 this.setInputValue(token.address, '');
             }
 
-            // Check for insufficent balance on active valid input
-            else if (hasAccount && isTokenActive && isActiveInputValid) {
+            // Check for insufficent balance on active valid input if user logged in
+            else if (isTokenActive && isActiveInputValid) {
                 const {validation, value} = this.inputs[token.address];
 
-                if (validation === ValidationStatus.VALID) {
+                if (validation === ValidationStatus.VALID && account) {
                     this.inputs[
                         token.address
                         ].validation = this.getInputValidationStatus(

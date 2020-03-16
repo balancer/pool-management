@@ -137,7 +137,7 @@ const Web3ReactManager = observer(({ children }) => {
     //Fetch user blockchain data on an interval using current params
     useInterval(
         () => blockchainFetchStore.setFetchLoop(web3React, false),
-        web3React.account ? 1000 : null
+        1000
     );
 
     useEffect(() => {

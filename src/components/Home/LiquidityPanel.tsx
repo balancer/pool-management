@@ -123,7 +123,7 @@ export enum LiquidityPanelDataSource {
 }
 
 enum Messages {
-    noAccount = 'Connect Wallet to see your liquidity',
+    noAccount = 'Connect wallet to see your liquidity',
     accountButNoPools = 'This account has no public liquidity contributions',
     noPublicPools = 'No public pools found',
 }
