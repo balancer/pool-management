@@ -140,7 +140,7 @@ const WalletBalances = observer(() => {
             {account ? (
                 renderWalletBalances()
             ) : (
-                <BalanceElement>Connect Wallet to see balances</BalanceElement>
+                <BalanceElement>Connect wallet to see balances</BalanceElement>
             )}
         </Wrapper>
     );

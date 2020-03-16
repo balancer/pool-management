@@ -113,10 +113,13 @@ const AddLiquidityModal = observer((props: Props) => {
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
 
-    if (pool) {
-        const tokenAddresses = poolStore.getPoolTokens(pool.address);
+    if (pool && !account) {
+        loading = false;
+    }
+
+    if (pool && account) {
         const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
-            tokenAddresses,
+            poolStore.getPoolTokens(pool.address),
             account,
             pool.address
         );
@@ -161,6 +164,13 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderNotification = () => {
+        if (!account) {
+            return (
+                <Notification>
+                    Connect wallet to add liqudity
+                </Notification>
+            );
+        }
         if (lockedToken) {
             return (
                 <Notification>
@@ -177,7 +187,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Unlock ${lockedToken.symbol}`}
-                    active={true}
+                    active={!!account}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.UNLOCK, lockedToken)
                     }
@@ -187,7 +197,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={!addLiquidityFormStore.hasInputExceedUserBalance}
+                    active={account && !addLiquidityFormStore.hasInputExceedUserBalance}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }
