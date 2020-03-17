@@ -154,6 +154,16 @@ export function getEtherscanLink(networkId, data, type) {
     }
 }
 
+export function fromPercentage(value: BigNumber | string): BigNumber {
+    const bn = bnum(value.toString());
+    return bn.div(100);
+}
+
+export function toPercentage(value: BigNumber | string): BigNumber {
+    const bn = bnum(value.toString());
+    return bn.times(100);
+}
+
 export function getQueryParam(windowLocation, name) {
     var q = windowLocation.search.match(
         new RegExp('[?&]' + name + '=([^&#?]*)')

@@ -144,6 +144,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                             <TableCellRight>
                                 <WithdrawAmount>
                                 	<div>
+                                        {userBalanceToDisplay} {token.symbol}
                                 	</div>
                                 </WithdrawAmount>
                             </TableCellRight>
