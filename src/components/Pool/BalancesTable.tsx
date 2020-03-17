@@ -126,6 +126,7 @@ const BalancesTable = observer((props: Props) => {
                         userBalances && userBalances[tokenAddress]
                             ? formatBalanceTruncated(
                                   userBalances[tokenAddress],
+                                  token.decimals,
                                   4,
                                   20
                               )
@@ -148,11 +149,11 @@ const BalancesTable = observer((props: Props) => {
                             )
                         );
 
-                        valueToDisplay = formatBalance(userBalanceValue, 2);
+                        valueToDisplay = formatBalance(userBalanceValue, tokenMetadata.decimals, 2);
                     }
 
                     return (
-                        <TableRow>
+                        <TableRow key={tokenAddress}>
                             <TableCell>
                                 <TokenIcon
                                     src={TokenIconAddress(

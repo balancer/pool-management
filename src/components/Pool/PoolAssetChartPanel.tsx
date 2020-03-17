@@ -85,7 +85,7 @@ const PoolAssetChartPanel = observer((props: Props) => {
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
                     return (
-                        <AssetPercentageContainer>
+                        <AssetPercentageContainer key={token.address}>
                             <AssetDot
                                 dotColor={contractMetadataStore.getTokenColor(
                                     token.address

@@ -93,6 +93,7 @@ const Pool = observer((props: RouteComponentProps) => {
         marketStore.assetPricesLoaded && pool
             ? formatBalanceTruncated(
                   toWei(marketStore.getPoolPortfolioValue(pool)),
+                  18,
                   4,
                   20
               )

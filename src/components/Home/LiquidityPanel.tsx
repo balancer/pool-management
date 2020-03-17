@@ -150,7 +150,7 @@ const LiquidityPanel = observer((props: Props) => {
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
                     return (
-                        <AssetPercentageContainer>
+                        <AssetPercentageContainer key={index}>
                             <AssetDot
                                 dotColor={contractMetadataStore.getTokenColor(
                                     token.address
@@ -183,6 +183,7 @@ const LiquidityPanel = observer((props: Props) => {
                         );
                         liquidityText = formatBalanceTruncated(
                             toWei(poolLiquidity),
+                            18,
                             4,
                             20
                         );
@@ -193,18 +194,19 @@ const LiquidityPanel = observer((props: Props) => {
                                 account
                             );
 
-                            if (userLiquidity) {
-                                userLiquidityText = formatBalanceTruncated(
-                                    toWei(userLiquidity),
-                                    4,
-                                    20
-                                );
-                            }
+                          if (userLiquidity) {
+                            userLiquidityText = formatBalanceTruncated(
+                                toWei(userLiquidity),
+                                18,
+                                4,
+                                20
+                            );
+                          }
                         }
                     }
 
                     return (
-                        <PoolRow>
+                        <PoolRow key={pool.address}>
                             <TableCell width="15%">
                                 <Identicon address={pool.address} />
                                 <IdenticonText>
