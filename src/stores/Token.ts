@@ -14,6 +14,7 @@ import {
 } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
+import {ActionResponse} from "./actions/actions";
 
 export interface ContractMetadata {
     bFactory: string;
@@ -284,9 +285,9 @@ export default class TokenStore {
         return undefined;
     }
 
-    @action approveMax = async (web3React, tokenAddress, spender) => {
+    @action approveMax = async (web3React, tokenAddress, spender): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
-        await providerStore.sendTransaction(
+        return await providerStore.sendTransaction(
             web3React,
             ContractTypes.TestToken,
             tokenAddress,
@@ -295,9 +296,9 @@ export default class TokenStore {
         );
     };
 
-    @action revokeApproval = async (web3React, tokenAddress, spender) => {
+    @action revokeApproval = async (web3React, tokenAddress, spender): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
-        await providerStore.sendTransaction(
+        return await providerStore.sendTransaction(
             web3React,
             ContractTypes.TestToken,
             tokenAddress,

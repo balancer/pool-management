@@ -323,13 +323,23 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
 
         if (checked) {
-            await tokenStore.approveMax(web3React, tokenAddress, pool.address);
+            const response = await tokenStore.approveMax(web3React, tokenAddress, pool.address);
+
+            // Revert change on metamask error
+            if (response.error) {
+                addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, !checked);
+            }
         } else {
-            await tokenStore.revokeApproval(
+            const response = await tokenStore.revokeApproval(
                 web3React,
                 tokenAddress,
                 pool.address
             );
+
+            // Revert change on metamask error
+            if (response.error) {
+                addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, !checked);
+            }
         }
     };
 
