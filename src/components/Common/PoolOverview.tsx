@@ -107,7 +107,7 @@ export const getUserShareText = (
     if (account && userPoolTokens && totalPoolTokens) {
         const userShare = userPoolTokens.div(totalPoolTokens);
         if (userShare) {
-            shareText = formatPercentage(userShare, 1);
+            shareText = formatPercentage(userShare, 2);
         } else {
             shareText = '0%';
         }

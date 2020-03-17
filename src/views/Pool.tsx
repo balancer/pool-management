@@ -81,11 +81,7 @@ const Pool = observer((props: RouteComponentProps) => {
 
     if (account) {
         userPoolTokens = tokenStore.getBalance(poolAddress, account);
-        console.log('userPoolTokens', userPoolTokens ? userPoolTokens.toString(): 'not found')
     }
-
-    console.log('totalPoolTokens', totalPoolTokens ? totalPoolTokens.toString() : 'not found');
-    console.log('userPoolTokens', userPoolTokens ? userPoolTokens.toString(): 'not found')
 
     if (account) {
         userPoolTokens = tokenStore.getBalance(poolAddress, account);

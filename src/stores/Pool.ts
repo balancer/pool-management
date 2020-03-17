@@ -132,12 +132,10 @@ export default class PoolStore {
         return undefined;
     }
 
-    calcExitMinAmountOut() {
-
-    }
-
-    calcPoolTokensByRatio(ratio: BigNumber): BigNumber {
-        return scale(ratio.times(90), POOL_TOKENS_DECIMALS).integerValue(BigNumber.ROUND_DOWN);
+    calcPoolTokensByRatio(pool: Pool, ratio: BigNumber): BigNumber {
+        const {tokenStore} = this.rootStore;
+        const totalPoolTokens = tokenStore.getTotalSupply(pool.address);
+        return ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN);
     }
 
     getPoolTokens(poolAddress: string): string[] {
@@ -154,7 +152,7 @@ export default class PoolStore {
         maxAmountsIn: BigNumber[]
     ) => {
         const { providerStore } = this.rootStore;
-        const { chainId, account } = web3React;
+        const { account } = web3React;
 
         const contract = providerStore.getContract(
             web3React,

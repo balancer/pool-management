@@ -1,7 +1,7 @@
 import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
 import {BigNumberMap, Pool} from '../types';
-import {bnum, hasMaxApproval} from '../utils/helpers';
+import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
 import {validateTokenValue, ValidationStatus} from './actions/validators';
 import {BigNumber} from 'utils/bignumber';
 
@@ -28,13 +28,14 @@ interface Checkbox {
 
 export enum ModalMode {
     ADD_LIQUIDITY,
-    REMOVE_LIQUIDITY
+    REMOVE_LIQUIDITY,
 }
 
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;
     @observable inputs: InputMap;
+    @observable joinInputs: BigNumberMap;
     @observable activeInputKey: string | undefined;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
@@ -47,9 +48,15 @@ export default class AddLiquidityFormStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.resetApprovalCheckboxStatusMap();
+        this.resetJoinInputs();
     }
 
-    @action openModal(poolAddress, account, tokenAddresses: string[], modalMode: ModalMode) {
+    @action openModal(
+        poolAddress,
+        account,
+        tokenAddresses: string[],
+        modalMode: ModalMode
+    ) {
         this.modalOpen = true;
         this.modalMode = modalMode;
         this.resetApprovalCheckboxStatusMap();
@@ -69,6 +76,10 @@ export default class AddLiquidityFormStore {
         this.inputs = {} as InputMap;
         this.activeInputKey = undefined;
         this.checkboxesLoaded = false;
+    }
+
+    @action resetJoinInputs() {
+        this.joinInputs = {} as BigNumberMap;
     }
 
     isActivePool(poolAddress: string) {
@@ -140,6 +151,14 @@ export default class AddLiquidityFormStore {
         this.inputs[tokenAddress].touched = touched;
     }
 
+    hasValidInput(): boolean {
+        if (this.activeInputKey) {
+            return this.inputs[this.activeInputKey].validation === ValidationStatus.VALID || this.inputs[this.activeInputKey].validation === ValidationStatus.INSUFFICIENT_BALANCE;
+        } else {
+            return false;
+        }
+    }
+
     getCheckbox(tokenAddress: string): Checkbox {
         if (!this.checkboxes[tokenAddress]) {
             throw new Error(
@@ -192,18 +211,19 @@ export default class AddLiquidityFormStore {
     }
 
     setJoinRatio(ratio: BigNumber) {
-        console.log('joinRatio', ratio.toString()
-        );
+        console.log('joinRatio', ratio.toString());
         this.joinRatio = ratio;
     }
 
     @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
-        pool.tokens.forEach(token => {
-            let hasInputExceedUserBalance = false;
+        let hasInputExceedUserBalance = false;
+        this.resetJoinInputs();
 
-            const hasAccount = !!account;
+        pool.tokens.forEach(token => {
             const isTokenActive = token.address === this.activeInputKey;
-            const isActiveInputValid = this.inputs[this.activeInputKey].validation === ValidationStatus.VALID;
+            const isActiveInputValid =
+                this.inputs[this.activeInputKey].validation ===
+                ValidationStatus.VALID;
 
             /* Only calculate other token balances if
                 2. This token is not for the active input field
@@ -219,13 +239,15 @@ export default class AddLiquidityFormStore {
                     requiredBalance
                 );
 
-                this.inputs[
-                    token.address
-                ].validation = validationStatus;
+                this.inputs[token.address].validation = validationStatus;
 
-                if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+                if (
+                    validationStatus === ValidationStatus.INSUFFICIENT_BALANCE
+                ) {
                     hasInputExceedUserBalance = true;
                 }
+
+                this.setJoinInputParam(token.address, requiredBalance);
             }
 
             // Reset other input fields on invalid active input
@@ -235,16 +257,24 @@ export default class AddLiquidityFormStore {
 
             // Check for insufficent balance on active valid input if user logged in
             else if (isTokenActive && isActiveInputValid) {
-                const {validation, value} = this.inputs[token.address];
+                const { validation, value } = this.inputs[token.address];
 
                 if (validation === ValidationStatus.VALID && account) {
+                    const requiredBalance = token.balance.times(ratio);
+
                     this.inputs[
                         token.address
-                        ].validation = this.getInputValidationStatus(
+                    ].validation = this.getInputValidationStatus(
                         token.address,
                         account,
                         bnum(value)
                     );
+
+                    const valueForJoin = requiredBalance.gt(bnum(value))
+                        ? requiredBalance
+                        : bnum(value);
+
+                    this.setJoinInputParam(token.address, valueForJoin);
                 }
             }
 
@@ -252,11 +282,26 @@ export default class AddLiquidityFormStore {
         });
     }
 
+    setJoinInputParam(tokenAddress: string, amount: BigNumber) {
+        this.joinInputs[tokenAddress] = amount;
+    }
+
     formatInputsForJoin(): string[] {
-        const {tokenStore} = this.rootStore;
-        return Object.keys(this.inputs).map(key => {
+        const { tokenStore } = this.rootStore;
+        return Object.keys(this.joinInputs).map(key => {
             const tokenAddress = key;
-            return tokenStore.denormalizeBalance(bnum(this.inputs[tokenAddress].value), tokenAddress).integerValue(BigNumber.ROUND_DOWN).toString();
+            return tokenStore
+                .denormalizeBalance(
+                    bnum(this.joinInputs[tokenAddress]),
+                    tokenAddress
+                ).integerValue(BigNumber.ROUND_DOWN)
+                .toString();
+        });
+    }
+
+    maxUintInputAmounts(): string[] {
+        return Object.keys(this.joinInputs).map(key => {
+            return MAX_UINT.toString();
         });
     }
 
