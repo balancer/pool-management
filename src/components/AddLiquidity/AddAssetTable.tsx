@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import { formatBalanceTruncated, fromWei } from '../../utils/helpers';
+import {bnum, formatBalanceTruncated, fromWei} from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -139,67 +139,6 @@ const ToggleSlider = styled.span`
     }
 `;
 
-const ToggleCheck = styled.img`
-    position: absolute;
-    content: '';
-    height: 18px;
-    width: 18px;
-    left: 21px;
-    bottom: 3px;
-    font-size: 12px;
-    color: blue;
-    background-color: none;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-    border-radius: 50%;
-`;
-
-const CheckBoxWrapper = styled.div`
-    position: relative;
-`;
-
-const CheckBoxLabel = styled.label`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 42px;
-    height: 26px;
-    border-radius: 15px;
-    background: #bebebe;
-    cursor: pointer;
-    &::after {
-        content: '';
-        display: block;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        margin: 3px;
-        background: #ffffff;
-        box-shadow: 1px 3px 3px 1px rgba(0, 0, 0, 0.2);
-        transition: 0.2s;
-    }
-`;
-
-const CheckBox = styled.input`
-    opacity: 0;
-    z-index: 1;
-    border-radius: 15px;
-    width: 42px;
-    height: 26px;
-    &:checked + ${CheckBoxLabel} {
-        background: #4fbe79;
-        &::after {
-            content: '';
-            display: block;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            margin-left: 21px;
-            transition: 0.2s;
-        }
-    }
-`;
-
 const InputWrapper = styled.div`
     height: 30px;
     padding: 0px 17px;
@@ -300,8 +239,22 @@ const AddAssetTable = observer((props: Props) => {
         tokenAddress: string,
         balance: BigNumber
     ) => {
-        const maxValue = fromWei(balance);
+        let maxValue = fromWei(balance);
+        if (bnum(maxValue).eq(0)) {
+            maxValue = '0.00';
+        }
+
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
+        addLiquidityFormStore.setActiveInputKey(tokenAddress);
+      
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            tokenAddress,
+            maxValue
+        );
+
+        addLiquidityFormStore.setJoinRatio(ratio);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
@@ -311,19 +264,30 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
 
         if (checked) {
-            await tokenStore.approveMax(web3React, tokenAddress, pool.address);
+            const response = await tokenStore.approveMax(web3React, tokenAddress, pool.address);
+
+            // Revert change on metamask error
+            if (response.error) {
+                addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, !checked);
+            }
         } else {
-            await tokenStore.revokeApproval(
+            const response = await tokenStore.revokeApproval(
                 web3React,
                 tokenAddress,
                 pool.address
             );
+
+            // Revert change on metamask error
+            if (response.error) {
+                addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, !checked);
+            }
         }
     };
 
     const handleInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
         addLiquidityFormStore.setInputValue(tokenAddress, value);
+        addLiquidityFormStore.setActiveInputKey(tokenAddress);
         const ratio = addLiquidityFormStore.calcRatio(
             pool,
             tokenAddress,
@@ -379,6 +343,7 @@ const AddAssetTable = observer((props: Props) => {
                     if (userBalances && userBalances[tokenAddress]) {
                         normalizedUserBalance = formatBalanceTruncated(
                             userBalances[tokenAddress],
+                            tokenMetadata.decimals,
                             tokenMetadata.precision,
                             20
                         );
@@ -386,19 +351,16 @@ const AddAssetTable = observer((props: Props) => {
                         userBalanceToDisplay = normalizedUserBalance;
                     }
 
-                    const hasError =
-                        input.valid === ValidationStatus.INSUFFICIENT_BALANCE;
+                    let hasError =
+                        input.validation === ValidationStatus.INSUFFICIENT_BALANCE;
 
-                    console.log('hasError', {
-                        userBalances,
-                        userBalance: normalizedUserBalance,
-                        inputAmount: input.value,
-                        inputStatus: input.valid,
-                        hasError: hasError,
-                    });
+                    if (addLiquidityFormStore.activeInputKey === token.address) {
+                        hasError = input.validation !== ValidationStatus.VALID && input.validation !== ValidationStatus.EMPTY;
+                    }
+
 
                     return (
-                        <TableRow>
+                        <TableRow key={token.address}>
                             <TableCell>
                                 <TokenIcon
                                     src={TokenIconAddress(
@@ -412,6 +374,7 @@ const AddAssetTable = observer((props: Props) => {
                                     <ToggleInput
                                         type="checkbox"
                                         checked={visuallyChecked}
+                                        disabled={!account}
                                         onChange={e =>
                                             handleCheckboxChange(
                                                 e,
@@ -448,7 +411,7 @@ const AddAssetTable = observer((props: Props) => {
                                         <input
                                             id={`input-${tokenAddress}`}
                                             name={`input-name-${tokenAddress}`}
-                                            defaultValue={
+                                            value={
                                                 addLiquidityFormStore.getInput(
                                                     tokenAddress
                                                 ).value

@@ -8,6 +8,7 @@ import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import {
+    bnum,
     formatBalanceTruncated,
     formatFee,
     isAddress,
@@ -36,7 +37,7 @@ const InfoPanelWrapper = styled.div`
 const SwapsTable = styled.div``;
 
 const Pool = observer((props: RouteComponentProps) => {
-    console.log(props);
+
     const poolAddress = props.match.params.poolAddress;
     const {
         root: {
@@ -46,6 +47,7 @@ const Pool = observer((props: RouteComponentProps) => {
             appSettingsStore,
             blockchainFetchStore,
             addLiquidityFormStore,
+            tokenStore
         },
     } = useStores();
 
@@ -75,12 +77,25 @@ const Pool = observer((props: RouteComponentProps) => {
         }
     }
 
+    let userPoolTokens = undefined;
+    const totalPoolTokens = tokenStore.getTotalSupply(poolAddress);
+
+    if (account) {
+        userPoolTokens = tokenStore.getBalance(poolAddress, account);
+    }
+
+    if (account) {
+        userPoolTokens = tokenStore.getBalance(poolAddress, account);
+    }
+
     const feeText = pool ? formatFee(pool.swapFee) : '-';
-    const shareText = getUserShareText(pool, account);
+    const shareText = getUserShareText(pool, account, totalPoolTokens, userPoolTokens);
+
     const liquidityText =
         marketStore.assetPricesLoaded && pool
             ? formatBalanceTruncated(
                   toWei(marketStore.getPoolPortfolioValue(pool)),
+                  18,
                   4,
                   20
               )

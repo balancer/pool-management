@@ -10,6 +10,7 @@ import {
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
 import { formatPoolAssetChartData } from '../../utils/chartFormatter';
+import { BigNumber } from '../../utils/bignumber';
 
 const Wrapper = styled.div`
     display: flex;
@@ -95,13 +96,18 @@ interface Props {
     poolAddress: string;
 }
 
-export const getUserShareText = (pool: Pool, account: string): string => {
+export const getUserShareText = (
+    pool: Pool,
+    account: string,
+    totalPoolTokens: BigNumber | undefined,
+    userPoolTokens: BigNumber | undefined
+): string => {
     let shareText = '-';
 
-    if (account && pool) {
-        const userShare = pool.shares.find(share => share.account === account);
+    if (account && userPoolTokens && totalPoolTokens) {
+        const userShare = userPoolTokens.div(totalPoolTokens);
         if (userShare) {
-            shareText = formatPercentage(userShare.balanceProportion, 1);
+            shareText = formatPercentage(userShare, 2);
         } else {
             shareText = '0%';
         }
@@ -113,13 +119,23 @@ export const getUserShareText = (pool: Pool, account: string): string => {
 const PoolOverview = observer((props: Props) => {
     const { poolAddress } = props;
     const {
-        root: { poolStore, providerStore, contractMetadataStore },
+        root: { poolStore, providerStore, contractMetadataStore, tokenStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
     const { account } = providerStore.getActiveWeb3React();
 
+    let userPoolTokens = undefined;
+    const totalPoolTokens = tokenStore.getTotalSupply(poolAddress);
+
+    console.log('totalPoolTokens', totalPoolTokens ? totalPoolTokens.toString() : 'not found');
+
+    if (account) {
+        userPoolTokens = tokenStore.getBalance(poolAddress, account);
+        console.log('userPoolTokens', userPoolTokens ? userPoolTokens.toString(): 'not found')
+    }
+
     const feeText = pool ? formatFee(pool.swapFee) : '-';
-    const shareText = getUserShareText(pool, account);
+    const shareText = getUserShareText(pool, account, totalPoolTokens, userPoolTokens);
 
     const options = {
         maintainAspectRatio: false,
@@ -136,7 +152,7 @@ const PoolOverview = observer((props: Props) => {
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
                     return (
-                        <AssetPercentageContainer>
+                        <AssetPercentageContainer key={token.address}>
                             <AssetDot
                                 dotColor={contractMetadataStore.getTokenColor(
                                     token.address

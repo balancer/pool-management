@@ -53,7 +53,7 @@ const Header = () => {
             <HeaderElement>
                 <Title>
                     <a href="/">
-                        <img src="pebbles-pad.svg" />
+                        <img alt="pebbles" src="pebbles-pad.svg" />
                     </a>
                     <AppName>Balancer</AppName>
                 </Title>

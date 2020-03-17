@@ -8,7 +8,6 @@ import {
 } from 'provider/connectors';
 import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
 import { useStores } from 'contexts/storesContext';
-import { observer } from 'mobx-react';
 import { useInterval } from 'utils/helperHooks';
 
 const MessageWrapper = styled.div`
@@ -22,7 +21,7 @@ const Message = styled.h2`
     color: ${({ theme }) => theme.uniswapPink};
 `;
 
-const Web3ReactManager = observer(({ children }) => {
+const Web3ReactManager = ({ children }) => {
     const {
         root: { providerStore, blockchainFetchStore },
     } = useStores();
@@ -52,8 +51,6 @@ const Web3ReactManager = observer(({ children }) => {
         backup: web3ContextBackup,
         web3React: web3React,
     });
-
-    const favorInjected = injectedActive && isChainIdSupported(injectedChainId);
 
     // try to eagerly connect to an injected provider, if it exists and has granted access already
     const triedEager = useEagerConnect();
@@ -137,7 +134,7 @@ const Web3ReactManager = observer(({ children }) => {
     //Fetch user blockchain data on an interval using current params
     useInterval(
         () => blockchainFetchStore.setFetchLoop(web3React, false),
-        web3React.account ? 1000 : null
+        1000
     );
 
     useEffect(() => {
@@ -188,6 +185,6 @@ const Web3ReactManager = observer(({ children }) => {
         }
     );
     return children;
-});
+};
 
 export default Web3ReactManager;

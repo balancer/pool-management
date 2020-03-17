@@ -2,17 +2,20 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
-import {bnum, scale} from 'utils/helpers';
+import { bnum, scale } from 'utils/helpers';
 import { parseEther } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
 import {
     AsyncStatus,
     TokenBalanceFetch,
+    TotalSupplyFetch,
     UserAllowanceFetch,
 } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
+import {ActionResponse} from "./actions/actions";
+
 
 export interface ContractMetadata {
     bFactory: string;
@@ -29,6 +32,15 @@ export interface TokenBalance {
 export interface UserAllowance {
     allowance: BigNumber;
     lastFetched: number;
+}
+
+export interface TotalSupply {
+    totalSupply: BigNumber;
+    lastFetched: number;
+}
+
+interface TotalSupplyMap {
+    [index: string]: TotalSupply;
 }
 
 interface TokenBalanceMap {
@@ -65,12 +77,14 @@ export default class TokenStore {
     @observable symbols = {};
     @observable balances: TokenBalanceMap;
     @observable allowances: UserAllowanceMap;
+    @observable totalSupplies: TotalSupplyMap;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.balances = {} as TokenBalanceMap;
         this.allowances = {} as UserAllowanceMap;
+        this.totalSupplies = {} as TotalSupplyMap;
     }
 
     getAccountBalances(
@@ -203,6 +217,17 @@ export default class TokenStore {
         this.allowances = chainApprovals;
     }
 
+    private setTotalSupplyProperty(
+        tokenAddress: string,
+        totalSupply: BigNumber,
+        blockFetched: number
+    ): void {
+        this.totalSupplies[tokenAddress] = {
+            totalSupply: totalSupply,
+            lastFetched: blockFetched,
+        };
+    }
+
     private setBalanceProperty(
         tokenAddress: string,
         account: string,
@@ -221,6 +246,14 @@ export default class TokenStore {
         };
 
         this.balances = chainBalances;
+    }
+
+    getTotalSupply(tokenAddress: string): BigNumber | undefined {
+        if (this.totalSupplies[tokenAddress]) {
+            return this.totalSupplies[tokenAddress].totalSupply;
+        } else {
+            return undefined;
+        }
     }
 
     getBalance(tokenAddress: string, account: string): BigNumber | undefined {
@@ -253,9 +286,9 @@ export default class TokenStore {
         return undefined;
     }
 
-    @action approveMax = async (web3React, tokenAddress, spender) => {
+    @action approveMax = async (web3React, tokenAddress, spender): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
-        await providerStore.sendTransaction(
+        return await providerStore.sendTransaction(
             web3React,
             ContractTypes.TestToken,
             tokenAddress,
@@ -264,9 +297,9 @@ export default class TokenStore {
         );
     };
 
-    @action revokeApproval = async (web3React, tokenAddress, spender) => {
+    @action revokeApproval = async (web3React, tokenAddress, spender): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
-        await providerStore.sendTransaction(
+        return await providerStore.sendTransaction(
             web3React,
             ContractTypes.TestToken,
             tokenAddress,
@@ -275,23 +308,63 @@ export default class TokenStore {
         );
     };
 
-    @action fetchWhitelistedTokenBalances = async (
-        web3React,
-        account
+    @action fetchTotalSupplies = async (
+        web3React: Web3ReactContextInterface,
+        tokensToTrack: string[]
     ): Promise<FetchCode> => {
-        const { providerStore, contractMetadataStore } = this.rootStore;
-        const tokensToTrack = contractMetadataStore.getWhitelistedTokenMetadata();
+        const { providerStore } = this.rootStore;
 
         const promises: Promise<any>[] = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
         tokensToTrack.forEach((value, index) => {
             promises.push(
-                this.fetchBalanceOf(
-                    web3React,
-                    value.address,
-                    account,
-                    fetchBlock
-                )
+                this.fetchTotalSupply(web3React, value, fetchBlock)
+            );
+        });
+
+        let allFetchesSuccess = true;
+
+        try {
+            const responses = await Promise.all(promises);
+            responses.forEach(response => {
+                console.log(response);
+                if (response instanceof TotalSupplyFetch) {
+                    const { status, request, payload } = response;
+                    if (status === AsyncStatus.SUCCESS) {
+                        this.setTotalSupplyProperty(
+                            request.tokenAddress,
+                            payload.totalSupply,
+                            payload.lastFetched
+                        );
+                    } else {
+                        allFetchesSuccess = false;
+                    }
+                }
+            });
+
+            if (allFetchesSuccess) {
+                console.debug('[All Fetches Success]');
+            }
+        } catch (e) {
+            console.error('[Fetch] Total Supply Data', { error: e });
+            return FetchCode.FAILURE;
+        }
+        return FetchCode.SUCCESS;
+    };
+
+
+
+    @action fetchTokenBalances = async (
+        web3React: Web3ReactContextInterface,
+        account: string,
+        tokensToTrack: string[]
+    ): Promise<FetchCode> => {
+        const { providerStore } = this.rootStore;
+        const promises: Promise<any>[] = [];
+        const fetchBlock = providerStore.getCurrentBlockNumber();
+        tokensToTrack.forEach((value, index) => {
+            promises.push(
+                this.fetchBalanceOf(web3React, value, account, fetchBlock)
             );
         });
 
@@ -332,11 +405,6 @@ export default class TokenStore {
         fetchBlock: number
     ): Promise<TokenBalanceFetch> => {
         const { providerStore } = this.rootStore;
-        const token = providerStore.getContract(
-            web3React,
-            ContractTypes.TestToken,
-            tokenAddress
-        );
 
         /* Before and after the network operation, check for staleness
             If the fetch is stale, don't do network call
@@ -351,6 +419,11 @@ export default class TokenStore {
                 const { library } = web3React;
                 balance = bnum(await library.getBalance(account));
             } else {
+                const token = providerStore.getContract(
+                    web3React,
+                    ContractTypes.TestToken,
+                    tokenAddress
+                );
                 balance = bnum(await token.balanceOf(account));
             }
 
@@ -409,6 +482,74 @@ export default class TokenStore {
         );
     };
 
+    @action fetchTotalSupply = async (
+        web3React: Web3ReactContextInterface,
+        tokenAddress: string,
+        fetchBlock: number
+    ): Promise<TotalSupplyFetch> => {
+        const { providerStore } = this.rootStore;
+        const token = providerStore.getContract(
+            web3React,
+            ContractTypes.TestToken,
+            tokenAddress
+        );
+
+        const stale =
+            fetchBlock <=
+            this.getTotalSupplyLastFetched(tokenAddress);
+        if (!stale) {
+            try {
+                const totalSupply = bnum(await token.totalSupply());
+
+                const stale =
+                    fetchBlock <=
+                    this.getTotalSupplyLastFetched(tokenAddress);
+                if (!stale) {
+                    console.debug('[Total Supply Fetch]', {
+                        tokenAddress,
+                        totalSupply: totalSupply.toString(),
+                        fetchBlock,
+                    });
+                    return new TotalSupplyFetch({
+                        status: AsyncStatus.SUCCESS,
+                        request: {
+                            tokenAddress,
+                            fetchBlock,
+                        },
+                        payload: {
+                            totalSupply,
+                            lastFetched: fetchBlock,
+                        },
+                    });
+                }
+            } catch (e) {
+                return new TotalSupplyFetch({
+                    status: AsyncStatus.FAILURE,
+                    request: {
+                        tokenAddress,
+                        fetchBlock,
+                    },
+                    payload: undefined,
+                    error: e.message,
+                });
+            }
+        } else {
+            console.debug('[Total Supply Fetch] - Stale', {
+                tokenAddress,
+                fetchBlock,
+            });
+            return new TotalSupplyFetch({
+                status: AsyncStatus.STALE,
+                request: {
+                    tokenAddress,
+                    fetchBlock,
+                },
+                payload: undefined,
+            });
+        }
+
+    };
+
     @action fetchAllowance = async (
         web3React: Web3ReactContextInterface,
         tokenAddress: string,
@@ -417,11 +558,6 @@ export default class TokenStore {
         fetchBlock: number
     ): Promise<UserAllowanceFetch> => {
         const { providerStore } = this.rootStore;
-        const token = providerStore.getContract(
-            web3React,
-            ContractTypes.TestToken,
-            tokenAddress
-        );
 
         // Always max allowance for Ether
         if (tokenAddress === EtherKey) {
@@ -439,6 +575,12 @@ export default class TokenStore {
                 },
             });
         }
+
+        const token = providerStore.getContract(
+            web3React,
+            ContractTypes.TestToken,
+            tokenAddress
+        );
 
         /* Before and after the network operation, check for staleness
             If the fetch is stale, don't do network call
@@ -511,14 +653,20 @@ export default class TokenStore {
 
     // Token Scale -> Wei Scale
     denormalizeBalance(amount: BigNumber, tokenAddress: string): BigNumber {
-        const {contractMetadataStore} = this.rootStore;
-        return scale(bnum(amount), contractMetadataStore.getTokenMetadata(tokenAddress).decimals);
+        const { contractMetadataStore } = this.rootStore;
+        return scale(
+            bnum(amount),
+            contractMetadataStore.getTokenMetadata(tokenAddress).decimals
+        );
     }
 
     // Wei Scale -> Token Scale
     normalizeBalance(amount: BigNumber, tokenAddress: string): BigNumber {
-        const {contractMetadataStore} = this.rootStore;
-        return scale(bnum(amount), -contractMetadataStore.getTokenMetadata(tokenAddress).decimals);
+        const { contractMetadataStore } = this.rootStore;
+        return scale(
+            bnum(amount),
+            -contractMetadataStore.getTokenMetadata(tokenAddress).decimals
+        );
     }
 
     hasMaxApproval = (tokenAddress, account, spender): boolean => {
@@ -542,6 +690,19 @@ export default class TokenStore {
                         return userApprovals[spender].allowance;
                     }
                 }
+            }
+        }
+        return undefined;
+    };
+
+    getTotalSupplyLastFetched = (
+        tokenAddress
+    ): number | undefined => {
+        const totalSupplies = this.totalSupplies;
+        if (totalSupplies) {
+            const totalSupply = totalSupplies[tokenAddress];
+            if (totalSupply) {
+                        return totalSupply.lastFetched;
             }
         }
         return undefined;

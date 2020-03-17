@@ -123,7 +123,7 @@ export enum LiquidityPanelDataSource {
 }
 
 enum Messages {
-    noAccount = 'Connect Wallet to see your liquidity',
+    noAccount = 'Connect wallet to see your liquidity',
     accountButNoPools = 'This account has no public liquidity contributions',
     noPublicPools = 'No public pools found',
 }
@@ -150,7 +150,7 @@ const LiquidityPanel = observer((props: Props) => {
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
                     return (
-                        <AssetPercentageContainer>
+                        <AssetPercentageContainer key={index}>
                             <AssetDot
                                 dotColor={contractMetadataStore.getTokenColor(
                                     token.address
@@ -183,6 +183,7 @@ const LiquidityPanel = observer((props: Props) => {
                         );
                         liquidityText = formatBalanceTruncated(
                             toWei(poolLiquidity),
+                            18,
                             4,
                             20
                         );
@@ -192,16 +193,20 @@ const LiquidityPanel = observer((props: Props) => {
                                 pool.address,
                                 account
                             );
+
+                          if (userLiquidity) {
                             userLiquidityText = formatBalanceTruncated(
                                 toWei(userLiquidity),
+                                18,
                                 4,
                                 20
                             );
+                          }
                         }
                     }
 
                     return (
-                        <PoolRow>
+                        <PoolRow key={pool.address}>
                             <TableCell width="15%">
                                 <Identicon address={pool.address} />
                                 <IdenticonText>

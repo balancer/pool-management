@@ -6,6 +6,10 @@ import AddAssetTable from './AddAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
+import { ContractTypes } from '../../stores/Provider';
+import { ModalMode } from '../../stores/AddLiquidityForm';
+import { bnum, formatPercentage } from '../../utils/helpers';
+import { BigNumber } from '../../utils/bignumber';
 
 const Container = styled.div`
     display: block;
@@ -77,6 +81,7 @@ const Notification = styled.div`
 enum ButtonAction {
     UNLOCK,
     ADD_LIQUIDITY,
+    REMOVE_LIQUIDITY,
 }
 
 interface Props {
@@ -110,10 +115,13 @@ const AddLiquidityModal = observer((props: Props) => {
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
 
-    if (pool) {
-        const tokenAddresses = poolStore.getPoolTokens(pool.address);
+    if (pool && !account) {
+        loading = false;
+    }
+
+    if (pool && account) {
         const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
-            tokenAddresses,
+            poolStore.getPoolTokens(pool.address),
             account,
             pool.address
         );
@@ -132,37 +140,140 @@ const AddLiquidityModal = observer((props: Props) => {
             await tokenStore.approveMax(web3React, token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
+            console.log('pre-contract');
+
+            const { account } = web3React;
+
+            const contract = providerStore.getContract(
+                web3React,
+                ContractTypes.BPool,
+                poolAddress,
+                account
+            );
+
+            const poolTokens = poolStore.calcPoolTokensByRatio(
+                pool,
+                addLiquidityFormStore.joinRatio
+            );
+
+            const inputs = addLiquidityFormStore.formatInputsForJoin();
+            const poolTotal = tokenStore.getTotalSupply(pool.address);
+
+            let tokenAmountsIn: string[] = [];
+            pool.tokens.forEach(token => {
+                const tokenAmountIn = tokenStore
+                    .denormalizeBalance(
+                        addLiquidityFormStore.joinRatio.times(token.balance),
+                        token.address
+                    )
+                    .integerValue(BigNumber.ROUND_DOWN);
+                tokenAmountsIn.push(tokenAmountIn.toString());
+            });
+
+            console.log('joinPool', {
+                joinRatio: addLiquidityFormStore.joinRatio.toString(),
+                poolTokens: poolTokens.toString(),
+                inputs: addLiquidityFormStore.formatInputsForJoin(),
+                poolTotal: tokenStore.getTotalSupply(pool.address).toString(),
+                ratioCalc: poolTokens.div(poolTotal).toString(),
+                tokenAmountsIn,
+            });
+
+            await contract.joinPool(
+                poolTokens.toString(),
+                addLiquidityFormStore.maxUintInputAmounts()
+            );
+
+            // await poolStore.joinPool(web3React, pool.address, addLiquidityFormStore.joinRatio, addLiquidityFormStore.formatInputsForJoin())
         }
     };
 
     const renderNotification = () => {
+        let currentPoolShare = '-';
+        let futurePoolShare = '-';
+
+        const currentTotal = tokenStore.getTotalSupply(pool.address);
+        let existingShare = account
+            ? poolStore.getUserShareProportion(pool.address, account)
+            : bnum(0);
+
+        if (!existingShare) {
+            existingShare = bnum(0);
+        }
+
+        if (pool && currentTotal) {
+            const previewTokens = addLiquidityFormStore.hasValidInput()
+                ? poolStore.calcPoolTokensByRatio(
+                      pool,
+                      addLiquidityFormStore.joinRatio
+                  )
+                : bnum(0);
+
+            const futureTotal = currentTotal.plus(previewTokens);
+            const futureShare = previewTokens
+                .div(futureTotal)
+                .plus(existingShare);
+
+            currentPoolShare = formatPercentage(existingShare, 2);
+            futurePoolShare = formatPercentage(futureShare, 2);
+        }
+
+        if (!account && !addLiquidityFormStore.activeInputKey) {
+            return <Notification>Connect wallet to add liquidity</Notification>;
+        }
+
         if (lockedToken) {
             return (
                 <Notification>
                     Please unlock {lockedToken.symbol} to continue
                 </Notification>
             );
+        }
+        if (addLiquidityFormStore.activeInputKey) {
+            const text = account ? (
+                <React.Fragment>
+                    Your pool share will go from {currentPoolShare} to{' '}
+                    {futurePoolShare}
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    Your pool share would increase by {futurePoolShare}
+                </React.Fragment>
+            );
+            return <Notification>{text}</Notification>;
         } else {
-            return <React.Fragment />;
+            return (
+                <Notification>
+                    Please enter desired liquidity to continue
+                </Notification>
+            );
         }
     };
 
     const renderActionButton = () => {
-        if (lockedToken) {
+        if (
+            lockedToken &&
+            addLiquidityFormStore.modalMode === ModalMode.ADD_LIQUIDITY
+        ) {
             return (
                 <Button
                     buttonText={`Unlock ${lockedToken.symbol}`}
-                    active={true}
+                    active={!!account}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.UNLOCK, lockedToken)
                     }
                 />
             );
-        } else {
+        } else if (
+            addLiquidityFormStore.modalMode === ModalMode.ADD_LIQUIDITY
+        ) {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={!addLiquidityFormStore.hasInputExceedUserBalance}
+                    active={
+                        account &&
+                        !addLiquidityFormStore.hasInputExceedUserBalance
+                    }
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }

@@ -1,7 +1,7 @@
 import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
 import {BigNumberMap, Pool} from '../types';
-import {bnum, hasMaxApproval} from '../utils/helpers';
+import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
 import {validateTokenValue, ValidationStatus} from './actions/validators';
 import {BigNumber} from 'utils/bignumber';
 
@@ -18,7 +18,7 @@ interface InputMap {
 interface Input {
     value: string;
     touched: boolean;
-    valid: ValidationStatus;
+    validation: ValidationStatus;
 }
 
 interface Checkbox {
@@ -26,14 +26,21 @@ interface Checkbox {
     touched: boolean;
 }
 
+export enum ModalMode {
+    ADD_LIQUIDITY,
+    REMOVE_LIQUIDITY,
+}
+
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;
     @observable inputs: InputMap;
+    @observable joinInputs: BigNumberMap;
     @observable activeInputKey: string | undefined;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable modalMode: ModalMode;
     @observable joinRatio: BigNumber;
     @observable hasInputExceedUserBalance: boolean;
     rootStore: RootStore;
@@ -41,10 +48,17 @@ export default class AddLiquidityFormStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.resetApprovalCheckboxStatusMap();
+        this.resetJoinInputs();
     }
 
-    @action openModal(poolAddress, account, tokenAddresses: string[]) {
+    @action openModal(
+        poolAddress,
+        account,
+        tokenAddresses: string[],
+        modalMode: ModalMode
+    ) {
         this.modalOpen = true;
+        this.modalMode = modalMode;
         this.resetApprovalCheckboxStatusMap();
         this.activePool = poolAddress;
         this.activeAccount = account;
@@ -64,6 +78,10 @@ export default class AddLiquidityFormStore {
         this.checkboxesLoaded = false;
     }
 
+    @action resetJoinInputs() {
+        this.joinInputs = {} as BigNumberMap;
+    }
+
     isActivePool(poolAddress: string) {
         return this.activePool === poolAddress;
     }
@@ -75,23 +93,22 @@ export default class AddLiquidityFormStore {
     // Assumes balances are loaded - don't execute without that condition already met
     private getInputValidationStatus(
         tokenAddress: string,
-        account: string,
+        account: string | undefined,
         inputBalance: BigNumber
     ): ValidationStatus {
         const { tokenStore } = this.rootStore;
+
+        // Always valid if no account
+        if (!account) {
+            return ValidationStatus.VALID;
+        }
+
         const accountBalance = tokenStore.normalizeBalance(
             tokenStore.getBalance(tokenAddress, account),
             tokenAddress
         );
 
         let status = validateTokenValue(inputBalance.toString());
-
-        console.log('inputBalance is valid', {
-            tokenAddress,
-            inputBalance: inputBalance.toString(),
-            accountBalance: accountBalance.toString(),
-            result: inputBalance.lte(accountBalance),
-        });
 
         if (status === ValidationStatus.VALID) {
             status = inputBalance.lte(accountBalance)
@@ -102,36 +119,44 @@ export default class AddLiquidityFormStore {
         return status;
     }
 
-    private validateInputAddress(tokenAddress) {
+    private requireValidAddress(tokenAddress) {
         if (!this.inputs[tokenAddress]) {
             throw new Error(`Amount input for ${tokenAddress} not initialized`);
         }
     }
 
     getInput(tokenAddress): Input {
-        this.validateInputAddress(tokenAddress);
+        this.requireValidAddress(tokenAddress);
         return this.inputs[tokenAddress];
     }
 
     @action setInputValue(tokenAddress: string, value: string) {
-        console.log('setInputValue', {
-            tokenAddress,
-            value,
-        });
-        this.validateInputAddress(tokenAddress);
+        this.requireValidAddress(tokenAddress);
         this.inputs[tokenAddress].value = value;
         const status = validateTokenValue(value);
         this.setInputStatus(tokenAddress, status);
     }
 
+    @action setActiveInputKey(tokenAddress: string) {
+        this.activeInputKey = tokenAddress;
+    }
+
     @action setInputStatus(tokenAddress: string, status: ValidationStatus) {
-        this.validateInputAddress(tokenAddress);
-        this.inputs[tokenAddress].valid = status;
+        this.requireValidAddress(tokenAddress);
+        this.inputs[tokenAddress].validation = status;
     }
 
     @action setInputTouched(tokenAddress: string, touched: boolean) {
-        this.validateInputAddress(tokenAddress);
+        this.requireValidAddress(tokenAddress);
         this.inputs[tokenAddress].touched = touched;
+    }
+
+    hasValidInput(): boolean {
+        if (this.activeInputKey) {
+            return this.inputs[this.activeInputKey].validation === ValidationStatus.VALID || this.inputs[this.activeInputKey].validation === ValidationStatus.INSUFFICIENT_BALANCE;
+        } else {
+            return false;
+        }
     }
 
     getCheckbox(tokenAddress: string): Checkbox {
@@ -182,56 +207,102 @@ export default class AddLiquidityFormStore {
         const activeToken = pool.tokens.find(
             token => token.address === activeInputAddress
         );
-        console.log({
-            activeInputAmount: activeInputAmount,
-            activeTokenBalance: activeToken.balance,
-            ratio: bnum(activeInputAmount)
-                .div(activeToken.balance)
-                .toString(),
-        });
+
         return bnum(activeInputAmount).div(activeToken.balance);
     }
 
     setJoinRatio(ratio: BigNumber) {
-        console.log('setJoinRatio', ratio.toString());
+        console.log('joinRatio', ratio.toString());
         this.joinRatio = ratio;
     }
 
-    // TODO: If no account, don't check validation
     @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
+        let hasInputExceedUserBalance = false;
+        this.resetJoinInputs();
+
         pool.tokens.forEach(token => {
-            const requiredBalance = token.balance.times(ratio);
-            this.inputs[token.address].value = requiredBalance.toString();
+            const isTokenActive = token.address === this.activeInputKey;
+            const isActiveInputValid =
+                this.inputs[this.activeInputKey].validation ===
+                ValidationStatus.VALID;
 
-            let hasInputExceedUserBalance = false;
+            /* Only calculate other token balances if
+                2. This token is not for the active input field
+                3. The active input is valid
+             */
+            if (!isTokenActive && isActiveInputValid) {
+                const requiredBalance = token.balance.times(ratio);
+                this.inputs[token.address].value = requiredBalance.toString();
 
-            if (account) {
                 const validationStatus = this.getInputValidationStatus(
                     token.address,
                     account,
                     requiredBalance
                 );
 
-                this.inputs[
-                    token.address
-                ].valid = validationStatus;
+                this.inputs[token.address].validation = validationStatus;
 
-                if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+                if (
+                    validationStatus === ValidationStatus.INSUFFICIENT_BALANCE
+                ) {
                     hasInputExceedUserBalance = true;
                 }
-            } else {
-                this.inputs[token.address].valid = ValidationStatus.VALID;
+
+                this.setJoinInputParam(token.address, requiredBalance);
+            }
+
+            // Reset other input fields on invalid active input
+            else if (!isTokenActive && !isActiveInputValid) {
+                this.setInputValue(token.address, '');
+            }
+
+            // Check for insufficent balance on active valid input if user logged in
+            else if (isTokenActive && isActiveInputValid) {
+                const { validation, value } = this.inputs[token.address];
+
+                if (validation === ValidationStatus.VALID && account) {
+                    const requiredBalance = token.balance.times(ratio);
+
+                    this.inputs[
+                        token.address
+                    ].validation = this.getInputValidationStatus(
+                        token.address,
+                        account,
+                        bnum(value)
+                    );
+
+                    const valueForJoin = requiredBalance.gt(bnum(value))
+                        ? requiredBalance
+                        : bnum(value);
+
+                    this.setJoinInputParam(token.address, valueForJoin);
+                }
             }
 
             this.hasInputExceedUserBalance = hasInputExceedUserBalance;
         });
     }
 
-    formatInputsForJoin(): BigNumber[] {
-        const {tokenStore} = this.rootStore;
-        return Object.keys(this.inputs).map(key => {
+    setJoinInputParam(tokenAddress: string, amount: BigNumber) {
+        this.joinInputs[tokenAddress] = amount;
+    }
+
+    formatInputsForJoin(): string[] {
+        const { tokenStore } = this.rootStore;
+        return Object.keys(this.joinInputs).map(key => {
             const tokenAddress = key;
-            return tokenStore.denormalizeBalance(bnum(this.inputs[tokenAddress].value), tokenAddress);
+            return tokenStore
+                .denormalizeBalance(
+                    bnum(this.joinInputs[tokenAddress]),
+                    tokenAddress
+                ).integerValue(BigNumber.ROUND_DOWN)
+                .toString();
+        });
+    }
+
+    maxUintInputAmounts(): string[] {
+        return Object.keys(this.joinInputs).map(key => {
+            return MAX_UINT.toString();
         });
     }
 
@@ -285,7 +356,7 @@ export default class AddLiquidityFormStore {
             this.inputs[tokenAddress] = {
                 value: '',
                 touched: false,
-                valid: ValidationStatus.EMPTY,
+                validation: ValidationStatus.EMPTY,
             };
         });
     }

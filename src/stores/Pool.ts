@@ -3,7 +3,7 @@ import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
 import { Pool } from 'types';
 import { BigNumber } from '../utils/bignumber';
-import { bnum } from '../utils/helpers';
+import {bnum, POOL_TOKENS_DECIMALS, printPool, scale} from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
 
@@ -35,6 +35,7 @@ export default class PoolStore {
         const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
+            printPool(pool);
             this.setPool(pool.address, pool, currentBlock);
         });
         this.poolsLoaded = true;
@@ -64,30 +65,38 @@ export default class PoolStore {
         }
     }
 
-    getUserShare(poolAddress: string, account: string): BigNumber | undefined {
-        const userShare = this.getPool(poolAddress).shares.find(
-            share => share.account === account
-        );
+    getUserShare(poolAddress: string, account: string): BigNumber | undefined{
+        const {tokenStore} = this.rootStore;
+        const userShare = tokenStore.getBalance(poolAddress, account);
         if (userShare) {
-            console.log('userShare', userShare);
-            return userShare.balance;
+            return userShare;
         } else {
             return undefined;
         }
     }
 
-    calcUserLiquidity(poolAddress: string, account: string): BigNumber {
+    getUserShareProportion(poolAddress: string, account: string): BigNumber | undefined {
+        const {tokenStore} = this.rootStore;
+        const userShare = tokenStore.getBalance(poolAddress, account);
+        const totalShares = tokenStore.getTotalSupply(poolAddress);
+
+        if (userShare && totalShares) {
+            return userShare.div(totalShares);
+        } else {
+            return undefined;
+        }
+    }
+
+    calcUserLiquidity(poolAddress: string, account: string): BigNumber | undefined {
         const poolValue = this.rootStore.marketStore.getPortfolioValue(
             this.getPoolSymbols(poolAddress),
             this.getPoolBalances(poolAddress)
         );
-        const userShare = this.getUserShare(poolAddress, account);
-        if (userShare) {
-            return userShare
-                .div(this.getPool(poolAddress).totalShares)
-                .times(poolValue);
+        const userProportion = this.getUserShareProportion(poolAddress, account);
+        if (userProportion) {
+            return userProportion.times(poolValue);
         } else {
-            return bnum(0);
+            return undefined;
         }
     }
 
@@ -123,6 +132,12 @@ export default class PoolStore {
         return undefined;
     }
 
+    calcPoolTokensByRatio(pool: Pool, ratio: BigNumber): BigNumber {
+        const {tokenStore} = this.rootStore;
+        const totalPoolTokens = tokenStore.getTotalSupply(pool.address);
+        return ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN);
+    }
+
     getPoolTokens(poolAddress: string): string[] {
         if (!this.pools[poolAddress]) {
             throw new Error(`Pool ${poolAddress} not loaded`);
@@ -137,15 +152,25 @@ export default class PoolStore {
         maxAmountsIn: BigNumber[]
     ) => {
         const { providerStore } = this.rootStore;
-        await providerStore.sendTransaction(
+        const { account } = web3React;
+
+        const contract = providerStore.getContract(
             web3React,
             ContractTypes.BPool,
             poolAddress,
-            'joinPool',
-            [
-                poolAmountOut.toString(),
-                maxAmountsIn.map(amount => amount.toString()),
-            ]
+            account
         );
+
+        console.log(contract);
+        // await providerStore.sendTransaction(
+        //     web3React,
+        //     ContractTypes.BPool,
+        //     poolAddress,
+        //     'joinPool',
+        //     [
+        //         poolAmountOut.toString(),
+        //         maxAmountsIn.map(amount => amount.toString()),
+        //     ]
+        // );
     };
 }

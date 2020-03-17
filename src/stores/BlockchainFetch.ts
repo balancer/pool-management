@@ -21,6 +21,39 @@ export default class BlockchainFetchStore {
         }
     }
 
+    @action fetchPoolTotalSupplies(web3React) {
+        const {
+            tokenStore,
+            poolStore
+        } = this.rootStore;
+        const poolAddresses = poolStore.getPublicPools().map(pool => pool.address);
+        console.log(poolAddresses);
+        tokenStore.fetchTotalSupplies(web3React, poolAddresses);
+    }
+
+    @action fetchPoolUserBalances(web3React) {
+        const {
+            tokenStore,
+            poolStore
+        } = this.rootStore;
+        const { account } = web3React;
+        const poolAddresses = poolStore.getPublicPools().map(pool => pool.address);
+        tokenStore.fetchTokenBalances(web3React, account, poolAddresses);
+    }
+
+    @action fetchActivePoolSupply(web3React) {
+        const {
+            appSettingsStore,
+            tokenStore,
+        } = this.rootStore;
+        const poolAddress = appSettingsStore.getActivePoolAddress();
+        tokenStore.fetchTotalSupplies(web3React, [poolAddress]).then(result => {
+            console.log('fetchActivePoolSupply');
+            console.log(result);
+            console.log('totalSupply', tokenStore.getTotalSupply(poolAddress))
+        });
+    }
+
     @action async fetchActivePoolAllowances(web3React) {
         const { account } = web3React;
         const { appSettingsStore, poolStore, tokenStore } = this.rootStore;
@@ -34,13 +67,27 @@ export default class BlockchainFetchStore {
         );
     }
 
+    @action async fetchActivePoolUserBalance(web3React) {
+        const { account } = web3React;
+        const { appSettingsStore, tokenStore } = this.rootStore;
+        const poolAddress = appSettingsStore.getActivePoolAddress();
+        await tokenStore.fetchTokenBalances(
+            web3React,
+            account,
+            [poolAddress],
+                ).then(result => {
+                    console.log('fetchActivePoolUserBalance');
+                    console.log(result);
+                    console.log('balanceOf', tokenStore.getBalance(poolAddress, account))
+        });
+    }
+
     @action setFetchLoop(
         web3React: Web3ReactContextInterface,
         forceFetch?: boolean
     ) {
         if (
             web3React.active &&
-            web3React.account &&
             web3React.chainId === supportedChainId
         ) {
             const { library, account, chainId } = web3React;
@@ -50,6 +97,7 @@ export default class BlockchainFetchStore {
                 marketStore,
                 contractMetadataStore,
                 appSettingsStore,
+                tokenStore
             } = this.rootStore;
 
             library
@@ -78,7 +126,19 @@ export default class BlockchainFetchStore {
                         providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        poolStore.fetchPublicPools();
+                        poolStore.fetchPublicPools().then(() => {
+                            // Fetch user pool shares after pools loaded
+                            this.fetchPoolTotalSupplies(web3React);
+
+                            if (account) {
+                                this.fetchPoolUserBalances(web3React);
+                            }
+
+                            if (account && appSettingsStore.hasActivePool()) {
+                                this.fetchActivePoolAllowances(web3React);
+                            }
+                        });
+
                         if (marketStore.assetsLoaded) {
                             marketStore.fetchAssetPrices(
                                 contractMetadataStore.tokenSymbols
@@ -91,10 +151,6 @@ export default class BlockchainFetchStore {
                                 web3React,
                                 account
                             );
-
-                            if (appSettingsStore.hasActivePool()) {
-                                this.fetchActivePoolAllowances(web3React);
-                            }
                         }
                     }
                 })

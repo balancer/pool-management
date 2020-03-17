@@ -4,10 +4,13 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
+import {Pool} from "../types";
+
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
 export const MAX_UINT = utils.bigNumberify(ethers.constants.MaxUint256);
+export const POOL_TOKENS_DECIMALS = 18;
 
 export function toChecksum(address) {
     return utils.getAddress(address);
@@ -255,10 +258,11 @@ export const formatTokenValue = (
 
 export const formatBalanceTruncated = (
     balance: BigNumber,
+    decimals: number,
     precision: number,
     truncateAt: number
 ): string => {
-    const result = formatBalance(balance, precision);
+    const result = formatBalance(balance, decimals, precision);
     if (result.length > truncateAt) {
         return result.substring(0, 20) + '...';
     } else {
@@ -268,13 +272,15 @@ export const formatBalanceTruncated = (
 
 export const formatBalance = (
     balance: BigNumber,
+    decimals: number,
     precision: number
 ): string => {
     if (balance.eq(0)) {
         return bnum(0).toFixed(2);
     }
 
-    const result = bnum(fromWei(balance))
+
+    const result = scale(balance, -decimals)
         .decimalPlaces(precision, BigNumber.ROUND_DOWN)
         .toString();
 
@@ -322,4 +328,9 @@ export const getGasPriceFromETHGasStation = () => {
             }
         );
     });
+};
+
+
+export const printPool = (pool: Pool) => {
+    // console.log(pool);
 };

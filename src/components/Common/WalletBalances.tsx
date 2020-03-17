@@ -6,12 +6,6 @@ import { useStores } from '../../contexts/storesContext';
 
 const Wrapper = styled.div``;
 
-const WalletBalanceContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-`;
-
 const BalanceHeader = styled.div`
     font-family: Roboto;
     font-style: normal;
@@ -98,6 +92,7 @@ const WalletBalances = observer(() => {
                         if (userBalance) {
                             balanceToDisplay = formatBalanceTruncated(
                                 userBalance,
+                                token.decimals,
                                 4,
                                 20
                             );
@@ -112,7 +107,6 @@ const WalletBalances = observer(() => {
                         );
                     }
 
-                    return <React.Fragment></React.Fragment>;
                 })}
             </React.Fragment>
         );
@@ -124,7 +118,7 @@ const WalletBalances = observer(() => {
         tokenBalance: string
     ) => {
         return (
-            <BalanceElement>
+            <BalanceElement key={tokenName}>
                 <IconAndNameContainer>
                     <TokenIcon src={TokenIconAddress(iconUrl)} />
                     <TokenName>{tokenName}</TokenName>
@@ -140,7 +134,7 @@ const WalletBalances = observer(() => {
             {account ? (
                 renderWalletBalances()
             ) : (
-                <BalanceElement>Connect Wallet to see balances</BalanceElement>
+                <BalanceElement>Connect wallet to see balances</BalanceElement>
             )}
         </Wrapper>
     );
