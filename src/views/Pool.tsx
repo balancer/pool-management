@@ -5,6 +5,7 @@ import AddRemovePanel from '../components/Pool/AddRemovePanel';
 import InfoPanel from '../components/Pool/InfoPanel';
 import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
+import RemoveLiquidityModal from '../components/RemoveLiquidity/RemoveLiquidityModal';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import {
@@ -46,6 +47,7 @@ const Pool = observer((props: RouteComponentProps) => {
             appSettingsStore,
             blockchainFetchStore,
             addLiquidityFormStore,
+            removeLiquidityFormStore,
             tokenStore
         },
     } = useStores();
@@ -102,6 +104,11 @@ const Pool = observer((props: RouteComponentProps) => {
         <PoolViewWrapper>
             {addLiquidityFormStore.modalOpen ? (
                 <AddLiquidityModal poolAddress={poolAddress} />
+            ) : (
+                <div />
+            )}
+            {removeLiquidityFormStore.modalOpen ? (
+                <RemoveLiquidityModal poolAddress={poolAddress} />
             ) : (
                 <div />
             )}
