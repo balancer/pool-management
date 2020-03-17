@@ -246,11 +246,13 @@ const AddAssetTable = observer((props: Props) => {
 
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
+      
         const ratio = addLiquidityFormStore.calcRatio(
             pool,
             tokenAddress,
             maxValue
         );
+
         addLiquidityFormStore.setJoinRatio(ratio);
         addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
