@@ -1,11 +1,7 @@
 import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
 import {BigNumberMap, Pool} from '../types';
-<<<<<<< HEAD
 import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
-=======
-import {bnum, hasMaxApproval} from '../utils/helpers';
->>>>>>> master
 import {validateTokenValue, ValidationStatus} from './actions/validators';
 import {BigNumber} from 'utils/bignumber';
 

@@ -2,12 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
-<<<<<<< HEAD
 import {useStores} from '../../contexts/storesContext';
 import {ModalMode} from "../../stores/AddLiquidityForm";
-=======
-import { useStores } from '../../contexts/storesContext';
->>>>>>> master
 
 const Wrapper = styled.div`
     display: flex;

@@ -8,10 +8,6 @@ import {
 } from 'provider/connectors';
 import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
 import { useStores } from 'contexts/storesContext';
-<<<<<<< HEAD
-=======
-import { observer } from 'mobx-react';
->>>>>>> master
 import { useInterval } from 'utils/helperHooks';
 
 const MessageWrapper = styled.div`
