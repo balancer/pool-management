@@ -77,6 +77,88 @@ const Notification = styled.div`
     margin-bottom: 30px;
 `;
 
+const WithdrawWrapper = styled.div`
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	background: var(--panel-background);
+	margin-bottom: 30px;
+`
+
+const WithdrawAmountWrapper = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 10px;
+`
+
+const InputWrapper = styled.div`
+    height: 30px;
+    padding: 0px 17px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    margin: 0px 5px 0px 10px;
+    input {
+        width: 70px;
+        text-align: right;
+        color: var(--input-text);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        letter-spacing: 0.2px;
+        padding-left: 5px;
+        background-color: var(--panel-background);
+        border: none;
+        box-shadow: inset 0 0 0 1px var(--panel-background),
+            inset 0 0 0 70px var(--panel-background);
+        :-webkit-autofill,
+        :-webkit-autofill:hover,
+        :-webkit-autofill:focus,
+        :-webkit-autofill:active,
+        :-internal-autofill-selected {
+            -webkit-text-fill-color: var(--body-text);
+        }
+        ::placeholder {
+            color: var(--input-placeholder-text);
+        }
+        :focus {
+            outline: none;
+        }
+    }
+    border: ${props =>
+        props.errorBorders ? '1px solid var(--error-color)' : ''};
+    margin-left: ${props => (props.errorBorders ? '-1px' : '0px')}
+    margin-right: ${props => (props.errorBorders ? '-1px' : '0px')}
+    :hover {
+        background-color: var(--input-hover-background);
+        border: ${props =>
+            props.errorBorders
+                ? '1px solid var(--error-color)'
+                : '1px solid var(--input-hover-border);'};
+        margin-left: -1px;
+        margin-right: -1px;
+        input {
+            background-color: var(--input-hover-background);
+            box-shadow: inset 0 0 0 1px var(--input-hover-background),
+                inset 0 0 0 70px var(--input-hover-background);
+            ::placeholder {
+                color: var(--input-hover-placeholder-text);
+                background-color: var(--input-hover-background);
+            }
+        }
+    }
+`;
+
 interface Props {
     poolAddress: string;
 }
@@ -106,14 +188,11 @@ const RemoveLiquidityModal = observer((props: Props) => {
         loading = false;
     }
 
-
     const handleRemoveLiquidity = () => {};
-
 
     const renderNotification = () => {
         let currentPoolShare = '-';
         let futurePoolShare = '-';
-
 
         let existingShare = account
             ? poolStore.getUserShareProportion(pool.address, account)
@@ -159,9 +238,16 @@ const RemoveLiquidityModal = observer((props: Props) => {
             return <Notification>{text}</Notification>;
         } else {
             return (
-                <Notification>
-                    Please enter desired liquidity to continue
-                </Notification>
+                <WithdrawWrapper>
+                    <WithdrawAmountWrapper>
+	                    Withdraw
+	                    <InputWrapper>
+	                    	<input />
+	                    </InputWrapper>
+	                    %
+	                </WithdrawAmountWrapper>
+	                <div>You own X% of pool liquidity</div>
+                </WithdrawWrapper>
             );
         }
     };
