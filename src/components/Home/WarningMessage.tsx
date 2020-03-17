@@ -31,10 +31,13 @@ const WarningIcon = styled.img`
     color: var(--warning);
 `;
 
+<<<<<<< HEAD
 const Link = styled.a`
     color: color: var(--warning);
 `;
 
+=======
+>>>>>>> master
 const WarningMessage = () => {
     return (
         <Wrapper>

@@ -221,6 +221,7 @@ const AddLiquidityModal = observer((props: Props) => {
         if (!account && !addLiquidityFormStore.activeInputKey) {
             return <Notification>Connect wallet to add liquidity</Notification>;
         }
+
         if (lockedToken) {
             return (
                 <Notification>

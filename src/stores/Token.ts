@@ -16,6 +16,7 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
 import {ActionResponse} from "./actions/actions";
 
+
 export interface ContractMetadata {
     bFactory: string;
     proxy: string;
@@ -359,7 +360,6 @@ export default class TokenStore {
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
         const { providerStore } = this.rootStore;
-
         const promises: Promise<any>[] = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
         tokensToTrack.forEach((value, index) => {
