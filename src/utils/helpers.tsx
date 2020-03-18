@@ -250,7 +250,7 @@ export const normalizePriceValues = (
     };
 };
 
-export const formatTokenValue = (
+export const formatNormalizedTokenValue = (
     normalizedBalance: BigNumber,
     displayPrecision: number
 ): string => {

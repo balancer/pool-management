@@ -26,12 +26,15 @@ export default class RemoveLiquidityFormStore {
     setShareToWithdraw(value: string) {
         this.shareToWithdraw.value = value;
         this.shareToWithdraw.validation = validateTokenValue(value);
+        if (bnum(value).gt(100)) {
+            this.shareToWithdraw.validation = ValidationStatus.MAX_VALUE_EXCEEDED;
+        }
     }
 
     shareToWithdrawPercentageCheck(userShare: BigNumber) {
         if (this.shareToWithdraw.validation === ValidationStatus.VALID) {
             const formShare = bnum(this.getShareToWithdraw());
-            if (userShare.gt(formShare)) {
+            if (formShare.gt(userShare)) {
                 this.shareToWithdraw.validation = ValidationStatus.INSUFFICIENT_BALANCE;
             }
         }
@@ -39,6 +42,11 @@ export default class RemoveLiquidityFormStore {
 
     getShareToWithdraw() {
         return this.shareToWithdraw.value;
+    }
+
+    hasInputError() {
+        const status = this.shareToWithdraw.validation;
+        return status !== ValidationStatus.VALID && status !== ValidationStatus.EMPTY
     }
 
     hasValidInput() {

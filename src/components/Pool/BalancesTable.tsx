@@ -9,7 +9,7 @@ import {
     formatBalance,
     formatBalanceTruncated,
     formatPercentage,
-    formatTokenValue,
+    formatNormalizedTokenValue,
     fromWei,
     toWei,
 } from '../../utils/helpers';
@@ -168,7 +168,7 @@ const BalancesTable = observer((props: Props) => {
                                 )}
                             </TableCell>
                             <TableCell>
-                                {formatTokenValue(
+                                {formatNormalizedTokenValue(
                                     token.balance,
                                     tokenMetadata.precision
                                 )}{' '}

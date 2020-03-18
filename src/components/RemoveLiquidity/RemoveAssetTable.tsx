@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import {bnum, formatBalanceTruncated, fromPercentage, fromWei} from '../../utils/helpers';
+import {bnum, formatBalanceTruncated, formatNormalizedTokenValue, fromPercentage, fromWei} from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -107,32 +107,24 @@ const RemoveAssetsTable = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokensList.map(tokenAddress => {
-                    const token = pool.tokens.find(token => {
-                        return token.address === tokenAddress;
-                    });
+                    const token = poolStore.getPoolToken(poolAddress, tokenAddress);
 
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         tokenAddress
                     );
 
-                    let normalizedUserBalance = '0';
-                    let userBalanceToDisplay = '-';
+                    let poolBalanceToDisplay = '-';
                     let withdrawPreviewBalanceText = '-';
 
-                    if (userBalances && userBalances[tokenAddress]) {
-                        normalizedUserBalance = formatBalanceTruncated(
-                            userBalances[tokenAddress],
-                            tokenMetadata.precision,
-                            20
-                        );
+                    const precision = contractMetadataStore.getTokenPrecision(token.address);
+                    const userLiquidityContribution = poolStore.getUserLiquidityContribution(pool.address, token.address, account);
 
-                        userBalanceToDisplay = normalizedUserBalance;
-                    }
+                    poolBalanceToDisplay = formatNormalizedTokenValue(userLiquidityContribution, precision);
 
                     if (removeLiquidityFormStore.hasValidInput()) {
                         const tokensToWithdraw = token.balance.times(fromPercentage(removeLiquidityFormStore.getShareToWithdraw()));
 
-                        withdrawPreviewBalanceText = formatBalanceTruncated(tokensToWithdraw, contractMetadataStore.getTokenMetadata(token.address).precision, 20)
+                        withdrawPreviewBalanceText = formatNormalizedTokenValue(tokensToWithdraw, precision);
                     }
 
                     return (
@@ -146,7 +138,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                                 {token.symbol}
                             </TableCell>
                             <TableCell>
-                                {userBalanceToDisplay} {token.symbol}
+                                {poolBalanceToDisplay} {token.symbol}
                             </TableCell>
                             <TableCellRight width="40%">
                                 <WithdrawAmount>
