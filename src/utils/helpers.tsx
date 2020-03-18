@@ -4,8 +4,7 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
-import {Pool} from "../types";
-
+import { Pool } from '../types';
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
@@ -86,6 +85,15 @@ export function roundValue(value, decimals = 4): string {
 
 export function str(value: any): string {
     return value.toString();
+}
+
+export function tinyAddress(address, digits = 4) {
+    if (!isAddress(address)) {
+        throw Error(`Invalid 'address' parameter '${address}'.`);
+    }
+    return `${address.substring(0, digits + 2)}..${address.substring(
+        42 - digits
+    )}`;
 }
 
 export function shortenAddress(address, digits = 4) {
@@ -253,17 +261,24 @@ export const normalizePriceValues = (
 
 export const formatNormalizedTokenValue = (
     normalizedBalance: BigNumber,
-    displayPrecision: number
+    displayPrecision: number,
+    truncateAt?: number
 ): string => {
     if (normalizedBalance.eq(0)) {
         return bnum(0).toFixed(2);
     }
 
-    const result = bnum(normalizedBalance)
-        .decimalPlaces(displayPrecision)
+    let result = bnum(normalizedBalance)
+        .decimalPlaces(displayPrecision, BigNumber.ROUND_DOWN)
         .toString();
 
-    return padToDecimalPlaces(result, 2);
+    result = padToDecimalPlaces(result, 2);
+
+    if (truncateAt && result.length > truncateAt) {
+        return result.substring(0, 20) + '...';
+    } else {
+        return result;
+    }
 };
 
 export const formatBalanceTruncated = (
@@ -288,7 +303,6 @@ export const formatBalance = (
     if (balance.eq(0)) {
         return bnum(0).toFixed(2);
     }
-
 
     const result = scale(balance, -decimals)
         .decimalPlaces(precision, BigNumber.ROUND_DOWN)
@@ -340,7 +354,6 @@ export const getGasPriceFromETHGasStation = () => {
     });
 };
 
-
 export const printPool = (pool: Pool) => {
-    // console.log(pool);
+    console.log('pool', pool.address, pool);
 };

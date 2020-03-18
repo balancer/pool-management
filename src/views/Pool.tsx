@@ -12,7 +12,9 @@ import {
     bnum,
     formatBalanceTruncated,
     formatFee,
+    formatNormalizedTokenValue,
     isAddress,
+    toChecksum,
     toWei,
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
@@ -38,8 +40,7 @@ const InfoPanelWrapper = styled.div`
 const SwapsTable = styled.div``;
 
 const Pool = observer((props: RouteComponentProps) => {
-
-    const poolAddress = props.match.params.poolAddress;
+    const poolAddress = toChecksum(props.match.params.poolAddress);
     const {
         root: {
             poolStore,
@@ -49,7 +50,7 @@ const Pool = observer((props: RouteComponentProps) => {
             blockchainFetchStore,
             addLiquidityFormStore,
             removeLiquidityFormStore,
-            tokenStore
+            tokenStore,
         },
     } = useStores();
 
@@ -73,7 +74,7 @@ const Pool = observer((props: RouteComponentProps) => {
 
     if (pool) {
         if (appSettingsStore.activePoolAddress !== poolAddress) {
-            console.log(['Set Active Pool Address']);
+            console.debug(['Set Active Pool Address']);
             appSettingsStore.setActivePoolAddress(poolAddress);
             blockchainFetchStore.onActivePoolChanged(web3React);
         }
@@ -91,13 +92,17 @@ const Pool = observer((props: RouteComponentProps) => {
     }
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
-    const shareText = getUserShareText(pool, account, totalPoolTokens, userPoolTokens);
+    const shareText = getUserShareText(
+        pool,
+        account,
+        totalPoolTokens,
+        userPoolTokens
+    );
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? formatBalanceTruncated(
-                  toWei(marketStore.getPoolPortfolioValue(pool)),
-                  18,
+            ? formatNormalizedTokenValue(
+                  marketStore.getPortfolioValue(pool),
                   4,
                   20
               )

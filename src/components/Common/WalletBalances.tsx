@@ -38,7 +38,10 @@ const IconAndNameContainer = styled.div`
     align-items: center;
 `;
 
-export const TokenIconAddress = address => {
+export const TokenIconAddress = (address, isSupported) => {
+    if (!isSupported) {
+        return ``;
+    }
     if (address === 'ether') {
         return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png`;
     } else {
@@ -103,10 +106,10 @@ const WalletBalances = observer(() => {
                         return renderBalance(
                             token.iconAddress,
                             token.symbol,
+                            token.isSupported,
                             balanceToDisplay
                         );
                     }
-
                 })}
             </React.Fragment>
         );
@@ -115,12 +118,13 @@ const WalletBalances = observer(() => {
     const renderBalance = (
         iconUrl: string,
         tokenName: string,
+        isSupported: boolean,
         tokenBalance: string
     ) => {
         return (
             <BalanceElement key={tokenName}>
                 <IconAndNameContainer>
-                    <TokenIcon src={TokenIconAddress(iconUrl)} />
+                    <TokenIcon src={TokenIconAddress(iconUrl, isSupported)} />
                     <TokenName>{tokenName}</TokenName>
                 </IconAndNameContainer>
                 <TokenBalance>{tokenBalance}</TokenBalance>

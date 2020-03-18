@@ -3,7 +3,7 @@ import RootStore from 'stores/Root';
 import { ethers } from 'ethers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
-import {ActionResponse, sendAction} from './actions/actions';
+import { ActionResponse, sendAction } from './actions/actions';
 import { supportedChainId, web3ContextNames } from '../provider/connectors';
 
 export enum ContractTypes {
@@ -75,7 +75,11 @@ export default class ProviderStore {
         web3React: Web3ReactContextInterface,
         account: string
     ) => {
-        const { transactionStore, tokenStore, contractMetadataStore} = this.rootStore;
+        const {
+            transactionStore,
+            tokenStore,
+            contractMetadataStore,
+        } = this.rootStore;
 
         console.debug('[Fetch Start - User Blockchain Data]', {
             account,
@@ -83,7 +87,11 @@ export default class ProviderStore {
 
         transactionStore.checkPendingTransactions(web3React, account);
         tokenStore
-            .fetchTokenBalances(web3React, account, contractMetadataStore.getWhiteListedTokenAddresses())
+            .fetchTokenBalances(
+                web3React,
+                account,
+                contractMetadataStore.getTrackedTokenAddresses()
+            )
             .then(result => {
                 console.debug('[Fetch End - User Blockchain Data]', {
                     account,
@@ -181,7 +189,7 @@ export default class ProviderStore {
             overrides,
         });
 
-        const {error, txResponse} = response;
+        const { error, txResponse } = response;
 
         if (error) {
             console.warn('[Send Transaction Error', error);
@@ -192,6 +200,5 @@ export default class ProviderStore {
         }
 
         return response;
-
     };
 }
