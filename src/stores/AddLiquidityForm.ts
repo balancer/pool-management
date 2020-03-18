@@ -1,9 +1,16 @@
-import {action, observable} from 'mobx';
+import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
-import {BigNumberMap, Checkbox, CheckboxMap, Input, InputMap, Pool} from '../types';
-import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
-import {validateTokenValue, ValidationStatus} from './actions/validators';
-import {BigNumber} from 'utils/bignumber';
+import {
+    BigNumberMap,
+    Checkbox,
+    CheckboxMap,
+    Input,
+    InputMap,
+    Pool,
+} from '../types';
+import { bnum, hasMaxApproval, MAX_UINT } from '../utils/helpers';
+import { validateTokenValue, ValidationStatus } from './actions/validators';
+import { BigNumber } from 'utils/bignumber';
 
 export enum ModalMode {
     ADD_LIQUIDITY,
@@ -132,7 +139,12 @@ export default class AddLiquidityFormStore {
 
     hasValidInput(): boolean {
         if (this.activeInputKey) {
-            return this.inputs[this.activeInputKey].validation === ValidationStatus.VALID || this.inputs[this.activeInputKey].validation === ValidationStatus.INSUFFICIENT_BALANCE;
+            return (
+                this.inputs[this.activeInputKey].validation ===
+                    ValidationStatus.VALID ||
+                this.inputs[this.activeInputKey].validation ===
+                    ValidationStatus.INSUFFICIENT_BALANCE
+            );
         } else {
             return false;
         }
@@ -191,7 +203,6 @@ export default class AddLiquidityFormStore {
     }
 
     setJoinRatio(ratio: BigNumber) {
-        console.log('joinRatio', ratio.toString());
         this.joinRatio = ratio;
     }
 
@@ -274,7 +285,8 @@ export default class AddLiquidityFormStore {
                 .denormalizeBalance(
                     bnum(this.joinInputs[tokenAddress]),
                     tokenAddress
-                ).integerValue(BigNumber.ROUND_DOWN)
+                )
+                .integerValue(BigNumber.ROUND_DOWN)
                 .toString();
         });
     }

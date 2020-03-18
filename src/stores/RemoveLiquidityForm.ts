@@ -1,9 +1,9 @@
-import {action, observable} from 'mobx';
+import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
-import {Input} from '../types';
-import {validateTokenValue, ValidationStatus} from './actions/validators';
-import {BigNumber} from "../utils/bignumber";
-import {bnum} from "../utils/helpers";
+import { Input } from '../types';
+import { validateTokenValue, ValidationStatus } from './actions/validators';
+import { BigNumber } from '../utils/bignumber';
+import { bnum } from '../utils/helpers';
 
 export default class RemoveLiquidityFormStore {
     @observable activePool: string;
@@ -27,7 +27,8 @@ export default class RemoveLiquidityFormStore {
         this.shareToWithdraw.value = value;
         this.shareToWithdraw.validation = validateTokenValue(value);
         if (bnum(value).gt(100)) {
-            this.shareToWithdraw.validation = ValidationStatus.MAX_VALUE_EXCEEDED;
+            this.shareToWithdraw.validation =
+                ValidationStatus.MAX_VALUE_EXCEEDED;
         }
     }
 
@@ -35,7 +36,8 @@ export default class RemoveLiquidityFormStore {
         if (this.shareToWithdraw.validation === ValidationStatus.VALID) {
             const formShare = bnum(this.getShareToWithdraw());
             if (formShare.gt(userShare)) {
-                this.shareToWithdraw.validation = ValidationStatus.INSUFFICIENT_BALANCE;
+                this.shareToWithdraw.validation =
+                    ValidationStatus.INSUFFICIENT_BALANCE;
             }
         }
     }
@@ -46,11 +48,18 @@ export default class RemoveLiquidityFormStore {
 
     hasInputError() {
         const status = this.shareToWithdraw.validation;
-        return status !== ValidationStatus.VALID && status !== ValidationStatus.EMPTY
+        return (
+            status !== ValidationStatus.VALID &&
+            status !== ValidationStatus.EMPTY
+        );
     }
 
     hasValidInput() {
-        return this.shareToWithdraw.validation === ValidationStatus.VALID || this.shareToWithdraw.validation === ValidationStatus.INSUFFICIENT_BALANCE;
+        return (
+            this.shareToWithdraw.validation === ValidationStatus.VALID ||
+            this.shareToWithdraw.validation ===
+                ValidationStatus.INSUFFICIENT_BALANCE
+        );
     }
 
     @action closeModal() {
@@ -62,8 +71,8 @@ export default class RemoveLiquidityFormStore {
         this.shareToWithdraw = {
             value: '',
             touched: false,
-            validation: ValidationStatus.EMPTY
-        }
+            validation: ValidationStatus.EMPTY,
+        };
     }
 
     isActivePool(poolAddress: string) {

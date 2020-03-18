@@ -84,6 +84,9 @@ const PoolAssetChartPanel = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
+                    const tokenMetadata = contractMetadataStore.getTokenMetadata(
+                        token.address
+                    );
                     return (
                         <AssetPercentageContainer key={token.address}>
                             <AssetDot
@@ -96,7 +99,7 @@ const PoolAssetChartPanel = observer((props: Props) => {
                                     token.denormWeightProportion,
                                     2
                                 )}{' '}
-                                {token.symbol}
+                                {tokenMetadata.symbol}
                             </AssetPercentageText>
                         </AssetPercentageContainer>
                     );

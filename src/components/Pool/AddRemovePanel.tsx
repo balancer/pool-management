@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
-import {useStores} from '../../contexts/storesContext';
-import {ModalMode} from "../../stores/AddLiquidityForm";
+import { useStores } from '../../contexts/storesContext';
+import { ModalMode } from '../../stores/AddLiquidityForm';
 
 const Wrapper = styled.div`
     display: flex;
@@ -65,7 +65,12 @@ interface Props {
 const AddRemovePanel = (props: Props) => {
     const { poolAddress } = props;
     const {
-        root: { providerStore, addLiquidityFormStore, removeLiquidityFormStore, poolStore },
+        root: {
+            providerStore,
+            addLiquidityFormStore,
+            removeLiquidityFormStore,
+            poolStore,
+        },
     } = useStores();
     const { account } = providerStore.getActiveWeb3React();
 
@@ -73,7 +78,10 @@ const AddRemovePanel = (props: Props) => {
     let userProportion = undefined;
 
     if (pool) {
-        userProportion = poolStore.getUserShareProportion(pool.address, account);
+        userProportion = poolStore.getUserShareProportion(
+            pool.address,
+            account
+        );
     }
 
     return (
@@ -83,9 +91,7 @@ const AddRemovePanel = (props: Props) => {
                     <Identicon address={poolAddress} />
                     <IdenticonText>{poolAddress}</IdenticonText>
                 </AddressContainer>
-                <InformationContainer>
-
-                </InformationContainer>
+                <InformationContainer></InformationContainer>
             </LeftColumn>
             <RightColumn>
                 <Button
@@ -105,7 +111,12 @@ const AddRemovePanel = (props: Props) => {
                 <Spacer />
                 <Button
                     buttonText={'Remove Liquidity'}
-                    active={!!pool && account && userProportion && userProportion.gt(0)}
+                    active={
+                        !!pool &&
+                        account &&
+                        userProportion &&
+                        userProportion.gt(0)
+                    }
                     onClick={() => {
                         if (pool) {
                             removeLiquidityFormStore.openModal(

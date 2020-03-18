@@ -84,7 +84,7 @@ export default class ContractMetadataStore {
                 iconAddress,
                 precision,
                 chartColor,
-                isSupported: true
+                isSupported: true,
             });
         });
 
@@ -125,11 +125,21 @@ export default class ContractMetadataStore {
     }
 
     getWhiteListedTokenAddresses(): string[] {
-        return this.contractMetadata.tokens.map(token => token.address);
+        const whitelisted = this.getWhitelistedTokenMetadata();
+        return whitelisted.map(token => token.address);
+    }
+
+    getTrackedTokenAddresses(): string[] {
+        const tokens = this.getTrackedTokenMetadata();
+        return tokens.map(token => token.address);
+    }
+
+    getTrackedTokenMetadata(): TokenMetadata[] {
+        return this.contractMetadata.tokens;
     }
 
     getWhitelistedTokenMetadata(): TokenMetadata[] {
-        return this.contractMetadata.tokens;
+        return this.contractMetadata.tokens.filter(token => token.isSupported);
     }
 
     getTokenPrecision(address: string): number {
@@ -162,9 +172,8 @@ export default class ContractMetadataStore {
 
     @action addTokenMetadata(address: string, metadata: TokenMetadata) {
         const existingIndex = this.getTokenMetadataIndex(address);
-        console.log(existingIndex);
         if (existingIndex) {
-            throw new Error ('Attempting to add metadata for existing token');
+            throw new Error('Attempting to add metadata for existing token');
         }
         this.contractMetadata.tokens.push(metadata);
     }

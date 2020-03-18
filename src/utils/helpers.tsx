@@ -4,8 +4,7 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { SUPPORTED_THEMES } from '../theme';
-import {Pool} from "../types";
-
+import { Pool } from '../types';
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
@@ -86,6 +85,15 @@ export function roundValue(value, decimals = 4): string {
 
 export function str(value: any): string {
     return value.toString();
+}
+
+export function tinyAddress(address, digits = 4) {
+    if (!isAddress(address)) {
+        throw Error(`Invalid 'address' parameter '${address}'.`);
+    }
+    return `${address.substring(0, digits + 2)}..${address.substring(
+        42 - digits
+    )}`;
 }
 
 export function shortenAddress(address, digits = 4) {
@@ -296,7 +304,6 @@ export const formatBalance = (
         return bnum(0).toFixed(2);
     }
 
-
     const result = scale(balance, -decimals)
         .decimalPlaces(precision, BigNumber.ROUND_DOWN)
         .toString();
@@ -346,7 +353,6 @@ export const getGasPriceFromETHGasStation = () => {
         );
     });
 };
-
 
 export const printPool = (pool: Pool) => {
     console.log('pool', pool.address, pool);

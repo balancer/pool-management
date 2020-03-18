@@ -114,7 +114,10 @@ const BalancesTable = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokensList.map(tokenAddress => {
-                    const token = poolStore.getPoolToken(pool.address, tokenAddress);
+                    const token = poolStore.getPoolToken(
+                        pool.address,
+                        tokenAddress
+                    );
 
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         tokenAddress
@@ -136,26 +139,37 @@ const BalancesTable = observer((props: Props) => {
                         userBalances[tokenAddress] &&
                         marketStore.assetPricesLoaded
                     ) {
-                        // TODO: Scale this using token decimals
-                        const userBalanceValue =
-                            marketStore.getValue(
+                        if (tokenMetadata.isSupported) {
+                            // TODO: Scale this using token decimals
+                            const userBalanceValue = marketStore.getValue(
                                 tokenMetadata.symbol,
-                                tokenStore.normalizeBalance(userBalances[tokenAddress], tokenAddress)
+                                tokenStore.normalizeBalance(
+                                    userBalances[tokenAddress],
+                                    tokenAddress
+                                )
+                            );
 
-                        );
-
-                        valueToDisplay = formatNormalizedTokenValue(userBalanceValue, 2);
+                            valueToDisplay = formatNormalizedTokenValue(
+                                userBalanceValue,
+                                2
+                            );
+                        } else {
+                            valueToDisplay = '(Untracked)';
+                        }
                     }
+
+                    const isSupported = tokenMetadata.isSupported;
 
                     return (
                         <TableRow key={tokenAddress}>
                             <TableCell>
                                 <TokenIcon
                                     src={TokenIconAddress(
-                                        tokenMetadata.iconAddress
+                                        tokenMetadata.iconAddress,
+                                        tokenMetadata.isSupported
                                     )}
                                 />
-                                {token.symbol}
+                                {tokenMetadata.symbol}
                             </TableCell>
                             <TableCell>
                                 {formatPercentage(
@@ -168,10 +182,11 @@ const BalancesTable = observer((props: Props) => {
                                     token.balance,
                                     tokenMetadata.precision
                                 )}{' '}
-                                {token.symbol}
+                                {isSupported ? tokenMetadata.symbol : ''}
                             </TableCell>
                             <TableCell>
-                                {balanceToDisplay} {token.symbol}
+                                {balanceToDisplay}{' '}
+                                {isSupported ? tokenMetadata.symbol : ''}
                             </TableCell>
                             <TableCellRight>$ {valueToDisplay}</TableCellRight>
                         </TableRow>

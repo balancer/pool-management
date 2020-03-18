@@ -3,12 +3,17 @@ import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import RemoveAssetTable from './RemoveAssetTable';
-import {observer} from 'mobx-react';
-import {useStores} from '../../contexts/storesContext';
-import {Pool, PoolToken} from '../../types';
-import {ContractTypes} from "../../stores/Provider";
-import {ModalMode} from "../../stores/AddLiquidityForm";
-import {bnum, formatPercentage, fromPercentage, toPercentage} from "../../utils/helpers";
+import { observer } from 'mobx-react';
+import { useStores } from '../../contexts/storesContext';
+import { Pool, PoolToken } from '../../types';
+import { ContractTypes } from '../../stores/Provider';
+import { ModalMode } from '../../stores/AddLiquidityForm';
+import {
+    bnum,
+    formatPercentage,
+    fromPercentage,
+    toPercentage,
+} from '../../utils/helpers';
 
 const Container = styled.div`
     display: block;
@@ -63,7 +68,7 @@ const ExitComponent = styled.div`
 const RemoveLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
-    margin-bottom: 20px
+    margin-bottom: 20px;
 `;
 
 const Notification = styled.div`
@@ -78,22 +83,22 @@ const Notification = styled.div`
 `;
 
 const WithdrawWrapper = styled.div`
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	align-items: center;
-	background: var(--panel-background);
-	margin-bottom: 30px;
-`
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    background: var(--panel-background);
+    margin-bottom: 30px;
+`;
 
 const WithdrawAmountWrapper = styled.div`
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	margin-bottom: 10px;
-`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+`;
 
 const InputWrapper = styled.div`
     height: 30px;
@@ -192,22 +197,34 @@ const RemoveLiquidityModal = observer((props: Props) => {
         loading = false;
     }
 
-    const handleShareToWithdrawChange = (event) => {
+    const handleShareToWithdrawChange = event => {
         const { value } = event.target;
         removeLiquidityFormStore.setShareToWithdraw(value);
         if (account && removeLiquidityFormStore.hasValidInput()) {
-            const userShare = poolStore.getUserShareProportion(pool.address, account);
+            const userShare = poolStore.getUserShareProportion(
+                pool.address,
+                account
+            );
             if (userShare) {
-                console.log('userShare', toPercentage(userShare).toString());
-                removeLiquidityFormStore.shareToWithdrawPercentageCheck(toPercentage(userShare));
+                removeLiquidityFormStore.shareToWithdrawPercentageCheck(
+                    toPercentage(userShare)
+                );
             }
         }
     };
 
     const handleRemoveLiquidity = async () => {
-            const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
-            const poolTokens = poolStore.getPoolTokenPercentage(pool.address, shareToWithdraw);
-            await poolStore.exitPool(web3React, pool.address, poolTokens.integerValue().toString(), poolStore.formatZeroMinAmountsOut(pool.address));
+        const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
+        const poolTokens = poolStore.getPoolTokenPercentage(
+            pool.address,
+            shareToWithdraw
+        );
+        await poolStore.exitPool(
+            web3React,
+            pool.address,
+            poolTokens.integerValue().toString(),
+            poolStore.formatZeroMinAmountsOut(pool.address)
+        );
     };
 
     const renderNotification = () => {
@@ -225,12 +242,14 @@ const RemoveLiquidityModal = observer((props: Props) => {
         if (requiredDataPresent) {
             const shareToWithdraw = removeLiquidityFormStore.hasValidInput()
                 ? poolStore.calcPoolTokensByRatio(
-                    pool,
-                    bnum(removeLiquidityFormStore.getShareToWithdraw())
-                )
+                      pool,
+                      bnum(removeLiquidityFormStore.getShareToWithdraw())
+                  )
                 : bnum(0);
 
-            const tokensToWithdraw = fromPercentage(shareToWithdraw).times(currentTotal);
+            const tokensToWithdraw = fromPercentage(shareToWithdraw).times(
+                currentTotal
+            );
 
             const futureTotal = currentTotal.minus(tokensToWithdraw);
             const futureShare = tokensToWithdraw
@@ -241,29 +260,32 @@ const RemoveLiquidityModal = observer((props: Props) => {
             futurePoolShare = formatPercentage(futureShare, 2);
         }
 
-            return (
-                <WithdrawWrapper>
-                    <WithdrawAmountWrapper>
-	                    Withdraw
-	                    <InputWrapper errorBorders={removeLiquidityFormStore.hasInputError()}>
-                            <input
-                                id={`input-remove-liquidity`}
-                                name={`input-name-tokenAddress`}
-                                value={removeLiquidityFormStore.getShareToWithdraw()}
-                                onChange={e => {
-                                    handleShareToWithdrawChange(
-                                        e
-                                    );
-                                }}
-                                placeholder=""
-                            />
-	                    </InputWrapper>
-	                    %
-	                </WithdrawAmountWrapper>
-                    {account ? <div>You own {currentPoolShare} of pool liquidity</div> : <div>Connect wallet to remove liquidity</div>}
-
-                </WithdrawWrapper>
-            );
+        return (
+            <WithdrawWrapper>
+                <WithdrawAmountWrapper>
+                    Withdraw
+                    <InputWrapper
+                        errorBorders={removeLiquidityFormStore.hasInputError()}
+                    >
+                        <input
+                            id={`input-remove-liquidity`}
+                            name={`input-name-tokenAddress`}
+                            value={removeLiquidityFormStore.getShareToWithdraw()}
+                            onChange={e => {
+                                handleShareToWithdrawChange(e);
+                            }}
+                            placeholder=""
+                        />
+                    </InputWrapper>
+                    %
+                </WithdrawAmountWrapper>
+                {account ? (
+                    <div>You own {currentPoolShare} of pool liquidity</div>
+                ) : (
+                    <div>Connect wallet to remove liquidity</div>
+                )}
+            </WithdrawWrapper>
+        );
     };
 
     const renderActionButton = () => {

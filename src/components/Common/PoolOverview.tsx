@@ -127,15 +127,17 @@ const PoolOverview = observer((props: Props) => {
     let userPoolTokens = undefined;
     const totalPoolTokens = tokenStore.getTotalSupply(poolAddress);
 
-    console.log('totalPoolTokens', totalPoolTokens ? totalPoolTokens.toString() : 'not found');
-
     if (account) {
         userPoolTokens = tokenStore.getBalance(poolAddress, account);
-        console.log('userPoolTokens', userPoolTokens ? userPoolTokens.toString(): 'not found')
     }
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
-    const shareText = getUserShareText(pool, account, totalPoolTokens, userPoolTokens);
+    const shareText = getUserShareText(
+        pool,
+        account,
+        totalPoolTokens,
+        userPoolTokens
+    );
 
     const options = {
         maintainAspectRatio: false,
@@ -151,6 +153,9 @@ const PoolOverview = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
+                    const tokenMetadata = contractMetadataStore.getTokenMetadata(
+                        token.address
+                    );
                     return (
                         <AssetPercentageContainer key={token.address}>
                             <AssetDot
@@ -163,7 +168,7 @@ const PoolOverview = observer((props: Props) => {
                                     token.denormWeightProportion,
                                     2
                                 )}{' '}
-                                {token.symbol}
+                                {tokenMetadata.symbol}
                             </AssetPercentageText>
                         </AssetPercentageContainer>
                     );

@@ -14,8 +14,7 @@ import {
 } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
-import {ActionResponse} from "./actions/actions";
-
+import { ActionResponse } from './actions/actions';
 
 export interface ContractMetadata {
     bFactory: string;
@@ -286,7 +285,11 @@ export default class TokenStore {
         return undefined;
     }
 
-    @action approveMax = async (web3React, tokenAddress, spender): Promise<ActionResponse> => {
+    @action approveMax = async (
+        web3React,
+        tokenAddress,
+        spender
+    ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
             web3React,
@@ -297,7 +300,11 @@ export default class TokenStore {
         );
     };
 
-    @action revokeApproval = async (web3React, tokenAddress, spender): Promise<ActionResponse> => {
+    @action revokeApproval = async (
+        web3React,
+        tokenAddress,
+        spender
+    ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
             web3React,
@@ -317,9 +324,7 @@ export default class TokenStore {
         const promises: Promise<any>[] = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
         tokensToTrack.forEach((value, index) => {
-            promises.push(
-                this.fetchTotalSupply(web3React, value, fetchBlock)
-            );
+            promises.push(this.fetchTotalSupply(web3React, value, fetchBlock));
         });
 
         let allFetchesSuccess = true;
@@ -350,8 +355,6 @@ export default class TokenStore {
         }
         return FetchCode.SUCCESS;
     };
-
-
 
     @action fetchTokenBalances = async (
         web3React: Web3ReactContextInterface,
@@ -494,15 +497,13 @@ export default class TokenStore {
         );
 
         const stale =
-            fetchBlock <=
-            this.getTotalSupplyLastFetched(tokenAddress);
+            fetchBlock <= this.getTotalSupplyLastFetched(tokenAddress);
         if (!stale) {
             try {
                 const totalSupply = bnum(await token.totalSupply());
 
                 const stale =
-                    fetchBlock <=
-                    this.getTotalSupplyLastFetched(tokenAddress);
+                    fetchBlock <= this.getTotalSupplyLastFetched(tokenAddress);
                 if (!stale) {
                     console.debug('[Total Supply Fetch]', {
                         tokenAddress,
@@ -546,7 +547,6 @@ export default class TokenStore {
                 payload: undefined,
             });
         }
-
     };
 
     @action fetchAllowance = async (
@@ -694,14 +694,12 @@ export default class TokenStore {
         return undefined;
     };
 
-    getTotalSupplyLastFetched = (
-        tokenAddress
-    ): number | undefined => {
+    getTotalSupplyLastFetched = (tokenAddress): number | undefined => {
         const totalSupplies = this.totalSupplies;
         if (totalSupplies) {
             const totalSupply = totalSupplies[tokenAddress];
             if (totalSupply) {
-                        return totalSupply.lastFetched;
+                return totalSupply.lastFetched;
             }
         }
         return undefined;

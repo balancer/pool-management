@@ -76,7 +76,7 @@ export default class MarketStore {
     }
 
     getPortfolioValue(pool: Pool): BigNumber {
-        const {contractMetadataStore} = this.rootStore;
+        const { contractMetadataStore } = this.rootStore;
         let portfolioValue = bnum(0);
 
         pool.tokens.forEach((token, index) => {

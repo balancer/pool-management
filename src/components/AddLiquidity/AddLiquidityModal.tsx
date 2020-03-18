@@ -64,7 +64,7 @@ const ExitComponent = styled.div`
 const AddLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
-    margin-bottom: 20px
+    margin-bottom: 20px;
 `;
 
 const Notification = styled.div`
@@ -140,8 +140,6 @@ const AddLiquidityModal = observer((props: Props) => {
             await tokenStore.approveMax(web3React, token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
-            console.log('pre-contract');
-
             const { account } = web3React;
 
             const contract = providerStore.getContract(
@@ -170,7 +168,7 @@ const AddLiquidityModal = observer((props: Props) => {
                 tokenAmountsIn.push(tokenAmountIn.toString());
             });
 
-            console.log('joinPool', {
+            console.debug('joinPool', {
                 joinRatio: addLiquidityFormStore.joinRatio.toString(),
                 poolTokens: poolTokens.toString(),
                 inputs: addLiquidityFormStore.formatInputsForJoin(),

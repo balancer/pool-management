@@ -1,12 +1,20 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
-import {Pool, PoolToken} from 'types';
+import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
-import {bnum, fromPercentage, POOL_TOKENS_DECIMALS, printPool, scale, shortenAddress} from '../utils/helpers';
+import {
+    bnum,
+    fromPercentage,
+    POOL_TOKENS_DECIMALS,
+    printPool,
+    scale,
+    shortenAddress,
+    tinyAddress,
+} from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
-import {getNextTokenColor} from "../utils/tokenColorPicker";
+import { getNextTokenColor } from '../utils/tokenColorPicker';
 
 interface PoolData {
     blockLastFetched: number;
@@ -27,29 +35,41 @@ export default class PoolStore {
         this.pools = {} as PoolMap;
     }
 
-    @action processUnknownTokens(pool: Pool): Pool {
-        const { contractMetadataStore } = this.rootStore;
+    @action processUnknownTokens(web3React, pool: Pool): Pool {
+        const {
+            contractMetadataStore,
+            tokenStore,
+            providerStore,
+        } = this.rootStore;
+        const { account } = web3React;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
 
         pool.tokens.forEach((token, index) => {
             if (!contractMetadataStore.hasTokenMetadata(token.address)) {
-                pool.tokens[token.symbol] = shortenAddress(token.address);
+                pool.tokens[token.symbol] = tinyAddress(token.address, 3);
+
+                // We just discovered a new token, so should do an initial fetch for it outside of loop
+                if (account && !tokenStore.getBalance(token.address, account)) {
+                    tokenStore.fetchTokenBalances(web3React, account, [
+                        token.address,
+                    ]);
+                }
 
                 contractMetadataStore.addTokenMetadata(token.address, {
                     address: token.address,
                     precision: defaultPrecision,
                     chartColor: getNextTokenColor(),
                     decimals: token.decimals,
-                    symbol: shortenAddress(token.address),
+                    symbol: tinyAddress(token.address, 3),
                     iconAddress: token.address,
-                    isSupported: false
-                })
+                    isSupported: false,
+                });
             }
-        })
-            return pool;
+        });
+        return pool;
     }
 
-    @action async fetchPublicPools() {
+    @action async fetchPublicPools(web3React) {
         const { providerStore, contractMetadataStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
@@ -58,7 +78,7 @@ export default class PoolStore {
         const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
-            const processedPool = this.processUnknownTokens(pool);
+            const processedPool = this.processUnknownTokens(web3React, pool);
             this.setPool(pool.address, processedPool, currentBlock);
         });
         this.poolsLoaded = true;
@@ -89,32 +109,42 @@ export default class PoolStore {
     }
 
     getPoolToken(poolAddress: string, tokenAddress: string): PoolToken {
-        return this.getPool(poolAddress).tokens.find(token => token.address === tokenAddress
+        return this.getPool(poolAddress).tokens.find(
+            token => token.address === tokenAddress
         );
     }
 
     getPoolTokenBalance(poolAddress: string, tokenAddress: string): BigNumber {
-        const token = this.getPool(poolAddress).tokens.find(token => token.address === tokenAddress);
+        const token = this.getPool(poolAddress).tokens.find(
+            token => token.address === tokenAddress
+        );
         if (!token) {
-            throw new Error(`Token ${tokenAddress} not found in pool ${poolAddress}`);
+            throw new Error(
+                `Token ${tokenAddress} not found in pool ${poolAddress}`
+            );
         }
         return token.balance;
     }
 
-    getUserLiquidityContribution(poolAddress: string, tokenAddress: string, account: string): BigNumber {
-        const userProportion = this.getUserShareProportion(poolAddress, account);
-        const poolTokenBalance = this.getPoolTokenBalance(poolAddress, tokenAddress);
+    getUserLiquidityContribution(
+        poolAddress: string,
+        tokenAddress: string,
+        account: string
+    ): BigNumber {
+        const userProportion = this.getUserShareProportion(
+            poolAddress,
+            account
+        );
+        const poolTokenBalance = this.getPoolTokenBalance(
+            poolAddress,
+            tokenAddress
+        );
 
-        console.log('getUserLiquidityContribution', {
-            userProportion: userProportion.toString(),
-            poolTokenBalance: poolTokenBalance.toString(),
-            userLiquidityContribution: poolTokenBalance.times(userProportion).toString()
-        });
         return poolTokenBalance.times(userProportion);
     }
 
-    getUserShare(poolAddress: string, account: string): BigNumber | undefined{
-        const {tokenStore} = this.rootStore;
+    getUserShare(poolAddress: string, account: string): BigNumber | undefined {
+        const { tokenStore } = this.rootStore;
         const userShare = tokenStore.getBalance(poolAddress, account);
 
         if (userShare) {
@@ -124,8 +154,11 @@ export default class PoolStore {
         }
     }
 
-    getUserShareProportion(poolAddress: string, account: string): BigNumber | undefined {
-        const {tokenStore} = this.rootStore;
+    getUserShareProportion(
+        poolAddress: string,
+        account: string
+    ): BigNumber | undefined {
+        const { tokenStore } = this.rootStore;
         const userShare = tokenStore.getBalance(poolAddress, account);
         const totalShares = tokenStore.getTotalSupply(poolAddress);
 
@@ -138,14 +171,21 @@ export default class PoolStore {
 
     formatZeroMinAmountsOut(poolAddress: string): string[] {
         const pool = this.pools[poolAddress];
-        return pool.data.tokens.map(token => "0");
+        return pool.data.tokens.map(token => '0');
     }
 
-    calcUserLiquidity(poolAddress: string, account: string): BigNumber | undefined {
-        const {marketStore} = this.rootStore;
-        const poolValue = marketStore.getPortfolioValue(this.getPool(poolAddress)
+    calcUserLiquidity(
+        poolAddress: string,
+        account: string
+    ): BigNumber | undefined {
+        const { marketStore } = this.rootStore;
+        const poolValue = marketStore.getPortfolioValue(
+            this.getPool(poolAddress)
         );
-        const userProportion = this.getUserShareProportion(poolAddress, account);
+        const userProportion = this.getUserShareProportion(
+            poolAddress,
+            account
+        );
         if (userProportion) {
             return userProportion.times(poolValue);
         } else {
@@ -186,13 +226,15 @@ export default class PoolStore {
     }
 
     calcPoolTokensByRatio(pool: Pool, ratio: BigNumber): BigNumber {
-        const {tokenStore} = this.rootStore;
+        const { tokenStore } = this.rootStore;
         const totalPoolTokens = tokenStore.getTotalSupply(pool.address);
         return ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN);
     }
 
     getPoolTokenPercentage(poolAddress: string, percentage: string) {
-        const totalPoolTokens = this.rootStore.tokenStore.getTotalSupply(poolAddress);
+        const totalPoolTokens = this.rootStore.tokenStore.getTotalSupply(
+            poolAddress
+        );
         return bnum(fromPercentage(percentage)).times(totalPoolTokens);
     }
 
@@ -216,10 +258,7 @@ export default class PoolStore {
             ContractTypes.BPool,
             poolAddress,
             'exitPool',
-            [
-                poolAmountIn,
-                minAmountsOut
-            ]
+            [poolAmountIn, minAmountsOut]
         );
     };
 
@@ -239,7 +278,6 @@ export default class PoolStore {
             account
         );
 
-        console.log(contract);
         // await providerStore.sendTransaction(
         //     web3React,
         //     ContractTypes.BPool,
