@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import {bnum, formatBalanceTruncated, fromWei} from '../../utils/helpers';
+import {bnum, formatBalanceTruncated, fromPercentage, fromWei} from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -117,6 +117,7 @@ const RemoveAssetsTable = observer((props: Props) => {
 
                     let normalizedUserBalance = '0';
                     let userBalanceToDisplay = '-';
+                    let withdrawPreviewBalanceText = '-';
 
                     if (userBalances && userBalances[tokenAddress]) {
                         normalizedUserBalance = formatBalanceTruncated(
@@ -126,6 +127,12 @@ const RemoveAssetsTable = observer((props: Props) => {
                         );
 
                         userBalanceToDisplay = normalizedUserBalance;
+                    }
+
+                    if (removeLiquidityFormStore.hasValidInput()) {
+                        const tokensToWithdraw = token.balance.times(fromPercentage(removeLiquidityFormStore.getShareToWithdraw()));
+
+                        withdrawPreviewBalanceText = formatBalanceTruncated(tokensToWithdraw, contractMetadataStore.getTokenMetadata(token.address).precision, 20)
                     }
 
                     return (
@@ -144,7 +151,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                             <TableCellRight>
                                 <WithdrawAmount>
                                 	<div>
-                                        {userBalanceToDisplay} {token.symbol}
+                                        {withdrawPreviewBalanceText} {token.symbol}
                                 	</div>
                                 </WithdrawAmount>
                             </TableCellRight>
