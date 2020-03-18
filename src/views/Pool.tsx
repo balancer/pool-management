@@ -12,7 +12,7 @@ import {
     bnum,
     formatBalanceTruncated,
     formatFee,
-    isAddress,
+    isAddress, toChecksum,
     toWei,
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
@@ -39,7 +39,7 @@ const SwapsTable = styled.div``;
 
 const Pool = observer((props: RouteComponentProps) => {
 
-    const poolAddress = props.match.params.poolAddress;
+    const poolAddress = toChecksum(props.match.params.poolAddress);
     const {
         root: {
             poolStore,
