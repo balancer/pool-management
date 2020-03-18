@@ -1,29 +1,13 @@
 import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import {BigNumberMap, Pool} from '../types';
+import {BigNumberMap, Checkbox, CheckboxMap, Input, InputMap, Pool} from '../types';
 import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
 import {validateTokenValue, ValidationStatus} from './actions/validators';
 import {BigNumber} from 'utils/bignumber';
 
-// Token Address -> checked
-interface CheckboxMap {
-    [index: string]: Checkbox;
-}
-
-// Token -> amount
-interface InputMap {
-    [index: string]: Input;
-}
-
-interface Input {
-    value: string;
-    touched: boolean;
-    validation: ValidationStatus;
-}
-
-interface Checkbox {
-    checked: boolean;
-    touched: boolean;
+export enum ModalMode {
+    ADD_LIQUIDITY,
+    REMOVE_LIQUIDITY,
 }
 
 export enum ModalMode {

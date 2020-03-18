@@ -65,7 +65,7 @@ interface Props {
 const AddRemovePanel = (props: Props) => {
     const { poolAddress } = props;
     const {
-        root: { providerStore, addLiquidityFormStore, poolStore },
+        root: { providerStore, addLiquidityFormStore, removeLiquidityFormStore, poolStore },
     } = useStores();
     const { account } = providerStore.getActiveWeb3React();
 
@@ -108,11 +108,10 @@ const AddRemovePanel = (props: Props) => {
                     active={!!pool && account && userProportion && userProportion.gt(0)}
                     onClick={() => {
                         if (pool) {
-                            addLiquidityFormStore.openModal(
+                            removeLiquidityFormStore.openModal(
                                 poolAddress,
                                 account,
-                                pool.tokensList,
-                                ModalMode.REMOVE_LIQUIDITY
+                                pool.tokensList
                             );
                         }
                     }}

@@ -1,9 +1,9 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
-import { Pool } from 'types';
+import {Pool, PoolToken} from 'types';
 import { BigNumber } from '../utils/bignumber';
-import {bnum, POOL_TOKENS_DECIMALS, printPool, scale} from '../utils/helpers';
+import {bnum, fromPercentage, POOL_TOKENS_DECIMALS, printPool, scale} from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
 
@@ -65,9 +65,35 @@ export default class PoolStore {
         }
     }
 
+    getPoolToken(poolAddress: string, tokenAddress: string): PoolToken {
+        return this.getPool(poolAddress).tokens.find(token => token.address === tokenAddress
+        );
+    }
+
+    getPoolTokenBalance(poolAddress: string, tokenAddress: string): BigNumber {
+        const token = this.getPool(poolAddress).tokens.find(token => token.address === tokenAddress);
+        if (!token) {
+            throw new Error(`Token ${tokenAddress} not found in pool ${poolAddress}`);
+        }
+        return token.balance;
+    }
+
+    getUserLiquidityContribution(poolAddress: string, tokenAddress: string, account: string): BigNumber {
+        const userProportion = this.getUserShareProportion(poolAddress, account);
+        const poolTokenBalance = this.getPoolTokenBalance(poolAddress, tokenAddress);
+
+        console.log('getUserLiquidityContribution', {
+            userProportion: userProportion.toString(),
+            poolTokenBalance: poolTokenBalance.toString(),
+            userLiquidityContribution: poolTokenBalance.times(userProportion).toString()
+        });
+        return poolTokenBalance.times(userProportion);
+    }
+
     getUserShare(poolAddress: string, account: string): BigNumber | undefined{
         const {tokenStore} = this.rootStore;
         const userShare = tokenStore.getBalance(poolAddress, account);
+
         if (userShare) {
             return userShare;
         } else {
@@ -85,6 +111,11 @@ export default class PoolStore {
         } else {
             return undefined;
         }
+    }
+
+    formatZeroMinAmountsOut(poolAddress: string): string[] {
+        const pool = this.pools[poolAddress];
+        return pool.data.tokens.map(token => "0");
     }
 
     calcUserLiquidity(poolAddress: string, account: string): BigNumber | undefined {
@@ -138,12 +169,49 @@ export default class PoolStore {
         return ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN);
     }
 
+    getPoolTokenPercentage(poolAddress: string, percentage: string) {
+        const totalPoolTokens = this.rootStore.tokenStore.getTotalSupply(poolAddress);
+        return bnum(fromPercentage(percentage)).times(totalPoolTokens);
+    }
+
     getPoolTokens(poolAddress: string): string[] {
         if (!this.pools[poolAddress]) {
             throw new Error(`Pool ${poolAddress} not loaded`);
         }
         return this.pools[poolAddress].data.tokensList;
     }
+
+    @action exitPool = async (
+        web3React: Web3ReactContextInterface,
+        poolAddress: string,
+        poolAmountIn: string,
+        minAmountsOut: string[]
+    ) => {
+        const { providerStore } = this.rootStore;
+
+        await providerStore.sendTransaction(
+            web3React,
+            ContractTypes.BPool,
+            poolAddress,
+            'exitPool',
+            [
+                poolAmountIn,
+                minAmountsOut
+            ]
+        );
+
+        console.log(contract);
+        // await providerStore.sendTransaction(
+        //     web3React,
+        //     ContractTypes.BPool,
+        //     poolAddress,
+        //     'joinPool',
+        //     [
+        //         poolAmountOut.toString(),
+        //         maxAmountsIn.map(amount => amount.toString()),
+        //     ]
+        // );
+    };
 
     @action joinPool = async (
         web3React: Web3ReactContextInterface,

@@ -189,6 +189,14 @@
                 "iconAddress": "0xe41d2489571d322189246dafa5ebde1f4699f498",
                 "precision": 2,
                 "chartColor": "#536DFE"
+            },
+            {
+                "symbol": "LINK",
+                "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
+                "decimals": 18,
+                "iconAddress": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
+                "precision": 2,
+                "chartColor": "#536DFE"
             }
         ]
     }

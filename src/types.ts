@@ -1,4 +1,5 @@
 import { BigNumber } from 'utils/bignumber';
+import {ValidationStatus} from "./stores/actions/validators";
 
 export interface BigNumberMap {
     [index: string]: BigNumber;
@@ -54,4 +55,25 @@ export interface MarketAssetPrice {
 // Indexed by Symbol
 export interface MarketAssetPriceMap {
     [index: string]: MarketAssetPrice;
+}
+
+// Token Address -> checked
+export interface CheckboxMap {
+    [index: string]: Checkbox;
+}
+
+// Token -> amount
+export interface InputMap {
+    [index: string]: Input;
+}
+
+export interface Input {
+    value: string;
+    touched: boolean;
+    validation: ValidationStatus;
+}
+
+export interface Checkbox {
+    checked: boolean;
+    touched: boolean;
 }
