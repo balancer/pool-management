@@ -16,6 +16,7 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
 import {ActionResponse} from "./actions/actions";
 
+
 export interface ContractMetadata {
     bFactory: string;
     proxy: string;
@@ -359,7 +360,6 @@ export default class TokenStore {
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
         const { providerStore } = this.rootStore;
-
         const promises: Promise<any>[] = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
         tokensToTrack.forEach((value, index) => {
@@ -405,11 +405,6 @@ export default class TokenStore {
         fetchBlock: number
     ): Promise<TokenBalanceFetch> => {
         const { providerStore } = this.rootStore;
-        const token = providerStore.getContract(
-            web3React,
-            ContractTypes.TestToken,
-            tokenAddress
-        );
 
         /* Before and after the network operation, check for staleness
             If the fetch is stale, don't do network call
@@ -424,6 +419,11 @@ export default class TokenStore {
                 const { library } = web3React;
                 balance = bnum(await library.getBalance(account));
             } else {
+                const token = providerStore.getContract(
+                    web3React,
+                    ContractTypes.TestToken,
+                    tokenAddress
+                );
                 balance = bnum(await token.balanceOf(account));
             }
 
@@ -558,11 +558,6 @@ export default class TokenStore {
         fetchBlock: number
     ): Promise<UserAllowanceFetch> => {
         const { providerStore } = this.rootStore;
-        const token = providerStore.getContract(
-            web3React,
-            ContractTypes.TestToken,
-            tokenAddress
-        );
 
         // Always max allowance for Ether
         if (tokenAddress === EtherKey) {
@@ -580,6 +575,12 @@ export default class TokenStore {
                 },
             });
         }
+
+        const token = providerStore.getContract(
+            web3React,
+            ContractTypes.TestToken,
+            tokenAddress
+        );
 
         /* Before and after the network operation, check for staleness
             If the fetch is stale, don't do network call

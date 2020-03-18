@@ -38,6 +38,7 @@ const InfoPanelWrapper = styled.div`
 const SwapsTable = styled.div``;
 
 const Pool = observer((props: RouteComponentProps) => {
+
     const poolAddress = props.match.params.poolAddress;
     const {
         root: {
@@ -91,10 +92,12 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const feeText = pool ? formatFee(pool.swapFee) : '-';
     const shareText = getUserShareText(pool, account, totalPoolTokens, userPoolTokens);
+
     const liquidityText =
         marketStore.assetPricesLoaded && pool
             ? formatBalanceTruncated(
                   toWei(marketStore.getPoolPortfolioValue(pool)),
+                  18,
                   4,
                   20
               )

@@ -186,6 +186,7 @@ export default class AddLiquidityFormStore {
         const activeToken = pool.tokens.find(
             token => token.address === activeInputAddress
         );
+
         return bnum(activeInputAmount).div(activeToken.balance);
     }
 

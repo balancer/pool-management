@@ -84,9 +84,7 @@ const AddRemovePanel = (props: Props) => {
                     <IdenticonText>{poolAddress}</IdenticonText>
                 </AddressContainer>
                 <InformationContainer>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore aliqua.
-                    Check out the blog post for more info.
+
                 </InformationContainer>
             </LeftColumn>
             <RightColumn>
