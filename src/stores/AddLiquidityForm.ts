@@ -10,11 +10,6 @@ export enum ModalMode {
     REMOVE_LIQUIDITY,
 }
 
-export enum ModalMode {
-    ADD_LIQUIDITY,
-    REMOVE_LIQUIDITY,
-}
-
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;

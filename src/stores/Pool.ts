@@ -199,8 +199,6 @@ export default class PoolStore {
                 minAmountsOut
             ]
         );
-
-        console.log(contract);
         // await providerStore.sendTransaction(
         //     web3React,
         //     ContractTypes.BPool,
