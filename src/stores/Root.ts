@@ -9,6 +9,7 @@ import AppSettingsStore from './AppSettings';
 import ContractMetadataStore from './ContractMetadata';
 import MarketStore from './Market';
 import AddLiquidityFormStore from './AddLiquidityForm';
+import RemoveLiquidityFormStore from './RemoveLiquidityForm';
 
 export default class RootStore {
     providerStore: ProviderStore;
@@ -21,6 +22,7 @@ export default class RootStore {
     appSettingsStore: AppSettingsStore;
     contractMetadataStore: ContractMetadataStore;
     addLiquidityFormStore: AddLiquidityFormStore;
+    removeLiquidityFormStore: RemoveLiquidityFormStore;
 
     constructor() {
         this.providerStore = new ProviderStore(this);
@@ -33,6 +35,7 @@ export default class RootStore {
         this.appSettingsStore = new AppSettingsStore(this);
         this.contractMetadataStore = new ContractMetadataStore(this);
         this.addLiquidityFormStore = new AddLiquidityFormStore(this);
+        this.removeLiquidityFormStore = new RemoveLiquidityFormStore(this);
 
         this.asyncSetup().catch(e => {
             //TODO: Add retry on these fetches

@@ -119,6 +119,14 @@ export default class ContractMetadataStore {
         return this.contractMetadata.tokens;
     }
 
+    getTokenPrecision(address: string): number {
+        const tokenMetadata = this.contractMetadata.tokens.find(
+            element => element.address === address
+        );
+
+        return tokenMetadata.precision;
+    }
+
     getTokenMetadata(address: string): TokenMetadata {
         const tokenMetadata = this.contractMetadata.tokens.find(
             element => element.address === address
