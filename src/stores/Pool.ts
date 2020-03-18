@@ -199,6 +199,18 @@ export default class PoolStore {
                 minAmountsOut
             ]
         );
+
+        console.log(contract);
+        // await providerStore.sendTransaction(
+        //     web3React,
+        //     ContractTypes.BPool,
+        //     poolAddress,
+        //     'joinPool',
+        //     [
+        //         poolAmountOut.toString(),
+        //         maxAmountsIn.map(amount => amount.toString()),
+        //     ]
+        // );
     };
 
     @action joinPool = async (
