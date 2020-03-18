@@ -114,9 +114,7 @@ const BalancesTable = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokensList.map(tokenAddress => {
-                    const token = pool.tokens.find(token => {
-                        return token.address === tokenAddress;
-                    });
+                    const token = poolStore.getPoolToken(pool.address, tokenAddress);
 
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         tokenAddress
@@ -139,17 +137,14 @@ const BalancesTable = observer((props: Props) => {
                         marketStore.assetPricesLoaded
                     ) {
                         // TODO: Scale this using token decimals
-                        const userBalanceScaled = bnum(
-                            fromWei(userBalances[tokenAddress])
-                        );
-                        const userBalanceValue = toWei(
+                        const userBalanceValue =
                             marketStore.getValue(
                                 tokenMetadata.symbol,
-                                userBalanceScaled
-                            )
+                                tokenStore.normalizeBalance(userBalances[tokenAddress], tokenAddress)
+
                         );
 
-                        valueToDisplay = formatBalance(userBalanceValue, tokenMetadata.decimals, 2);
+                        valueToDisplay = formatNormalizedTokenValue(userBalanceValue, 2);
                     }
 
                     return (

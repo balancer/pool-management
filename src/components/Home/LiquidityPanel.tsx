@@ -178,7 +178,7 @@ const LiquidityPanel = observer((props: Props) => {
                     let userLiquidityText = '-';
 
                     if (marketStore.assetPricesLoaded) {
-                        const poolLiquidity = marketStore.getPoolPortfolioValue(
+                        const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
                         liquidityText = formatBalanceTruncated(

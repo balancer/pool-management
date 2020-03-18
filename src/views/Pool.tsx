@@ -11,7 +11,7 @@ import { useStores } from '../contexts/storesContext';
 import {
     bnum,
     formatBalanceTruncated,
-    formatFee,
+    formatFee, formatNormalizedTokenValue,
     isAddress, toChecksum,
     toWei,
 } from '../utils/helpers';
@@ -95,9 +95,8 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? formatBalanceTruncated(
-                  toWei(marketStore.getPoolPortfolioValue(pool)),
-                  18,
+            ? formatNormalizedTokenValue(
+                  marketStore.getPortfolioValue(pool),
                   4,
                   20
               )

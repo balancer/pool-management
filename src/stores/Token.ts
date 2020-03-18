@@ -327,7 +327,6 @@ export default class TokenStore {
         try {
             const responses = await Promise.all(promises);
             responses.forEach(response => {
-                console.log(response);
                 if (response instanceof TotalSupplyFetch) {
                     const { status, request, payload } = response;
                     if (status === AsyncStatus.SUCCESS) {

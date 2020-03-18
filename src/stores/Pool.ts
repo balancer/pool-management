@@ -3,9 +3,10 @@ import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
 import {Pool, PoolToken} from 'types';
 import { BigNumber } from '../utils/bignumber';
-import {bnum, fromPercentage, POOL_TOKENS_DECIMALS, printPool, scale} from '../utils/helpers';
+import {bnum, fromPercentage, POOL_TOKENS_DECIMALS, printPool, scale, shortenAddress} from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
+import {getNextTokenColor} from "../utils/tokenColorPicker";
 
 interface PoolData {
     blockLastFetched: number;
@@ -26,6 +27,28 @@ export default class PoolStore {
         this.pools = {} as PoolMap;
     }
 
+    @action processUnknownTokens(pool: Pool): Pool {
+        const { contractMetadataStore } = this.rootStore;
+        const defaultPrecision = contractMetadataStore.getDefaultPrecision();
+
+        pool.tokens.forEach((token, index) => {
+            if (!contractMetadataStore.hasTokenMetadata(token.address)) {
+                pool.tokens[token.symbol] = shortenAddress(token.address);
+
+                contractMetadataStore.addTokenMetadata(token.address, {
+                    address: token.address,
+                    precision: defaultPrecision,
+                    chartColor: getNextTokenColor(),
+                    decimals: token.decimals,
+                    symbol: shortenAddress(token.address),
+                    iconAddress: token.address,
+                    isSupported: false
+                })
+            }
+        })
+            return pool;
+    }
+
     @action async fetchPublicPools() {
         const { providerStore, contractMetadataStore } = this.rootStore;
         // The subgraph and local block could be out of sync
@@ -35,8 +58,8 @@ export default class PoolStore {
         const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
-            printPool(pool);
-            this.setPool(pool.address, pool, currentBlock);
+            const processedPool = this.processUnknownTokens(pool);
+            this.setPool(pool.address, processedPool, currentBlock);
         });
         this.poolsLoaded = true;
 
@@ -119,9 +142,8 @@ export default class PoolStore {
     }
 
     calcUserLiquidity(poolAddress: string, account: string): BigNumber | undefined {
-        const poolValue = this.rootStore.marketStore.getPortfolioValue(
-            this.getPoolSymbols(poolAddress),
-            this.getPoolBalances(poolAddress)
+        const {marketStore} = this.rootStore;
+        const poolValue = marketStore.getPortfolioValue(this.getPool(poolAddress)
         );
         const userProportion = this.getUserShareProportion(poolAddress, account);
         if (userProportion) {

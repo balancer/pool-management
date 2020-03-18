@@ -253,17 +253,24 @@ export const normalizePriceValues = (
 
 export const formatNormalizedTokenValue = (
     normalizedBalance: BigNumber,
-    displayPrecision: number
+    displayPrecision: number,
+    truncateAt?: number
 ): string => {
     if (normalizedBalance.eq(0)) {
         return bnum(0).toFixed(2);
     }
 
-    const result = bnum(normalizedBalance)
-        .decimalPlaces(displayPrecision)
+    let result = bnum(normalizedBalance)
+        .decimalPlaces(displayPrecision, BigNumber.ROUND_DOWN)
         .toString();
 
-    return padToDecimalPlaces(result, 2);
+    result = padToDecimalPlaces(result, 2);
+
+    if (truncateAt && result.length > truncateAt) {
+        return result.substring(0, 20) + '...';
+    } else {
+        return result;
+    }
 };
 
 export const formatBalanceTruncated = (
@@ -342,5 +349,5 @@ export const getGasPriceFromETHGasStation = () => {
 
 
 export const printPool = (pool: Pool) => {
-    // console.log(pool);
+    console.log('pool', pool.address, pool);
 };

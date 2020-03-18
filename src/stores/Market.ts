@@ -65,32 +65,26 @@ export default class MarketStore {
         return this.idToSymbolMap[id];
     }
 
+    // Tokens with unknown symbol have 0 value
     getValue(symbol: string, balance: BigNumber): BigNumber {
         if (!this.assets[symbol] || !this.assets[symbol].price) {
-            throw new Error('Symbol price not found for ' + symbol);
+            console.warn('Symbol price not found for ' + symbol);
+            return bnum(0);
         }
 
         return this.assets[symbol].price.value.times(balance);
     }
 
-    getPoolPortfolioValue(pool: Pool) {
-        return this.getPortfolioValue(
-            pool.tokens.map(token => token.symbol),
-            pool.tokens.map(token => token.balance)
-        );
-    }
-
-    getPortfolioValue(symbols: string[], balances: BigNumber[]): BigNumber {
-        if (symbols.length !== balances.length) {
-            throw new Error('Input array lengths do not match');
-        }
-
+    getPortfolioValue(pool: Pool): BigNumber {
+        const {contractMetadataStore} = this.rootStore;
         let portfolioValue = bnum(0);
 
-        symbols.forEach((symbol, index) => {
-            portfolioValue = portfolioValue.plus(
-                this.getValue(symbol, balances[index])
-            );
+        pool.tokens.forEach((token, index) => {
+            if (contractMetadataStore.isSupported(token.address)) {
+                portfolioValue = portfolioValue.plus(
+                    this.getValue(token.symbol, token.balance)
+                );
+            }
         });
 
         return portfolioValue;
