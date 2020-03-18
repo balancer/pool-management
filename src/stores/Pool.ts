@@ -200,7 +200,6 @@ export default class PoolStore {
             ]
         );
 
-        console.log(contract);
         // await providerStore.sendTransaction(
         //     web3React,
         //     ContractTypes.BPool,
