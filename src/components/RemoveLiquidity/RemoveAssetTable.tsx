@@ -51,7 +51,7 @@ const TableRow = styled.div`
 const TableCell = styled.div`
     display: flex;
     align-items: center;
-    width: ${props => props.width || '25%'};
+    width: ${props => props.width || '30%'};
 `;
 
 const TableCellRight = styled(TableCell)`
@@ -148,7 +148,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                             <TableCell>
                                 {userBalanceToDisplay} {token.symbol}
                             </TableCell>
-                            <TableCellRight>
+                            <TableCellRight width="40%">
                                 <WithdrawAmount>
                                 	<div>
                                         {withdrawPreviewBalanceText} {token.symbol}
@@ -167,7 +167,7 @@ const RemoveAssetsTable = observer((props: Props) => {
             <HeaderRow>
                 <TableCell>Asset</TableCell>
                 <TableCell>My Pool Balance</TableCell>
-                <TableCellRight>Withdraw Amount</TableCellRight>
+                <TableCellRight width="40%">Withdraw Amount</TableCellRight>
             </HeaderRow>
             {pool &&
             removeLiquidityFormStore.isActivePool(poolAddress) &&
