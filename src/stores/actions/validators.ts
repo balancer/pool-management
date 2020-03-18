@@ -9,7 +9,7 @@ export enum ValidationStatus {
     INSUFFICIENT_BALANCE = 'Insufficient Balance',
     NO_POOLS = 'There are no Pools with selected tokens',
     MAX_DIGITS_EXCEEDED = 'Maximum Digits Exceeded',
-    MAX_VALUE_EXCEEDED = 'Maximum Value Exceeded'
+    MAX_VALUE_EXCEEDED = 'Maximum Value Exceeded',
 }
 
 export const validateTokenValue = (

@@ -1,4 +1,4 @@
-import {TokenBalance, TotalSupply, UserAllowance} from '../Token';
+import { TokenBalance, TotalSupply, UserAllowance } from '../Token';
 
 export enum AsyncStatus {
     SUCCESS,
@@ -80,4 +80,3 @@ export class TotalSupplyFetch {
         }
     }
 }
-

@@ -1,16 +1,9 @@
-import { action, observable } from 'mobx';
+import {action, observable} from 'mobx';
 import RootStore from 'stores/Root';
-import {
-    BigNumberMap,
-    Checkbox,
-    CheckboxMap,
-    Input,
-    InputMap,
-    Pool,
-} from '../types';
-import { bnum, hasMaxApproval, MAX_UINT } from '../utils/helpers';
-import { validateTokenValue, ValidationStatus } from './actions/validators';
-import { BigNumber } from 'utils/bignumber';
+import {BigNumberMap, Checkbox, CheckboxMap, Input, InputMap, Pool,} from '../types';
+import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
+import {validateTokenValue, ValidationStatus} from './actions/validators';
+import {BigNumber} from 'utils/bignumber';
 
 export enum ModalMode {
     ADD_LIQUIDITY,
@@ -253,13 +246,19 @@ export default class AddLiquidityFormStore {
                 if (validation === ValidationStatus.VALID && account) {
                     const requiredBalance = token.balance.times(ratio);
 
-                    this.inputs[
-                        token.address
-                    ].validation = this.getInputValidationStatus(
+                    const validation = this.getInputValidationStatus(
                         token.address,
                         account,
                         bnum(value)
                     );
+
+                    this.inputs[
+                        token.address
+                    ].validation  = validation;
+
+                    if (validation === ValidationStatus.INSUFFICIENT_BALANCE) {
+                        hasInputExceedUserBalance = true;
+                    }
 
                     const valueForJoin = requiredBalance.gt(bnum(value))
                         ? requiredBalance

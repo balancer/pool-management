@@ -270,7 +270,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     buttonText={`Add Liquidity`}
                     active={
                         account &&
-                        !addLiquidityFormStore.hasInputExceedUserBalance
+                        addLiquidityFormStore.hasValidInput() && !addLiquidityFormStore.hasInputExceedUserBalance
                     }
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
