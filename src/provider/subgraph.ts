@@ -2,10 +2,11 @@ import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
 import { NumberMap, Pool, PoolShare, PoolToken } from '../types';
 import { bnum } from '../utils/helpers';
+import {getSupportedChainId, SUBGRAPH_URLS} from "./connectors";
 
+const chainId = getSupportedChainId();
 const SUBGRAPH_URL =
-    process.env.REACT_APP_SUBGRAPH_URL ||
-    'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-kovan';
+    SUBGRAPH_URLS[chainId];
 
 export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
     const query = `
