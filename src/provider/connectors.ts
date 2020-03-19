@@ -38,10 +38,11 @@ export const web3ContextNames = {
     injected: 'INJECTED',
 };
 
+const backupUrls = {};
+backupUrls[supportedChainId] = RPC_URLS[supportedChainId];
+
 export const backup = new NetworkConnector({
-    urls: {
-        42: RPC_URLS[42],
-    },
+    urls: backupUrls,
     defaultChainId: supportedChainId,
     pollingInterval: POLLING_INTERVAL,
 });
