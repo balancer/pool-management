@@ -5,14 +5,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import {
-    bnum,
-    formatBalanceTruncated,
     formatNormalizedTokenValue,
     fromPercentage,
-    fromWei,
 } from '../../utils/helpers';
-import { BigNumber } from '../../utils/bignumber';
-import { ValidationStatus } from '../../stores/actions/validators';
 
 const Wrapper = styled.div`
     width: calc(80% - 20px);
@@ -153,7 +148,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                     }
 
                     return (
-                        <TableRow>
+                        <TableRow key={token.address}>
                             <TableCell>
                                 <TokenIcon
                                     src={TokenIconAddress(
