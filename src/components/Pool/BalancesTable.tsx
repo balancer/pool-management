@@ -145,10 +145,10 @@ const BalancesTable = observer((props: Props) => {
                                 )
                             );
 
-                            valueToDisplay = formatNormalizedTokenValue(
+                            valueToDisplay = Number(formatNormalizedTokenValue(
                                 userBalanceValue,
                                 2
-                            );
+                            )).toLocaleString();
                         } else {
                             valueToDisplay = '(Untracked)';
                         }

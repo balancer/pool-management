@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
+import { getEtherscanLink } from 'utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { ModalMode } from '../../stores/AddLiquidityForm';
 
@@ -39,8 +40,10 @@ const AddressContainer = styled.div`
     width: 60%;
 `;
 
-const IdenticonText = styled.div`
+const IdenticonText = styled.a`
     margin-left: 10px;
+    color: var(--body-text);
+    text-decoration: none;
     font-family: Roboto;
     font-style: normal;
     font-weight: normal;
@@ -72,7 +75,7 @@ const AddRemovePanel = (props: Props) => {
             poolStore,
         },
     } = useStores();
-    const { account } = providerStore.getActiveWeb3React();
+    const { chainId, account } = providerStore.getActiveWeb3React();
 
     const pool = poolStore.getPool(poolAddress);
     let userProportion = undefined;
@@ -89,7 +92,7 @@ const AddRemovePanel = (props: Props) => {
             <LeftColumn>
                 <AddressContainer>
                     <Identicon address={poolAddress} />
-                    <IdenticonText>{poolAddress}</IdenticonText>
+                    <IdenticonText href={getEtherscanLink(chainId, poolAddress, 'address')} target="_blank">{poolAddress}</IdenticonText>
                 </AddressContainer>
                 <InformationContainer></InformationContainer>
             </LeftColumn>

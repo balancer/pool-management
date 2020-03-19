@@ -98,11 +98,11 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? formatNormalizedTokenValue(
+            ? Number(formatNormalizedTokenValue(
                   marketStore.getPortfolioValue(pool),
                   4,
                   20
-              )
+              )).toLocaleString()
             : '-';
 
     return (
