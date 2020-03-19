@@ -21,6 +21,7 @@ const HeaderElement = styled.div`
 
 const Title = styled.a`
     display: flex;
+    text-decoration: none;
     align-items: center;
     cursor: pointer;
     height: 32px;

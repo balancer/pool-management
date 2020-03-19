@@ -184,12 +184,12 @@ const LiquidityPanel = observer((props: Props) => {
                         const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
-                        liquidityText = formatBalanceTruncated(
+                        liquidityText = Number(formatBalanceTruncated(
                             toWei(poolLiquidity),
                             18,
                             4,
                             20
-                        );
+                        )).toLocaleString();
 
                         if (account) {
                             const userLiquidity = poolStore.calcUserLiquidity(
@@ -198,12 +198,12 @@ const LiquidityPanel = observer((props: Props) => {
                             );
 
                             if (userLiquidity) {
-                                userLiquidityText = formatBalanceTruncated(
+                                userLiquidityText = Number(formatBalanceTruncated(
                                     toWei(userLiquidity),
                                     18,
                                     4,
                                     20
-                                );
+                                )).toLocaleString();
                             }
                         }
                     }
