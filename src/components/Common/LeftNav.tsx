@@ -12,7 +12,7 @@ const NavContainer = styled.div`
     margin-top: 20px;
 `;
 
-const NavElement = styled.div`
+const NavElement = styled.a`
     display: flex;
     align-items: center;
     height: 40px;
@@ -23,6 +23,7 @@ const NavElement = styled.div`
     font-weight: normal;
     font-size: 14px;
     line-height: 22px;
+    text-decoration: none;
 `;
 
 const ActiveNavElement = styled(NavElement)`
@@ -36,7 +37,7 @@ const LeftNav = () => {
     return (
         <Wrapper>
             <NavContainer>
-                <ActiveNavElement>Shared Pools</ActiveNavElement>
+                <ActiveNavElement href="/">Shared Pools</ActiveNavElement>
                 <NavElement>My Private Pools</NavElement>
             </NavContainer>
         </Wrapper>
