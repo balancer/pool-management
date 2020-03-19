@@ -19,20 +19,16 @@ const HeaderElement = styled.div`
     align-items: center;
 `;
 
-const Title = styled.div`
+const Title = styled.a`
     display: flex;
     align-items: center;
     cursor: pointer;
     height: 32px;
-    a {
-        display: inline;
+    img {
         font-size: 15px;
         font-weight: 500;
-        text-decoration: none;
-        img {
-            height: 32px;
-            width: 32px;
-        }
+        height: 32px;
+        width: 32px;
     }
 `;
 
@@ -51,10 +47,8 @@ const Header = () => {
     return (
         <HeaderFrame>
             <HeaderElement>
-                <Title>
-                    <a href="/">
-                        <img alt="pebbles" src="pebbles-pad.svg" />
-                    </a>
+                <Title href="/">
+                    <img alt="pebbles" src="pebbles-pad.svg" />
                     <AppName>Balancer</AppName>
                 </Title>
             </HeaderElement>
