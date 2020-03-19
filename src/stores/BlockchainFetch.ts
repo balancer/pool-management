@@ -22,36 +22,28 @@ export default class BlockchainFetchStore {
     }
 
     @action fetchPoolTotalSupplies(web3React) {
-        const {
-            tokenStore,
-            poolStore
-        } = this.rootStore;
-        const poolAddresses = poolStore.getPublicPools().map(pool => pool.address);
-        console.log(poolAddresses);
+        const { tokenStore, poolStore } = this.rootStore;
+        const poolAddresses = poolStore
+            .getPublicPools()
+            .map(pool => pool.address);
         tokenStore.fetchTotalSupplies(web3React, poolAddresses);
     }
 
     @action fetchPoolUserBalances(web3React) {
-        const {
-            tokenStore,
-            poolStore
-        } = this.rootStore;
+        const { tokenStore, poolStore } = this.rootStore;
         const { account } = web3React;
-        const poolAddresses = poolStore.getPublicPools().map(pool => pool.address);
+        const poolAddresses = poolStore
+            .getPublicPools()
+            .map(pool => pool.address);
         tokenStore.fetchTokenBalances(web3React, account, poolAddresses);
     }
 
     @action fetchActivePoolSupply(web3React) {
-        const {
-            appSettingsStore,
-            tokenStore,
-        } = this.rootStore;
+        const { appSettingsStore, tokenStore } = this.rootStore;
         const poolAddress = appSettingsStore.getActivePoolAddress();
-        tokenStore.fetchTotalSupplies(web3React, [poolAddress]).then(result => {
-            console.log('fetchActivePoolSupply');
-            console.log(result);
-            console.log('totalSupply', tokenStore.getTotalSupply(poolAddress))
-        });
+        tokenStore
+            .fetchTotalSupplies(web3React, [poolAddress])
+            .then(result => {});
     }
 
     @action async fetchActivePoolAllowances(web3React) {
@@ -71,25 +63,14 @@ export default class BlockchainFetchStore {
         const { account } = web3React;
         const { appSettingsStore, tokenStore } = this.rootStore;
         const poolAddress = appSettingsStore.getActivePoolAddress();
-        await tokenStore.fetchTokenBalances(
-            web3React,
-            account,
-            [poolAddress],
-                ).then(result => {
-                    console.log('fetchActivePoolUserBalance');
-                    console.log(result);
-                    console.log('balanceOf', tokenStore.getBalance(poolAddress, account))
-        });
+        await tokenStore.fetchTokenBalances(web3React, account, [poolAddress]);
     }
 
     @action setFetchLoop(
         web3React: Web3ReactContextInterface,
         forceFetch?: boolean
     ) {
-        if (
-            web3React.active &&
-            web3React.chainId === supportedChainId
-        ) {
+        if (web3React.active && web3React.chainId === supportedChainId) {
             const { library, account, chainId } = web3React;
             const {
                 providerStore,
@@ -97,7 +78,6 @@ export default class BlockchainFetchStore {
                 marketStore,
                 contractMetadataStore,
                 appSettingsStore,
-                tokenStore
             } = this.rootStore;
 
             library
@@ -126,7 +106,7 @@ export default class BlockchainFetchStore {
                         providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        poolStore.fetchPublicPools().then(() => {
+                        poolStore.fetchPublicPools(web3React).then(() => {
                             // Fetch user pool shares after pools loaded
                             this.fetchPoolTotalSupplies(web3React);
 

@@ -149,6 +149,9 @@ const LiquidityPanel = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokens.map((token, index) => {
+                    const tokenMetadata = contractMetadataStore.getTokenMetadata(
+                        token.address
+                    );
                     return (
                         <AssetPercentageContainer key={index}>
                             <AssetDot
@@ -161,7 +164,7 @@ const LiquidityPanel = observer((props: Props) => {
                                     token.denormWeightProportion,
                                     2
                                 )}{' '}
-                                {token.symbol}
+                                {tokenMetadata.symbol}
                             </AssetPercentageText>
                         </AssetPercentageContainer>
                     );
@@ -178,7 +181,7 @@ const LiquidityPanel = observer((props: Props) => {
                     let userLiquidityText = '-';
 
                     if (marketStore.assetPricesLoaded) {
-                        const poolLiquidity = marketStore.getPoolPortfolioValue(
+                        const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
                         liquidityText = formatBalanceTruncated(
@@ -194,14 +197,14 @@ const LiquidityPanel = observer((props: Props) => {
                                 account
                             );
 
-                          if (userLiquidity) {
-                            userLiquidityText = formatBalanceTruncated(
-                                toWei(userLiquidity),
-                                18,
-                                4,
-                                20
-                            );
-                          }
+                            if (userLiquidity) {
+                                userLiquidityText = formatBalanceTruncated(
+                                    toWei(userLiquidity),
+                                    18,
+                                    4,
+                                    20
+                                );
+                            }
                         }
                     }
 

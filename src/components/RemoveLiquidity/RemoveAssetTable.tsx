@@ -4,7 +4,13 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import {bnum, formatBalanceTruncated, formatNormalizedTokenValue, fromPercentage, fromWei} from '../../utils/helpers';
+import {
+    bnum,
+    formatBalanceTruncated,
+    formatNormalizedTokenValue,
+    fromPercentage,
+    fromWei,
+} from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -74,7 +80,7 @@ const WithdrawAmount = styled.div`
 `;
 
 interface Props {
-	poolAddress: string;
+    poolAddress: string;
 }
 
 const RemoveAssetsTable = observer((props: Props) => {
@@ -107,7 +113,10 @@ const RemoveAssetsTable = observer((props: Props) => {
         return (
             <React.Fragment>
                 {pool.tokensList.map(tokenAddress => {
-                    const token = poolStore.getPoolToken(poolAddress, tokenAddress);
+                    const token = poolStore.getPoolToken(
+                        poolAddress,
+                        tokenAddress
+                    );
 
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         tokenAddress
@@ -116,15 +125,31 @@ const RemoveAssetsTable = observer((props: Props) => {
                     let poolBalanceToDisplay = '-';
                     let withdrawPreviewBalanceText = '-';
 
-                    const precision = contractMetadataStore.getTokenPrecision(token.address);
-                    const userLiquidityContribution = poolStore.getUserLiquidityContribution(pool.address, token.address, account);
+                    const precision = contractMetadataStore.getTokenPrecision(
+                        token.address
+                    );
+                    const userLiquidityContribution = poolStore.getUserLiquidityContribution(
+                        pool.address,
+                        token.address,
+                        account
+                    );
 
-                    poolBalanceToDisplay = formatNormalizedTokenValue(userLiquidityContribution, precision);
+                    poolBalanceToDisplay = formatNormalizedTokenValue(
+                        userLiquidityContribution,
+                        precision
+                    );
 
                     if (removeLiquidityFormStore.hasValidInput()) {
-                        const tokensToWithdraw = token.balance.times(fromPercentage(removeLiquidityFormStore.getShareToWithdraw()));
+                        const tokensToWithdraw = token.balance.times(
+                            fromPercentage(
+                                removeLiquidityFormStore.getShareToWithdraw()
+                            )
+                        );
 
-                        withdrawPreviewBalanceText = formatNormalizedTokenValue(tokensToWithdraw, precision);
+                        withdrawPreviewBalanceText = formatNormalizedTokenValue(
+                            tokensToWithdraw,
+                            precision
+                        );
                     }
 
                     return (
@@ -132,7 +157,8 @@ const RemoveAssetsTable = observer((props: Props) => {
                             <TableCell>
                                 <TokenIcon
                                     src={TokenIconAddress(
-                                        tokenMetadata.iconAddress
+                                        tokenMetadata.iconAddress,
+                                        tokenMetadata.isSupported
                                     )}
                                 />
                                 {token.symbol}
@@ -142,9 +168,10 @@ const RemoveAssetsTable = observer((props: Props) => {
                             </TableCell>
                             <TableCellRight width="40%">
                                 <WithdrawAmount>
-                                	<div>
-                                        {withdrawPreviewBalanceText} {token.symbol}
-                                	</div>
+                                    <div>
+                                        {withdrawPreviewBalanceText}{' '}
+                                        {token.symbol}
+                                    </div>
                                 </WithdrawAmount>
                             </TableCellRight>
                         </TableRow>
@@ -169,7 +196,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                 <TableRow>Loading</TableRow>
             )}
         </Wrapper>
-    )
+    );
 });
 
 export default RemoveAssetsTable;

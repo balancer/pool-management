@@ -9,7 +9,6 @@ interface ActionRequest {
     overrides: any;
 }
 
-
 export interface ActionResponse {
     contract: Contract;
     action: string;

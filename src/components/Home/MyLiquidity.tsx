@@ -29,11 +29,14 @@ const MyLiquidity = observer(() => {
 
     if (account) {
         poolStore.getPublicPools().forEach(pool => {
-            const userShare = poolStore.getUserShareProportion(pool.address, account);
+            const userShare = poolStore.getUserShareProportion(
+                pool.address,
+                account
+            );
             if (userShare && userShare.gt(0)) {
                 pools.push(pool);
             }
-        })
+        });
     }
 
     return (

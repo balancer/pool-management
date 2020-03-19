@@ -1,5 +1,5 @@
 import { BigNumber } from 'utils/bignumber';
-import {ValidationStatus} from "./stores/actions/validators";
+import { ValidationStatus } from './stores/actions/validators';
 
 export interface BigNumberMap {
     [index: string]: BigNumber;

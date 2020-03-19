@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import {bnum, formatBalanceTruncated, fromWei} from '../../utils/helpers';
+import { bnum, formatBalanceTruncated, fromWei } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -246,7 +246,7 @@ const AddAssetTable = observer((props: Props) => {
 
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
-      
+
         const ratio = addLiquidityFormStore.calcRatio(
             pool,
             tokenAddress,
@@ -264,11 +264,18 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
 
         if (checked) {
-            const response = await tokenStore.approveMax(web3React, tokenAddress, pool.address);
+            const response = await tokenStore.approveMax(
+                web3React,
+                tokenAddress,
+                pool.address
+            );
 
             // Revert change on metamask error
             if (response.error) {
-                addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, !checked);
+                addLiquidityFormStore.setApprovalCheckboxChecked(
+                    tokenAddress,
+                    !checked
+                );
             }
         } else {
             const response = await tokenStore.revokeApproval(
@@ -279,7 +286,10 @@ const AddAssetTable = observer((props: Props) => {
 
             // Revert change on metamask error
             if (response.error) {
-                addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, !checked);
+                addLiquidityFormStore.setApprovalCheckboxChecked(
+                    tokenAddress,
+                    !checked
+                );
             }
         }
     };
@@ -352,22 +362,27 @@ const AddAssetTable = observer((props: Props) => {
                     }
 
                     let hasError =
-                        input.validation === ValidationStatus.INSUFFICIENT_BALANCE;
+                        input.validation ===
+                        ValidationStatus.INSUFFICIENT_BALANCE;
 
-                    if (addLiquidityFormStore.activeInputKey === token.address) {
-                        hasError = input.validation !== ValidationStatus.VALID && input.validation !== ValidationStatus.EMPTY;
+                    if (
+                        addLiquidityFormStore.activeInputKey === token.address
+                    ) {
+                        hasError =
+                            input.validation !== ValidationStatus.VALID &&
+                            input.validation !== ValidationStatus.EMPTY;
                     }
-
 
                     return (
                         <TableRow key={token.address}>
                             <TableCell>
                                 <TokenIcon
                                     src={TokenIconAddress(
-                                        tokenMetadata.iconAddress
+                                        tokenMetadata.iconAddress,
+                                        tokenMetadata.isSupported
                                     )}
                                 />
-                                {token.symbol}
+                                {tokenMetadata.symbol}
                             </TableCell>
                             <TableCell>
                                 <Toggle>

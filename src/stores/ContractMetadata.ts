@@ -8,6 +8,7 @@ export interface ContractMetadata {
     bFactory: string;
     proxy: string;
     weth: string;
+    defaultPrecision: number;
     tokens: TokenMetadata[];
 }
 
@@ -18,6 +19,7 @@ export interface TokenMetadata {
     iconAddress: string;
     precision: number;
     chartColor: string;
+    isSupported: boolean;
 }
 
 export default class ContractMetadataStore {
@@ -62,6 +64,7 @@ export default class ContractMetadataStore {
             bFactory: metadata.default[chainName].bFactory,
             proxy: metadata.default[chainName].proxy,
             weth: metadata.default[chainName].weth,
+            defaultPrecision: metadata.default[chainName].defaultPrecision,
             tokens: [] as TokenMetadata[],
         };
 
@@ -81,6 +84,7 @@ export default class ContractMetadataStore {
                 iconAddress,
                 precision,
                 chartColor,
+                isSupported: true,
             });
         });
 
@@ -89,6 +93,15 @@ export default class ContractMetadataStore {
 
     getTokenColor(tokenAddress: string): string {
         return this.getTokenMetadata(tokenAddress).chartColor;
+    }
+
+    getDefaultPrecision(): number {
+        return this.contractMetadata.defaultPrecision;
+    }
+
+    isSupported(tokenAddress: string): boolean {
+        const metadata = this.getTokenMetadata(tokenAddress);
+        return metadata.isSupported;
     }
 
     getProxyAddress(): string {
@@ -112,11 +125,21 @@ export default class ContractMetadataStore {
     }
 
     getWhiteListedTokenAddresses(): string[] {
-        return this.contractMetadata.tokens.map(token => token.address);
+        const whitelisted = this.getWhitelistedTokenMetadata();
+        return whitelisted.map(token => token.address);
+    }
+
+    getTrackedTokenAddresses(): string[] {
+        const tokens = this.getTrackedTokenMetadata();
+        return tokens.map(token => token.address);
+    }
+
+    getTrackedTokenMetadata(): TokenMetadata[] {
+        return this.contractMetadata.tokens;
     }
 
     getWhitelistedTokenMetadata(): TokenMetadata[] {
-        return this.contractMetadata.tokens;
+        return this.contractMetadata.tokens.filter(token => token.isSupported);
     }
 
     getTokenPrecision(address: string): number {
@@ -125,6 +148,34 @@ export default class ContractMetadataStore {
         );
 
         return tokenMetadata.precision;
+    }
+
+    hasTokenMetadata(address: string): boolean {
+        const tokenMetadata = this.contractMetadata.tokens.find(
+            element => element.address === address
+        );
+
+        return !!tokenMetadata;
+    }
+
+    getTokenMetadataIndex(address: string): number | undefined {
+        const index = this.contractMetadata.tokens.findIndex(
+            element => element.address === address
+        );
+
+        if (index !== -1) {
+            return index;
+        } else {
+            return undefined;
+        }
+    }
+
+    @action addTokenMetadata(address: string, metadata: TokenMetadata) {
+        const existingIndex = this.getTokenMetadataIndex(address);
+        if (existingIndex) {
+            throw new Error('Attempting to add metadata for existing token');
+        }
+        this.contractMetadata.tokens.push(metadata);
     }
 
     getTokenMetadata(address: string): TokenMetadata {
