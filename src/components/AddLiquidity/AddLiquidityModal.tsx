@@ -6,7 +6,6 @@ import AddAssetTable from './AddAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
-import { ContractTypes } from '../../stores/Provider';
 import { ModalMode } from '../../stores/AddLiquidityForm';
 import { bnum, formatPercentage } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
@@ -140,21 +139,12 @@ const AddLiquidityModal = observer((props: Props) => {
             await tokenStore.approveMax(web3React, token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
-            const { account } = web3React;
-
-            const contract = providerStore.getContract(
-                web3React,
-                ContractTypes.BPool,
-                poolAddress,
-                account
-            );
 
             const poolTokens = poolStore.calcPoolTokensByRatio(
                 pool,
                 addLiquidityFormStore.joinRatio
             );
 
-            const inputs = addLiquidityFormStore.formatInputsForJoin();
             const poolTotal = tokenStore.getTotalSupply(pool.address);
 
             let tokenAmountsIn: string[] = [];
@@ -177,12 +167,12 @@ const AddLiquidityModal = observer((props: Props) => {
                 tokenAmountsIn,
             });
 
-            await contract.joinPool(
+            await poolStore.joinPool(
+                web3React,
+                pool.address,
                 poolTokens.toString(),
                 addLiquidityFormStore.maxUintInputAmounts()
             );
-
-            // await poolStore.joinPool(web3React, pool.address, addLiquidityFormStore.joinRatio, addLiquidityFormStore.formatInputsForJoin())
         }
     };
 

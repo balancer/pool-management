@@ -5,13 +5,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import {
-    bnum,
-    formatBalance,
     formatBalanceTruncated,
     formatPercentage,
     formatNormalizedTokenValue,
-    fromWei,
-    toWei,
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`

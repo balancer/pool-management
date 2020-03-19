@@ -6,10 +6,6 @@ import { BigNumber } from '../utils/bignumber';
 import {
     bnum,
     fromPercentage,
-    POOL_TOKENS_DECIMALS,
-    printPool,
-    scale,
-    shortenAddress,
     tinyAddress,
 } from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
@@ -39,7 +35,6 @@ export default class PoolStore {
         const {
             contractMetadataStore,
             tokenStore,
-            providerStore,
         } = this.rootStore;
         const { account } = web3React;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
@@ -261,43 +256,25 @@ export default class PoolStore {
             [poolAmountIn, minAmountsOut]
         );
 
-        // await providerStore.sendTransaction(
-        //     web3React,
-        //     ContractTypes.BPool,
-        //     poolAddress,
-        //     'joinPool',
-        //     [
-        //         poolAmountOut.toString(),
-        //         maxAmountsIn.map(amount => amount.toString()),
-        //     ]
-        // );
     };
 
     @action joinPool = async (
         web3React: Web3ReactContextInterface,
         poolAddress: string,
-        poolAmountOut: BigNumber,
-        maxAmountsIn: BigNumber[]
+        poolAmountOut: string,
+        maxAmountsIn: string[]
     ) => {
         const { providerStore } = this.rootStore;
-        const { account } = web3React;
 
-        const contract = providerStore.getContract(
+        await providerStore.sendTransaction(
             web3React,
             ContractTypes.BPool,
             poolAddress,
-            account
+            'joinPool',
+            [
+                poolAmountOut.toString(),
+                maxAmountsIn,
+            ]
         );
-
-        // await providerStore.sendTransaction(
-        //     web3React,
-        //     ContractTypes.BPool,
-        //     poolAddress,
-        //     'joinPool',
-        //     [
-        //         poolAmountOut.toString(),
-        //         maxAmountsIn.map(amount => amount.toString()),
-        //     ]
-        // );
     };
 }

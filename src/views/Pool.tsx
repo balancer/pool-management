@@ -9,13 +9,10 @@ import RemoveLiquidityModal from '../components/RemoveLiquidity/RemoveLiquidityM
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import {
-    bnum,
-    formatBalanceTruncated,
     formatFee,
     formatNormalizedTokenValue,
     isAddress,
     toChecksum,
-    toWei,
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';

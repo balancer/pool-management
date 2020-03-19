@@ -102,14 +102,18 @@ const WalletBalances = observer(() => {
                         }
                     }
 
+                    let returnBalance;
+
                     if (account && balanceToDisplay) {
-                        return renderBalance(
+                        returnBalance = renderBalance(
                             token.iconAddress,
                             token.symbol,
                             token.isSupported,
                             balanceToDisplay
                         );
                     }
+
+                    return returnBalance;
                 })}
             </React.Fragment>
         );
