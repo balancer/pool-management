@@ -8,6 +8,7 @@ import {
     formatBalanceTruncated,
     formatPercentage,
     formatNormalizedTokenValue,
+    formatCurrency
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -145,10 +146,9 @@ const BalancesTable = observer((props: Props) => {
                                 )
                             );
 
-                            valueToDisplay = Number(formatNormalizedTokenValue(
-                                userBalanceValue,
-                                2
-                            )).toLocaleString();
+                            valueToDisplay = formatCurrency(
+                                userBalanceValue
+                            );
                         } else {
                             valueToDisplay = '(Untracked)';
                         }

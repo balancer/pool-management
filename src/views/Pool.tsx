@@ -10,9 +10,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import {
     formatFee,
-    formatNormalizedTokenValue,
     isAddress,
     toChecksum,
+    formatCurrency
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -98,11 +98,9 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? Number(formatNormalizedTokenValue(
+            ? formatCurrency(
                   marketStore.getPortfolioValue(pool),
-                  4,
-                  20
-              )).toLocaleString()
+              )
             : '-';
 
     return (

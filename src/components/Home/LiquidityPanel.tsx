@@ -6,10 +6,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
 import {
-    formatBalanceTruncated,
+    formatCurrency,
     formatPercentage,
     shortenAddress,
-    toWei,
 } from '../../utils/helpers';
 import { formatPoolAssetChartData } from '../../utils/chartFormatter';
 
@@ -184,12 +183,9 @@ const LiquidityPanel = observer((props: Props) => {
                         const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
-                        liquidityText = Number(formatBalanceTruncated(
-                            toWei(poolLiquidity),
-                            18,
-                            4,
-                            20
-                        )).toLocaleString();
+                        liquidityText = formatCurrency(
+                            poolLiquidity
+                        );
 
                         if (account) {
                             const userLiquidity = poolStore.calcUserLiquidity(
@@ -198,12 +194,9 @@ const LiquidityPanel = observer((props: Props) => {
                             );
 
                             if (userLiquidity) {
-                                userLiquidityText = Number(formatBalanceTruncated(
-                                    toWei(userLiquidity),
-                                    18,
-                                    4,
-                                    20
-                                )).toLocaleString();
+                                userLiquidityText = formatCurrency(
+                                    userLiquidity
+                                )
                             }
                         }
                     }
