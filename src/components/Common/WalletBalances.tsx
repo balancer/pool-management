@@ -4,7 +4,10 @@ import { formatBalanceTruncated, isAddress } from '../../utils/helpers';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+    height: calc(100vh - 283px);
+    overflow: scroll;
+`;
 
 const BalanceHeader = styled.div`
     font-family: Roboto;
