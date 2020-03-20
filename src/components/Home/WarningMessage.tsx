@@ -41,7 +41,7 @@ const WarningMessage = () => {
             <Warning>
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
-                    This is still beta software. Please use small amounts of
+                    This is still beta software. Use small amounts of
                     funds to start. Please reach out in our{' '}
                     <Link
                         href="https://discord.gg/ARJWaeF"
