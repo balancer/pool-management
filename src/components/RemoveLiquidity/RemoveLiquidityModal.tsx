@@ -1,17 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import RemoveAssetTable from './RemoveAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { Pool, PoolToken } from '../../types';
-import { ContractTypes } from '../../stores/Provider';
-import { ModalMode } from '../../stores/AddLiquidityForm';
+
 import {
     bnum,
-    formatPercentage,
-    fromPercentage,
     toPercentage,
 } from '../../utils/helpers';
 
@@ -69,17 +65,6 @@ const RemoveLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
-`;
-
-const Notification = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    width: 100%;
-    border: 1px solid var(--panel-border);
-    background: var(--panel-background);
-    margin-bottom: 30px;
 `;
 
 const WithdrawWrapper = styled.div`
@@ -168,6 +153,36 @@ interface Props {
     poolAddress: string;
 }
 
+function useOnClickOutside(ref, handler) {
+    useEffect(() => {
+        const handleClick = event => {
+            // Do nothing if clicking ref's element or descendent elements
+            if (!ref.current || ref.current.contains(event.target)) {
+                return;
+            }
+
+            handler(event);
+        };
+
+        const handleKeyUp = event => {
+            if (event.key !== 'Escape') {
+                return;
+            }
+            handler(event);
+        };
+
+        document.addEventListener('mousedown', handleClick);
+        window.addEventListener('keydown', handleKeyUp, false);
+        document.addEventListener('touchstart', handleClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClick);
+            window.removeEventListener('keydown', handleKeyUp, false);
+            document.removeEventListener('touchstart', handleClick);
+        };
+    }, [ref, handler]);
+}
+
 const RemoveLiquidityModal = observer((props: Props) => {
     const { poolAddress } = props;
     const {
@@ -229,7 +244,6 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
     const renderNotification = () => {
         let currentPoolShare = '-';
-        let futurePoolShare = '-';
 
         let existingShare = account
             ? poolStore.getUserShareProportion(pool.address, account)
@@ -237,27 +251,6 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
         if (!existingShare) {
             existingShare = bnum(0);
-        }
-
-        if (requiredDataPresent) {
-            const shareToWithdraw = removeLiquidityFormStore.hasValidInput()
-                ? poolStore.calcPoolTokensByRatio(
-                      pool,
-                      bnum(removeLiquidityFormStore.getShareToWithdraw())
-                  )
-                : bnum(0);
-
-            const tokensToWithdraw = fromPercentage(shareToWithdraw).times(
-                currentTotal
-            );
-
-            const futureTotal = currentTotal.minus(tokensToWithdraw);
-            const futureShare = tokensToWithdraw
-                .div(futureTotal)
-                .plus(existingShare);
-
-            currentPoolShare = formatPercentage(existingShare, 2);
-            futurePoolShare = formatPercentage(futureShare, 2);
         }
 
         return (
@@ -303,9 +296,15 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
     const modalOpen = removeLiquidityFormStore.modalOpen;
 
+    const ref = useRef();
+
+    useOnClickOutside(ref, () =>
+        removeLiquidityFormStore.closeModal()
+    );
+
     return (
         <Container style={{ display: modalOpen ? 'block' : 'none' }}>
-            <ModalContent>
+            <ModalContent ref={ref}>
                 <RemoveLiquidityHeader>
                     <HeaderContent>Remove Liquidity</HeaderContent>
                     <ExitComponent

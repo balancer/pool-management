@@ -295,6 +295,18 @@ export const formatBalanceTruncated = (
     }
 };
 
+export const formatCurrency = (
+    balance: BigNumber
+): string => {
+    const fmt = {
+        decimalSeparator: '.',
+        groupSeparator: ',',
+        groupSize: 3,
+        secondaryGroupSize: 2,
+    };
+    return balance.toFormat(2, BigNumber.ROUND_DOWN, fmt);
+};
+
 export const formatBalance = (
     balance: BigNumber,
     decimals: number,

@@ -9,13 +9,10 @@ import RemoveLiquidityModal from '../components/RemoveLiquidity/RemoveLiquidityM
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import {
-    bnum,
-    formatBalanceTruncated,
     formatFee,
-    formatNormalizedTokenValue,
     isAddress,
     toChecksum,
-    toWei,
+    formatCurrency
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -101,10 +98,8 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? formatNormalizedTokenValue(
+            ? formatCurrency(
                   marketStore.getPortfolioValue(pool),
-                  4,
-                  20
               )
             : '-';
 

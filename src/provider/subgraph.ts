@@ -10,8 +10,8 @@ const SUBGRAPH_URL =
 
 export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
     const query = `
-      query ($tokens: [Bytes!]) {
-          pools (where: {publicSwap: true}) {
+        {
+          pools (where: {finalized: true}) {
             id
             publicSwap
             finalized

@@ -5,13 +5,10 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import {
-    bnum,
-    formatBalance,
     formatBalanceTruncated,
     formatPercentage,
     formatNormalizedTokenValue,
-    fromWei,
-    toWei,
+    formatCurrency
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -149,9 +146,8 @@ const BalancesTable = observer((props: Props) => {
                                 )
                             );
 
-                            valueToDisplay = formatNormalizedTokenValue(
-                                userBalanceValue,
-                                2
+                            valueToDisplay = formatCurrency(
+                                userBalanceValue
                             );
                         } else {
                             valueToDisplay = '(Untracked)';

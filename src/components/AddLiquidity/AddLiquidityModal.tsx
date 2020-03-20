@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
@@ -6,7 +6,6 @@ import AddAssetTable from './AddAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
-import { ContractTypes } from '../../stores/Provider';
 import { ModalMode } from '../../stores/AddLiquidityForm';
 import { bnum, formatPercentage } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
@@ -88,6 +87,36 @@ interface Props {
     poolAddress: string;
 }
 
+function useOnClickOutside(ref, handler) {
+    useEffect(() => {
+        const handleClick = event => {
+            // Do nothing if clicking ref's element or descendent elements
+            if (!ref.current || ref.current.contains(event.target)) {
+                return;
+            }
+
+            handler(event);
+        };
+
+        const handleKeyUp = event => {
+            if (event.key !== 'Escape') {
+                return;
+            }
+            handler(event);
+        };
+
+        document.addEventListener('mousedown', handleClick);
+        window.addEventListener('keydown', handleKeyUp, false);
+        document.addEventListener('touchstart', handleClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClick);
+            window.removeEventListener('keydown', handleKeyUp, false);
+            document.removeEventListener('touchstart', handleClick);
+        };
+    }, [ref, handler]);
+}
+
 const AddLiquidityModal = observer((props: Props) => {
     const findLockedToken = (
         pool: Pool,
@@ -140,21 +169,12 @@ const AddLiquidityModal = observer((props: Props) => {
             await tokenStore.approveMax(web3React, token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
-            const { account } = web3React;
-
-            const contract = providerStore.getContract(
-                web3React,
-                ContractTypes.BPool,
-                poolAddress,
-                account
-            );
 
             const poolTokens = poolStore.calcPoolTokensByRatio(
                 pool,
                 addLiquidityFormStore.joinRatio
             );
 
-            const inputs = addLiquidityFormStore.formatInputsForJoin();
             const poolTotal = tokenStore.getTotalSupply(pool.address);
 
             let tokenAmountsIn: string[] = [];
@@ -177,12 +197,12 @@ const AddLiquidityModal = observer((props: Props) => {
                 tokenAmountsIn,
             });
 
-            await contract.joinPool(
+            await poolStore.joinPool(
+                web3React,
+                pool.address,
                 poolTokens.toString(),
                 addLiquidityFormStore.maxUintInputAmounts()
             );
-
-            // await poolStore.joinPool(web3React, pool.address, addLiquidityFormStore.joinRatio, addLiquidityFormStore.formatInputsForJoin())
         }
     };
 
@@ -282,9 +302,15 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const modalOpen = addLiquidityFormStore.modalOpen;
 
+    const ref = useRef();
+
+    useOnClickOutside(ref, () =>
+        addLiquidityFormStore.closeModal()
+    );
+
     return (
         <Container style={{ display: modalOpen ? 'block' : 'none' }}>
-            <ModalContent>
+            <ModalContent ref={ref}>
                 <AddLiquidityHeader>
                     <HeaderContent>Add Liquidity</HeaderContent>
                     <ExitComponent
