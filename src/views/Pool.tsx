@@ -24,6 +24,16 @@ const PoolViewWrapper = styled.div`
     padding: 27px 25px 0px 25px;
 `;
 
+const ErrorMessage = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    color: var(--panel-row-text);
+    width: 100%;
+    height: calc(100vh - 108px);
+`
+
 const InfoPanelWrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -53,7 +63,11 @@ const Pool = observer((props: RouteComponentProps) => {
 
     if (!isAddress(poolAddress)) {
         return (
-            <PoolViewWrapper>Please input a valid Pool address</PoolViewWrapper>
+            <PoolViewWrapper>
+                <ErrorMessage>
+                    Please input a valid Pool address
+                </ErrorMessage>
+            </PoolViewWrapper>
         );
     }
 
@@ -64,7 +78,9 @@ const Pool = observer((props: RouteComponentProps) => {
     if (poolStore.poolsLoaded && !pool) {
         return (
             <PoolViewWrapper>
-                Pool with specified address not found
+                <ErrorMessage>
+                    Pool with specified address not found
+                </ErrorMessage>
             </PoolViewWrapper>
         );
     }
