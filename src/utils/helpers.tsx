@@ -130,14 +130,7 @@ export function formatPercentage(
         return '<0.01%';
     }
 
-    return `${value.times(100).toFormat(decimals, BigNumber.ROUND_HALF_EVEN)}%`;
-}
-
-export function formatPctString(value: BigNumber): string {
-    if (value.lte(0.01) && value.gt(0)) {
-        return '<0.01%';
-    }
-    return `${value.toFormat(2, BigNumber.ROUND_HALF_EVEN)}%`;
+    return `${value.times(100).toFormat(decimals, BigNumber.ROUND_DOWN)}%`;
 }
 
 const ETHERSCAN_PREFIXES = {

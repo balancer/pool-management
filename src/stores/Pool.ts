@@ -6,7 +6,7 @@ import { BigNumber } from '../utils/bignumber';
 import {
     bnum,
     fromPercentage,
-    tinyAddress,
+    tinyAddress, toPercentage,
 } from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
@@ -247,6 +247,12 @@ export default class PoolStore {
         minAmountsOut: string[]
     ) => {
         const { providerStore } = this.rootStore;
+
+        console.debug('exitPool', {
+            poolAddress,
+            poolAmountIn,
+            minAmountsOut
+        });
 
         await providerStore.sendTransaction(
             web3React,

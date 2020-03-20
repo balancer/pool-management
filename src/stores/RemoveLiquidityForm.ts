@@ -3,7 +3,7 @@ import RootStore from 'stores/Root';
 import { Input } from '../types';
 import { validateTokenValue, ValidationStatus } from './actions/validators';
 import { BigNumber } from '../utils/bignumber';
-import { bnum } from '../utils/helpers';
+import {bnum, toPercentage} from '../utils/helpers';
 
 export default class RemoveLiquidityFormStore {
     @observable activePool: string;
@@ -29,6 +29,19 @@ export default class RemoveLiquidityFormStore {
         if (bnum(value).gt(100)) {
             this.shareToWithdraw.validation =
                 ValidationStatus.MAX_VALUE_EXCEEDED;
+        }
+    }
+
+    @action validateUserShareInput(poolAddress: string, account: string) {
+        const {poolStore} = this.rootStore;
+        const userShare = poolStore.getUserShareProportion(
+            poolAddress,
+            account
+        );
+        if (userShare) {
+            this.shareToWithdrawPercentageCheck(
+                toPercentage(userShare)
+            );
         }
     }
 
