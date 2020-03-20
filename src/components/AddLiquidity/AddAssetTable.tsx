@@ -239,9 +239,11 @@ const AddAssetTable = observer((props: Props) => {
         tokenAddress: string,
         balance: BigNumber
     ) => {
-        let maxValue = fromWei(balance);
-        if (bnum(maxValue).eq(0)) {
-            maxValue = '0.00';
+        let maxValue = '0.00';
+        const userBalance = tokenStore.normalizeBalance(balance, tokenAddress);
+
+        if (userBalance && !userBalance.eq(0)) {
+            maxValue = userBalance.toString();
         }
 
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
