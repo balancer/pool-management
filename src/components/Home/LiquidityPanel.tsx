@@ -154,9 +154,10 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderAssetPercentages = (pool: Pool) => {
+        const sortedTokens = pool.tokens.sort((a, b) => Number(b.denormWeightProportion) - Number(a.denormWeightProportion));
         return (
             <React.Fragment>
-                {pool.tokens.map((token, index) => {
+                {sortedTokens.map((token, index) => {
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
                         token.address
                     );
@@ -182,6 +183,11 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderPoolsChart = () => {
+        if (marketStore.assetPricesLoaded) {
+            pools.sort((a, b) => {
+                return Number(marketStore.getPortfolioValue(b)) - Number(marketStore.getPortfolioValue(a));
+            });
+        }
         return (
             <React.Fragment>
                 {pools.map(pool => {
@@ -211,8 +217,8 @@ const LiquidityPanel = observer((props: Props) => {
                     }
 
                     return (
-                        <PoolLink to={`/pool/${pool.address}`}>
-                            <PoolRow key={pool.address}>
+                        <PoolLink key={pool.address} to={`/pool/${pool.address}`}>
+                            <PoolRow>
                                 <TableCell width="15%">
                                     <Identicon address={pool.address} />
                                     <IdenticonText>
