@@ -223,7 +223,9 @@ export default class PoolStore {
     calcPoolTokensByRatio(pool: Pool, ratio: BigNumber): BigNumber {
         const { tokenStore } = this.rootStore;
         const totalPoolTokens = tokenStore.getTotalSupply(pool.address);
-        return ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN);
+        // TODO - fix calcs so no buffer is needed
+        const buffer = bnum(100)
+        return (ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN)).minus(buffer);
     }
 
     getPoolTokenPercentage(poolAddress: string, percentage: string) {
