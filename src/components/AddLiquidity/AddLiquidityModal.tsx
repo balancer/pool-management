@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
@@ -85,6 +85,36 @@ enum ButtonAction {
 
 interface Props {
     poolAddress: string;
+}
+
+function useOnClickOutside(ref, handler) {
+    useEffect(() => {
+        const handleClick = event => {
+            // Do nothing if clicking ref's element or descendent elements
+            if (!ref.current || ref.current.contains(event.target)) {
+                return;
+            }
+
+            handler(event);
+        };
+
+        const handleKeyUp = event => {
+            if (event.key !== 'Escape') {
+                return;
+            }
+            handler(event);
+        };
+
+        document.addEventListener('mousedown', handleClick);
+        window.addEventListener('keydown', handleKeyUp, false);
+        document.addEventListener('touchstart', handleClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClick);
+            window.removeEventListener('keydown', handleKeyUp, false);
+            document.removeEventListener('touchstart', handleClick);
+        };
+    }, [ref, handler]);
 }
 
 const AddLiquidityModal = observer((props: Props) => {
@@ -272,9 +302,15 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const modalOpen = addLiquidityFormStore.modalOpen;
 
+    const ref = useRef();
+
+    useOnClickOutside(ref, () =>
+        addLiquidityFormStore.closeModal()
+    );
+
     return (
         <Container style={{ display: modalOpen ? 'block' : 'none' }}>
-            <ModalContent>
+            <ModalContent ref={ref}>
                 <AddLiquidityHeader>
                     <HeaderContent>Add Liquidity</HeaderContent>
                     <ExitComponent

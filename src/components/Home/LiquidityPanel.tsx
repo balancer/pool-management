@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import { Pie } from 'react-chartjs-2';
 import { observer } from 'mobx-react';
+import { Link } from 'react-router-dom';
 import { useStores } from '../../contexts/storesContext';
 import { Pool } from '../../types';
 import {
@@ -31,6 +32,10 @@ const HeaderRow = styled.div`
     line-height: 16px;
 `;
 
+const PoolLink = styled(Link)`
+    text-decoration: none;
+`;
+
 const PoolRow = styled.div`
     display: flex;
     flex-direction: row;
@@ -43,6 +48,10 @@ const PoolRow = styled.div`
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
+
+    &:hover {
+        background: var(--panel-border);
+    }
 `;
 
 const FooterRow = styled.div`
@@ -202,34 +211,34 @@ const LiquidityPanel = observer((props: Props) => {
                     }
 
                     return (
-                        <PoolRow key={pool.address}>
-                            <TableCell width="15%">
-                                <Identicon address={pool.address} />
-                                <IdenticonText>
-                                    <a href={`/#/pool/${pool.address}`}>
-                                        {shortenAddress(pool.address)}
-                                    </a>
-                                </IdenticonText>
-                            </TableCell>
-                            <AssetCell>
-                                <PieChartWrapper>
-                                    <Pie
-                                        type={'doughnut'}
-                                        data={formatPoolAssetChartData(
-                                            pool,
-                                            contractMetadataStore.contractMetadata
-                                        )}
-                                        options={options}
-                                    />
-                                </PieChartWrapper>
-                                <BreakdownContainer>
-                                    {renderAssetPercentages(pool)}
-                                </BreakdownContainer>
-                            </AssetCell>
-                            <TableCell width="12%">{`$ ${liquidityText}`}</TableCell>
-                            <TableCell width="12%">{`$ ${userLiquidityText}`}</TableCell>
-                            <TableCellRight width="15%">$ -</TableCellRight>
-                        </PoolRow>
+                        <PoolLink to={`/pool/${pool.address}`}>
+                            <PoolRow key={pool.address}>
+                                <TableCell width="15%">
+                                    <Identicon address={pool.address} />
+                                    <IdenticonText>
+                                        {shortenAddress(pool.address)}  
+                                    </IdenticonText>
+                                </TableCell>
+                                <AssetCell>
+                                    <PieChartWrapper>
+                                        <Pie
+                                            type={'doughnut'}
+                                            data={formatPoolAssetChartData(
+                                                pool,
+                                                contractMetadataStore.contractMetadata
+                                            )}
+                                            options={options}
+                                        />
+                                    </PieChartWrapper>
+                                    <BreakdownContainer>
+                                        {renderAssetPercentages(pool)}
+                                    </BreakdownContainer>
+                                </AssetCell>
+                                <TableCell width="12%">{`$ ${liquidityText}`}</TableCell>
+                                <TableCell width="12%">{`$ ${userLiquidityText}`}</TableCell>
+                                <TableCellRight width="15%">$ -</TableCellRight>
+                            </PoolRow>
+                        </PoolLink>
                     );
                 })}
             </React.Fragment>
