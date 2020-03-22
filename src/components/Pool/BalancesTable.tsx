@@ -199,7 +199,7 @@ const BalancesTable = observer((props: Props) => {
                     <TableCell>Token</TableCell>
                     <TableCell>Weight</TableCell>
                     <TableCell>Pool Balance</TableCell>
-                    <TableCell>My Balance</TableCell>
+                    <TableCell>My Pool Balance</TableCell>
                     <TableCellRight>My Asset Value</TableCellRight>
                 </HeaderRow>
                 {pool ? (
