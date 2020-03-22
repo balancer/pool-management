@@ -154,7 +154,7 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderAssetPercentages = (pool: Pool) => {
-        const sortedTokens = pool.tokens.sort((a, b) => Number(b.denormWeightProportion) - Number(a.denormWeightProportion));
+        const sortedTokens = pool.tokens.slice().sort((a, b) => Number(b.denormWeightProportion) - Number(a.denormWeightProportion));
         return (
             <React.Fragment>
                 {sortedTokens.map((token, index) => {

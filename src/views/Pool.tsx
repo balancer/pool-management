@@ -100,10 +100,6 @@ const Pool = observer((props: RouteComponentProps) => {
         userPoolTokens = tokenStore.getBalance(poolAddress, account);
     }
 
-    if (account) {
-        userPoolTokens = tokenStore.getBalance(poolAddress, account);
-    }
-
     const feeText = pool ? formatFee(pool.swapFee) : '-';
     const shareText = getUserShareText(
         pool,
