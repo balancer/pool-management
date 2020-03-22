@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { BigNumberMap, Pool } from '../../types';
+import { BigNumber } from 'utils/bignumber';
+import { Pool } from '../../types';
 import {
-    formatBalanceTruncated,
     formatPercentage,
     formatNormalizedTokenValue,
     formatCurrency
@@ -98,15 +98,18 @@ const BalancesTable = observer((props: Props) => {
     const { account } = providerStore.getActiveWeb3React();
 
     const pool = poolStore.getPool(poolAddress);
-    let userBalances: undefined | BigNumberMap;
+    let userPoolTokens: undefined | BigNumber;
+    let totalPoolTokens: undefined | BigNumber;
 
     if (pool) {
-        userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
+        userPoolTokens = tokenStore.getBalance(poolAddress, account);
+        totalPoolTokens = tokenStore.getTotalSupply(poolAddress);
     }
 
     const renderBalanceTable = (
         pool: Pool,
-        userBalances: undefined | BigNumberMap
+        userPoolTokens: undefined | BigNumber,
+        totalPoolTokens: undefined | BigNumber
     ) => {
         return (
             <React.Fragment>
@@ -121,10 +124,9 @@ const BalancesTable = observer((props: Props) => {
                     );
 
                     const balanceToDisplay: string =
-                        userBalances && userBalances[tokenAddress]
-                            ? formatBalanceTruncated(
-                                  userBalances[tokenAddress],
-                                  token.decimals,
+                        userPoolTokens && totalPoolTokens
+                            ? formatNormalizedTokenValue(
+                                  token.balance.times(userPoolTokens.div(totalPoolTokens)),
                                   4,
                                   20
                               )
@@ -132,18 +134,15 @@ const BalancesTable = observer((props: Props) => {
 
                     let valueToDisplay = '-';
                     if (
-                        userBalances &&
-                        userBalances[tokenAddress] &&
+                        userPoolTokens &&
+                        totalPoolTokens &&
                         marketStore.assetPricesLoaded
                     ) {
                         if (tokenMetadata.isSupported) {
                             // TODO: Scale this using token decimals
                             const userBalanceValue = marketStore.getValue(
                                 tokenMetadata.symbol,
-                                tokenStore.normalizeBalance(
-                                    userBalances[tokenAddress],
-                                    tokenAddress
-                                )
+                                token.balance.times(userPoolTokens.div(totalPoolTokens)),
                             );
 
                             valueToDisplay = formatCurrency(
@@ -204,7 +203,7 @@ const BalancesTable = observer((props: Props) => {
                     <TableCellRight>My Asset Value</TableCellRight>
                 </HeaderRow>
                 {pool ? (
-                    renderBalanceTable(pool, userBalances)
+                    renderBalanceTable(pool, userPoolTokens, totalPoolTokens)
                 ) : (
                     <TableRow>Loading</TableRow>
                 )}
