@@ -211,6 +211,7 @@ const AddLiquidityModal = observer((props: Props) => {
         let futurePoolShare = '-';
 
         const currentTotal = tokenStore.getTotalSupply(pool.address);
+        const userBalance = tokenStore.getBalance(pool.address, account);
         let existingShare = account
             ? poolStore.getUserShareProportion(pool.address, account)
             : bnum(0);
@@ -228,9 +229,7 @@ const AddLiquidityModal = observer((props: Props) => {
                 : bnum(0);
 
             const futureTotal = currentTotal.plus(previewTokens);
-            const futureShare = previewTokens
-                .div(futureTotal)
-                .plus(existingShare);
+            const futureShare = (previewTokens.plus(userBalance)).div(futureTotal);
 
             currentPoolShare = formatPercentage(existingShare, 2);
             futurePoolShare = formatPercentage(futureShare, 2);
