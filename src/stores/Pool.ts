@@ -242,6 +242,22 @@ export default class PoolStore {
         return this.pools[poolAddress].data.tokensList;
     }
 
+    calcPoolVolume(
+        poolAddress: string
+    ): BigNumber | undefined {
+        var pool = this.getPool(poolAddress);
+
+        // For each tokenVolume get market value and multiply by total
+        // Add all token prices together
+        let total = new BigNumber(0);
+        pool.swaps.tokenVolumes.forEach(token => {
+          // console.log(`${token.tokenAddress}: ${token.totalVolume}`);
+          total = total.plus(token.totalVolume);
+        })
+        // !!!!!!! ADD GECKO PRICES
+        return total;
+    }
+
     @action exitPool = async (
         web3React: Web3ReactContextInterface,
         poolAddress: string,

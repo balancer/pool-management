@@ -193,6 +193,7 @@ const LiquidityPanel = observer((props: Props) => {
                 {pools.map(pool => {
                     let liquidityText = '-';
                     let userLiquidityText = '-';
+                    let volumeText = '-';
 
                     if (marketStore.assetPricesLoaded) {
                         const poolLiquidity = marketStore.getPortfolioValue(
@@ -214,6 +215,13 @@ const LiquidityPanel = observer((props: Props) => {
                                 )
                             }
                         }
+
+                        // !!! SHOULD THIS BE CHANGED TO MARKET STORE?
+                        const volume = poolStore.calcPoolVolume(pool.address);
+
+                        volumeText = formatCurrency(
+                            volume
+                        )
                     }
 
                     return (
@@ -222,7 +230,7 @@ const LiquidityPanel = observer((props: Props) => {
                                 <TableCell width="15%">
                                     <Identicon address={pool.address} />
                                     <IdenticonText>
-                                        {shortenAddress(pool.address)}  
+                                        {shortenAddress(pool.address)}
                                     </IdenticonText>
                                 </TableCell>
                                 <AssetCell>
@@ -242,7 +250,7 @@ const LiquidityPanel = observer((props: Props) => {
                                 </AssetCell>
                                 <TableCell width="12%">{`$ ${liquidityText}`}</TableCell>
                                 <TableCell width="12%">{`$ ${userLiquidityText}`}</TableCell>
-                                <TableCellRight width="15%">$ -</TableCellRight>
+                                <TableCellRight width="15%">{`$ ${volumeText}`}</TableCellRight>
                             </PoolRow>
                         </PoolLink>
                     );
