@@ -81,6 +81,7 @@ export interface Checkbox {
 
 export interface TokenVolume {
     tokenAddress: string;
+    tokenSymbol: string;
     totalVolume: BigNumber;
 }
 

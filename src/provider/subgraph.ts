@@ -16,10 +16,12 @@ function processSwapsTest(data): PoolSwaps[] {
         {
             tokenAddress: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
             totalVolume: bnum(20),
+            tokenSymbol: 'WETH'
         },
         {
             tokenAddress: '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
             totalVolume: bnum(7000),
+            tokenSymbol: 'DAI'
         }
       ]
     },
@@ -29,10 +31,12 @@ function processSwapsTest(data): PoolSwaps[] {
         {
             tokenAddress: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
             totalVolume: bnum(0.1111111111111),
+            tokenSymbol: 'WETH'
         },
         {
             tokenAddress: '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
             totalVolume: bnum(0.6666666666666),
+            tokenSymbol:'DAI'
         }
       ]
     }];
@@ -59,16 +63,20 @@ function processSwapsLive(data): PoolSwaps[] {
     for (var swap in data.swaps) {
         let swapPoolAddress = data.swaps[swap].poolAddress.id;
         let swapTokenIn = data.swaps[swap].tokenIn;
+        let swapTokenInSymbol = data.swaps[swap].tokenInSym;
         let swapTokenAmountIn = data.swaps[swap].tokenAmountIn;
         let swapTokenOut = data.swaps[swap].tokenOut;
         let swapTokenAmountOut = data.swaps[swap].tokenAmountOut;
+        let swapTokenOutSymbol = data.swaps[swap].tokenOutSym;
 
         let tokenToCount = swapTokenIn;
         let tokenCount = swapTokenAmountIn;
+        let tokenSymbol = swapTokenInSymbol;
 
         if (!coinGeckoList(swapTokenIn)) {
             tokenToCount = swapTokenOut;
             tokenCount = swapTokenAmountOut;
+            tokenSymbol = swapTokenOutSymbol;
         }
 
         var pool = poolSwaps.find(
@@ -88,6 +96,7 @@ function processSwapsLive(data): PoolSwaps[] {
                 pool.tokenVolumes.push({
                     tokenAddress: tokenToCount,
                     totalVolume: bnum(tokenCount),
+                    tokenSymbol: tokenSymbol
                 });
             }
         } else {
@@ -97,6 +106,7 @@ function processSwapsLive(data): PoolSwaps[] {
                     {
                         tokenAddress: tokenToCount,
                         totalVolume: bnum(tokenCount),
+                        tokenSymbol: tokenSymbol
                     },
                 ],
             });
@@ -108,10 +118,7 @@ function processSwapsLive(data): PoolSwaps[] {
 
 async function fetchSwaps(): Promise<PoolSwaps[]> {
 
-  console.log('!!!! fetchSwaps');
-
   // !!! ADD TIMESTAMP CHECK TOO
-
   var ts = Math.round((new Date()).getTime() / 1000);
 
   const query = `
@@ -123,8 +130,10 @@ async function fetchSwaps(): Promise<PoolSwaps[]> {
           }
           caller
           tokenIn
+          tokenInSym
           tokenAmountIn
           tokenOut
+          tokenOutSym
           tokenAmountOut
           timestamp
         }
@@ -145,8 +154,8 @@ async function fetchSwaps(): Promise<PoolSwaps[]> {
   const { data } = await response.json();
 
   // !!!!!!!
-  var poolSwaps: PoolSwaps[] = processSwapsTest(data);
-  // var poolSwaps: PoolSwaps[] = processSwapsLive(data);
+  // var poolSwaps: PoolSwaps[] = processSwapsTest(data);
+  var poolSwaps: PoolSwaps[] = processSwapsLive(data);
 
   return poolSwaps;
 }
@@ -197,7 +206,6 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
 
     const { data } = await response.json();
 
-    console.log('!!!!!!! FETCH PUBLIC POOLS');
     var allSwaps = await fetchSwaps();
 
     return data.pools.map(pool => {

@@ -245,16 +245,30 @@ export default class PoolStore {
     calcPoolVolume(
         poolAddress: string
     ): BigNumber | undefined {
+        const { marketStore } = this.rootStore;
+
         var pool = this.getPool(poolAddress);
 
         // For each tokenVolume get market value and multiply by total
         // Add all token prices together
         let total = new BigNumber(0);
         pool.swaps.tokenVolumes.forEach(token => {
-          // console.log(`${token.tokenAddress}: ${token.totalVolume}`);
-          total = total.plus(token.totalVolume);
+          // !!!!!!! THIS IS FOR CONSOLE ONLY
+          if(token.tokenSymbol == ''){
+            console.log('No Symbol: ');
+            console.log(token.tokenAddress)
+          }else{
+
+            var price = marketStore.getAssetPrice(token.tokenSymbol)
+            console.log(`${poolAddress} ${token.tokenSymbol}: ${price} Volume: ${token.totalVolume}`);
+
+            var value = marketStore.getValue(token.tokenSymbol, token.totalVolume)
+
+            // total = total.plus(token.totalVolume);
+            total = total.plus(value);
+          }
         })
-        // !!!!!!! ADD GECKO PRICES
+        console.log(`TOTAL: $${total}`);
         return total;
     }
 
