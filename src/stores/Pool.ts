@@ -255,7 +255,7 @@ export default class PoolStore {
         pool.swaps.tokenVolumes.forEach(token => {
           // !!!!!!! THIS IS FOR CONSOLE ONLY
           if(token.tokenSymbol == ''){
-            console.log('No Symbol: ');
+            console.log('!!!!!!! No Symbol: ');
             console.log(token.tokenAddress)
           }else{
 

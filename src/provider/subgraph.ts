@@ -73,10 +73,10 @@ function processSwapsLive(data): PoolSwaps[] {
         let tokenCount = swapTokenAmountIn;
         let tokenSymbol = swapTokenInSymbol;
 
-        if (!coinGeckoList(swapTokenIn)) {
-            tokenToCount = swapTokenOut;
-            tokenCount = swapTokenAmountOut;
-            tokenSymbol = swapTokenOutSymbol;
+        // !!!!!!! Should check for Gecko price here?
+        if(tokenSymbol == ''){
+          console.log(`!!!!!!! IN TOKEN HAS NO SYMBOL. TRY OUT: ${swapTokenOutSymbol}`);
+          tokenSymbol = swapTokenOutSymbol;
         }
 
         var pool = poolSwaps.find(
@@ -120,10 +120,12 @@ async function fetchSwaps(): Promise<PoolSwaps[]> {
 
   // !!! ADD TIMESTAMP CHECK TOO
   var ts = Math.round((new Date()).getTime() / 1000);
+  var tsYesterday = ts - (24 * 3600);
 
+  // swaps (where: {timestamp_gt: 1584897485}){
   const query = `
       {
-        swaps{
+        swaps (where: {timestamp_gt: ${tsYesterday}}){
           id
           poolAddress {
             id
