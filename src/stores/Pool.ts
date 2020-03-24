@@ -70,7 +70,7 @@ export default class PoolStore {
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
+        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex, this.rootStore);
 
         pools.forEach(pool => {
             const processedPool = this.processUnknownTokens(web3React, pool);
@@ -253,22 +253,16 @@ export default class PoolStore {
         // Add all token prices together
         let total = new BigNumber(0);
         pool.swaps.tokenVolumes.forEach(token => {
-          // !!!!!!! THIS IS FOR CONSOLE ONLY
+
           if(token.tokenSymbol == ''){
-            console.log('!!!!!!! No Symbol: ');
+            console.log('!!!!!!! No Symbol For Token Volume.');
             console.log(token.tokenAddress)
           }else{
 
-            var price = marketStore.getAssetPrice(token.tokenSymbol)
-            console.log(`${poolAddress} ${token.tokenSymbol}: ${price} Volume: ${token.totalVolume}`);
-
             var value = marketStore.getValue(token.tokenSymbol, token.totalVolume)
-
-            // total = total.plus(token.totalVolume);
             total = total.plus(value);
           }
         })
-        console.log(`TOTAL: $${total}`);
         return total;
     }
 

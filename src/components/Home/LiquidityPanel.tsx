@@ -216,7 +216,6 @@ const LiquidityPanel = observer((props: Props) => {
                             }
                         }
 
-                        // !!! SHOULD THIS BE CHANGED TO MARKET STORE?
                         const volume = poolStore.calcPoolVolume(pool.address);
 
                         volumeText = formatCurrency(
