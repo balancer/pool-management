@@ -216,7 +216,7 @@ const LiquidityPanel = observer((props: Props) => {
                             }
                         }
 
-                        const volume = poolStore.calcPoolVolume(pool.address);
+                        const volume = marketStore.getPoolVolume(pool);
 
                         volumeText = formatCurrency(
                             volume

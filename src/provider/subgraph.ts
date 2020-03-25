@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
-import { NumberMap, Pool, PoolShare, PoolToken } from '../types';
+import { NumberMap, Pool, PoolShare, PoolToken, Swap } from '../types';
 import { bnum } from '../utils/helpers';
 import {getSupportedChainId, SUBGRAPH_URLS} from "./connectors";
 
@@ -101,7 +101,16 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
                     ),
                 } as PoolShare;
             }),
-            swaps: pool.swaps
+            swaps: pool.swaps.map(swap => {
+                return {
+                    tokenIn: getAddress(swap.tokenIn),
+                    tokenAmountIn: bnum(swap.tokenAmountIn),
+                    tokenInSym: swap.tokenInSym,
+                    tokenOut: getAddress(swap.tokenOut),
+                    tokenAmountOut: bnum(swap.tokenAmountOut),
+                    tokenOutSym: swap.tokenOutSym
+                } as Swap
+            })
         };
 
         parsedPool.tokensList = parsedPool.tokensList.sort((a, b) => {

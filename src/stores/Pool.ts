@@ -242,49 +242,6 @@ export default class PoolStore {
         return this.pools[poolAddress].data.tokensList;
     }
 
-    calcPoolVolume(
-        poolAddress: string
-    ): BigNumber | undefined {
-
-        const { marketStore } = this.rootStore;
-
-        var pool = this.getPool(poolAddress);
-
-        let total = new BigNumber(0);
-
-        for (var swap in pool.swaps) {
-            let swapTokenIn = pool.swaps[swap].tokenIn;
-            let swapTokenInSymbol = pool.swaps[swap].tokenInSym;
-            let swapTokenAmountIn = pool.swaps[swap].tokenAmountIn;
-            let swapTokenOut = pool.swaps[swap].tokenOut;
-            let swapTokenAmountOut = pool.swaps[swap].tokenAmountOut;
-            let swapTokenOutSymbol = pool.swaps[swap].tokenOutSym;
-
-            let tokenToCount = swapTokenIn;
-            let tokenCount = swapTokenAmountIn;
-            let tokenSymbol = swapTokenInSymbol;
-
-            try {
-              marketStore.getAssetPrice(tokenSymbol);
-            } catch (error) {
-              console.log(`!!!!!!! In token price issue ${swapTokenInSymbol} ${swapTokenIn}. Try Out: ${swapTokenOutSymbol} ${swapTokenOut}`);
-              tokenToCount = swapTokenOut;
-              tokenCount = swapTokenAmountOut;
-              tokenSymbol = swapTokenOutSymbol;
-            }
-
-            let value = new BigNumber(0);
-            try {
-              value = marketStore.getValue(tokenSymbol, tokenCount)
-            } catch (error) {
-              console.log(`!!!!!!! Error getting asset value: ${tokenSymbol}: ${tokenToCount}`);
-            }
-            total = total.plus(value);
-        }
-
-        return total;
-    }
-
     @action exitPool = async (
         web3React: Web3ReactContextInterface,
         poolAddress: string,
