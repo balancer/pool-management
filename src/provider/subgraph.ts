@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
-import { NumberMap, Pool, PoolShare, PoolToken, PoolSwaps } from '../types';
+import { NumberMap, Pool, PoolShare, PoolToken } from '../types';
 import { bnum } from '../utils/helpers';
 import {getSupportedChainId, SUBGRAPH_URLS} from "./connectors";
 import RootStore from 'stores/Root';
@@ -10,7 +10,7 @@ const SUBGRAPH_URL =
     SUBGRAPH_URLS[chainId];
 
 async function fetchSwaps() {
-
+  // Returns all swaps for all pools in last 24hours
   var ts = Math.round((new Date()).getTime() / 1000);
   var tsYesterday = ts - (24 * 3600);
 

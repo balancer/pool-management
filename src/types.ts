@@ -79,17 +79,6 @@ export interface Checkbox {
     touched: boolean;
 }
 
-export interface TokenVolume {
-    tokenAddress: string;
-    tokenSymbol: string;
-    totalVolume: BigNumber;
-}
-
-export interface PoolSwaps {
-    poolAddress: string;
-    tokenVolumes: TokenVolume[];
-}
-
 export interface Swap {
   tokenIn
   tokenInSym
