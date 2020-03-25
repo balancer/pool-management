@@ -9,76 +9,7 @@ const chainId = getSupportedChainId();
 const SUBGRAPH_URL =
     SUBGRAPH_URLS[chainId];
 
-function processSwapsLive(data, rootStore: RootStore): PoolSwaps[] {
-    var poolSwaps: PoolSwaps[] = [];
-
-    for (var swap in data.swaps) {
-        let swapPoolAddress = data.swaps[swap].poolAddress.id;
-        let swapTokenIn = data.swaps[swap].tokenIn;
-        let swapTokenInSymbol = data.swaps[swap].tokenInSym;
-        let swapTokenAmountIn = data.swaps[swap].tokenAmountIn;
-        let swapTokenOut = data.swaps[swap].tokenOut;
-        let swapTokenAmountOut = data.swaps[swap].tokenAmountOut;
-        let swapTokenOutSymbol = data.swaps[swap].tokenOutSym;
-
-        let tokenToCount = swapTokenIn;
-        let tokenCount = swapTokenAmountIn;
-        let tokenSymbol = swapTokenInSymbol;
-
-        const { marketStore } = rootStore;
-        var hasPrice = true;
-        try {
-          marketStore.getAssetPrice(tokenSymbol);
-        } catch (error) {
-          console.log(`!!!!!!! Error getting asset price: ${tokenSymbol}: ${tokenToCount}`);
-          hasPrice = false;
-        }
-
-        if(tokenSymbol == '' || !hasPrice){
-          tokenToCount = swapTokenOut;
-          tokenCount = swapTokenAmountOut;
-          tokenSymbol = swapTokenOutSymbol;
-          console.log(`!!!!!!! In token price issue ${swapTokenInSymbol} ${swapTokenIn}. Try Out: ${swapTokenOutSymbol} ${swapTokenOut}`);
-        }
-
-        var pool = poolSwaps.find(
-            poolSwap => poolSwap.poolAddress == swapPoolAddress
-        );
-
-        if (pool) {
-            // Add token volume for pool
-            var tokenVolume = pool.tokenVolumes.find(
-                token => token.tokenAddress == tokenToCount
-            );
-            if (tokenVolume) {
-                tokenVolume.totalVolume = tokenVolume.totalVolume.plus(
-                    bnum(tokenCount)
-                );
-            } else {
-                pool.tokenVolumes.push({
-                    tokenAddress: tokenToCount,
-                    totalVolume: bnum(tokenCount),
-                    tokenSymbol: tokenSymbol
-                });
-            }
-        } else {
-            poolSwaps.push({
-                poolAddress: swapPoolAddress,
-                tokenVolumes: [
-                    {
-                        tokenAddress: tokenToCount,
-                        totalVolume: bnum(tokenCount),
-                        tokenSymbol: tokenSymbol
-                    },
-                ],
-            });
-        }
-    }
-
-    return poolSwaps;
-}
-
-async function fetchSwaps(rootStore: RootStore): Promise<PoolSwaps[]> {
+async function fetchSwaps() {
 
   var ts = Math.round((new Date()).getTime() / 1000);
   var tsYesterday = ts - (24 * 3600);
@@ -86,18 +17,15 @@ async function fetchSwaps(rootStore: RootStore): Promise<PoolSwaps[]> {
   const query = `
       {
         swaps (where: {timestamp_gt: ${tsYesterday}}){
-          id
           poolAddress {
             id
           }
-          caller
           tokenIn
           tokenInSym
           tokenAmountIn
           tokenOut
           tokenOutSym
           tokenAmountOut
-          timestamp
         }
       }
   `;
@@ -115,9 +43,7 @@ async function fetchSwaps(rootStore: RootStore): Promise<PoolSwaps[]> {
 
   const { data } = await response.json();
 
-  var poolSwaps: PoolSwaps[] = processSwapsLive(data, rootStore);
-
-  return poolSwaps;
+  return data.swaps;
 }
 
 export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootStore): Promise<Pool[]> {
@@ -166,14 +92,13 @@ export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootSto
 
     const { data } = await response.json();
 
-    var allSwaps = await fetchSwaps(rootStore);
+    var allSwaps = await fetchSwaps();
 
     return data.pools.map(pool => {
 
-        var poolSwaps = allSwaps.find(swap => swap.poolAddress == pool.id);
-        if(!poolSwaps){
-          poolSwaps = {poolAddress: pool.id, tokenVolumes: []};
-        }
+        var poolSwaps = allSwaps.filter(swap => {
+          return swap.poolAddress.id == pool.id
+        });
 
         const parsedPool: Pool = {
             address: getAddress(pool.id),

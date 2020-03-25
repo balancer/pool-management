@@ -1,7 +1,7 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
-import { Pool, PoolToken } from 'types';
+import { Pool, PoolToken, TokenVolume } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import {
     bnum,
@@ -245,24 +245,78 @@ export default class PoolStore {
     calcPoolVolume(
         poolAddress: string
     ): BigNumber | undefined {
+
         const { marketStore } = this.rootStore;
 
         var pool = this.getPool(poolAddress);
 
-        // For each tokenVolume get market value and multiply by total
-        // Add all token prices together
+        let tokenVolumes: TokenVolume[] = [];
         let total = new BigNumber(0);
-        pool.swaps.tokenVolumes.forEach(token => {
+
+        for (var swap in pool.swaps) {
+            let swapTokenIn = pool.swaps[swap].tokenIn;
+            let swapTokenInSymbol = pool.swaps[swap].tokenInSym;
+            let swapTokenAmountIn = pool.swaps[swap].tokenAmountIn;
+            let swapTokenOut = pool.swaps[swap].tokenOut;
+            let swapTokenAmountOut = pool.swaps[swap].tokenAmountOut;
+            let swapTokenOutSymbol = pool.swaps[swap].tokenOutSym;
+
+            let tokenToCount = swapTokenIn;
+            let tokenCount = swapTokenAmountIn;
+            let tokenSymbol = swapTokenInSymbol;
+
+            var hasPrice = true;
+            try {
+              marketStore.getAssetPrice(tokenSymbol);
+            } catch (error) {
+              console.log(`!!!!!!! Error getting asset price: ${tokenSymbol}: ${tokenToCount}`);
+              hasPrice = false;
+            }
+
+            if(tokenSymbol == '' || !hasPrice){
+              tokenToCount = swapTokenOut;
+              tokenCount = swapTokenAmountOut;
+              tokenSymbol = swapTokenOutSymbol;
+              console.log(`!!!!!!! In token price issue ${swapTokenInSymbol} ${swapTokenIn}. Try Out: ${swapTokenOutSymbol} ${swapTokenOut}`);
+            }
+
+            var tokenVolume = tokenVolumes.find(
+                token => token.tokenAddress == tokenToCount
+            );
+
+            if (tokenVolume) {
+                tokenVolume.totalVolume = tokenVolume.totalVolume.plus(
+                    bnum(tokenCount)
+                );
+            } else {
+                tokenVolumes.push({
+                    tokenAddress: tokenToCount,
+                    totalVolume: bnum(tokenCount),
+                    tokenSymbol: tokenSymbol
+                });
+            }
+
+            var value = marketStore.getValue(tokenSymbol, tokenCount)
+            total = total.plus(value);
+        }
+
+        /*
+        Useful debug
+        let totalCheck = new BigNumber(0);
+        tokenVolumes.forEach(token => {
 
           if(token.tokenSymbol == ''){
             console.log('!!!!!!! No Symbol For Token Volume.');
             console.log(token.tokenAddress)
           }else{
-
             var value = marketStore.getValue(token.tokenSymbol, token.totalVolume)
-            total = total.plus(value);
+            console.log(`\n${poolAddress}: ${token.tokenSymbol} ${token.totalVolume} $${value}`)
+
+            totalCheck = totalCheck.plus(value);
           }
         })
+        */
+
         return total;
     }
 

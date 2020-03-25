@@ -23,7 +23,7 @@ export interface Pool {
     tokens: PoolToken[];
     tokensList: string[];
     shares: PoolShare[];
-    swaps: PoolSwaps;
+    swaps: Swap[];
 }
 
 export interface PoolToken {
@@ -88,4 +88,13 @@ export interface TokenVolume {
 export interface PoolSwaps {
     poolAddress: string;
     tokenVolumes: TokenVolume[];
+}
+
+export interface Swap {
+  tokenIn
+  tokenInSym
+  tokenAmountIn
+  tokenOut
+  tokenOutSym
+  tokenAmountOut
 }
