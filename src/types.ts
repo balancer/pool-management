@@ -23,6 +23,7 @@ export interface Pool {
     tokens: PoolToken[];
     tokensList: string[];
     shares: PoolShare[];
+    swaps: Swap[];
 }
 
 export interface PoolToken {
@@ -76,4 +77,13 @@ export interface Input {
 export interface Checkbox {
     checked: boolean;
     touched: boolean;
+}
+
+export interface Swap {
+  tokenIn
+  tokenInSym
+  tokenAmountIn
+  tokenOut
+  tokenOutSym
+  tokenAmountOut
 }

@@ -115,6 +115,15 @@ const Pool = observer((props: RouteComponentProps) => {
               )
             : '-';
 
+    let volumeText = '-';
+    if(marketStore.assetPricesLoaded && pool){
+      const volume = marketStore.getPoolVolume(pool);
+
+      volumeText = formatCurrency(
+          volume
+      )
+    }
+
     return (
         <PoolViewWrapper>
             {addLiquidityFormStore.modalOpen ? (
@@ -131,7 +140,7 @@ const Pool = observer((props: RouteComponentProps) => {
             <AddRemovePanel poolAddress={poolAddress} />
             <InfoPanelWrapper>
                 <InfoPanel text={`$ ${liquidityText}`} subText="Liquidity" />
-                <InfoPanel text="$ -" subText="Trade Volume (24hr)" />
+                <InfoPanel text={`$ ${volumeText}`} subText="Trade Volume (24hr)" />
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />
                 <InfoPanel text={shareText} subText="My Pool Share" />
             </InfoPanelWrapper>
