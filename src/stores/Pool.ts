@@ -70,7 +70,7 @@ export default class PoolStore {
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex, this.rootStore);
+        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
             const processedPool = this.processUnknownTokens(web3React, pool);

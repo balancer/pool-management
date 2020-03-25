@@ -3,14 +3,13 @@ import { getAddress } from 'ethers/utils';
 import { NumberMap, Pool, PoolShare, PoolToken } from '../types';
 import { bnum } from '../utils/helpers';
 import {getSupportedChainId, SUBGRAPH_URLS} from "./connectors";
-import RootStore from 'stores/Root';
 
 const chainId = getSupportedChainId();
 const SUBGRAPH_URL =
     SUBGRAPH_URLS[chainId];
 
 
-export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootStore): Promise<Pool[]> {
+export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
     // Returns all swaps for all pools in last 24hours
     var ts = Math.round((new Date()).getTime() / 1000);
     var tsYesterday = ts - (24 * 3600);
