@@ -9,44 +9,12 @@ const chainId = getSupportedChainId();
 const SUBGRAPH_URL =
     SUBGRAPH_URLS[chainId];
 
-async function fetchSwaps() {
-  // Returns all swaps for all pools in last 24hours
-  var ts = Math.round((new Date()).getTime() / 1000);
-  var tsYesterday = ts - (24 * 3600);
-
-  const query = `
-      {
-        swaps (where: {timestamp_gt: ${tsYesterday}}){
-          poolAddress {
-            id
-          }
-          tokenIn
-          tokenInSym
-          tokenAmountIn
-          tokenOut
-          tokenOutSym
-          tokenAmountOut
-        }
-      }
-  `;
-
-  const response = await fetch(SUBGRAPH_URL, {
-      method: 'POST',
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          query,
-      }),
-  });
-
-  const { data } = await response.json();
-
-  return data.swaps;
-}
 
 export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootStore): Promise<Pool[]> {
+    // Returns all swaps for all pools in last 24hours
+    var ts = Math.round((new Date()).getTime() / 1000);
+    var tsYesterday = ts - (24 * 3600);
+
     const query = `
         {
           pools (where: {finalized: true}) {
@@ -75,6 +43,15 @@ export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootSto
               }
               balance
             }
+
+            swaps(where: {timestamp_gt: ${tsYesterday}}) {
+              tokenIn
+              tokenInSym
+              tokenAmountIn
+              tokenOut
+              tokenOutSym
+              tokenAmountOut
+            }
           }
         }
     `;
@@ -92,13 +69,7 @@ export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootSto
 
     const { data } = await response.json();
 
-    var allSwaps = await fetchSwaps();
-
     return data.pools.map(pool => {
-
-        var poolSwaps = allSwaps.filter(swap => {
-          return swap.poolAddress.id == pool.id
-        });
 
         const parsedPool: Pool = {
             address: getAddress(pool.id),
@@ -131,7 +102,7 @@ export async function fetchPublicPools(tokenIndex: NumberMap, rootStore: RootSto
                     ),
                 } as PoolShare;
             }),
-            swaps: poolSwaps
+            swaps: pool.swaps
         };
 
         parsedPool.tokensList = parsedPool.tokensList.sort((a, b) => {
