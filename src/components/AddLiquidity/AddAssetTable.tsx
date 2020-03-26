@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import { bnum, formatBalanceTruncated, fromWei } from '../../utils/helpers';
+import { formatBalanceTruncated } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 
@@ -239,9 +239,11 @@ const AddAssetTable = observer((props: Props) => {
         tokenAddress: string,
         balance: BigNumber
     ) => {
-        let maxValue = fromWei(balance);
-        if (bnum(maxValue).eq(0)) {
-            maxValue = '0.00';
+        let maxValue = '0.00';
+        const userBalance = tokenStore.normalizeBalance(balance, tokenAddress);
+
+        if (userBalance && !userBalance.eq(0)) {
+            maxValue = userBalance.toString();
         }
 
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);

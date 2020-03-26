@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
-import { NumberMap, Pool, PoolShare, PoolToken } from '../types';
+import { NumberMap, Pool, PoolShare, PoolToken, Swap } from '../types';
 import { bnum } from '../utils/helpers';
 import {getSupportedChainId, SUBGRAPH_URLS} from "./connectors";
 
@@ -8,7 +8,12 @@ const chainId = getSupportedChainId();
 const SUBGRAPH_URL =
     SUBGRAPH_URLS[chainId];
 
+
 export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
+    // Returns all swaps for all pools in last 24hours
+    var ts = Math.round((new Date()).getTime() / 1000);
+    var tsYesterday = ts - (24 * 3600);
+
     const query = `
         {
           pools (where: {finalized: true}) {
@@ -37,6 +42,15 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
               }
               balance
             }
+
+            swaps(where: {timestamp_gt: ${tsYesterday}}) {
+              tokenIn
+              tokenInSym
+              tokenAmountIn
+              tokenOut
+              tokenOutSym
+              tokenAmountOut
+            }
           }
         }
     `;
@@ -55,6 +69,7 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
     const { data } = await response.json();
 
     return data.pools.map(pool => {
+
         const parsedPool: Pool = {
             address: getAddress(pool.id),
             publicSwap: pool.publicSwap,
@@ -86,6 +101,16 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
                     ),
                 } as PoolShare;
             }),
+            swaps: pool.swaps.map(swap => {
+                return {
+                    tokenIn: getAddress(swap.tokenIn),
+                    tokenAmountIn: bnum(swap.tokenAmountIn),
+                    tokenInSym: swap.tokenInSym,
+                    tokenOut: getAddress(swap.tokenOut),
+                    tokenAmountOut: bnum(swap.tokenAmountOut),
+                    tokenOutSym: swap.tokenOutSym
+                } as Swap
+            })
         };
 
         parsedPool.tokensList = parsedPool.tokensList.sort((a, b) => {

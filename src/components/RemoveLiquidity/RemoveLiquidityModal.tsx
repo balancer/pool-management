@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 
 import {
-    bnum,
+    bnum, formatPercentage,
     toPercentage,
 } from '../../utils/helpers';
 
@@ -34,6 +34,16 @@ const ModalContent = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     color: white;
+`;
+
+const MaxLink = styled.div`
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    display: flex;
+    text-decoration-line: underline;
+    color: var(--link-text);
+    cursor: pointer;
 `;
 
 const RemoveLiquidityHeader = styled.div`
@@ -216,15 +226,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
         const { value } = event.target;
         removeLiquidityFormStore.setShareToWithdraw(value);
         if (account && removeLiquidityFormStore.hasValidInput()) {
-            const userShare = poolStore.getUserShareProportion(
-                pool.address,
-                account
-            );
-            if (userShare) {
-                removeLiquidityFormStore.shareToWithdrawPercentageCheck(
-                    toPercentage(userShare)
-                );
-            }
+            removeLiquidityFormStore.validateUserShareInput(pool.address, account);
         }
     };
 
@@ -242,6 +244,20 @@ const RemoveLiquidityModal = observer((props: Props) => {
         );
     };
 
+    const handleMaxLinkClick = async () => {
+        const userShare = poolStore.getUserShareProportion(pool.address, account);
+        let maxValue = '0.00';
+
+        if (userShare && userShare.gt(0)) {
+            maxValue = toPercentage(userShare).toString();
+        }
+
+        removeLiquidityFormStore.setShareToWithdraw(maxValue);
+        if (removeLiquidityFormStore.hasValidInput()) {
+            removeLiquidityFormStore.validateUserShareInput(pool.address, account);
+        }
+    };
+
     const renderNotification = () => {
         let currentPoolShare = '-';
 
@@ -253,6 +269,13 @@ const RemoveLiquidityModal = observer((props: Props) => {
             existingShare = bnum(0);
         }
 
+        if (requiredDataPresent) {
+            currentPoolShare = formatPercentage(existingShare, 2);
+        }
+
+        const showMaxLink = account && existingShare.gt(0);
+        console.log(showMaxLink);
+
         return (
             <WithdrawWrapper>
                 <WithdrawAmountWrapper>
@@ -260,6 +283,17 @@ const RemoveLiquidityModal = observer((props: Props) => {
                     <InputWrapper
                         errorBorders={removeLiquidityFormStore.hasInputError()}
                     >
+                        {showMaxLink ? (
+                            <MaxLink
+                                onClick={() => {
+                                    handleMaxLinkClick();
+                                }}
+                            >
+                                Max
+                            </MaxLink>
+                        ) : (
+                            <div />
+                        )}
                         <input
                             id={`input-remove-liquidity`}
                             name={`input-name-tokenAddress`}
