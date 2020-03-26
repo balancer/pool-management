@@ -4,7 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
-import { bnum, formatBalanceTruncated, fromWei } from '../../utils/helpers';
+import { formatBalanceTruncated } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 import { ValidationStatus } from '../../stores/actions/validators';
 

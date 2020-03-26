@@ -6,7 +6,7 @@ import { BigNumber } from '../utils/bignumber';
 import {
     bnum,
     fromPercentage,
-    tinyAddress, toPercentage,
+    tinyAddress
 } from '../utils/helpers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
