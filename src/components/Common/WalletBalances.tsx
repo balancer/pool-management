@@ -9,6 +9,17 @@ const Wrapper = styled.div`
     overflow: scroll;
 `;
 
+const BuildVersion = styled.div`
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    margin: 20px;
+    font-size: 10px;
+    color: var(--body-text);
+    position: fixed;
+    bottom: 0px;
+`;
+
 const BalanceHeader = styled.div`
     font-family: Roboto;
     font-style: normal;
@@ -147,6 +158,7 @@ const WalletBalances = observer(() => {
             ) : (
                 <BalanceElement>Connect wallet to see balances</BalanceElement>
             )}
+            <BuildVersion>BUILD ID: {process.env.REACT_APP_COMMIT_REF}</BuildVersion>
         </Wrapper>
     );
 });
