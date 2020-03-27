@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Button from '../Common/Button';
 import { useStores } from '../../contexts/storesContext';
-import { toWei } from '../../utils/helpers';
+import { bnum, toWei, formatBalance } from '../../utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
 import { ethers } from 'ethers';
 
+const Container = styled.div`
+    font-family: var(--roboto);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`;
 
-const BContainer = styled.div`
+const ButtonContainer = styled.div`
     font-family: var(--roboto);
     display: flex;
     flex-direction: row;
@@ -15,7 +20,7 @@ const BContainer = styled.div`
     justify-content: center;
 `;
 
-const ButtonBase = styled.div`
+const EthButton = styled.div`
     border-radius: 4px;
     width: 70px;
     height: 38px;
@@ -29,44 +34,14 @@ const ButtonBase = styled.div`
     align-items: center;
     text-align: center;
     cursor: pointer;
-`;
-
-const ActiveButton = styled(ButtonBase)`
-    background: var(--button-background);
-    border: 1px solid var(--button-border);
-    color: var(--button-text);
-`;
-
-const InactiveButton = styled(ButtonBase)`
     background: var(--selector-background);
     border: 1px solid var(--inactive-button-border);
     color: var(--inactive-button-text);
 `;
 
-const JohnsButton = ({ buttonText, active, onClick }) => {
-    const ButtonDisplay = ({ activeButton, children }) => {
-        if (activeButton) {
-            return <ActiveButton onClick={onClick}>{children}</ActiveButton>;
-        } else {
-            return <InactiveButton>{children}</InactiveButton>;
-        }
-    };
-
-    return (
-        <BContainer>
-            <ButtonDisplay activeButton={active}>{buttonText}</ButtonDisplay>
-        </BContainer>
-    );
-};
-
-const Container = styled.div`
-    font-family: var(--roboto);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+const WethButton = styled(EthButton)`
+    width: 70px;
 `;
-
-// align-items: center;
 
 const WrapHeader = styled.div`
     align-items: left;
@@ -93,7 +68,8 @@ const Advice = styled.div`
     color: var(--token-balance-text);
 `;
 
-const InputWrapper = styled.div`
+// padding and width
+const EthInputWrapper = styled.div`
     height: 38px;
     padding: 0px 17px;
     font-family: Roboto;
@@ -106,7 +82,7 @@ const InputWrapper = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     input {
-        width: 100px;
+        width: 85px;
         text-align: right;
         color: var(--input-text);
         font-size: 14px;
@@ -156,7 +132,11 @@ const InputWrapper = styled.div`
     }
 `;
 
-const BalanceElement = styled.div`
+const WethInputWrapper = styled(EthInputWrapper)`
+    padding: 0px 5px;
+`;
+
+const WrapElement = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -170,6 +150,16 @@ const BalanceElement = styled.div`
     margin-top: 2px;
 `;
 
+const MaxLink = styled.div`
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    display: flex;
+    text-decoration-line: underline;
+    color: var(--link-text);
+    cursor: pointer;
+`;
+
 enum ButtonAction {
     WRAP,
     UNWRAP
@@ -177,24 +167,45 @@ enum ButtonAction {
 
 const WrapEth = () => {
 
-    const [tokenAmount, setTokenAmount] = useState('0');
+    const [ethAmount, setEthAmount] = useState('');
+    const [wethAmount, setWethAmount] = useState('');
 
     const {
-        root: { providerStore, contractMetadataStore },
+        root: { providerStore, contractMetadataStore, tokenStore },
     } = useStores();
 
+    const wethAddress = contractMetadataStore.getWethAddress();
+
     const web3React = providerStore.getActiveWeb3React();
+
+    const handleMaxLinkClick = async () => {
+        const { account } = web3React;
+        let maxValue = '0.00';
+
+        if(account){
+          const balance = tokenStore.getBalance(
+              wethAddress,
+              account
+          );
+
+          maxValue = formatBalance(
+              balance,
+              18,
+              20
+          );
+        }
+
+        setWethAmount(maxValue);
+        return maxValue;
+    };
 
     const actionButtonHandler = async (
         action: ButtonAction,
     ) => {
         if (action === ButtonAction.WRAP) {
 
-            console.log(`!!!!!!! WRAP: ${tokenAmount}`);
-            console.log(contractMetadataStore.getWethAddress())
-
             let overrides = {
-                value: ethers.utils.parseEther(tokenAmount),
+                value: ethers.utils.parseEther(ethAmount),
             };
 
             await providerStore.sendTransaction(
@@ -206,8 +217,8 @@ const WrapEth = () => {
             );
 
         } else if (action === ButtonAction.UNWRAP) {
-            let amountToUnwrap = toWei(tokenAmount);
-            console.log(`!!!!!!! UNWRAP: ${tokenAmount} ${amountToUnwrap}`);
+
+            let amountToUnwrap = toWei(wethAmount);
 
             await providerStore.sendTransaction(
                 web3React,
@@ -219,69 +230,71 @@ const WrapEth = () => {
         }
     };
 
-    const handleInputChange = async (event, tokenAddress: string) => {
-        const { value } = event.target;
-        setTokenAmount(value);
-    };
-
     return (
         <Container>
             <WrapHeader>Eth</WrapHeader>
-            <BalanceElement>
-            <InputWrapper errorBorders={false}>
-            <input
-                id={`input-wrap`}
-                name={`input-name-wrap`}
-                value={
-                     tokenAmount
-                }
-                onChange={e => {
-                    handleInputChange(
-                        e,
-                        'tokenAddress'
-                    );
-                }}
-                // ref={textInput}
-                placeholder=""
-            />
-            </InputWrapper>
-            <JohnsButton
-                buttonText={`WRAP`}
-                active={true}
-                onClick={e =>
-                    actionButtonHandler(ButtonAction.WRAP)
-                }
-            />
-            </BalanceElement>
+            <WrapElement>
+              <EthInputWrapper errorBorders={false}>
+                <input
+                    id={`input-wrap`}
+                    name={`input-name-wrap`}
+                    value={
+                         ethAmount
+                    }
+                    onChange={e => setEthAmount(e.target.value)}
+                    // ref={textInput}
+                    placeholder=""
+                />
+              </EthInputWrapper>
+
+              <ButtonContainer>
+                <EthButton
+                    buttonText={`WRAP`}
+                    active={false}
+                    onClick={e =>
+                        actionButtonHandler(ButtonAction.WRAP)
+                    }
+                >WRAP
+                </EthButton>
+              </ButtonContainer>
+            </WrapElement>
             <Advice>Keep some ETH unwrapped for transaction fees</Advice>
 
-            <WrapHeader>WETH</WrapHeader>
-            <BalanceElement>
-              <InputWrapper errorBorders={false}>
-              <input
-                  id={`input-wrap`}
-                  name={`input-name-wrap`}
-                  value={
-                       tokenAmount
-                  }
-                  onChange={e => {
-                      handleInputChange(
-                          e,
-                          'tokenAddress'
-                      );
-                  }}
-                  // ref={textInput}
-                  placeholder=""
-              />
-              </InputWrapper>
-              <JohnsButton
-                  buttonText={`UNWRAP`}
-                  active={true}
-                  onClick={e =>
-                      actionButtonHandler(ButtonAction.UNWRAP)
-                  }
-              />
-            </BalanceElement>
+            <WrapHeader>WETH (?)</WrapHeader>
+            <WrapElement>
+              <WethInputWrapper errorBorders={false}>
+
+                    <MaxLink
+                        onClick={() => {
+                            handleMaxLinkClick(
+                            );
+                        }}
+                    >
+                        Max
+                    </MaxLink>
+
+                <input
+                    id={`input-wrap`}
+                    name={`input-name-wrap`}
+                    value={
+                         wethAmount
+                    }
+                    onChange={e => setWethAmount(e.target.value)}
+                    // ref={textInput}
+                    placeholder=""
+                />
+              </WethInputWrapper>
+              <ButtonContainer>
+                <WethButton
+                    buttonText={`UNWRAP`}
+                    active={false}
+                    onClick={e =>
+                        actionButtonHandler(ButtonAction.UNWRAP)
+                    }
+                >UNWRAP
+                </WethButton>
+              </ButtonContainer>
+            </WrapElement>
         </Container>
     );
 };

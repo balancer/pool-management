@@ -154,8 +154,9 @@ const WalletBalances = observer(() => {
 
     return (
         <Wrapper>
-            <BalanceHeader>My Wallet</BalanceHeader>
+
             <WrapEth />
+            <BalanceHeader>My Wallet</BalanceHeader>
             {account ? (
                 renderWalletBalances()
             ) : (
