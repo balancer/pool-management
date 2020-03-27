@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { formatBalanceTruncated, isAddress } from '../../utils/helpers';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
+import WrapEth from './WrapEth';
+
 
 const Wrapper = styled.div`
     height: calc(100vh - 283px);
@@ -153,6 +155,7 @@ const WalletBalances = observer(() => {
     return (
         <Wrapper>
             <BalanceHeader>My Wallet</BalanceHeader>
+            <WrapEth />
             {account ? (
                 renderWalletBalances()
             ) : (
