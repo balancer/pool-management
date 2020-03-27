@@ -95,6 +95,17 @@ const WithdrawAmountWrapper = styled.div`
     margin-bottom: 10px;
 `;
 
+const Notification = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 100%;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-background);
+    margin-bottom: 30px;
+`;
+
 const InputWrapper = styled.div`
     height: 30px;
     padding: 0px 17px;
@@ -137,16 +148,12 @@ const InputWrapper = styled.div`
     }
     border: ${props =>
         props.errorBorders ? '1px solid var(--error-color)' : ''};
-    margin-left: ${props => (props.errorBorders ? '-1px' : '0px')}
-    margin-right: ${props => (props.errorBorders ? '-1px' : '0px')}
     :hover {
         background-color: var(--input-hover-background);
         border: ${props =>
             props.errorBorders
                 ? '1px solid var(--error-color)'
                 : '1px solid var(--input-hover-border);'};
-        margin-left: -1px;
-        margin-right: -1px;
         input {
             background-color: var(--input-hover-background);
             box-shadow: inset 0 0 0 1px var(--input-hover-background),
@@ -258,8 +265,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
         }
     };
 
-    const renderNotification = () => {
-        let currentPoolShare = '-';
+    const renderWithdrawInput = () => {
 
         let existingShare = account
             ? poolStore.getUserShareProportion(pool.address, account)
@@ -269,12 +275,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
             existingShare = bnum(0);
         }
 
-        if (requiredDataPresent) {
-            currentPoolShare = formatPercentage(existingShare, 2);
-        }
-
         const showMaxLink = account && existingShare.gt(0);
-        console.log(showMaxLink);
 
         return (
             <WithdrawWrapper>
@@ -306,13 +307,63 @@ const RemoveLiquidityModal = observer((props: Props) => {
                     </InputWrapper>
                     %
                 </WithdrawAmountWrapper>
-                {account ? (
-                    <div>You own {currentPoolShare} of pool liquidity</div>
-                ) : (
-                    <div>Connect wallet to remove liquidity</div>
-                )}
             </WithdrawWrapper>
         );
+    };
+
+    const renderNotification = () => {
+        let currentPoolShare = '-';
+        let futurePoolShare = '-';
+
+        const currentTotal = tokenStore.getTotalSupply(pool.address);
+        const userBalance = tokenStore.getBalance(pool.address, account);
+
+        let existingShare = account
+            ? poolStore.getUserShareProportion(pool.address, account)
+            : bnum(0);
+
+        if (!existingShare) {
+            existingShare = bnum(0);
+        }
+
+        if (pool && currentTotal) {
+            const previewTokens = removeLiquidityFormStore.hasValidInput()
+                ? poolStore.getPoolTokenPercentage(
+                    pool.address,
+                    removeLiquidityFormStore.getShareToWithdraw()
+                )
+                : bnum(0);
+
+            const futureTotal = currentTotal.minus(previewTokens);
+            const futureShare = (userBalance.minus(previewTokens)).div(futureTotal);
+
+            currentPoolShare = formatPercentage(existingShare, 2);
+            futurePoolShare = formatPercentage(futureShare, 2);
+        }
+
+        if (!account) {
+            return <Notification>Connect wallet to remove liquidity</Notification>;
+        }
+
+        if (removeLiquidityFormStore.hasValidInput()) {
+            const text = account ? (
+                <React.Fragment>
+                    Your pool share will go from {currentPoolShare} to{' '}
+                    {futurePoolShare}
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    
+                </React.Fragment>
+            );
+            return <Notification>{text}</Notification>;
+        } else {
+            return (
+                <Notification>
+                    Please enter desired withdraw amount to continue
+                </Notification>
+            );
+        }
     };
 
     const renderActionButton = () => {
@@ -356,6 +407,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
                         <div>Loading</div>
                     ) : (
                         <React.Fragment>
+                            {renderWithdrawInput()}
                             {renderNotification()}
                             {renderActionButton()}
                         </React.Fragment>
