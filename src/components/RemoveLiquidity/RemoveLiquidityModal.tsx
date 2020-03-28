@@ -143,8 +143,9 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
     const handleRemoveLiquidity = async () => {
         const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
-        const poolTokens = poolStore.getPoolTokenPercentage(
+        const poolTokens = poolStore.getUserTokenPercentage(
             pool.address,
+            account,
             shareToWithdraw
         );
         await poolStore.exitPool(
@@ -172,8 +173,9 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
         if (pool && currentTotal) {
             const previewTokens = removeLiquidityFormStore.hasValidInput()
-                ? poolStore.getPoolTokenPercentage(
+                ? poolStore.getUserTokenPercentage(
                     pool.address,
+                    account,
                     removeLiquidityFormStore.getShareToWithdraw()
                 )
                 : bnum(0);
@@ -192,7 +194,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
         if (removeLiquidityFormStore.hasValidInput()) {
             const text = account ? (
                 <React.Fragment>
-                    Your pool share will go from {currentPoolShare} to{' '}
+                    Withdrawing {removeLiquidityFormStore.getShareToWithdraw()}% of your liquidity. Your pool share will go from {currentPoolShare} to{' '}
                     {futurePoolShare}
                 </React.Fragment>
             ) : (
