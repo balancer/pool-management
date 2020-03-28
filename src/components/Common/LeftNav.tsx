@@ -12,6 +12,11 @@ const NavContainer = styled.div`
     margin-top: 20px;
 `;
 
+const ComingSoon = styled.p`
+    margin-left: 5px;
+    font-size: 10px;
+`;
+
 const NavElement = styled.a`
     display: flex;
     align-items: center;
@@ -38,7 +43,7 @@ const LeftNav = () => {
         <Wrapper>
             <NavContainer>
                 <ActiveNavElement href="/">Shared Pools</ActiveNavElement>
-                <NavElement>My Private Pools</NavElement>
+                <NavElement>My Private Pools <ComingSoon>(coming soon)</ComingSoon></NavElement>
             </NavContainer>
         </Wrapper>
     );
