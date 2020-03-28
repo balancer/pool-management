@@ -7,7 +7,6 @@ import { BigNumberMap, Pool } from '../../types';
 import {
     formatNormalizedTokenValue,
     fromPercentage,
-    toPercentage,
     bnum,
 } from '../../utils/helpers';
 
@@ -105,7 +104,7 @@ const WithdrawAmountWrapper = styled.div`
 
 const InputWrapper = styled.div`
     height: 30px;
-    padding: 0px 17px;
+    padding: 0px 10px;
     font-family: Roboto;
     font-style: normal;
     font-weight: 500;
@@ -117,7 +116,7 @@ const InputWrapper = styled.div`
     border-radius: 4px;
     margin: 0px 5px 0px 10px;
     input {
-        width: 70px;
+        width: 50px;
         text-align: right;
         color: var(--input-text);
         font-size: 14px;
@@ -203,7 +202,7 @@ const RemoveAssetsTable = observer((props: Props) => {
         let maxValue = '0.00';
 
         if (userShare && userShare.gt(0)) {
-            maxValue = toPercentage(userShare).toString();
+            maxValue = '100';
         }
 
         removeLiquidityFormStore.setShareToWithdraw(maxValue);
@@ -227,7 +226,7 @@ const RemoveAssetsTable = observer((props: Props) => {
         return (
             <WithdrawWrapper>
                 <WithdrawAmountWrapper>
-                    Withdraw
+                    Percent of my liquidity to withdraw
                     <InputWrapper
                         errorBorders={removeLiquidityFormStore.hasInputError()}
                     >
@@ -292,7 +291,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                     );
 
                     if (removeLiquidityFormStore.hasValidInput()) {
-                        const tokensToWithdraw = token.balance.times(
+                        const tokensToWithdraw = userLiquidityContribution.times(
                             fromPercentage(
                                 removeLiquidityFormStore.getShareToWithdraw()
                             )

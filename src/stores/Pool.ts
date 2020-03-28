@@ -228,11 +228,10 @@ export default class PoolStore {
         return (ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN)).minus(buffer);
     }
 
-    getPoolTokenPercentage(poolAddress: string, percentage: string) {
-        const totalPoolTokens = this.rootStore.tokenStore.getTotalSupply(
-            poolAddress
-        );
-        return bnum(fromPercentage(percentage)).times(totalPoolTokens);
+    getUserTokenPercentage(poolAddress: string, account: string, percentage: string) {
+        const { tokenStore } = this.rootStore;
+        const userPoolTokens = tokenStore.getBalance(poolAddress, account);
+        return bnum(fromPercentage(percentage)).times(userPoolTokens);
     }
 
     getPoolTokens(poolAddress: string): string[] {
