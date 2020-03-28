@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useStores } from '../../contexts/storesContext';
-import { bnum, toWei, formatBalance } from '../../utils/helpers';
+import { toWei, formatBalance } from '../../utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
 import { ethers } from 'ethers';
 
@@ -10,6 +10,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 20px;
 `;
 
 const ButtonContainer = styled.div`
@@ -37,6 +39,12 @@ const EthButton = styled.div`
     background: var(--selector-background);
     border: 1px solid var(--inactive-button-border);
     color: var(--inactive-button-text);
+
+    &:hover {
+        background: var(--button-background);
+        border: 1px solid var(--button-border);
+        color: var(--button-text);
+    }
 `;
 
 const WethButton = styled(EthButton)`
@@ -236,7 +244,6 @@ const WrapEth = () => {
             <WrapElement>
               <EthInputWrapper errorBorders={false}>
                 <input
-                    id={`input-wrap`}
                     name={`input-name-wrap`}
                     value={
                          ethAmount
@@ -260,7 +267,7 @@ const WrapEth = () => {
             </WrapElement>
             <Advice>Keep some ETH unwrapped for transaction fees</Advice>
 
-            <WrapHeader>WETH (?)</WrapHeader>
+            <WrapHeader>WETH</WrapHeader>
             <WrapElement>
               <WethInputWrapper errorBorders={false}>
 
@@ -274,7 +281,6 @@ const WrapEth = () => {
                     </MaxLink>
 
                 <input
-                    id={`input-wrap`}
                     name={`input-name-wrap`}
                     value={
                          wethAmount
