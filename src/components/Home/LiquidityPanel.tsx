@@ -261,13 +261,18 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderPools = () => {
+        // Has all token data been loaded
+        if(!pools){
+          return <PoolRow>Loading</PoolRow>;
+        }
+
         // Has pool data to display and data has loaded
-        if (poolStore.poolsLoaded && pools.length > 0) {
+        else if (poolStore.poolsLoaded && pools.length > 0) {
             return renderPoolsChart();
         }
 
         // Has pool data to display and data has NOT loaded
-        else if (!poolStore.poolsLoaded && pools.length > 0) {
+        else if (!poolStore.poolsLoaded && pools.length >= 0) {
             return <PoolRow>Loading</PoolRow>;
         }
 
