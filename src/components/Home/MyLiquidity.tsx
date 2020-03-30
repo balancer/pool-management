@@ -28,14 +28,24 @@ const MyLiquidity = observer(() => {
     let pools: Pool[] = [];
 
     if (account) {
-        poolStore.getPublicPools().forEach(pool => {
+
+        poolStore.getPublicPools().every(pool => {
             const userShare = poolStore.getUserShareProportion(
                 pool.address,
                 account
             );
-            if (userShare && userShare.gt(0)) {
+
+            // userShare in undefined if token balances or supplies haven't been loaded
+            if(!userShare){
+              pools = undefined;
+              return false;
+            }
+
+            if (userShare.gt(0)) {
                 pools.push(pool);
             }
+
+            return true;
         });
     }
 
