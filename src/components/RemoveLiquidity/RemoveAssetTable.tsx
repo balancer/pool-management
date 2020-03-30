@@ -7,6 +7,7 @@ import { BigNumberMap, Pool } from '../../types';
 import {
     formatNormalizedTokenValue,
     fromPercentage,
+    bnum,
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -65,6 +66,16 @@ const TokenIcon = styled.img`
     margin-right: 13px;
 `;
 
+const MaxLink = styled.div`
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    display: flex;
+    text-decoration-line: underline;
+    color: var(--link-text);
+    cursor: pointer;
+`;
+
 const WithdrawAmount = styled.div`
     display: flex;
     flex-direction: row;
@@ -72,6 +83,83 @@ const WithdrawAmount = styled.div`
     align-items: center;
     height: 30px;
     border-radius: 4px;
+`;
+
+const WithdrawWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: right;
+    background: var(--panel-background);
+    padding: 16px 20px;
+    align-self: flex-end;
+`;
+
+const WithdrawAmountWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+`;
+
+const InputWrapper = styled.div`
+    height: 30px;
+    padding: 0px 10px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    margin: 0px 5px 0px 10px;
+    input {
+        width: 50px;
+        text-align: right;
+        color: var(--input-text);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        letter-spacing: 0.2px;
+        padding-left: 5px;
+        background-color: var(--panel-background);
+        border: none;
+        box-shadow: inset 0 0 0 1px var(--panel-background),
+            inset 0 0 0 70px var(--panel-background);
+        :-webkit-autofill,
+        :-webkit-autofill:hover,
+        :-webkit-autofill:focus,
+        :-webkit-autofill:active,
+        :-internal-autofill-selected {
+            -webkit-text-fill-color: var(--body-text);
+        }
+        ::placeholder {
+            color: var(--input-placeholder-text);
+        }
+        :focus {
+            outline: none;
+        }
+    }
+    border: ${props =>
+        props.errorBorders ? '1px solid var(--error-color)' : ''};
+    :hover {
+        background-color: var(--input-hover-background);
+        border: ${props =>
+            props.errorBorders
+                ? '1px solid var(--error-color)'
+                : '1px solid var(--input-hover-border);'};
+        input {
+            background-color: var(--input-hover-background);
+            box-shadow: inset 0 0 0 1px var(--input-hover-background),
+                inset 0 0 0 70px var(--input-hover-background);
+            ::placeholder {
+                color: var(--input-hover-placeholder-text);
+                background-color: var(--input-hover-background);
+            }
+        }
+    }
 `;
 
 interface Props {
@@ -100,6 +188,74 @@ const RemoveAssetsTable = observer((props: Props) => {
     if (pool) {
         userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
     }
+
+    const handleShareToWithdrawChange = event => {
+        const { value } = event.target;
+        removeLiquidityFormStore.setShareToWithdraw(value);
+        if (account && removeLiquidityFormStore.hasValidInput()) {
+            removeLiquidityFormStore.validateUserShareInput(pool.address, account);
+        }
+    };
+
+    const handleMaxLinkClick = async () => {
+        const userShare = poolStore.getUserShareProportion(pool.address, account);
+        let maxValue = '0.00';
+
+        if (userShare && userShare.gt(0)) {
+            maxValue = '100';
+        }
+
+        removeLiquidityFormStore.setShareToWithdraw(maxValue);
+        if (removeLiquidityFormStore.hasValidInput()) {
+            removeLiquidityFormStore.validateUserShareInput(pool.address, account);
+        }
+    };
+
+    const renderWithdrawInput = () => {
+
+        let existingShare = account
+            ? poolStore.getUserShareProportion(pool.address, account)
+            : bnum(0);
+
+        if (!existingShare) {
+            existingShare = bnum(0);
+        }
+
+        const showMaxLink = account && existingShare.gt(0);
+
+        return (
+            <WithdrawWrapper>
+                <WithdrawAmountWrapper>
+                    Percent of my liquidity to withdraw
+                    <InputWrapper
+                        errorBorders={removeLiquidityFormStore.hasInputError()}
+                    >
+                        {showMaxLink ? (
+                            <MaxLink
+                                onClick={() => {
+                                    handleMaxLinkClick();
+                                }}
+                            >
+                                Max
+                            </MaxLink>
+                        ) : (
+                            <div />
+                        )}
+                        <input
+                            id={`input-remove-liquidity`}
+                            name={`input-name-tokenAddress`}
+                            value={removeLiquidityFormStore.getShareToWithdraw()}
+                            onChange={e => {
+                                handleShareToWithdrawChange(e);
+                            }}
+                            placeholder=""
+                        />
+                    </InputWrapper>
+                    %
+                </WithdrawAmountWrapper>
+            </WithdrawWrapper>
+        );
+    };
 
     const renderAssetTable = (
         pool: Pool,
@@ -135,7 +291,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                     );
 
                     if (removeLiquidityFormStore.hasValidInput()) {
-                        const tokensToWithdraw = token.balance.times(
+                        const tokensToWithdraw = userLiquidityContribution.times(
                             fromPercentage(
                                 removeLiquidityFormStore.getShareToWithdraw()
                             )
@@ -190,6 +346,7 @@ const RemoveAssetsTable = observer((props: Props) => {
             ) : (
                 <TableRow>Loading</TableRow>
             )}
+            {renderWithdrawInput()}
         </Wrapper>
     );
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-    height: 201px;
+    height: 150px;
     border-bottom: 1px solid var(--panel-border);
 `;
 
@@ -10,6 +10,11 @@ const NavContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+`;
+
+const ComingSoon = styled.p`
+    margin-left: 5px;
+    font-size: 10px;
 `;
 
 const NavElement = styled.a`
@@ -38,7 +43,7 @@ const LeftNav = () => {
         <Wrapper>
             <NavContainer>
                 <ActiveNavElement href="/">Shared Pools</ActiveNavElement>
-                <NavElement>My Private Pools</NavElement>
+                <NavElement>My Private Pools <ComingSoon>(coming soon)</ComingSoon></NavElement>
             </NavContainer>
         </Wrapper>
     );

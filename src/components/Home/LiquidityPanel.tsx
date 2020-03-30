@@ -10,6 +10,7 @@ import {
     formatCurrency,
     formatPercentage,
     shortenAddress,
+    formatFee,
 } from '../../utils/helpers';
 import { formatPoolAssetChartData } from '../../utils/chartFormatter';
 
@@ -247,8 +248,9 @@ const LiquidityPanel = observer((props: Props) => {
                                         {renderAssetPercentages(pool)}
                                     </BreakdownContainer>
                                 </AssetCell>
-                                <TableCell width="12%">{`$ ${liquidityText}`}</TableCell>
-                                <TableCell width="12%">{`$ ${userLiquidityText}`}</TableCell>
+                                <TableCell width="12%">{ formatFee(pool.swapFee) }</TableCell>
+                                <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
+                                <TableCellRight width="12%">{`$ ${userLiquidityText}`}</TableCellRight>
                                 <TableCellRight width="15%">{`$ ${volumeText}`}</TableCellRight>
                             </PoolRow>
                         </PoolLink>
@@ -259,13 +261,18 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderPools = () => {
+        // Has all token data been loaded
+        if(!pools){
+          return <PoolRow>Loading</PoolRow>;
+        }
+
         // Has pool data to display and data has loaded
-        if (poolStore.poolsLoaded && pools.length > 0) {
+        else if (poolStore.poolsLoaded && pools.length > 0) {
             return renderPoolsChart();
         }
 
         // Has pool data to display and data has NOT loaded
-        else if (!poolStore.poolsLoaded && pools.length > 0) {
+        else if (!poolStore.poolsLoaded && pools.length >= 0) {
             return <PoolRow>Loading</PoolRow>;
         }
 
@@ -300,8 +307,9 @@ const LiquidityPanel = observer((props: Props) => {
             <HeaderRow>
                 <TableCell width="15%">Pool Address</TableCell>
                 <AssetCell>Assets</AssetCell>
-                <TableCell width="12%">Liquidity</TableCell>
-                <TableCell width="12%">My Liquidity</TableCell>
+                <TableCell width="12%">Swap Fee</TableCell>
+                <TableCellRight width="12%">Liquidity</TableCellRight>
+                <TableCellRight width="12%">My Liquidity</TableCellRight>
                 <TableCellRight width="15%">Trade Volume (24h)</TableCellRight>
             </HeaderRow>
             {renderPools()}

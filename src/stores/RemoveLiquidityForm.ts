@@ -34,7 +34,7 @@ export default class RemoveLiquidityFormStore {
 
     @action validateUserShareInput(poolAddress: string, account: string) {
         const {poolStore} = this.rootStore;
-        const userShare = poolStore.getUserShareProportion(
+        const userShare = poolStore.getUserShare(
             poolAddress,
             account
         );
