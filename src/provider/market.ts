@@ -69,7 +69,7 @@ export async function fetchAssetList(
     const result: MarketAssetMap = {};
     symbolsToFetch.forEach(assetSymbol => {
         const match = assets.find(
-            value => value.symbol.toUpperCase() === assetSymbol
+            value => value.symbol.toUpperCase() === assetSymbol.toUpperCase()
         );
         if (match) {
             result[assetSymbol] = formatAsset(match);

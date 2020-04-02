@@ -45,7 +45,7 @@ export default class MarketStore {
 
     @action setAssetPrices(prices: MarketAssetPriceMap) {
         Object.keys(this.assets).forEach(key => {
-            this.assets[key].price = prices[key];
+            this.assets[key].price = prices[key.toUpperCase()];
         });
     }
 
