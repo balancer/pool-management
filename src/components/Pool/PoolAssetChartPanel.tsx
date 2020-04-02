@@ -15,6 +15,9 @@ const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     width: 33%;
+    @media screen and (max-width: 1024px) {
+        width: 100%;
+    }
     min-width: 246px;
 `;
 
