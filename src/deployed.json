@@ -145,7 +145,7 @@
                 "chartColor": "#2875ca"
             },
             {
-                "symbol": "CUSDC",
+                "symbol": "cUSDC",
                 "address": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
                 "decimals": 8,
                 "iconAddress": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
@@ -153,7 +153,7 @@
                 "chartColor": "#2ecfa7"
             },
             {
-                "symbol": "CDAI",
+                "symbol": "cDAI",
                 "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
                 "decimals": 8,
                 "iconAddress": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
