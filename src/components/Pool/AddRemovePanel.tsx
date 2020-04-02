@@ -14,6 +14,11 @@ const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     width: calc(67% - 99px);
+    @media screen and (max-width: 1024px) {
+        width: 100%;
+        margin: 20px 0 0 0;
+        flex-wrap: wrap;
+    }
     margin-left: 25px;
 `;
 
