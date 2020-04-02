@@ -44,6 +44,9 @@ export default class RootStore {
     }
 
     async asyncSetup() {
+        // !!!!!!! Add web3 stuff here.
+        await this.providerStore.loadWeb3();
+
         await this.marketStore.fetchAssetList(
             this.contractMetadataStore.tokenSymbols
         );

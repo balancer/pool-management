@@ -1,17 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { Activity } from 'react-feather';
 import { observer } from 'mobx-react';
-import { action, observable, ObservableMap } from 'mobx';
 import { shortenAddress } from 'utils/helpers';
 import WalletModal from 'components/WalletModal';
 import { Spinner } from '../../theme';
 import Circle from 'assets/images/circle.svg';
+import { injected, web3ContextNames } from 'provider/connectors';
 import Identicon from '../Identicon';
 import { useStores } from '../../contexts/storesContext';
 import Button from '../Common/Button';
 import Web3PillBox from '../Web3PillBox';
 import { isChainIdSupported } from '../../provider/connectors';
+import { useActiveWeb3React } from 'provider/providerHooks';
 
 const Web3StatusGeneric = styled.button`
     ${({ theme }) => theme.flexRowNoWrap}
@@ -63,20 +65,17 @@ const SpinnerWrapper = styled(Spinner)`
 `;
 
 const Web3ConnectStatus = observer(() => {
-
     const {
-        root: { modalStore, transactionStore, providerStore },
+        root: { modalStore, transactionStore },
     } = useStores();
+    const { chainId, active, connector, error } = useActiveWeb3React();
+    const { account, chainId: injectedChainId } = useWeb3React(
+        web3ContextNames.injected
+    );
 
-    const account = providerStore.account;
-    const chainId = providerStore.getChainId();
-    const active = providerStore.active;
-    const error = providerStore.error;
+    const contextNetwork = useWeb3React(web3ContextNames.backup);
 
-    console.debug(`!!!!!!! connectStatus`, [account, chainId, active, error])
-    console.log(providerStore)
-
-    if (!chainId && active) {
+    if (!chainId) {
         throw new Error('No chain ID specified');
     }
 
@@ -84,7 +83,7 @@ const Web3ConnectStatus = observer(() => {
     let confirmed = undefined;
     let hasPendingTransactions = false;
 
-    if (account && isChainIdSupported(chainId)) {
+    if (account && isChainIdSupported(injectedChainId)) {
         pending = transactionStore.getPendingTransactions(account);
         confirmed = transactionStore.getConfirmedTransactions(account);
         hasPendingTransactions = !!pending.length;
@@ -96,23 +95,19 @@ const Web3ConnectStatus = observer(() => {
 
     // handle the logo we want to show with the account
     function getStatusIcon() {
-        /* !!!!!!! Not really sure what this check was for?
-        // const { connector } = useActiveWeb3React();
         if (connector === injected) {
             return <Identicon />;
         }
-        */
-        return <Identicon />;
     }
 
     function getWeb3Status() {
         console.log('[GetWeb3Status]', {
             account,
-            isChainIdSupported: isChainIdSupported(chainId),
+            isChainIdSupported: isChainIdSupported(injectedChainId),
             error,
         });
         // Wrong network
-        if (account && !isChainIdSupported(chainId)) {
+        if (account && !isChainIdSupported(injectedChainId)) {
             return (
                 <Web3StatusError onClick={toggleWalletModal}>
                     <WarningIcon src="WarningSign.svg" />
@@ -133,7 +128,11 @@ const Web3ConnectStatus = observer(() => {
             return (
                 <Web3StatusError onClick={toggleWalletModal}>
                     <NetworkIcon />
-                    <Text>Error</Text>
+                    <Text>
+                        {error instanceof UnsupportedChainIdError
+                            ? 'Wrong Network'
+                            : 'Error'}
+                    </Text>
                 </Web3StatusError>
             );
         } else {
@@ -147,8 +146,7 @@ const Web3ConnectStatus = observer(() => {
         }
     }
 
-    // ??????? Not really sure what this one was doing if (!contextNetwork.active && !active) {
-    if (!active) {
+    if (!contextNetwork.active && !active) {
         return null;
     }
 

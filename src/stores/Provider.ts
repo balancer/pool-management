@@ -5,6 +5,8 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { ActionResponse, sendAction } from './actions/actions';
 import { supportedChainId, web3ContextNames } from '../provider/connectors';
+import { web3Window as window } from 'provider/Web3Window';
+
 
 export enum ContractTypes {
     BPool = 'BPool',
@@ -39,22 +41,23 @@ enum ERRORS {
 type ChainDataMap = ObservableMap<number, ChainData>;
 
 export default class ProviderStore {
-    @observable provider: any;
-    @observable accounts: string[];
-    @observable defaultAccount: string | null;
+
     @observable web3Contexts: object;
-    @observable blockNumber: number;
-    @observable supportedNetworks: number[];
     @observable chainData: ChainData;
-    @observable activeChainId: number;
-    @observable activeFetchLoop: any;
     @observable activeAccount: string;
+    @observable chainId: number;
+    @observable account: string;
+    @observable library: any;
+    @observable active: boolean;
+    @observable error: Error;
     rootStore: RootStore;
 
     constructor(rootStore) {
+        console.debug(`!!!!!!! Provider Constructor`)
         this.rootStore = rootStore;
         this.web3Contexts = {};
         this.chainData = { currentBlockNumber: -1 } as ChainData;
+        this.active = false;
     }
 
     isBlockStale(blockNumber: number) {
@@ -203,4 +206,80 @@ export default class ProviderStore {
 
         return response;
     };
+
+    getChainId(): number {
+        return this.chainId;
+    }
+
+    private handleChainChanged(chainId: string | number): void {
+
+      console.log("Handling 'chainChanged' event with payload", chainId)
+
+      // this.emitUpdate({ chainId, provider: window.ethereum })
+    }
+
+    @action handleNetworkChanged(networkId: string | number): void {
+      this.chainId = Number(networkId);
+    }
+
+    async loadWeb3() {
+        console.log(`loadWeb3()`);
+
+        if (!window.ethereum) {
+          console.log(`!!!!!!! NOETHPROVIDER`)
+          // !!!!!!! Handle this
+          // throw new NoEthereumProviderError();
+        }
+        const web3 = new ethers.providers.Web3Provider(window.ethereum);
+        let network = await web3.getNetwork();
+
+        const accounts = await web3.listAccounts();
+        let account = null;
+        if(accounts.length > 0)
+          account = accounts[0];
+
+        if ((window.ethereum as any).isMetaMask) {
+          ;(window.ethereum as any).autoRefreshOnNetworkChange = false
+        }
+
+        this.handleNetworkChanged = this.handleNetworkChanged.bind(this)
+
+        if (window.ethereum.on) {
+          // !!!!!!! need to implement these
+          // window.ethereum.on('chainChanged', () => this.handleChainChanged)
+          // window.ethereum.on('accountsChanged', this.handleAccountsChanged)
+          // window.ethereum.on('close', this.handleClose)
+          window.ethereum.on('networkChanged', this.handleNetworkChanged)
+        }
+
+        this.chainId = network.chainId;
+        this.account = account;
+        this.library = web3;
+        this.active = true;
+
+        /*
+        !!!!!!! check if this is needed
+
+        // try to activate + get account via eth_requestAccounts
+        let account
+        try {
+          account = await (window.ethereum.send as Send)('eth_requestAccounts').then(
+            sendReturn => parseSendReturn(sendReturn)[0]
+          )
+        } catch (error) {
+          if ((error as any).code === 4001) {
+            throw new UserRejectedRequestError()
+          }
+          warning(false, 'eth_requestAccounts was unsuccessful, falling back to enable')
+        }
+
+        // if unsuccessful, try enable
+        if (!account) {
+          // if enable is successful but doesn't return accounts, fall back to getAccount (not happy i have to do this...)
+          account = await window.ethereum.enable().then(sendReturn => sendReturn && parseSendReturn(sendReturn)[0])
+        }
+
+        return { provider: window.ethereum, ...(account ? { account } : {}) }
+        */
+    }
 }

@@ -21,6 +21,7 @@ const Message = styled.h2`
 `;
 
 const Web3ReactManager = ({ children }) => {
+    console.log(`!!!!!!! Web3ReactManager()`)
     const {
         root: { providerStore, blockchainFetchStore },
     } = useStores();
@@ -130,10 +131,12 @@ const Web3ReactManager = ({ children }) => {
     }, []);
 
     //Fetch user blockchain data on an interval using current params
+    /*
     useInterval(
         () => blockchainFetchStore.setFetchLoop(web3React, false),
         1000
     );
+    */
 
     useEffect(() => {
         if (
