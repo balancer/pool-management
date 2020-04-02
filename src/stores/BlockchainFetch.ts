@@ -75,8 +75,6 @@ export default class BlockchainFetchStore {
             const {
                 providerStore,
                 poolStore,
-                marketStore,
-                contractMetadataStore,
                 appSettingsStore,
             } = this.rootStore;
 
@@ -118,12 +116,6 @@ export default class BlockchainFetchStore {
                                 this.fetchActivePoolAllowances(web3React);
                             }
                         });
-
-                        if (marketStore.assetsLoaded) {
-                            marketStore.fetchAssetPrices(
-                                contractMetadataStore.tokenSymbols
-                            );
-                        }
 
                         // Get user-specific blockchain data
                         if (account) {

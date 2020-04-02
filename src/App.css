@@ -59,7 +59,7 @@ body {
     background-color: var(--background);
     height: calc(100vh - 81px);
     width: 82%;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .popup-content {
