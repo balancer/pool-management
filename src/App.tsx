@@ -15,9 +15,11 @@ const Container = styled.div`
 `;
 
 const LeftContainer = styled.div`
-    display: flex;
+    @media screen and (max-width: 1024px) {
+        display: none;
+    }
     flex-direction: column;
-    width: 18%;
+    width: 300px;
     border-right: 1px solid var(--panel-border);
     background-color: var(--panel-background);
 `;
