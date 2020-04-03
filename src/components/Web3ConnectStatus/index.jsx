@@ -11,6 +11,8 @@ import { useStores } from '../../contexts/storesContext';
 import Button from '../Common/Button';
 import Web3PillBox from '../Web3PillBox';
 import { isChainIdSupported } from '../../provider/connectors';
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const Web3StatusGeneric = styled.button`
     ${({ theme }) => theme.flexRowNoWrap}
@@ -72,6 +74,22 @@ const Web3ConnectStatus = observer(() => {
     const active = providerStore.active;
     const error = providerStore.error;
 
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          infuraId: process.env.REACT_APP_INFURA_ID   // !!!!!!! add if needed
+        }
+      }
+    }
+
+    let web3Modal = new Web3Modal({
+      // network: "kovan",
+      // cacheProvider: false,
+      providerOptions: providerOptions,
+      theme: "dark"
+    });
+
     console.debug(`[connectStatus]`, [account, chainId, active, error])
 
     if (!chainId && active) {
@@ -88,8 +106,9 @@ const Web3ConnectStatus = observer(() => {
         hasPendingTransactions = !!pending.length;
     }
 
-    const toggleWalletModal = () => {
-        modalStore.toggleWalletModal();
+    const toggleWalletModal = async() => {
+        // modalStore.toggleWalletModal();
+        let provider = await web3Modal.connect();
     };
 
     // handle the logo we want to show with the account
@@ -146,9 +165,11 @@ const Web3ConnectStatus = observer(() => {
     }
 
     // ??????? Not really sure what this one was doing if (!contextNetwork.active && !active) {
+    /*
     if (!active) {
         return null;
     }
+    */
 
     return (
         <>

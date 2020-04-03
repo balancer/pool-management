@@ -244,7 +244,8 @@ export default class ProviderStore {
         console.log(`loadWeb3()`);
 
         if (!window.ethereum) {
-          console.log(`!!!!!!! NOETHPROVIDER`)
+          console.log(`!!!!!!! NOETHPROVIDER`);
+          return;
           // !!!!!!! Handle this
           // throw new NoEthereumProviderError();
         }
