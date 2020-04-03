@@ -23,7 +23,7 @@ const MyLiquidity = observer(() => {
     const {
         root: { poolStore, providerStore },
     } = useStores();
-    const { account } = providerStore.getActiveWeb3React();
+    const account = providerStore.account;
 
     let pools: Pool[] = [];
 

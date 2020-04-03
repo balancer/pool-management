@@ -8,7 +8,9 @@ import Copy from './Copy';
 import Circle from '../../assets/images/circle.svg';
 
 import { transparentize } from 'polished';
-import { useActiveWeb3React } from 'provider/providerHooks';
+
+import { useStores } from '../../contexts/storesContext';
+
 
 const TransactionStatusWrapper = styled.div`
     display: flex;
@@ -82,7 +84,14 @@ const ButtonWrapper = styled.div`
 `;
 
 export default function Transaction({ hash, pending }) {
-    const { chainId } = useActiveWeb3React();
+
+    const {
+        root: {
+            providerStore
+        },
+    } = useStores();
+
+    const chainId = providerStore.chainId;
 
     return (
         <TransactionWrapper key={hash}>

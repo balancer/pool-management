@@ -1,11 +1,14 @@
 import { action, observable, ObservableMap } from 'mobx';
 import RootStore from 'stores/Root';
 import { ethers } from 'ethers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { ActionResponse, sendAction } from './actions/actions';
 import { supportedChainId, web3ContextNames } from '../provider/connectors';
 import { web3Window as window } from 'provider/Web3Window';
+
+// *******
+import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import { InjectedConnector } from '@web3-react/injected-connector';
 
 
 export enum ContractTypes {
@@ -50,6 +53,7 @@ export default class ProviderStore {
     @observable library: any;
     @observable active: boolean;
     @observable error: Error;
+    @observable connector: InjectedConnector;
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -58,6 +62,9 @@ export default class ProviderStore {
         this.web3Contexts = {};
         this.chainData = { currentBlockNumber: -1 } as ChainData;
         this.active = false;
+        this.connector = new InjectedConnector({
+            // supportedChainIds: supportedNetworks,
+        });
     }
 
     isBlockStale(blockNumber: number) {
@@ -77,7 +84,6 @@ export default class ProviderStore {
     }
 
     @action fetchUserBlockchainData = async (
-        web3React: Web3ReactContextInterface,
         account: string
     ) => {
         const {
@@ -90,10 +96,9 @@ export default class ProviderStore {
             account,
         });
 
-        transactionStore.checkPendingTransactions(web3React, account);
+        transactionStore.checkPendingTransactions(account);
         tokenStore
             .fetchTokenBalances(
-                web3React,
                 account,
                 contractMetadataStore.getTrackedTokenAddresses()
             )
@@ -118,24 +123,24 @@ export default class ProviderStore {
     }
 
     getContract(
-        web3React: Web3ReactContextInterface,
         type: ContractTypes,
         address: string,
         signerAccount?: string
     ): ethers.Contract {
-        const { library } = web3React;
+        const library = this.library;
 
         if (signerAccount) {
             return new ethers.Contract(
                 address,
                 schema[type],
-                this.getProviderOrSigner(library, signerAccount)
+                this.getProviderOrSigner(this.library, signerAccount)
             );
         }
 
         return new ethers.Contract(address, schema[type], library);
     }
 
+    // ******* CAN DELETE ONCE WEB3CONNECT MANAGER GONE
     getActiveWeb3React(): Web3ReactContextInterface {
         const contextBackup = this.web3Contexts[web3ContextNames.backup];
         const contextInjected = this.web3Contexts[web3ContextNames.injected];
@@ -146,20 +151,12 @@ export default class ProviderStore {
             : contextBackup;
     }
 
-    getWeb3React(name): Web3ReactContextInterface {
-        if (!this.web3Contexts[name]) {
-            throw new Error(ERRORS.ContextNotFound);
-        }
-        return this.web3Contexts[name];
-    }
-
     @action setWeb3Context(name, context: Web3ReactContextInterface) {
         console.debug('[setWeb3Context]', name, context);
         this.web3Contexts[name] = context;
     }
 
     @action sendTransaction = async (
-        web3React: Web3ReactContextInterface,
         contractType: ContractTypes,
         contractAddress: string,
         action: string,
@@ -167,7 +164,8 @@ export default class ProviderStore {
         overrides?: any
     ): Promise<ActionResponse> => {
         const { transactionStore } = this.rootStore;
-        const { chainId, account } = web3React;
+        const chainId = this.chainId;
+        const account = this.account;
 
         overrides = overrides ? overrides : {};
 
@@ -180,7 +178,6 @@ export default class ProviderStore {
         }
 
         const contract = this.getContract(
-            web3React,
             contractType,
             contractAddress,
             account

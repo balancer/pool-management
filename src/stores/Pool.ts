@@ -8,7 +8,6 @@ import {
     fromPercentage,
     tinyAddress
 } from '../utils/helpers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ContractTypes } from './Provider';
 import { getNextTokenColor } from '../utils/tokenColorPicker';
 
@@ -31,12 +30,13 @@ export default class PoolStore {
         this.pools = {} as PoolMap;
     }
 
-    @action processUnknownTokens(web3React, pool: Pool): Pool {
+    @action processUnknownTokens(pool: Pool): Pool {
         const {
             contractMetadataStore,
             tokenStore,
+            providerStore
         } = this.rootStore;
-        const { account } = web3React;
+        const account = providerStore.account;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
 
         pool.tokens.forEach((token, index) => {
@@ -45,7 +45,7 @@ export default class PoolStore {
 
                 // We just discovered a new token, so should do an initial fetch for it outside of loop
                 if (account && !tokenStore.getBalance(token.address, account)) {
-                    tokenStore.fetchTokenBalances(web3React, account, [
+                    tokenStore.fetchTokenBalances(account, [
                         token.address,
                     ]);
                 }
@@ -64,7 +64,7 @@ export default class PoolStore {
         return pool;
     }
 
-    @action async fetchPublicPools(web3React) {
+    @action async fetchPublicPools() {
         const { providerStore, contractMetadataStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
@@ -73,7 +73,7 @@ export default class PoolStore {
         const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
-            const processedPool = this.processUnknownTokens(web3React, pool);
+            const processedPool = this.processUnknownTokens(pool);
             this.setPool(pool.address, processedPool, currentBlock);
         });
         this.poolsLoaded = true;
@@ -242,7 +242,6 @@ export default class PoolStore {
     }
 
     @action exitPool = async (
-        web3React: Web3ReactContextInterface,
         poolAddress: string,
         poolAmountIn: string,
         minAmountsOut: string[]
@@ -256,7 +255,6 @@ export default class PoolStore {
         });
 
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.BPool,
             poolAddress,
             'exitPool',
@@ -266,7 +264,6 @@ export default class PoolStore {
     };
 
     @action joinPool = async (
-        web3React: Web3ReactContextInterface,
         poolAddress: string,
         poolAmountOut: string,
         maxAmountsIn: string[]
@@ -274,7 +271,6 @@ export default class PoolStore {
         const { providerStore } = this.rootStore;
 
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.BPool,
             poolAddress,
             'joinPool',

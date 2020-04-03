@@ -95,7 +95,7 @@ const BalancesTable = observer((props: Props) => {
         },
     } = useStores();
 
-    const { account } = providerStore.getActiveWeb3React();
+    const account = providerStore.account;
 
     const pool = poolStore.getPool(poolAddress);
     let userPoolTokens: undefined | BigNumber;

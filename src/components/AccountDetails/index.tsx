@@ -243,7 +243,9 @@ export default function AccountDetails(props: Props) {
     const {
         root: { providerStore },
     } = useStores();
-    const { chainId, account, connector } = providerStore.getActiveWeb3React();
+    const chainId = providerStore.chainId;
+    const account = providerStore.account;
+    const connector = providerStore.connector;
 
     function renderTransactions(transactions: TransactionRecord[], pending) {
         return (

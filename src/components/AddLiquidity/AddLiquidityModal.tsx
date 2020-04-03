@@ -136,8 +136,7 @@ const AddLiquidityModal = observer((props: Props) => {
         root: { poolStore, tokenStore, providerStore, addLiquidityFormStore },
     } = useStores();
 
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.account;
 
     const pool = poolStore.getPool(poolAddress);
 
@@ -166,7 +165,7 @@ const AddLiquidityModal = observer((props: Props) => {
         token?: PoolToken
     ) => {
         if (action === ButtonAction.UNLOCK) {
-            await tokenStore.approveMax(web3React, token.address, pool.address);
+            await tokenStore.approveMax(token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
 
@@ -198,7 +197,6 @@ const AddLiquidityModal = observer((props: Props) => {
             });
 
             await poolStore.joinPool(
-                web3React,
                 pool.address,
                 poolTokens.toString(),
                 addLiquidityFormStore.maxUintInputAmounts()

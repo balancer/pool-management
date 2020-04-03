@@ -131,12 +131,10 @@ const Web3ReactManager = ({ children }) => {
     }, []);
 
     //Fetch user blockchain data on an interval using current params
-    /*
     useInterval(
-        () => blockchainFetchStore.setFetchLoop(web3React, false),
+        () => blockchainFetchStore.setFetchLoop(false),
         1000
     );
-    */
 
     useEffect(() => {
         if (
@@ -147,7 +145,7 @@ const Web3ReactManager = ({ children }) => {
                 account: web3React.account,
                 prevAccount: providerStore.activeAccount,
             });
-            blockchainFetchStore.setFetchLoop(web3React, true);
+            blockchainFetchStore.setFetchLoop(true);
         }
     }, [web3React, providerStore.activeAccount, blockchainFetchStore]);
 

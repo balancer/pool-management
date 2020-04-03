@@ -12,7 +12,6 @@ import {
     TotalSupplyFetch,
     UserAllowanceFetch,
 } from './actions/fetch';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
 import { ActionResponse } from './actions/actions';
 
@@ -115,7 +114,6 @@ export default class TokenStore {
     }
 
     @action async fetchAccountApprovals(
-        web3React,
         tokenAddresses: string[],
         account: string,
         spender: string
@@ -127,7 +125,6 @@ export default class TokenStore {
         tokenAddresses.forEach(tokenAddress => {
             promises.push(
                 this.fetchAllowance(
-                    web3React,
                     tokenAddress,
                     account,
                     spender,
@@ -286,13 +283,11 @@ export default class TokenStore {
     }
 
     @action approveMax = async (
-        web3React,
         tokenAddress,
         spender
     ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'approve',
@@ -301,13 +296,11 @@ export default class TokenStore {
     };
 
     @action revokeApproval = async (
-        web3React,
         tokenAddress,
         spender
     ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'approve',
@@ -316,7 +309,6 @@ export default class TokenStore {
     };
 
     @action fetchTotalSupplies = async (
-        web3React: Web3ReactContextInterface,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
         const { providerStore } = this.rootStore;
@@ -324,7 +316,7 @@ export default class TokenStore {
         const promises: Promise<any>[] = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
         tokensToTrack.forEach((value, index) => {
-            promises.push(this.fetchTotalSupply(web3React, value, fetchBlock));
+            promises.push(this.fetchTotalSupply(value, fetchBlock));
         });
 
         let allFetchesSuccess = true;
@@ -357,7 +349,6 @@ export default class TokenStore {
     };
 
     @action fetchTokenBalances = async (
-        web3React: Web3ReactContextInterface,
         account: string,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
@@ -366,7 +357,7 @@ export default class TokenStore {
         const fetchBlock = providerStore.getCurrentBlockNumber();
         tokensToTrack.forEach((value, index) => {
             promises.push(
-                this.fetchBalanceOf(web3React, value, account, fetchBlock)
+                this.fetchBalanceOf(value, account, fetchBlock)
             );
         });
 
@@ -401,7 +392,6 @@ export default class TokenStore {
     };
 
     @action fetchBalanceOf = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         account: string,
         fetchBlock: number
@@ -418,11 +408,10 @@ export default class TokenStore {
             let balance;
 
             if (tokenAddress === EtherKey) {
-                const { library } = web3React;
+                const library = providerStore.library;
                 balance = bnum(await library.getBalance(account));
             } else {
                 const token = providerStore.getContract(
-                    web3React,
                     ContractTypes.TestToken,
                     tokenAddress
                 );
@@ -470,13 +459,11 @@ export default class TokenStore {
     };
 
     @action mint = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         amount: string
     ) => {
         const { providerStore } = this.rootStore;
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'mint',
@@ -485,13 +472,11 @@ export default class TokenStore {
     };
 
     @action fetchTotalSupply = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         fetchBlock: number
     ): Promise<TotalSupplyFetch> => {
         const { providerStore } = this.rootStore;
         const token = providerStore.getContract(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress
         );
@@ -550,7 +535,6 @@ export default class TokenStore {
     };
 
     @action fetchAllowance = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         owner: string,
         spender: string,
@@ -576,7 +560,6 @@ export default class TokenStore {
         }
 
         const token = providerStore.getContract(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress
         );
