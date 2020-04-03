@@ -45,7 +45,7 @@ export default class MarketStore {
 
     @action setAssetPrices(prices: MarketAssetPriceMap) {
         Object.keys(this.assets).forEach(key => {
-            this.assets[key].price = prices[key];
+            this.assets[key].price = prices[key.toUpperCase()];
         });
     }
 
@@ -68,7 +68,7 @@ export default class MarketStore {
     // Tokens with unknown symbol have 0 value
     getValue(symbol: string, balance: BigNumber): BigNumber {
         if (!this.assets[symbol] || !this.assets[symbol].price) {
-            console.warn('Symbol price not found for ' + symbol);
+            // console.warn('Symbol price not found for ' + symbol);
             return bnum(0);
         }
 

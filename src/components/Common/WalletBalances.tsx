@@ -1,14 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import { formatBalanceTruncated, isAddress } from '../../utils/helpers';
+import { formatBalanceTruncated, isAddress, bnum } from '../../utils/helpers';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import WrapEth from './WrapEth';
 
 
 const Wrapper = styled.div`
-    height: calc(100vh - 283px);
-    overflow: scroll;
 `;
 
 const BuildVersion = styled.div`
@@ -108,7 +106,7 @@ const WalletBalances = observer(() => {
                             token.address,
                             account
                         );
-                        if (userBalance) {
+                        if (userBalance && userBalance.isGreaterThan(bnum(0))) {
                             balanceToDisplay = formatBalanceTruncated(
                                 userBalance,
                                 token.decimals,

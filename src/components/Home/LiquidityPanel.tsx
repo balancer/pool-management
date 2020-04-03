@@ -63,6 +63,16 @@ const TableCell = styled.div`
     display: flex;
     align-items: center;
     width: ${props => props.width || '12%'};
+    @media screen and (max-width: 1024px) {
+        width: 33%
+    }
+`;
+
+const TableCellHideMobile = styled(TableCell)`
+    @media screen and (max-width: 1024px) {
+        display: none;
+        width: 0%;
+    }
 `;
 
 const AssetCell = styled(TableCell)`
@@ -71,6 +81,16 @@ const AssetCell = styled(TableCell)`
 
 const TableCellRight = styled(TableCell)`
     justify-content: flex-end;
+    @media screen and (max-width: 1024px) {
+        width: 33%
+    }
+`;
+
+const TableCellRightHideMobile = styled(TableCellRight)`
+    @media screen and (max-width: 1024px) {
+        display: none;
+        width: 0%;
+    }
 `;
 
 const IdenticonText = styled.div`
@@ -248,10 +268,10 @@ const LiquidityPanel = observer((props: Props) => {
                                         {renderAssetPercentages(pool)}
                                     </BreakdownContainer>
                                 </AssetCell>
-                                <TableCell width="12%">{ formatFee(pool.swapFee) }</TableCell>
+                                <TableCellHideMobile width="12%">{ formatFee(pool.swapFee) }</TableCellHideMobile>
                                 <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
-                                <TableCellRight width="12%">{`$ ${userLiquidityText}`}</TableCellRight>
-                                <TableCellRight width="15%">{`$ ${volumeText}`}</TableCellRight>
+                                <TableCellRightHideMobile width="12%">{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
+                                <TableCellRightHideMobile width="15%">{`$ ${volumeText}`}</TableCellRightHideMobile>
                             </PoolRow>
                         </PoolLink>
                     );
@@ -307,10 +327,10 @@ const LiquidityPanel = observer((props: Props) => {
             <HeaderRow>
                 <TableCell width="15%">Pool Address</TableCell>
                 <AssetCell>Assets</AssetCell>
-                <TableCell width="12%">Swap Fee</TableCell>
+                <TableCellHideMobile width="12%">Swap Fee</TableCellHideMobile>
                 <TableCellRight width="12%">Liquidity</TableCellRight>
-                <TableCellRight width="12%">My Liquidity</TableCellRight>
-                <TableCellRight width="15%">Trade Volume (24h)</TableCellRight>
+                <TableCellRightHideMobile width="12%">My Liquidity</TableCellRightHideMobile>
+                <TableCellRightHideMobile width="15%">Trade Volume (24h)</TableCellRightHideMobile>
             </HeaderRow>
             {renderPools()}
             <FooterRow />

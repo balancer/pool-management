@@ -11,6 +11,10 @@ const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     width: calc(25% - 21px);
+    @media screen and (max-width: 1024px) {
+        width: 100%;
+        margin-left: 0px;
+    }
     font-family: Roboto;
     font-style: normal;
     margin-top: 30px;

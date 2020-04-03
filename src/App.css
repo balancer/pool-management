@@ -58,8 +58,8 @@ body {
 .app-shell {
     background-color: var(--background);
     height: calc(100vh - 81px);
-    width: 82%;
-    overflow: scroll;
+    width: 100%;
+    overflow-y: scroll;
 }
 
 .popup-content {

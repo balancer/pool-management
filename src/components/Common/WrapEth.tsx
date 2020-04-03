@@ -126,8 +126,6 @@ const EthInputWrapper = styled.div`
             props.errorBorders
                 ? '1px solid var(--error-color)'
                 : '1px solid var(--input-hover-border);'};
-        margin-left: -1px;
-        margin-right: -1px;
         input {
             background-color: var(--input-hover-background);
             box-shadow: inset 0 0 0 1px var(--input-hover-background),
