@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { observer } from 'mobx-react';
 
 import Modal from '../Modal';
@@ -12,13 +11,10 @@ import { usePrevious } from 'utils/helperHooks';
 import { Link } from '../../theme';
 import MetamaskIcon from 'assets/images/metamask.png';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
 import { useStores } from 'contexts/storesContext';
-import {
-    isChainIdSupported,
-    web3ContextNames,
-} from '../../provider/connectors';
-import { useActiveWeb3React } from 'provider/providerHooks';
+import { isChainIdSupported } from '../../provider/connectors';
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const CloseIcon = styled.div`
     position: absolute;
@@ -120,14 +116,35 @@ const WALLET_VIEWS = {
 
 const WalletModal = observer(
     ({ pendingTransactions, confirmedTransactions }) => {
-        const {
-            root: { modalStore },
-        } = useStores();
-        const { active, connector, error, activate } = useActiveWeb3React();
 
-        const { account, chainId: injectedChainId } = useWeb3React(
-            web3ContextNames.injected
-        );
+      const providerOptions = {
+
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: process.env.REACT_APP_INFURA_ID
+          }
+        }
+
+      }
+
+      let web3Modal = new Web3Modal({
+        // network: "kovan",
+        // cacheProvider: false,
+        providerOptions: providerOptions,
+        theme: "dark"
+      });
+
+        const {
+            root: { modalStore, providerStore },
+        } = useStores();
+
+        const active = providerStore.active;
+        const error = providerStore.error;
+        const account = providerStore.account;
+        const injectedChainId = providerStore.getChainId();
+
+        console.log(`!!!!!!! error`, error)
 
         const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
         const [pendingWallet, setPendingWallet] = useState();
@@ -149,12 +166,9 @@ const WalletModal = observer(
 
         // close modal when a connection is successful
         const activePrevious = usePrevious(active);
-        const connectorPrevious = usePrevious(connector);
         useEffect(() => {
             if (
-                walletModalOpen &&
-                ((active && !activePrevious) ||
-                    (connector && connector !== connectorPrevious && !error))
+                walletModalOpen && (active && !activePrevious)
             ) {
                 setWalletView(WALLET_VIEWS.ACCOUNT);
             }
@@ -162,22 +176,18 @@ const WalletModal = observer(
             setWalletView,
             active,
             error,
-            connector,
             walletModalOpen,
-            activePrevious,
-            connectorPrevious,
+            activePrevious
         ]);
 
-        const tryActivation = async connector => {
-            setPendingWallet(connector); // set wallet for pending view
-            setWalletView(WALLET_VIEWS.PENDING);
-            activate(connector, undefined, true).catch(e => {
-                console.error('[Activation Error]', e);
-                setPendingError(true);
-            });
-        };
+        async function load(){
+          let provider = await web3Modal.connect();
+          // ????? Should update Provider here?
+        }
 
         // get wallets user can switch too, depending on device/browser
+        // !!!!!!! not used but left in incase other wallet options are required
+        /*
         function getOptions() {
             const isMetamask = window.ethereum && window.ethereum.isMetaMask;
             return Object.keys(SUPPORTED_WALLETS).map(key => {
@@ -262,6 +272,61 @@ const WalletModal = observer(
                 );
             });
         }
+        */
+
+        //
+        function checkMetaMask() {
+          if (!(window.web3 || window.ethereum)) {
+            return (
+              <UpperSection>
+                  <CloseIcon onClick={toggleWalletModal}>
+                      <CloseColor alt={'close icon'} />
+                  </CloseIcon>
+                  {walletView !== WALLET_VIEWS.ACCOUNT ? (
+                      <HeaderRow color="blue">
+                          <HoverText
+                              onClick={() => {
+                                  setPendingError(false);
+                                  setWalletView(WALLET_VIEWS.ACCOUNT);
+                              }}
+                          >
+                              Back
+                          </HoverText>
+                      </HeaderRow>
+                  ) : (
+                      <HeaderRow>
+                          <HoverText>Connect To A Wallet</HoverText>
+                      </HeaderRow>
+                  )}
+                  <ContentWrapper>
+
+                          <OptionGrid>
+                            <Option
+                                color={'#E8831D'}
+                                header={'Install Metamask'}
+                                subheader={null}
+                                link={'https://metamask.io/'}
+                                icon={MetamaskIcon}
+                            />
+                          </OptionGrid>
+
+                      {walletView !== WALLET_VIEWS.PENDING && (
+                          <Blurb>
+                              <span style={{ color: '#90a4ae' }}>
+                                  New to Ethereum? &nbsp;
+                              </span>{' '}
+                              <Link href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
+                                  Learn more about wallets
+                              </Link>
+                          </Blurb>
+                      )}
+                  </ContentWrapper>
+              </UpperSection>
+            );
+          }else {
+            return null;
+          }
+        }
 
         function getModalContent() {
             if (error) {
@@ -271,18 +336,10 @@ const WalletModal = observer(
                             <CloseColor alt={'close icon'} />
                         </CloseIcon>
                         <HeaderRow>
-                            {error instanceof UnsupportedChainIdError
-                                ? 'Wrong Network'
-                                : 'Error connecting'}
+                            'Error connecting'
                         </HeaderRow>
                         <ContentWrapper>
-                            {error instanceof UnsupportedChainIdError ? (
-                                <h5>
-                                    Please connect to the main Ethereum network.
-                                </h5>
-                            ) : (
-                                'Error connecting. Try refreshing the page.'
-                            )}
+                            'Error connecting. Try refreshing the page.'
                         </ContentWrapper>
                     </UpperSection>
                 );
@@ -316,6 +373,19 @@ const WalletModal = observer(
                     />
                 );
             }
+
+            if(walletModalOpen){
+              let mm = checkMetaMask();
+
+              if(mm)
+                return mm
+              else{
+                load();
+              }
+            }
+            return null;
+
+            /*
             return (
                 <UpperSection>
                     <CloseIcon onClick={toggleWalletModal}>
@@ -362,6 +432,7 @@ const WalletModal = observer(
                     </ContentWrapper>
                 </UpperSection>
             );
+            */
         }
 
         return (
