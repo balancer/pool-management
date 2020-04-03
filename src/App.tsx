@@ -2,6 +2,7 @@ import React from 'react';
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import './App.css';
+import Web3ReactManagerOld from 'components/Web3ReactManagerOld';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Header from 'components/Common/Header';
 import Home from 'views/Home';
