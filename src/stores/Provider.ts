@@ -5,6 +5,7 @@ import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { ActionResponse, sendAction } from './actions/actions';
 import { supportedChainId, web3ContextNames } from '../provider/connectors';
 import { web3Window as window } from 'provider/Web3Window';
+import { backup, backupUrls } from 'provider/connectors';
 
 // *******
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
@@ -240,13 +241,42 @@ export default class ProviderStore {
     async loadWeb3() {
         console.log(`loadWeb3()`);
 
+        let web3;
+        // !!!!!!! THIS NEEDS A GENERAL TIDY AND MADE MORE ROBUST BUT FUNCTIONS FOR NOW
         if (!window.ethereum) {
-          console.log(`!!!!!!! NOETHPROVIDER`);
-          return;
-          // !!!!!!! Handle this
+          console.log(`!!!!!!! NOETHPROVIDER`, backupUrls[supportedChainId]);
+          console.log(process.env.REACT_APP_INFURA_ID)
+          // let currentProvider = new ethers.providers.InfuraProvider(process.env.REACT_APP_INFURA_ID);
+          web3 = new ethers.providers.JsonRpcProvider(backupUrls[supportedChainId]);
+          // web3 = new ethers.providers.Web3Provider(backupUrls[supportedChainId]);
+          console.log(`!!!!!!! WELL??`)
+
+          /*
+          console.log(backup)
+          backup.resume();
+          console.log(backup)
+          */
+          // return;
+          // !!!!!!! Add backup provider loading here
           // throw new NoEthereumProviderError();
+        }else{
+          web3 = new ethers.providers.Web3Provider(window.ethereum);
+
+          if ((window.ethereum as any).isMetaMask) {
+            ;(window.ethereum as any).autoRefreshOnNetworkChange = false
+          }
+
+          this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
+          this.handleClose = this.handleClose.bind(this);
+          this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
+
+          if (window.ethereum.on) {
+            window.ethereum.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
+            window.ethereum.on('accountsChanged', this.handleAccountsChanged)
+            window.ethereum.on('close', this.handleClose)
+            window.ethereum.on('networkChanged', this.handleNetworkChanged)
+          }
         }
-        const web3 = new ethers.providers.Web3Provider(window.ethereum);
         let network = await web3.getNetwork();
 
         const accounts = await web3.listAccounts();
@@ -254,20 +284,7 @@ export default class ProviderStore {
         if(accounts.length > 0)
           account = accounts[0];
 
-        if ((window.ethereum as any).isMetaMask) {
-          ;(window.ethereum as any).autoRefreshOnNetworkChange = false
-        }
-
-        this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
-
-        if (window.ethereum.on) {
-          window.ethereum.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
-          window.ethereum.on('accountsChanged', this.handleAccountsChanged)
-          window.ethereum.on('close', this.handleClose)
-          window.ethereum.on('networkChanged', this.handleNetworkChanged)
-        }
+        console.log(`!!!!!!!`, [network, account])
 
         this.chainId = network.chainId;
         this.account = account;

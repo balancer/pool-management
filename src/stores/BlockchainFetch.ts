@@ -58,6 +58,7 @@ export default class BlockchainFetchStore {
     @action setFetchLoop(
         forceFetch?: boolean
     ) {
+        console.log(`!!!! yo?`)
         const { providerStore } = this.rootStore;
 
         const active = providerStore.active;

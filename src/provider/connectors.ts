@@ -38,7 +38,7 @@ export const web3ContextNames = {
     injected: 'INJECTED',
 };
 
-const backupUrls = {};
+export const backupUrls = {};
 backupUrls[supportedChainId] = RPC_URLS[supportedChainId];
 
 export const backup = new NetworkConnector({
