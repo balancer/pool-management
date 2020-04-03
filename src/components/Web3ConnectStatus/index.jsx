@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Activity } from 'react-feather';
 import { observer } from 'mobx-react';
-import { action, observable, ObservableMap } from 'mobx';
 import { shortenAddress } from 'utils/helpers';
 import WalletModal from 'components/WalletModal';
 import { Spinner } from '../../theme';
@@ -73,8 +72,7 @@ const Web3ConnectStatus = observer(() => {
     const active = providerStore.active;
     const error = providerStore.error;
 
-    console.debug(`!!!!!!! connectStatus`, [account, chainId, active, error])
-    console.log(providerStore)
+    console.debug(`[connectStatus]`, [account, chainId, active, error])
 
     if (!chainId && active) {
         throw new Error('No chain ID specified');

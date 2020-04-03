@@ -211,15 +211,33 @@ export default class ProviderStore {
         return this.chainId;
     }
 
-    private handleChainChanged(chainId: string | number): void {
-
-      console.log("Handling 'chainChanged' event with payload", chainId)
-
-      // this.emitUpdate({ chainId, provider: window.ethereum })
-    }
 
     @action handleNetworkChanged(networkId: string | number): void {
       this.chainId = Number(networkId);
+    }
+
+    @action handleClose(): void {
+      console.log(`!!!!!!! handleClose`);
+      if (window.ethereum && window.ethereum.removeListener) {
+        console.log(`!!!!!!! removingListeners`);
+
+        window.ethereum.removeListener('chainChanged', this.handleNetworkChanged)
+        window.ethereum.removeListener('accountsChanged', this.handleAccountsChanged)
+        window.ethereum.removeListener('close', this.handleClose)
+        window.ethereum.removeListener('networkChanged', this.handleNetworkChanged)
+      }
+
+      this.loadWeb3();
+    }
+
+    @action handleAccountsChanged(accounts: string[]): void {
+      console.log(`!!!!!!! handleAccountsChanged`, accounts);
+
+      if (accounts.length === 0) {
+        this.handleClose();
+      } else {
+        this.account = accounts[0];
+      }
     }
 
     async loadWeb3() {
@@ -242,13 +260,14 @@ export default class ProviderStore {
           ;(window.ethereum as any).autoRefreshOnNetworkChange = false
         }
 
-        this.handleNetworkChanged = this.handleNetworkChanged.bind(this)
+        this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
 
         if (window.ethereum.on) {
-          // !!!!!!! need to implement these
-          // window.ethereum.on('chainChanged', () => this.handleChainChanged)
-          // window.ethereum.on('accountsChanged', this.handleAccountsChanged)
-          // window.ethereum.on('close', this.handleClose)
+          window.ethereum.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
+          window.ethereum.on('accountsChanged', this.handleAccountsChanged)
+          window.ethereum.on('close', this.handleClose)
           window.ethereum.on('networkChanged', this.handleNetworkChanged)
         }
 
