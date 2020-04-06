@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Option from './Option';
-import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
+import { SUPPORTED_WALLETS } from 'provider/connectors';
 import { Spinner } from '../../theme';
 import Circle from '../../assets/images/circle.svg';
 import { darken } from 'polished';
@@ -106,28 +106,27 @@ export default function PendingView({
             </LoadingMessage>
             {Object.keys(SUPPORTED_WALLETS).map(key => {
                 const option = SUPPORTED_WALLETS[key];
-                if (option.connector === connector) {
-                    if (option.connector === injected) {
-                        if (isMetamask && option.name !== 'MetaMask') {
-                            return null;
-                        }
-                        if (!isMetamask && option.name === 'MetaMask') {
-                            return null;
-                        }
+
+                if (option.isInjected) {
+                    if (isMetamask && option.name !== 'MetaMask') {
+                        return null;
                     }
-                    return (
-                        <Option
-                            key={key}
-                            clickable={false}
-                            color={option.color}
-                            header={option.name}
-                            subheader={option.description}
-                            icon={require('../../assets/images/' +
-                                option.iconName)}
-                        />
-                    );
+                    if (!isMetamask && option.name === 'MetaMask') {
+                        return null;
+                    }
                 }
-                return null;
+                return (
+                    <Option
+                        key={key}
+                        clickable={false}
+                        color={option.color}
+                        header={option.name}
+                        subheader={option.description}
+                        icon={require('../../assets/images/' +
+                            option.iconName)}
+                    />
+                );
+
             })}
         </PendingSection>
     );

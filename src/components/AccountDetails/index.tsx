@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import Copy from './Copy';
 import Transaction from './Transaction';
-import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
+import { SUPPORTED_WALLETS } from 'provider/connectors';
 //@ts-ignore
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { getEtherscanLink } from 'utils/helpers';
@@ -245,7 +245,7 @@ export default function AccountDetails(props: Props) {
     } = useStores();
     const chainId = providerStore.chainId;
     const account = providerStore.account;
-    const connector = providerStore.connector;
+    const isInjected = providerStore.isInjected;
 
     function renderTransactions(transactions: TransactionRecord[], pending) {
         return (
@@ -269,8 +269,7 @@ export default function AccountDetails(props: Props) {
         const name = Object.keys(SUPPORTED_WALLETS)
             .filter(
                 k =>
-                    SUPPORTED_WALLETS[k].connector === connector &&
-                    (connector !== injected ||
+                    (!isInjected ||
                         isMetaMask === (k === 'METAMASK'))
             )
             .map(k => SUPPORTED_WALLETS[k].name)[0];
@@ -278,7 +277,7 @@ export default function AccountDetails(props: Props) {
     }
 
     function getStatusIcon() {
-        if (connector === injected) {
+        if (isInjected) {
             return (
                 <IconWrapper size={16}>
                     <Identicon /> {formatConnectorName()}
@@ -303,11 +302,12 @@ export default function AccountDetails(props: Props) {
                             <AccountGroupingRow>
                                 {getStatusIcon()}
                                 <div>
-                                    {connector !== injected && (
+
+                                    {!isInjected && (
                                         <WalletAction
                                             onClick={() => {
                                                 //@ts-ignore
-                                                connector.close();
+                                                providerStore.handleClose();
                                             }}
                                         >
                                             Disconnect

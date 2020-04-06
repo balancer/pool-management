@@ -3,14 +3,8 @@ import RootStore from 'stores/Root';
 import { ethers } from 'ethers';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { ActionResponse, sendAction } from './actions/actions';
-import { supportedChainId, web3ContextNames } from '../provider/connectors';
 import { web3Window as window } from 'provider/Web3Window';
-import { backup, backupUrls } from 'provider/connectors';
-
-// *******
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import { InjectedConnector } from '@web3-react/injected-connector';
-
+import { backupUrls, supportedChainId } from 'provider/connectors';
 
 export enum ContractTypes {
     BPool = 'BPool',
@@ -54,7 +48,7 @@ export default class ProviderStore {
     @observable library: any;
     @observable active: boolean;
     @observable error: Error;
-    @observable connector: InjectedConnector;
+    @observable isInjected: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -63,9 +57,7 @@ export default class ProviderStore {
         this.web3Contexts = {};
         this.chainData = { currentBlockNumber: -1 } as ChainData;
         this.active = false;
-        this.connector = new InjectedConnector({
-            // supportedChainIds: supportedNetworks,
-        });
+        this.isInjected = false;
     }
 
     isBlockStale(blockNumber: number) {
@@ -139,22 +131,6 @@ export default class ProviderStore {
         }
 
         return new ethers.Contract(address, schema[type], library);
-    }
-
-    // ******* CAN DELETE ONCE WEB3CONNECT MANAGER GONE
-    getActiveWeb3React(): Web3ReactContextInterface {
-        const contextBackup = this.web3Contexts[web3ContextNames.backup];
-        const contextInjected = this.web3Contexts[web3ContextNames.injected];
-
-        return contextInjected.active &&
-            contextInjected.chainId === supportedChainId
-            ? contextInjected
-            : contextBackup;
-    }
-
-    @action setWeb3Context(name, context: Web3ReactContextInterface) {
-        console.debug('[setWeb3Context]', name, context);
-        this.web3Contexts[name] = context;
     }
 
     @action sendTransaction = async (
@@ -276,6 +252,8 @@ export default class ProviderStore {
             window.ethereum.on('close', this.handleClose)
             window.ethereum.on('networkChanged', this.handleNetworkChanged)
           }
+
+          this.isInjected = true;
         }
         let network = await web3.getNetwork();
 

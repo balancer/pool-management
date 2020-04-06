@@ -71,6 +71,7 @@ const Web3ConnectStatus = observer(() => {
     const chainId = providerStore.getChainId();
     const active = providerStore.active;
     const error = providerStore.error;
+    const isInjected = providerStore.isInjected;
 
     console.debug(`[connectStatus]`, [account, chainId, active, error])
 
@@ -94,13 +95,9 @@ const Web3ConnectStatus = observer(() => {
 
     // handle the logo we want to show with the account
     function getStatusIcon() {
-        /* !!!!!!! Not really sure what this check was for?
-        // const { connector } = useActiveWeb3React();
-        if (connector === injected) {
-            return <Identicon />;
+        if(isInjected){
+          return <Identicon />;
         }
-        */
-        return <Identicon />;
     }
 
     function getWeb3Status() {
