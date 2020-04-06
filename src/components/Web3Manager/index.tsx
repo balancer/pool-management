@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-    backup,
-    web3ContextNames,
-} from 'provider/connectors';
 import { useStores } from 'contexts/storesContext';
 import { useInterval } from 'utils/helperHooks';
+import { observer } from 'mobx-react';
+
 
 const MessageWrapper = styled.div`
     display: flex;
@@ -18,8 +16,7 @@ const Message = styled.h2`
     color: ${({ theme }) => theme.bodyText};
 `;
 
-const Web3ReactManager = ({ children }) => {
-    console.log(`!!!!!!! Web3ReactManager()`)
+const Web3Manager = observer(({ children }) => {
     const {
         root: { providerStore, blockchainFetchStore },
     } = useStores();
@@ -42,10 +39,8 @@ const Web3ReactManager = ({ children }) => {
         1000
     );
 
-    // if the account context isn't active, and there's an error on the network context, it's an irrecoverable error
-    /*
-    !!!!!!! user Provider state/error for this
-    if (!injectedActive && networkError) {
+    // if the web3 context isn't active, and there's an error it's an irrecoverable error
+    if (!providerStore.active && providerStore.error) {
         return (
             <MessageWrapper>
                 <Message>unknownError</Message>
@@ -53,11 +48,10 @@ const Web3ReactManager = ({ children }) => {
         );
     }
 
-
-    // if neither context is active, spin
-    if (!injectedActive && !networkActive) {
+    // This means no injected web3 and infura backup has failed
+    if (!providerStore.active) {
         console.debug(
-            '[Web3ReactManager] Render: No active network, show loading'
+            '[Web3Manager] Render: No active network, show loading'
         );
         return showLoader ? (
             <MessageWrapper>
@@ -65,9 +59,8 @@ const Web3ReactManager = ({ children }) => {
             </MessageWrapper>
         ) : null;
     }
-    */
 
     return children;
-};
+});
 
-export default Web3ReactManager;
+export default Web3Manager;

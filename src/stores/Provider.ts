@@ -238,7 +238,7 @@ export default class ProviderStore {
       }
     }
 
-    async loadWeb3() {
+    @action async loadWeb3() {
         console.log(`loadWeb3()`);
 
         let web3;
