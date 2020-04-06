@@ -294,8 +294,7 @@ export const formatCurrency = (
     const fmt = {
         decimalSeparator: '.',
         groupSeparator: ',',
-        groupSize: 3,
-        secondaryGroupSize: 2,
+        groupSize: 3
     };
     return balance.toFormat(2, BigNumber.ROUND_DOWN, fmt);
 };
