@@ -126,7 +126,7 @@ export function formatPercentage(
     decimals: number,
     useLowerLimit = true
 ): string {
-    if (value.lte(0.01) && value.gt(0) && useLowerLimit) {
+    if (value.lte(0.0001) && value.gt(0) && useLowerLimit) {
         return '<0.01%';
     }
 
