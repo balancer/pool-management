@@ -73,7 +73,14 @@ const Web3ConnectStatus = observer(() => {
     const error = providerStore.error;
     const isInjected = providerStore.isInjected;
 
-    console.debug(`[connectStatus]`, [account, chainId, active, error])
+    console.log('[Web3ConnectStatus]', {
+        account,
+        chainId,
+        isChainIdSupported: isChainIdSupported(chainId),
+        active,
+        isInjected,
+        error,
+    });
 
     if (!chainId && active) {
         throw new Error('No chain ID specified');
@@ -103,7 +110,10 @@ const Web3ConnectStatus = observer(() => {
     function getWeb3Status() {
         console.log('[GetWeb3Status]', {
             account,
+            chainId,
             isChainIdSupported: isChainIdSupported(chainId),
+            active,
+            isInjected,
             error,
         });
         // Wrong network

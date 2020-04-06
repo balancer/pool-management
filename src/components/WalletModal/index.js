@@ -143,9 +143,6 @@ const WalletModal = observer(
         const error = providerStore.error;
         const account = providerStore.account;
         const injectedChainId = providerStore.getChainId();
-
-        console.log(`!!!!!!! error`, error)
-
         const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
         const [pendingWallet, setPendingWallet] = useState();
         const [pendingError, setPendingError] = useState();
