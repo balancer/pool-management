@@ -359,6 +359,8 @@ const WalletModal = observer(
             }
 
             if(walletModalOpen){
+              loadWalletModal();
+              /*
               let mm = checkMetaMask();
 
               if(mm)
@@ -366,6 +368,7 @@ const WalletModal = observer(
               else{
                 loadWalletModal();
               }
+              */
             }
             return null;
 
