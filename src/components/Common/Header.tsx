@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Web3ConnectStatus from '../Web3ConnectStatus';
+import Wallet from '../Wallet';
 
 const HeaderFrame = styled.div`
     display: flex;
@@ -54,7 +54,7 @@ const Header = () => {
                 </Title>
             </HeaderElement>
             <HeaderElement>
-                <Web3ConnectStatus />
+                <Wallet />
             </HeaderElement>
         </HeaderFrame>
     );

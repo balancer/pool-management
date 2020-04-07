@@ -3,8 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { Check } from 'react-feather';
 
 import { getEtherscanLink } from 'utils/helpers';
-import { Link, Spinner } from '../../theme';
-import Copy from './Copy';
+
 import Circle from '../../assets/images/circle.svg';
 
 import { transparentize } from 'polished';
@@ -22,7 +21,8 @@ const TransactionStatusWrapper = styled.div`
 `;
 
 const TransactionWrapper = styled.div`
-    ${({ theme }) => theme.flexRowNoWrap}
+    display: flex;
+    flex-flow: row nowrap;
     justify-content: space-between;
     width: 100%;
     margin-top: 0.75rem;
@@ -47,6 +47,12 @@ const rotate = keyframes`
   to {
     transform: rotate(360deg);
   }
+`;
+
+const Spinner = styled.img`
+    animation: 2s ${rotate} linear infinite;
+    width: 16px;
+    height: 16px;
 `;
 
 const TransactionState = styled.div`
@@ -96,32 +102,31 @@ export default function Transaction({ hash, pending }) {
     return (
         <TransactionWrapper key={hash}>
             <TransactionStatusWrapper>
-                <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
+                <a href={getEtherscanLink(chainId, hash, 'transaction')}>
                     {hash} ↗{' '}
-                </Link>
-                <Copy toCopy={hash} />
+                </a>
             </TransactionStatusWrapper>
             {pending ? (
                 <ButtonWrapper pending={pending}>
-                    <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
+                    <a href={getEtherscanLink(chainId, hash, 'transaction')}>
                         <TransactionState pending={pending}>
                             <Spinner src={Circle} id="pending" />
                             <TransactionStatusText>
                                 Pending
                             </TransactionStatusText>
                         </TransactionState>
-                    </Link>
+                    </a>
                 </ButtonWrapper>
             ) : (
                 <ButtonWrapper pending={pending}>
-                    <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
+                    <a href={getEtherscanLink(chainId, hash, 'transaction')}>
                         <TransactionState pending={pending}>
                             <Check size="16" />
                             <TransactionStatusText>
                                 Confirmed
                             </TransactionStatusText>
                         </TransactionState>
-                    </Link>
+                    </a>
                 </ButtonWrapper>
             )}
         </TransactionWrapper>

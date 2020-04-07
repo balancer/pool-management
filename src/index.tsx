@@ -3,15 +3,11 @@ import ReactDOM from 'react-dom';
 import 'index.css';
 import App from 'App';
 import * as serviceWorker from './serviceWorker';
-import ThemeProvider, { GlobalStyle } from './theme';
 
 const Root = (
-            <ThemeProvider>
-                <>
-                    <GlobalStyle />
-                    <App />
-                </>
-            </ThemeProvider>
+    <>
+        <App />
+    </>
 );
 ReactDOM.render(Root, document.getElementById('root'));
 

@@ -11,10 +11,14 @@ const providerOptions = {
 }
 
 export const web3Modal = new Web3Modal({
-  // network: "kovan",
-  // cacheProvider: true,
   providerOptions: providerOptions,
-  theme: "dark"
+  theme: {
+    background: "#282932",
+    main: "#282932",
+    secondary: "#90a4ae",
+    border: "#41476b",
+    hover: "#21222c"
+  }
 });
 
 export const supportedChainId = Number(
@@ -38,7 +42,6 @@ export const isChainIdSupported = (chainId: number): boolean => {
     return supportedChainId === chainId;
 };
 
-const POLLING_INTERVAL = 1000;
 const RPC_URLS: { [chainId: number]: string } = {
     1: process.env.REACT_APP_RPC_URL_1 as string,
     42: process.env.REACT_APP_RPC_URL_42 as string,

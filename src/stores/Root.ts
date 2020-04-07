@@ -4,7 +4,7 @@ import BlockchainFetchStore from 'stores/BlockchainFetch';
 import TokenStore from 'stores/Token';
 import TransactionStore from './Transaction';
 import PoolStore from './Pool';
-import ModalStore from './Modal';
+import DropdownStore from './Dropdown';
 import AppSettingsStore from './AppSettings';
 import ContractMetadataStore from './ContractMetadata';
 import MarketStore from './Market';
@@ -18,7 +18,7 @@ export default class RootStore {
     poolStore: PoolStore;
     marketStore: MarketStore;
     transactionStore: TransactionStore;
-    modalStore: ModalStore;
+    dropdownStore: DropdownStore;
     appSettingsStore: AppSettingsStore;
     contractMetadataStore: ContractMetadataStore;
     addLiquidityFormStore: AddLiquidityFormStore;
@@ -31,7 +31,7 @@ export default class RootStore {
         this.poolStore = new PoolStore(this);
         this.marketStore = new MarketStore(this);
         this.transactionStore = new TransactionStore(this);
-        this.modalStore = new ModalStore(this);
+        this.dropdownStore = new DropdownStore(this);
         this.appSettingsStore = new AppSettingsStore(this);
         this.contractMetadataStore = new ContractMetadataStore(this);
         this.addLiquidityFormStore = new AddLiquidityFormStore(this);
