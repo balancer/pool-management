@@ -6,10 +6,7 @@ import { bnum, scale } from 'utils/helpers';
 import { parseEther, Interface } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
-import {
-    AsyncStatus,
-    UserAllowanceFetch,
-} from './actions/fetch';
+import { AsyncStatus, UserAllowanceFetch } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
 import { ActionResponse } from './actions/actions';
@@ -216,14 +213,39 @@ export default class TokenStore {
         this.allowances = chainApprovals;
     }
 
-    private setTotalSupplyProperty(
-        tokenAddress: string,
-        totalSupply: BigNumber,
-        blockFetched: number
-    ): void {
-        this.totalSupplies[tokenAddress] = {
-            totalSupply: totalSupply,
-            lastFetched: blockFetched,
+    isSupplyFetched(tokenAddress: string) {
+        return !!this.totalSupplies[tokenAddress];
+    }
+
+    isSupplyStale(tokenAddress: string, blockNumber: number): boolean {
+        return this.totalSupplies[tokenAddress].lastFetched < blockNumber;
+    }
+
+    @action private setTotalSupplies(
+        tokens: string[],
+        supplies: BigNumber[],
+        fetchBlock: number
+    ) {
+        const fetchedSupplies: TotalSupplyMap = {};
+
+        supplies.forEach((supply, index) => {
+            const tokenAddress = tokens[index];
+
+            if (
+                (this.isSupplyFetched(tokenAddress) &&
+                    this.isSupplyStale(tokenAddress, fetchBlock)) ||
+                !this.isSupplyFetched(tokenAddress)
+            ) {
+                fetchedSupplies[tokenAddress] = {
+                    totalSupply: supply,
+                    lastFetched: fetchBlock,
+                };
+            }
+        });
+
+        this.totalSupplies = {
+            ...this.totalSupplies,
+            ...fetchedSupplies,
         };
     }
 
@@ -326,41 +348,32 @@ export default class TokenStore {
         const stale =
             fetchBlock <= this.getTotalSupplyLastFetched(tokensToTrack[0]);
         if (!stale) {
-
             const multiAddress = contractMetadataStore.getMultiAddress();
             const multi = providerStore.getContract(
-                        web3React,
-                        ContractTypes.Multicall,
-                        multiAddress
-                    );
+                web3React,
+                ContractTypes.Multicall,
+                multiAddress
+            );
 
             const iface = new Interface(tokenAbi);
 
             tokensToTrack.forEach((value, index) => {
-                calls.push(
-                    [value, iface.functions.totalSupply.encode([])],
-                ); 
+                calls.push([value, iface.functions.totalSupply.encode([])]);
             });
 
             let allFetchesSuccess = true;
 
             try {
                 const [blockNumber, response] = await multi.aggregate(calls);
-                const stale =
-                    fetchBlock <= this.getTotalSupplyLastFetched(tokensToTrack[0]);
-                if (!stale) {
-                    tokensToTrack.forEach((value, index) => {
-                        if (response && response[index]) {
-                            let supply = iface.functions.totalSupply.decode(response[index])
-                            this.setTotalSupplyProperty(
-                                value,
-                                bnum(supply),
-                                fetchBlock
-                            );
-                        }
-                    });
-                }
+                const supplies = response.map(value =>
+                    bnum(iface.functions.totalSupply.decode(value))
+                );
 
+                this.setTotalSupplies(
+                    tokensToTrack,
+                    supplies,
+                    blockNumber.toNumber()
+                );
                 if (allFetchesSuccess) {
                     console.debug('[All Fetches Success]');
                 }
@@ -383,10 +396,10 @@ export default class TokenStore {
 
         const multiAddress = contractMetadataStore.getMultiAddress();
         const multi = providerStore.getContract(
-                    web3React,
-                    ContractTypes.Multicall,
-                    multiAddress
-                );
+            web3React,
+            ContractTypes.Multicall,
+            multiAddress
+        );
 
         const iface = new Interface(tokenAbi);
 
@@ -395,9 +408,10 @@ export default class TokenStore {
 
         if (!stale) {
             tokensToTrack.forEach((value, index) => {
-                calls.push(
-                    [value, iface.functions.balanceOf.encode([account])],
-                ); 
+                calls.push([
+                    value,
+                    iface.functions.balanceOf.encode([account]),
+                ]);
             });
 
             let allFetchesSuccess = true;
@@ -405,11 +419,14 @@ export default class TokenStore {
             try {
                 const [blockNumber, response] = await multi.aggregate(calls);
                 const stale =
-                    fetchBlock <= this.getBalanceLastFetched(tokensToTrack[0], account);
+                    fetchBlock <=
+                    this.getBalanceLastFetched(tokensToTrack[0], account);
                 if (!stale) {
                     tokensToTrack.forEach((value, index) => {
                         if (response && response[index]) {
-                            let balance = iface.functions.balanceOf.decode(response[index])
+                            let balance = iface.functions.balanceOf.decode(
+                                response[index]
+                            );
                             this.setBalanceProperty(
                                 value,
                                 account,
@@ -428,7 +445,7 @@ export default class TokenStore {
                 return FetchCode.FAILURE;
             }
         }
-        
+
         return FetchCode.SUCCESS;
     };
 
