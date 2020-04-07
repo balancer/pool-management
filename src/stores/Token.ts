@@ -213,6 +213,17 @@ export default class TokenStore {
         this.allowances = chainApprovals;
     }
 
+    isBalanceFetched(tokenAddress: string, account: string) {
+        return (
+            !!this.balances[tokenAddress] &&
+            !!this.balances[tokenAddress][account]
+        );
+    }
+
+    isBalanceStale(tokenAddress: string, account: string, blockNumber: number) {
+        return this.balances[tokenAddress][account].lastFetched < blockNumber;
+    }
+
     isSupplyFetched(tokenAddress: string) {
         return !!this.totalSupplies[tokenAddress];
     }
@@ -249,24 +260,39 @@ export default class TokenStore {
         };
     }
 
-    private setBalanceProperty(
-        tokenAddress: string,
+    @action private setBalances(
+        tokens: string[],
+        balances: BigNumber[],
         account: string,
-        balance: BigNumber,
-        blockFetched: number
-    ): void {
-        const chainBalances = this.balances;
+        fetchBlock: number
+    ) {
+        const fetchedBalances: TokenBalanceMap = {};
 
-        if (!chainBalances[tokenAddress]) {
-            chainBalances[tokenAddress] = {};
-        }
+        balances.forEach((balance, index) => {
+            const tokenAddress = tokens[index];
 
-        chainBalances[tokenAddress][account] = {
-            balance: balance,
-            lastFetched: blockFetched,
+            if (
+                (this.isBalanceFetched(tokenAddress, account) &&
+                    this.isBalanceStale(tokenAddress, account, fetchBlock)) ||
+                !this.isBalanceFetched(tokenAddress, account)
+            ) {
+                if (this.balances[tokenAddress]) {
+                    fetchedBalances[tokenAddress] = this.balances[tokenAddress];
+                } else {
+                    fetchedBalances[tokenAddress] = {};
+                }
+
+                fetchedBalances[tokenAddress][account] = {
+                    balance: balance,
+                    lastFetched: fetchBlock,
+                };
+            }
+        });
+
+        this.balances = {
+            ...this.balances,
+            ...fetchedBalances,
         };
-
-        this.balances = chainBalances;
     }
 
     getTotalSupply(tokenAddress: string): BigNumber | undefined {
@@ -357,11 +383,9 @@ export default class TokenStore {
 
             const iface = new Interface(tokenAbi);
 
-            tokensToTrack.forEach((value, index) => {
+            tokensToTrack.forEach(value => {
                 calls.push([value, iface.functions.totalSupply.encode([])]);
             });
-
-            let allFetchesSuccess = true;
 
             try {
                 const [blockNumber, response] = await multi.aggregate(calls);
@@ -374,9 +398,7 @@ export default class TokenStore {
                     supplies,
                     blockNumber.toNumber()
                 );
-                if (allFetchesSuccess) {
-                    console.debug('[All Fetches Success]');
-                }
+                console.debug('[All Fetches Success]');
             } catch (e) {
                 console.error('[Fetch] Total Supply Data', { error: e });
                 return FetchCode.FAILURE;
@@ -403,47 +425,27 @@ export default class TokenStore {
 
         const iface = new Interface(tokenAbi);
 
-        const stale =
-            fetchBlock <= this.getBalanceLastFetched(tokensToTrack[0], account);
+        tokensToTrack.forEach(value => {
+            calls.push([value, iface.functions.balanceOf.encode([account])]);
+        });
 
-        if (!stale) {
-            tokensToTrack.forEach((value, index) => {
-                calls.push([
-                    value,
-                    iface.functions.balanceOf.encode([account]),
-                ]);
-            });
+        try {
+            const [blockNumber, response] = await multi.aggregate(calls);
+            const balances = response.map(value =>
+                bnum(iface.functions.balanceOf.decode(value))
+            );
 
-            let allFetchesSuccess = true;
+            this.setBalances(
+                tokensToTrack,
+                balances,
+                account,
+                blockNumber.toNumber()
+            );
 
-            try {
-                const [blockNumber, response] = await multi.aggregate(calls);
-                const stale =
-                    fetchBlock <=
-                    this.getBalanceLastFetched(tokensToTrack[0], account);
-                if (!stale) {
-                    tokensToTrack.forEach((value, index) => {
-                        if (response && response[index]) {
-                            let balance = iface.functions.balanceOf.decode(
-                                response[index]
-                            );
-                            this.setBalanceProperty(
-                                value,
-                                account,
-                                bnum(balance),
-                                fetchBlock
-                            );
-                        }
-                    });
-                }
-
-                if (allFetchesSuccess) {
-                    console.debug('[All Fetches Success]');
-                }
-            } catch (e) {
-                console.error('[Fetch] Balancer Token Data', { error: e });
-                return FetchCode.FAILURE;
-            }
+            console.debug('[All Fetches Success]');
+        } catch (e) {
+            console.error('[Fetch] Balancer Token Data', { error: e });
+            return FetchCode.FAILURE;
         }
 
         return FetchCode.SUCCESS;
