@@ -122,7 +122,7 @@ const PoolOverview = observer((props: Props) => {
         root: { poolStore, providerStore, contractMetadataStore, tokenStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     let userPoolTokens = undefined;
     const totalPoolTokens = tokenStore.getTotalSupply(poolAddress);

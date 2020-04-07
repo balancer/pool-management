@@ -80,8 +80,8 @@ const AddRemovePanel = (props: Props) => {
             poolStore,
         },
     } = useStores();
-    const account = providerStore.account;
-    const chainId = providerStore.chainId;
+    const account = providerStore.providerStatus.account;
+    const chainId = providerStore.providerStatus.activeChainId;
 
     const pool = poolStore.getPool(poolAddress);
     let userProportion = undefined;

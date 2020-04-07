@@ -13,8 +13,7 @@ import MetamaskIcon from 'assets/images/metamask.png';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { useStores } from 'contexts/storesContext';
 import { isChainIdSupported } from '../../provider/connectors';
-import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+
 
 const CloseIcon = styled.div`
     position: absolute;
@@ -117,32 +116,16 @@ const WALLET_VIEWS = {
 const WalletModal = observer(
     ({ pendingTransactions, confirmedTransactions }) => {
 
-      const providerOptions = {
-
-        walletconnect: {
-          package: WalletConnectProvider,
-          options: {
-            infuraId: process.env.REACT_APP_INFURA_ID
-          }
-        }
-
-      }
-
-      let web3Modal = new Web3Modal({
-        // network: "kovan",
-        // cacheProvider: false,
-        providerOptions: providerOptions,
-        theme: "dark"
-      });
-
         const {
             root: { modalStore, providerStore },
         } = useStores();
 
-        const active = providerStore.active;
-        const error = providerStore.error;
-        const account = providerStore.account;
-        const injectedChainId = providerStore.getChainId();
+        const active = providerStore.providerStatus.active;
+        const error = providerStore.providerStatus.error;
+        const account = providerStore.providerStatus.account;
+        const chainId = providerStore.providerStatus.activeChainId;
+        const injectedActive = providerStore.providerStatus.injectedActive;
+        const injectedLoaded = providerStore.providerStatus.injectedLoaded;
         const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
         const [pendingWallet, setPendingWallet] = useState();
         const [pendingError, setPendingError] = useState();
@@ -177,9 +160,12 @@ const WalletModal = observer(
             activePrevious
         ]);
 
-        async function load(){
-          let provider = await web3Modal.connect();
-          // ????? Should update Provider here?
+        async function loadWalletModal(){
+          if(walletModalOpen){
+            toggleWalletModal();
+          }
+          setWalletView(WALLET_VIEWS.ACCOUNT);
+          await providerStore.loadWeb3Modal();
         }
 
         // get wallets user can switch too, depending on device/browser
@@ -342,9 +328,8 @@ const WalletModal = observer(
                 );
             }
             if (
-                account &&
-                !isChainIdSupported(injectedChainId) &&
-                walletView === WALLET_VIEWS.ACCOUNT
+                injectedLoaded && !injectedActive &&
+                  walletView === WALLET_VIEWS.ACCOUNT
             ) {
                 return (
                     <UpperSection>
@@ -360,7 +345,9 @@ const WalletModal = observer(
                     </UpperSection>
                 );
             }
-            if (account && walletView === WALLET_VIEWS.ACCOUNT) {
+            if (account &&
+                injectedActive &&
+                (walletView === WALLET_VIEWS.ACCOUNT)) {
                 return (
                     <AccountDetails
                         toggleWalletModal={toggleWalletModal}
@@ -375,9 +362,9 @@ const WalletModal = observer(
               let mm = checkMetaMask();
 
               if(mm)
-                return mm
+                return mm;
               else{
-                load();
+                loadWalletModal();
               }
             }
             return null;

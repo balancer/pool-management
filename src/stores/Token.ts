@@ -408,7 +408,7 @@ export default class TokenStore {
             let balance;
 
             if (tokenAddress === EtherKey) {
-                const library = providerStore.library;
+                const library = providerStore.providerStatus.library;
                 balance = bnum(await library.getBalance(account));
             } else {
                 const token = providerStore.getContract(

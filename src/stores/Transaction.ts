@@ -65,7 +65,7 @@ export default class TransactionStore {
         const { providerStore } = this.rootStore;
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        const library = providerStore.library;
+        const library = providerStore.providerStatus.library;
         if (this.txRecords[account]) {
             const records = this.txRecords[account];
             records.forEach(value => {

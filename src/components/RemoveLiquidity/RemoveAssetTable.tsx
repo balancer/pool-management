@@ -179,7 +179,7 @@ const RemoveAssetsTable = observer((props: Props) => {
         },
     } = useStores();
 
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;

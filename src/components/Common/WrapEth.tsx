@@ -184,7 +184,7 @@ const WrapEth = () => {
 
 
     const handleMaxLinkClick = async () => {
-        const account = providerStore.account;
+        const account = providerStore.providerStatus.account;
         let maxValue = '0.00';
 
         if(account){

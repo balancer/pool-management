@@ -162,7 +162,7 @@ const LiquidityPanel = observer((props: Props) => {
         root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
     const { pools, dataSource } = props;
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     const options = {
         maintainAspectRatio: false,

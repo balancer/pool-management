@@ -67,30 +67,31 @@ const Web3ConnectStatus = observer(() => {
         root: { modalStore, transactionStore, providerStore },
     } = useStores();
 
-    const account = providerStore.account;
-    const chainId = providerStore.getChainId();
-    const active = providerStore.active;
-    const error = providerStore.error;
-    const isInjected = providerStore.isInjected;
+    const account = providerStore.providerStatus.account;
+    const activeChainId = providerStore.providerStatus.activeChainId;
+    const active = providerStore.providerStatus.active;
+    const error = providerStore.providerStatus.error;
+    const injectedActive = providerStore.providerStatus.injectedActive;
+    const injectedLoaded = providerStore.providerStatus.injectedLoaded;
 
     console.log('[Web3ConnectStatus]', {
         account,
-        chainId,
-        isChainIdSupported: isChainIdSupported(chainId),
+        activeChainId,
+        isChainIdSupported: isChainIdSupported(activeChainId),
         active,
-        isInjected,
+        injectedActive,
         error,
     });
 
-    if (!chainId && active) {
-        throw new Error('No chain ID specified');
+    if (!activeChainId && active) {
+        throw new Error(`No chain ID specified ${activeChainId}`);
     }
 
     let pending = undefined;
     let confirmed = undefined;
     let hasPendingTransactions = false;
 
-    if (account && isChainIdSupported(chainId)) {
+    if (account && isChainIdSupported(activeChainId)) {
         pending = transactionStore.getPendingTransactions(account);
         confirmed = transactionStore.getConfirmedTransactions(account);
         hasPendingTransactions = !!pending.length;
@@ -102,7 +103,7 @@ const Web3ConnectStatus = observer(() => {
 
     // handle the logo we want to show with the account
     function getStatusIcon() {
-        if(isInjected){
+        if(injectedActive){
           return <Identicon />;
         }
     }
@@ -110,14 +111,14 @@ const Web3ConnectStatus = observer(() => {
     function getWeb3Status() {
         console.log('[GetWeb3Status]', {
             account,
-            chainId,
-            isChainIdSupported: isChainIdSupported(chainId),
+            activeChainId,
+            isChainIdSupported: isChainIdSupported(activeChainId),
             active,
-            isInjected,
+            injectedActive,
             error,
         });
         // Wrong network
-        if (account && !isChainIdSupported(chainId)) {
+        if (injectedLoaded && !injectedActive ) {
             return (
                 <Web3StatusError onClick={toggleWalletModal}>
                     <WarningIcon src="WarningSign.svg" />

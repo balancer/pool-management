@@ -243,9 +243,9 @@ export default function AccountDetails(props: Props) {
     const {
         root: { providerStore },
     } = useStores();
-    const chainId = providerStore.chainId;
-    const account = providerStore.account;
-    const isInjected = providerStore.isInjected;
+    const chainId = providerStore.providerStatus.activeChainId;
+    const account = providerStore.providerStatus.account;
+    const isInjectedActive = providerStore.providerStatus.injectedActive;
 
     function renderTransactions(transactions: TransactionRecord[], pending) {
         return (
@@ -269,7 +269,7 @@ export default function AccountDetails(props: Props) {
         const name = Object.keys(SUPPORTED_WALLETS)
             .filter(
                 k =>
-                    (!isInjected ||
+                    (!isInjectedActive ||
                         isMetaMask === (k === 'METAMASK'))
             )
             .map(k => SUPPORTED_WALLETS[k].name)[0];
@@ -277,7 +277,7 @@ export default function AccountDetails(props: Props) {
     }
 
     function getStatusIcon() {
-        if (isInjected) {
+        if (isInjectedActive) {
             return (
                 <IconWrapper size={16}>
                     <Identicon /> {formatConnectorName()}
@@ -303,7 +303,7 @@ export default function AccountDetails(props: Props) {
                                 {getStatusIcon()}
                                 <div>
 
-                                    {!isInjected && (
+                                    {!isInjectedActive && (
                                         <WalletAction
                                             onClick={() => {
                                                 //@ts-ignore

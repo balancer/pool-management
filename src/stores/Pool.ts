@@ -36,7 +36,7 @@ export default class PoolStore {
             tokenStore,
             providerStore
         } = this.rootStore;
-        const account = providerStore.account;
+        const account = providerStore.providerStatus.account;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
 
         pool.tokens.forEach((token, index) => {

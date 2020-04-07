@@ -19,7 +19,7 @@ export default function Identicon() {
     const {
         root: { providerStore },
     } = useStores();
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     useEffect(() => {
         if (account && ref.current) {

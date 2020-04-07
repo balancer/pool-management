@@ -87,7 +87,7 @@ const WalletBalances = observer(() => {
         root: { tokenStore, contractMetadataStore, providerStore },
     } = useStores();
 
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     const renderWalletBalances = () => {
         const whitelistedTokens = contractMetadataStore.getWhitelistedTokenMetadata();

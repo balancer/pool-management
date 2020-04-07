@@ -15,9 +15,9 @@ export default class BlockchainFetchStore {
         const { providerStore } = this.rootStore;
 
         if (
-            providerStore.active &&
-            providerStore.account &&
-            providerStore.chainId === supportedChainId
+            providerStore.providerStatus.active &&
+            providerStore.providerStatus.account &&
+            providerStore.providerStatus.activeChainId === supportedChainId
         ) {
             this.fetchActivePoolAllowances();
         }
@@ -33,7 +33,7 @@ export default class BlockchainFetchStore {
 
     @action fetchPoolUserBalances() {
         const { tokenStore, poolStore, providerStore } = this.rootStore;
-        const account = providerStore.account;
+        const account = providerStore.providerStatus.account;
         const poolAddresses = poolStore
             .getPublicPools()
             .map(pool => pool.address);
@@ -44,7 +44,7 @@ export default class BlockchainFetchStore {
 
         const { providerStore } = this.rootStore;
 
-        const { account } = providerStore;
+        const account = providerStore.providerStatus.account;
         const { appSettingsStore, poolStore, tokenStore } = this.rootStore;
         const poolAddress = appSettingsStore.getActivePoolAddress();
         const tokenAddresses = poolStore.getPoolTokens(poolAddress);
@@ -60,10 +60,10 @@ export default class BlockchainFetchStore {
     ) {
         const { providerStore } = this.rootStore;
 
-        const active = providerStore.active;
-        const chainId = providerStore.chainId;
-        const library = providerStore.library;
-        const account = providerStore.account;
+        const active = providerStore.providerStatus.active;
+        const chainId = providerStore.providerStatus.activeChainId;
+        const library = providerStore.providerStatus.library;
+        const account = providerStore.providerStatus.account;
 
         if (active && chainId === supportedChainId) {
             const {

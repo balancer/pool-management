@@ -40,7 +40,7 @@ const Web3Manager = observer(({ children }) => {
     );
 
     // if the web3 context isn't active, and there's an error it's an irrecoverable error
-    if (!providerStore.active && providerStore.error) {
+    if (!providerStore.providerStatus.active && providerStore.providerStatus.error) {
         return (
             <MessageWrapper>
                 <Message>unknownError</Message>
@@ -49,7 +49,7 @@ const Web3Manager = observer(({ children }) => {
     }
 
     // This means no injected web3 and infura backup has failed
-    if (!providerStore.active) {
+    if (!providerStore.providerStatus.active) {
         console.debug(
             '[Web3Manager] Render: No active network, show loading'
         );

@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { ActionResponse, sendAction } from './actions/actions';
 import { web3Window as window } from 'provider/Web3Window';
-import { backupUrls, supportedChainId } from 'provider/connectors';
+import { backupUrls, supportedChainId, web3Modal } from 'provider/connectors';
 
 export enum ContractTypes {
     BPool = 'BPool',
@@ -39,26 +39,48 @@ enum ERRORS {
 
 type ChainDataMap = ObservableMap<number, ChainData>;
 
+export interface ProviderStatus {
+    activeChainId: number;
+    account: string;
+    library: any;
+    active: boolean;
+    injectedLoaded: boolean;
+    injectedActive: boolean;
+    injectedChainId: number;
+    injectedWeb3: any;
+    backUpLoaded: boolean;
+    backUpWeb3: any;
+    error: Error;
+}
+
 export default class ProviderStore {
 
     @observable chainData: ChainData;
-    @observable chainId: number;
-    @observable account: string;
-    @observable library: any;
-    @observable active: boolean;
-    @observable error: Error;
-    @observable isInjected: boolean;
+    @observable providerStatus: ProviderStatus;
+    web3Modal: any;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.chainData = { currentBlockNumber: -1 } as ChainData;
-        this.active = false;
-        this.isInjected = false;
+        this.web3Modal = web3Modal;
+        this.providerStatus = {} as ProviderStatus;
+        this.providerStatus.active = false;
+        this.providerStatus.injectedLoaded = false;
+        this.providerStatus.injectedActive = false;
+        this.providerStatus.backUpLoaded = false;
+
+        this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
     }
 
     getCurrentBlockNumber(): number {
         return this.chainData.currentBlockNumber;
+    }
+
+    async loadWeb3Modal(): Promise<void> {
+        await this.web3Modal.connect();
     }
 
     @action setCurrentBlockNumber(blockNumber): void {
@@ -74,7 +96,7 @@ export default class ProviderStore {
             contractMetadataStore,
         } = this.rootStore;
 
-        console.debug('[Fetch Start - User Blockchain Data]', {
+        console.debug('[Provider] fetchUserBlockchainData', {
             account,
         });
 
@@ -109,13 +131,13 @@ export default class ProviderStore {
         address: string,
         signerAccount?: string
     ): ethers.Contract {
-        const library = this.library;
+        const library = this.providerStatus.library;
 
         if (signerAccount) {
             return new ethers.Contract(
                 address,
                 schema[type],
-                this.getProviderOrSigner(this.library, signerAccount)
+                this.getProviderOrSigner(this.providerStatus.library, signerAccount)
             );
         }
 
@@ -130,8 +152,8 @@ export default class ProviderStore {
         overrides?: any
     ): Promise<ActionResponse> => {
         const { transactionStore } = this.rootStore;
-        const chainId = this.chainId;
-        const account = this.account;
+        const chainId = this.providerStatus.activeChainId;
+        const account = this.providerStatus.account;
 
         overrides = overrides ? overrides : {};
 
@@ -170,95 +192,125 @@ export default class ProviderStore {
         return response;
     };
 
-    getChainId(): number {
-        return this.chainId;
-    }
-
-    @action handleNetworkChanged(networkId: string | number): void {
-      this.chainId = Number(networkId);
-    }
-
-    @action handleClose(): void {
-      if (window.ethereum && window.ethereum.removeListener) {
-        window.ethereum.removeListener('chainChanged', this.handleNetworkChanged)
-        window.ethereum.removeListener('accountsChanged', this.handleAccountsChanged)
-        window.ethereum.removeListener('close', this.handleClose)
-        window.ethereum.removeListener('networkChanged', this.handleNetworkChanged)
+    @action async handleNetworkChanged(networkId: string | number): Promise<void> {
+      console.log(`[Provider] Network change: ${networkId} ${this.providerStatus.active}`);
+      // network change could mean switching from injected to backup or vice-versa
+      if(this.providerStatus.active){
+        await this.loadWeb3();
+        const { blockchainFetchStore } = this.rootStore;
+        blockchainFetchStore.setFetchLoop(true);
       }
+    }
 
-      this.loadWeb3();
+    @action async handleClose(): Promise<void> {
+      console.log(`[Provider] HandleClose() ${this.providerStatus.active}`)
+      if(this.providerStatus.active)
+        await this.loadWeb3();
     }
 
     @action handleAccountsChanged(accounts: string[]): void {
+      console.log(`[Provider] Accounts changed`)
       if (accounts.length === 0) {
         this.handleClose();
       } else {
-        this.account = accounts[0];
+        const { blockchainFetchStore } = this.rootStore;
+        this.providerStatus.account = accounts[0];
+        // Loads pool & balance data for account
+        blockchainFetchStore.setFetchLoop(true);
       }
     }
 
     @action async loadWeb3() {
+        /*
+        Handles loading web3 provider.
+        Injected web3 loaded and active if chain Id matches.
+        Backup web3 loaded and active if no injected or injected chain Id not correct.
+        */
+        console.log(`[Provider] loadWeb3()`)
         let web3;
 
-        if (!window.ethereum) {
-          console.log(`[Provider] No Injected Provider. Reverting To Backup.`);
+        if(window.ethereum){
+          try{
+            // remove any old listeners
+            if (window.ethereum.removeListener) {
+              window.ethereum.removeListener('chainChanged', this.handleNetworkChanged)
+              window.ethereum.removeListener('accountsChanged', this.handleAccountsChanged)
+              window.ethereum.removeListener('close', this.handleClose)
+              window.ethereum.removeListener('networkChanged', this.handleNetworkChanged)
+            }
+
+            web3 = new ethers.providers.Web3Provider(window.ethereum);
+
+            if ((window.ethereum as any).isMetaMask) {
+              ;(window.ethereum as any).autoRefreshOnNetworkChange = false
+            }
+
+            if (window.ethereum.on) {
+              window.ethereum.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
+              window.ethereum.on('accountsChanged', this.handleAccountsChanged)
+              window.ethereum.on('close', this.handleClose)
+              window.ethereum.on('networkChanged', this.handleNetworkChanged)
+            }
+
+            let network = await web3.getNetwork();
+
+            const accounts = await web3.listAccounts();
+            let account = null;
+            if(accounts.length > 0)
+              account = accounts[0];
+
+            this.providerStatus.injectedLoaded = true;
+            this.providerStatus.injectedChainId = network.chainId;
+            this.providerStatus.account = account;
+            this.providerStatus.injectedWeb3 = web3;
+            //this.providerStatus.library = web3;
+            //this.providerStatus.injectedActive = true;
+            //this.providerStatus.activeChainId = network.chainId;
+            console.log(`[Provider] Injected provider loaded.`)
+          }catch(err){
+            console.error(`[Provider] Injected Error`, err);
+            this.providerStatus.injectedLoaded = false;
+            this.providerStatus.injectedChainId = null;
+            this.providerStatus.account = null;
+            this.providerStatus.library = web3;
+            this.providerStatus.active = false;
+          }
+        }
+
+        // If no injected provider or inject provider is wrong chain fall back to Infura
+        if (!this.providerStatus.injectedLoaded ||
+            (this.providerStatus.injectedChainId !== supportedChainId)) {
+          console.log(`[Provider] Reverting To Backup Provider.`, this.providerStatus);
           try{
             web3 = new ethers.providers.JsonRpcProvider(backupUrls[supportedChainId]);
-            this.isInjected = false;
+            let network = await web3.getNetwork();
+            this.providerStatus.injectedActive = false;
+            this.providerStatus.backUpLoaded = true;
+            this.providerStatus.account = null;
+            this.providerStatus.activeChainId = network.chainId;
+            this.providerStatus.backUpWeb3 = web3;
+            this.providerStatus.library = web3;
+            console.log(`[Provider] BackUp Provider Loaded & Active`);
           }catch(err){
             console.error(`[Provider] loadWeb3 BackUp Error`, err);
-            this.isInjected = false;
-            this.chainId = null;
-            this.account = null;
-            this.library = null;
-            this.active = false;
-            this.error = new Error(ERRORS.NoWeb3);
+            this.providerStatus.injectedActive = false;
+            this.providerStatus.backUpLoaded = false;
+            this.providerStatus.account = null;
+            this.providerStatus.activeChainId = null;
+            this.providerStatus.backUpWeb3 = null;
+            this.providerStatus.library = null;
+            this.providerStatus.active = false;
+            this.providerStatus.error = new Error(ERRORS.NoWeb3);
+            return;
           }
         }else{
-          web3 = new ethers.providers.Web3Provider(window.ethereum);
-
-          if ((window.ethereum as any).isMetaMask) {
-            ;(window.ethereum as any).autoRefreshOnNetworkChange = false
-          }
-
-          this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
-          this.handleClose = this.handleClose.bind(this);
-          this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
-
-          if (window.ethereum.on) {
-            window.ethereum.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
-            window.ethereum.on('accountsChanged', this.handleAccountsChanged)
-            window.ethereum.on('close', this.handleClose)
-            window.ethereum.on('networkChanged', this.handleNetworkChanged)
-          }
-
-          this.isInjected = true;
-          console.log(`[Provider] Using injected provider.`)
+          console.log(`[Provider] Injected provider active.`);
+          this.providerStatus.library = this.providerStatus.injectedWeb3;
+          this.providerStatus.activeChainId = this.providerStatus.injectedChainId;
+          this.providerStatus.injectedActive = true;
         }
 
-        try{
-          let network = await web3.getNetwork();
-
-          const accounts = await web3.listAccounts();
-          let account = null;
-          if(accounts.length > 0)
-            account = accounts[0];
-
-          this.chainId = network.chainId;
-          this.account = account;
-          this.library = web3;
-          this.active = true;
-          console.log(`[Provider] Successfully loaded provider.`)
-
-        }catch(err){
-          console.error(`[Provider] loadWeb3 Error`, err);
-          console.log(web3)
-          this.isInjected = false;
-          this.chainId = null;
-          this.account = null;
-          this.library = null;
-          this.active = false;
-          this.error = new Error(ERRORS.NoWeb3);
-        }
+        this.providerStatus.active = true;
+        console.log(`[Provider] Successfully loaded provider.`, this.providerStatus)
     }
 }

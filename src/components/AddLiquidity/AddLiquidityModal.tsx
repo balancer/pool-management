@@ -136,7 +136,7 @@ const AddLiquidityModal = observer((props: Props) => {
         root: { poolStore, tokenStore, providerStore, addLiquidityFormStore },
     } = useStores();
 
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
 

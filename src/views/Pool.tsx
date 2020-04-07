@@ -72,7 +72,7 @@ const Pool = observer((props: RouteComponentProps) => {
     }
 
     const pool = poolStore.getPool(poolAddress);
-    const account = providerStore.account;
+    const account = providerStore.providerStatus.account;
 
     if (poolStore.poolsLoaded && !pool) {
         return (

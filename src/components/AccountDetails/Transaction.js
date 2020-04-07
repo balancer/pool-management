@@ -91,7 +91,7 @@ export default function Transaction({ hash, pending }) {
         },
     } = useStores();
 
-    const chainId = providerStore.chainId;
+    const chainId = providerStore.providerStatus.chainId;
 
     return (
         <TransactionWrapper key={hash}>
