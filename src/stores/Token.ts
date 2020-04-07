@@ -3,18 +3,18 @@ import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
 import { bnum, scale } from 'utils/helpers';
-import { parseEther } from 'ethers/utils';
+import { parseEther, Interface } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
 import {
     AsyncStatus,
-    TokenBalanceFetch,
-    TotalSupplyFetch,
     UserAllowanceFetch,
 } from './actions/fetch';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumberMap } from '../types';
 import { ActionResponse } from './actions/actions';
+
+const tokenAbi = require('../abi/TestToken').abi;
 
 export interface ContractMetadata {
     bFactory: string;
@@ -319,39 +319,55 @@ export default class TokenStore {
         web3React: Web3ReactContextInterface,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
-        const { providerStore } = this.rootStore;
-
-        const promises: Promise<any>[] = [];
+        const { providerStore, contractMetadataStore } = this.rootStore;
+        const calls = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
-        tokensToTrack.forEach((value, index) => {
-            promises.push(this.fetchTotalSupply(web3React, value, fetchBlock));
-        });
 
-        let allFetchesSuccess = true;
+        const stale =
+            fetchBlock <= this.getTotalSupplyLastFetched(tokensToTrack[0]);
+        if (!stale) {
 
-        try {
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response instanceof TotalSupplyFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setTotalSupplyProperty(
-                            request.tokenAddress,
-                            payload.totalSupply,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                }
+            const multiAddress = contractMetadataStore.getMultiAddress();
+            const multi = providerStore.getContract(
+                        web3React,
+                        ContractTypes.Multicall,
+                        multiAddress
+                    );
+
+            const iface = new Interface(tokenAbi);
+
+            tokensToTrack.forEach((value, index) => {
+                calls.push(
+                    [value, iface.functions.totalSupply.encode([])],
+                ); 
             });
 
-            if (allFetchesSuccess) {
-                console.debug('[All Fetches Success]');
+            let allFetchesSuccess = true;
+
+            try {
+                const [blockNumber, response] = await multi.aggregate(calls);
+                const stale =
+                    fetchBlock <= this.getTotalSupplyLastFetched(tokensToTrack[0]);
+                if (!stale) {
+                    tokensToTrack.forEach((value, index) => {
+                        if (response && response[index]) {
+                            let supply = iface.functions.totalSupply.decode(response[index])
+                            this.setTotalSupplyProperty(
+                                value,
+                                bnum(supply),
+                                fetchBlock
+                            );
+                        }
+                    });
+                }
+
+                if (allFetchesSuccess) {
+                    console.debug('[All Fetches Success]');
+                }
+            } catch (e) {
+                console.error('[Fetch] Total Supply Data', { error: e });
+                return FetchCode.FAILURE;
             }
-        } catch (e) {
-            console.error('[Fetch] Total Supply Data', { error: e });
-            return FetchCode.FAILURE;
         }
         return FetchCode.SUCCESS;
     };
@@ -361,112 +377,59 @@ export default class TokenStore {
         account: string,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
-        const { providerStore } = this.rootStore;
-        const promises: Promise<any>[] = [];
+        const { providerStore, contractMetadataStore } = this.rootStore;
+        const calls = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
-        tokensToTrack.forEach((value, index) => {
-            promises.push(
-                this.fetchBalanceOf(web3React, value, account, fetchBlock)
-            );
-        });
 
-        let allFetchesSuccess = true;
-
-        try {
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response instanceof TokenBalanceFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setBalanceProperty(
-                            request.tokenAddress,
-                            request.account,
-                            payload.balance,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                }
-            });
-
-            if (allFetchesSuccess) {
-                console.debug('[All Fetches Success]');
-            }
-        } catch (e) {
-            console.error('[Fetch] Balancer Token Data', { error: e });
-            return FetchCode.FAILURE;
-        }
-        return FetchCode.SUCCESS;
-    };
-
-    @action fetchBalanceOf = async (
-        web3React: Web3ReactContextInterface,
-        tokenAddress: string,
-        account: string,
-        fetchBlock: number
-    ): Promise<TokenBalanceFetch> => {
-        const { providerStore } = this.rootStore;
-
-        /* Before and after the network operation, check for staleness
-            If the fetch is stale, don't do network call
-            If the fetch is stale after network call, don't set DB variable
-        */
-        const stale =
-            fetchBlock <= this.getBalanceLastFetched(tokenAddress, account);
-        if (!stale) {
-            let balance;
-
-            if (tokenAddress === EtherKey) {
-                const { library } = web3React;
-                balance = bnum(await library.getBalance(account));
-            } else {
-                const token = providerStore.getContract(
+        const multiAddress = contractMetadataStore.getMultiAddress();
+        const multi = providerStore.getContract(
                     web3React,
-                    ContractTypes.TestToken,
-                    tokenAddress
+                    ContractTypes.Multicall,
+                    multiAddress
                 );
-                balance = bnum(await token.balanceOf(account));
-            }
 
-            const stale =
-                fetchBlock <= this.getBalanceLastFetched(tokenAddress, account);
-            if (!stale) {
-                console.debug('[Balance Fetch]', {
-                    tokenAddress,
-                    account,
-                    balance: balance.toString(),
-                    fetchBlock,
-                });
-                return new TokenBalanceFetch({
-                    status: AsyncStatus.SUCCESS,
-                    request: {
-                        tokenAddress,
-                        account,
-                        fetchBlock,
-                    },
-                    payload: {
-                        balance,
-                        lastFetched: fetchBlock,
-                    },
-                });
+        const iface = new Interface(tokenAbi);
+
+        const stale =
+            fetchBlock <= this.getBalanceLastFetched(tokensToTrack[0], account);
+
+        if (!stale) {
+            tokensToTrack.forEach((value, index) => {
+                calls.push(
+                    [value, iface.functions.balanceOf.encode([account])],
+                ); 
+            });
+
+            let allFetchesSuccess = true;
+
+            try {
+                const [blockNumber, response] = await multi.aggregate(calls);
+                const stale =
+                    fetchBlock <= this.getBalanceLastFetched(tokensToTrack[0], account);
+                if (!stale) {
+                    tokensToTrack.forEach((value, index) => {
+                        if (response && response[index]) {
+                            let balance = iface.functions.balanceOf.decode(response[index])
+                            this.setBalanceProperty(
+                                value,
+                                account,
+                                bnum(balance),
+                                fetchBlock
+                            );
+                        }
+                    });
+                }
+
+                if (allFetchesSuccess) {
+                    console.debug('[All Fetches Success]');
+                }
+            } catch (e) {
+                console.error('[Fetch] Balancer Token Data', { error: e });
+                return FetchCode.FAILURE;
             }
-        } else {
-            console.debug('[Balance Fetch] - Stale', {
-                tokenAddress,
-                account,
-                fetchBlock,
-            });
-            return new TokenBalanceFetch({
-                status: AsyncStatus.STALE,
-                request: {
-                    tokenAddress,
-                    account,
-                    fetchBlock,
-                },
-                payload: undefined,
-            });
         }
+        
+        return FetchCode.SUCCESS;
     };
 
     @action mint = async (
@@ -482,71 +445,6 @@ export default class TokenStore {
             'mint',
             [parseEther(amount).toString()]
         );
-    };
-
-    @action fetchTotalSupply = async (
-        web3React: Web3ReactContextInterface,
-        tokenAddress: string,
-        fetchBlock: number
-    ): Promise<TotalSupplyFetch> => {
-        const { providerStore } = this.rootStore;
-        const token = providerStore.getContract(
-            web3React,
-            ContractTypes.TestToken,
-            tokenAddress
-        );
-
-        const stale =
-            fetchBlock <= this.getTotalSupplyLastFetched(tokenAddress);
-        if (!stale) {
-            try {
-                const totalSupply = bnum(await token.totalSupply());
-
-                const stale =
-                    fetchBlock <= this.getTotalSupplyLastFetched(tokenAddress);
-                if (!stale) {
-                    console.debug('[Total Supply Fetch]', {
-                        tokenAddress,
-                        totalSupply: totalSupply.toString(),
-                        fetchBlock,
-                    });
-                    return new TotalSupplyFetch({
-                        status: AsyncStatus.SUCCESS,
-                        request: {
-                            tokenAddress,
-                            fetchBlock,
-                        },
-                        payload: {
-                            totalSupply,
-                            lastFetched: fetchBlock,
-                        },
-                    });
-                }
-            } catch (e) {
-                return new TotalSupplyFetch({
-                    status: AsyncStatus.FAILURE,
-                    request: {
-                        tokenAddress,
-                        fetchBlock,
-                    },
-                    payload: undefined,
-                    error: e.message,
-                });
-            }
-        } else {
-            console.debug('[Total Supply Fetch] - Stale', {
-                tokenAddress,
-                fetchBlock,
-            });
-            return new TotalSupplyFetch({
-                status: AsyncStatus.STALE,
-                request: {
-                    tokenAddress,
-                    fetchBlock,
-                },
-                payload: undefined,
-            });
-        }
     };
 
     @action fetchAllowance = async (
