@@ -50,6 +50,7 @@ export interface ProviderStatus {
     injectedWeb3: any;
     backUpLoaded: boolean;
     backUpWeb3: any;
+    activeProvider: any;
     error: Error;
 }
 
@@ -69,6 +70,7 @@ export default class ProviderStore {
         this.providerStatus.injectedLoaded = false;
         this.providerStatus.injectedActive = false;
         this.providerStatus.backUpLoaded = false;
+        this.providerStatus.activeProvider = null;
 
         this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -80,7 +82,10 @@ export default class ProviderStore {
     }
 
     async loadWeb3Modal(): Promise<void> {
-        await this.web3Modal.connect();
+        let provider = await this.web3Modal.connect();
+        console.log(`[Provider] Web3Modal`);
+        if(provider)
+          await this.loadWeb3(provider);
     }
 
     @action setCurrentBlockNumber(blockNumber): void {
@@ -220,13 +225,70 @@ export default class ProviderStore {
       }
     }
 
-    @action async loadWeb3() {
+    @action async loadInjectedProvider(provider){
+
+        try{
+          // remove any old listeners
+          if (provider.on) {
+            console.log(`[Provider] Removing Old Listeners`);
+            provider.removeListener('chainChanged', this.handleNetworkChanged)
+            provider.removeListener('accountsChanged', this.handleAccountsChanged)
+            provider.removeListener('close', this.handleClose)
+            provider.removeListener('networkChanged', this.handleNetworkChanged)
+          }
+
+          let web3 = new ethers.providers.Web3Provider(provider);
+
+          if ((provider as any).isMetaMask) {
+            console.log(`!!!!!!! MetaMask Auto Refresh Off`)
+            ;(provider as any).autoRefreshOnNetworkChange = false
+          }
+
+          if (provider.on) {
+            console.log(`[Provider] Subscribing Listeners`);
+            provider.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
+            provider.on('accountsChanged', this.handleAccountsChanged)
+            provider.on('close', this.handleClose)
+            provider.on('networkChanged', this.handleNetworkChanged)
+          }
+
+          let network = await web3.getNetwork();
+
+          const accounts = await web3.listAccounts();
+          let account = null;
+          if(accounts.length > 0)
+            account = accounts[0];
+
+          this.providerStatus.injectedLoaded = true;
+          this.providerStatus.injectedChainId = network.chainId;
+          this.providerStatus.account = account;
+          this.providerStatus.injectedWeb3 = web3;
+          this.providerStatus.activeProvider = provider;
+          console.log(`[Provider] Injected provider loaded.`)
+        }catch(err){
+          console.error(`[Provider] Injected Error`, err);
+          this.providerStatus.injectedLoaded = false;
+          this.providerStatus.injectedChainId = null;
+          this.providerStatus.account = null;
+          this.providerStatus.library = null;
+          this.providerStatus.active = false;
+          this.providerStatus.activeProvider = null;
+        }
+    }
+
+    @action async loadWeb3(provider=null) {
         /*
         Handles loading web3 provider.
         Injected web3 loaded and active if chain Id matches.
         Backup web3 loaded and active if no injected or injected chain Id not correct.
         */
-        console.log(`[Provider] loadWeb3()`)
+        console.log(`[Provider] loadWeb3()`);
+
+        if(provider === null && window.ethereum)
+          await this.loadInjectedProvider(window.ethereum);
+        else if(provider)
+          await this.loadInjectedProvider(provider);
+        /*
         let web3;
 
         if(window.ethereum){
@@ -272,17 +334,18 @@ export default class ProviderStore {
             this.providerStatus.injectedLoaded = false;
             this.providerStatus.injectedChainId = null;
             this.providerStatus.account = null;
-            this.providerStatus.library = web3;
+            this.providerStatus.library = null;
             this.providerStatus.active = false;
           }
         }
+        */
 
         // If no injected provider or inject provider is wrong chain fall back to Infura
         if (!this.providerStatus.injectedLoaded ||
             (this.providerStatus.injectedChainId !== supportedChainId)) {
           console.log(`[Provider] Reverting To Backup Provider.`, this.providerStatus);
           try{
-            web3 = new ethers.providers.JsonRpcProvider(backupUrls[supportedChainId]);
+            let web3 = new ethers.providers.JsonRpcProvider(backupUrls[supportedChainId]);
             let network = await web3.getNetwork();
             this.providerStatus.injectedActive = false;
             this.providerStatus.backUpLoaded = true;
@@ -290,6 +353,7 @@ export default class ProviderStore {
             this.providerStatus.activeChainId = network.chainId;
             this.providerStatus.backUpWeb3 = web3;
             this.providerStatus.library = web3;
+            this.providerStatus.activeProvider = 'backup';//backupUrls[supportedChainId];
             console.log(`[Provider] BackUp Provider Loaded & Active`);
           }catch(err){
             console.error(`[Provider] loadWeb3 BackUp Error`, err);
@@ -301,6 +365,7 @@ export default class ProviderStore {
             this.providerStatus.library = null;
             this.providerStatus.active = false;
             this.providerStatus.error = new Error(ERRORS.NoWeb3);
+            this.providerStatus.activeProvider = null;
             return;
           }
         }else{
@@ -308,6 +373,7 @@ export default class ProviderStore {
           this.providerStatus.library = this.providerStatus.injectedWeb3;
           this.providerStatus.activeChainId = this.providerStatus.injectedChainId;
           this.providerStatus.injectedActive = true;
+          this.fetchUserBlockchainData(this.providerStatus.account);
         }
 
         this.providerStatus.active = true;

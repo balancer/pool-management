@@ -51,6 +51,7 @@ const Web3Manager = observer(({ children }) => {
         () => blockchainFetchStore.setFetchLoop(false),
         1000
     );
+    // blockchainFetchStore.setFetchLoop(true)
 
     // This means no injected web3 and infura backup has failed
     if (!providerStore.providerStatus.active) {
