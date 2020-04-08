@@ -13,12 +13,26 @@ const TransactionListWrapper = styled.div`
 `;
 
 const Panel = styled.div`
+    text-align: left;
     display: flex;
     flex-flow: column nowrap;
-    padding: 2rem;
+    padding-top: 2rem;
     flex-grow: 1;
     overflow: auto;
     background-color: var(--panel-background);
+`;
+
+const TransactionHeader = styled.div`
+    border-top: 1px solid var(--panel-border);
+    align-items: left;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    padding-top: 14px;
+    color: var(--token-balance-text);
+    text-transform: uppercase;
 `;
 
 const TransactionPanel = observer(() => {
@@ -60,7 +74,7 @@ const TransactionPanel = observer(() => {
       if(hasTx){
         return (
           <Panel>
-          <h5>Recent Transactions</h5>
+          <TransactionHeader>Recent Transactions</TransactionHeader>
             {renderTransactions(pending, true)}
             {renderTransactions(confirmed, false)}
           </Panel>

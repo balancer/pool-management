@@ -34,8 +34,6 @@ export default class TransactionStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.txRecords = {} as TransactionRecordMap;
-
-
     }
 
     // @dev Transactions are pending if we haven't seen their receipt yet
@@ -82,43 +80,6 @@ export default class TransactionStore {
                     this.isTxPending(value) &&
                     this.isStale(value, currentBlock)
                 ) {
-                    library
-                        .getTransactionReceipt(value.hash)
-                        .then(receipt => {
-                            value.blockNumberChecked = currentBlock;
-                            if (receipt) {
-                                value.receipt = receipt;
-                            }
-                        })
-                        .catch(() => {
-                            value.blockNumberChecked = currentBlock;
-                        });
-                }
-            });
-        }
-
-        return FetchCode.SUCCESS;
-    }
-
-    @action async checkPendingTransactionsTest(
-        account
-    ): Promise<FetchCode> {
-        const { providerStore } = this.rootStore;
-        const currentBlock = providerStore.getCurrentBlockNumber();
-
-        const library = providerStore.providerStatus.library;
-        if (this.txRecords[account]) {
-          console.log(`!!!!Checking txs`)
-            const records = this.txRecords[account];
-            records.forEach(value => {
-                console.log(`!!!!!!! ${this.isTxPending(value)} ${this.isStale(value, currentBlock)}`)
-                /*if (
-                    this.isTxPending(value) &&
-                    this.isStale(value, currentBlock)
-                ) */if (
-                    this.isTxPending(value)
-                ) {
-                    console.log(`!!!!! Checking ${value.hash}`)
                     library
                         .getTransactionReceipt(value.hash)
                         .then(receipt => {

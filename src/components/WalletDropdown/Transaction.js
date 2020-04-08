@@ -1,15 +1,10 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Check } from 'react-feather';
-
 import { getEtherscanLink } from 'utils/helpers';
-
 import Circle from '../../assets/images/circle.svg';
-
 import { transparentize } from 'polished';
-
 import { useStores } from '../../contexts/storesContext';
-
 
 const TransactionStatusWrapper = styled.div`
     display: flex;
@@ -18,6 +13,11 @@ const TransactionStatusWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    a {
+      color: var(--link-text);
+      font-weight: 500;
+      font-size: 14px;
+    }
 `;
 
 const TransactionWrapper = styled.div`
@@ -34,10 +34,6 @@ const TransactionWrapper = styled.div`
         min-width: 0;
         max-width: 250px;
     }
-`;
-
-const TransactionStatusText = styled.span`
-    margin-left: 0.5rem;
 `;
 
 const rotate = keyframes`
@@ -57,35 +53,13 @@ const Spinner = styled.img`
 
 const TransactionState = styled.div`
     display: flex;
-    background-color: ${({ pending, theme }) =>
-        pending
-            ? transparentize(0.95, '#DC6BE5')
-            : transparentize(0.95, '#27AE60')};
-    border-radius: 1.5rem;
+    color: ${({ pending, theme }) =>
+        pending ? '#DC6BE5' : '#27AE60'};
     padding: 0.5rem 0.75rem;
     font-weight: 500;
     font-size: 0.75rem;
-    border: 1px solid;
-    border-color: ${({ pending, theme }) =>
-        pending
-            ? transparentize(0.75, '#DC6BE5')
-            : transparentize(0.75, '#27AE60')};
-
     #pending {
         animation: 2s ${rotate} linear infinite;
-    }
-
-    :hover {
-        border-color: ${({ pending, theme }) =>
-            pending
-                ? transparentize(0, '#DC6BE5')
-                : transparentize(0, '#27AE60')};
-    }
-`;
-const ButtonWrapper = styled.div`
-    a {
-        color: ${({ pending, theme }) =>
-            pending ? '#DC6BE5' : '#27AE60'};
     }
 `;
 
@@ -93,45 +67,31 @@ export default function Transaction({ hash, pending }) {
 
     const {
         root: {
-            providerStore,
-            transactionStore
+            providerStore
         },
     } = useStores();
-    // !!!!!!! testing without loop
-    // transactionStore.checkPendingTransactions(providerStore.providerStatus.account);
 
     const chainId = providerStore.providerStatus.chainId;
 
     return (
         <TransactionWrapper key={hash}>
+            {pending ? (
+
+                <TransactionState pending={pending}>
+                    <Spinner src={Circle} id="pending" />
+                </TransactionState>
+
+            ) : (
+                <TransactionState pending={pending}>
+                    <Check size="16" />
+                </TransactionState>
+
+            )}
             <TransactionStatusWrapper>
                 <a href={getEtherscanLink(chainId, hash, 'transaction')}>
                     {hash} ↗{' '}
                 </a>
             </TransactionStatusWrapper>
-            {pending ? (
-                <ButtonWrapper pending={pending}>
-                    <a href={getEtherscanLink(chainId, hash, 'transaction')}>
-                        <TransactionState pending={pending}>
-                            <Spinner src={Circle} id="pending" />
-                            <TransactionStatusText>
-                                Pending
-                            </TransactionStatusText>
-                        </TransactionState>
-                    </a>
-                </ButtonWrapper>
-            ) : (
-                <ButtonWrapper pending={pending}>
-                    <a href={getEtherscanLink(chainId, hash, 'transaction')}>
-                        <TransactionState pending={pending}>
-                            <Check size="16" />
-                            <TransactionStatusText>
-                                Confirmed
-                            </TransactionStatusText>
-                        </TransactionState>
-                    </a>
-                </ButtonWrapper>
-            )}
         </TransactionWrapper>
     );
 }
