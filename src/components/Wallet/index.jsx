@@ -8,7 +8,6 @@ import Circle from 'assets/images/circle.svg';
 import Identicon from '../Identicon';
 import { useStores } from '../../contexts/storesContext';
 import Button from '../Common/Button';
-import { isChainIdSupported } from '../../provider/connectors';
 
 import Dropdown from '../../assets/images/dropdown.svg';
 import Dropup from '../../assets/images/dropup.svg';
@@ -115,13 +114,7 @@ const Wallet = observer(() => {
 
     let pending = undefined;
     let confirmed = undefined;
-    let hasPendingTransactions = false;
-
-    if (account && isChainIdSupported(activeChainId)) {
-        pending = transactionStore.getPendingTransactions(account);
-        confirmed = transactionStore.getConfirmedTransactions(account);
-        hasPendingTransactions = !!pending.length;
-    }
+    let hasPendingTransactions = transactionStore.hasPendingTransactions(account);
 
     const toggleWalletDropdown = async() => {
       dropdownStore.toggleWalletDropdown();
@@ -175,10 +168,7 @@ const Wallet = observer(() => {
     return (
         <>
             {getWalletDetails()}
-            <WalletDropdown
-                pendingTransactions={pending}
-                confirmedTransactions={confirmed}
-            />
+            <WalletDropdown />
         </>
     );
 });

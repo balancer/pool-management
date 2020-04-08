@@ -4,8 +4,7 @@ import { observer } from 'mobx-react';
 import { web3Window as window } from 'provider/Web3Window';
 import { usePrevious } from 'utils/helperHooks';
 import { useStores } from 'contexts/storesContext';
-import Transaction from './Transaction';
-import { TransactionRecord } from 'stores/Transaction';
+import TransactionPanel from './TransactionPanel';
 
 const StyledLink = styled.a`
     color: #FFFFFF;
@@ -41,20 +40,6 @@ const Wrapper = styled.div`
     border-radius: 0 0 4px 4px;
 `;
 
-const TransactionListWrapper = styled.div`
-    display: flex;
-    flex-flow: column nowrap;
-`;
-
-const TransactionPanel = styled.div`
-    display: flex;
-    flex-flow: column nowrap;
-    padding: 2rem;
-    flex-grow: 1;
-    overflow: auto;
-    background-color: var(--panel-background);
-`;
-
 const WALLET_VIEWS = {
     OPTIONS: 'options',
     OPTIONS_SECONDARY: 'options_secondary',
@@ -62,16 +47,7 @@ const WALLET_VIEWS = {
     PENDING: 'pending',
 };
 
-interface Props {
-    toggleWalletDropdown: any;
-    pendingTransactions: TransactionRecord[];
-    confirmedTransactions: TransactionRecord[];
-    ENSName: any;
-    openOptions: any;
-}
-
-const WalletDropdown = observer(
-    ({ pendingTransactions, confirmedTransactions }) => {
+const WalletDropdown = observer(() => {
 
         const {
             root: { dropdownStore, providerStore },
@@ -120,47 +96,20 @@ const WalletDropdown = observer(
           await providerStore.loadWeb3Modal();
         }
 
-        function renderTransactions(transactions: TransactionRecord[], pending) {
-            return (
-                <TransactionListWrapper>
-                    {transactions.map((value, i) => {
-                        return (
-                            <Transaction
-                                key={i}
-                                hash={value.hash}
-                                pending={pending}
-                            />
-                        );
-                    })}
-                </TransactionListWrapper>
-            );
-        }
-
         function getDropdownContent() {
             if (account &&
                 injectedActive &&
                 (walletView === WALLET_VIEWS.ACCOUNT)) {
-                const hasTx =
-        !!pendingTransactions.length || !!confirmedTransactions.length;
                 return (
-
                     <>
-                        <>
-
-                            {(window.web3 || window.ethereum) && (
-                                <StyledLink onClick={() => {
-                                    setWalletView(WALLET_VIEWS.OPTIONS)
-                                }}>Connect to a different wallet</StyledLink>
-                            )}
-                        </>
-                        {hasTx ? (
-                            <TransactionPanel>
-                                <h5>Recent Transactions</h5>
-                                {renderTransactions(pendingTransactions, true)}
-                                {renderTransactions(confirmedTransactions, false)}
-                            </TransactionPanel>
-                        ) : ( <></>
+                      <>
+                        {(window.web3 || window.ethereum) && (
+                            <StyledLink onClick={() => {
+                                setWalletView(WALLET_VIEWS.OPTIONS)
+                            }}>Connect to a different wallet</StyledLink>
                         )}
+                      </>
+                      <TransactionPanel />
                     </>
                 );
             }

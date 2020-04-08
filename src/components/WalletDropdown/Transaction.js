@@ -59,8 +59,8 @@ const TransactionState = styled.div`
     display: flex;
     background-color: ${({ pending, theme }) =>
         pending
-            ? transparentize(0.95, theme.royalBlue)
-            : transparentize(0.95, theme.connectedGreen)};
+            ? transparentize(0.95, '#DC6BE5')
+            : transparentize(0.95, '#27AE60')};
     border-radius: 1.5rem;
     padding: 0.5rem 0.75rem;
     font-weight: 500;
@@ -68,8 +68,8 @@ const TransactionState = styled.div`
     border: 1px solid;
     border-color: ${({ pending, theme }) =>
         pending
-            ? transparentize(0.75, theme.royalBlue)
-            : transparentize(0.75, theme.connectedGreen)};
+            ? transparentize(0.75, '#DC6BE5')
+            : transparentize(0.75, '#27AE60')};
 
     #pending {
         animation: 2s ${rotate} linear infinite;
@@ -78,14 +78,14 @@ const TransactionState = styled.div`
     :hover {
         border-color: ${({ pending, theme }) =>
             pending
-                ? transparentize(0, theme.royalBlue)
-                : transparentize(0, theme.connectedGreen)};
+                ? transparentize(0, '#DC6BE5')
+                : transparentize(0, '#27AE60')};
     }
 `;
 const ButtonWrapper = styled.div`
     a {
         color: ${({ pending, theme }) =>
-            pending ? theme.royalBlue : theme.connectedGreen};
+            pending ? '#DC6BE5' : '#27AE60'};
     }
 `;
 
@@ -93,9 +93,12 @@ export default function Transaction({ hash, pending }) {
 
     const {
         root: {
-            providerStore
+            providerStore,
+            transactionStore
         },
     } = useStores();
+    // !!!!!!! testing without loop
+    // transactionStore.checkPendingTransactions(providerStore.providerStatus.account);
 
     const chainId = providerStore.providerStatus.chainId;
 
