@@ -60,6 +60,7 @@ export default class ProviderStore {
     web3Modal: any;
     rootStore: RootStore;
 
+
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.chainData = { currentBlockNumber: -1 } as ChainData;
