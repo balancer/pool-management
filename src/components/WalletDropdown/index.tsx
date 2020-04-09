@@ -104,7 +104,8 @@ const WalletDropdown = observer(() => {
                     <>
                       <>
                         {(window.web3 || window.ethereum) && (
-                            <StyledLink onClick={() => {
+                            <StyledLink onClick={async() => {
+                                await providerStore.loadNewWeb3Modal();
                                 setWalletView(WALLET_VIEWS.OPTIONS)
                             }}>Connect to a different wallet</StyledLink>
                         )}

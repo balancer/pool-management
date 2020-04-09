@@ -50,7 +50,6 @@ export interface ProviderStatus {
     injectedWeb3: any;
     backUpLoaded: boolean;
     backUpWeb3: any;
-    activeProvider: any;
     error: Error;
 }
 
@@ -70,7 +69,6 @@ export default class ProviderStore {
         this.providerStatus.injectedLoaded = false;
         this.providerStatus.injectedActive = false;
         this.providerStatus.backUpLoaded = false;
-        this.providerStatus.activeProvider = null;
 
         this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -84,6 +82,15 @@ export default class ProviderStore {
     async loadWeb3Modal(): Promise<void> {
         let provider = await this.web3Modal.connect();
         console.log(`[Provider] Web3Modal`);
+        if(provider)
+          await this.loadWeb3(provider);
+    }
+
+    async loadNewWeb3Modal(): Promise<void> {
+        console.log(`[Provider] NewWeb3Modal`);
+
+        await this.web3Modal.clearCachedProvider();
+        let provider = await this.web3Modal.connect();
         if(provider)
           await this.loadWeb3(provider);
     }
@@ -263,7 +270,6 @@ export default class ProviderStore {
           this.providerStatus.injectedChainId = network.chainId;
           this.providerStatus.account = account;
           this.providerStatus.injectedWeb3 = web3;
-          this.providerStatus.activeProvider = provider;
           console.log(`[Provider] Injected provider loaded.`)
         }catch(err){
           console.error(`[Provider] Injected Error`, err);
@@ -272,7 +278,6 @@ export default class ProviderStore {
           this.providerStatus.account = null;
           this.providerStatus.library = null;
           this.providerStatus.active = false;
-          this.providerStatus.activeProvider = null;
         }
     }
 
@@ -288,57 +293,6 @@ export default class ProviderStore {
           await this.loadInjectedProvider(window.ethereum);
         else if(provider)
           await this.loadInjectedProvider(provider);
-        /*
-        let web3;
-
-        if(window.ethereum){
-          try{
-            // remove any old listeners
-            if (window.ethereum.removeListener) {
-              window.ethereum.removeListener('chainChanged', this.handleNetworkChanged)
-              window.ethereum.removeListener('accountsChanged', this.handleAccountsChanged)
-              window.ethereum.removeListener('close', this.handleClose)
-              window.ethereum.removeListener('networkChanged', this.handleNetworkChanged)
-            }
-
-            web3 = new ethers.providers.Web3Provider(window.ethereum);
-
-            if ((window.ethereum as any).isMetaMask) {
-              ;(window.ethereum as any).autoRefreshOnNetworkChange = false
-            }
-
-            if (window.ethereum.on) {
-              window.ethereum.on('chainChanged', this.handleNetworkChanged)           // For now assume network/chain ids are same thing as only rare case when they don't match
-              window.ethereum.on('accountsChanged', this.handleAccountsChanged)
-              window.ethereum.on('close', this.handleClose)
-              window.ethereum.on('networkChanged', this.handleNetworkChanged)
-            }
-
-            let network = await web3.getNetwork();
-
-            const accounts = await web3.listAccounts();
-            let account = null;
-            if(accounts.length > 0)
-              account = accounts[0];
-
-            this.providerStatus.injectedLoaded = true;
-            this.providerStatus.injectedChainId = network.chainId;
-            this.providerStatus.account = account;
-            this.providerStatus.injectedWeb3 = web3;
-            //this.providerStatus.library = web3;
-            //this.providerStatus.injectedActive = true;
-            //this.providerStatus.activeChainId = network.chainId;
-            console.log(`[Provider] Injected provider loaded.`)
-          }catch(err){
-            console.error(`[Provider] Injected Error`, err);
-            this.providerStatus.injectedLoaded = false;
-            this.providerStatus.injectedChainId = null;
-            this.providerStatus.account = null;
-            this.providerStatus.library = null;
-            this.providerStatus.active = false;
-          }
-        }
-        */
 
         // If no injected provider or inject provider is wrong chain fall back to Infura
         if (!this.providerStatus.injectedLoaded ||
@@ -353,7 +307,6 @@ export default class ProviderStore {
             this.providerStatus.activeChainId = network.chainId;
             this.providerStatus.backUpWeb3 = web3;
             this.providerStatus.library = web3;
-            this.providerStatus.activeProvider = 'backup';//backupUrls[supportedChainId];
             console.log(`[Provider] BackUp Provider Loaded & Active`);
           }catch(err){
             console.error(`[Provider] loadWeb3 BackUp Error`, err);
@@ -365,7 +318,6 @@ export default class ProviderStore {
             this.providerStatus.library = null;
             this.providerStatus.active = false;
             this.providerStatus.error = new Error(ERRORS.NoWeb3);
-            this.providerStatus.activeProvider = null;
             return;
           }
         }else{

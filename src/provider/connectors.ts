@@ -54,23 +54,3 @@ export const SUBGRAPH_URLS: { [chainId: number]: string } = {
 
 export const backupUrls = {};
 backupUrls[supportedChainId] = RPC_URLS[supportedChainId];
-
-export const SUPPORTED_WALLETS = {
-    INJECTED: {
-        isInjected: true,
-        name: 'Injected',
-        iconName: 'arrow-right.svg',
-        description: 'Injected web3 provider.',
-        href: null,
-        color: '#010101',
-        primary: true,
-    },
-    METAMASK: {
-        isInjected: true,
-        name: 'MetaMask',
-        iconName: 'metamask.png',
-        description: 'Easy-to-use browser extension.',
-        href: null,
-        color: '#E8831D',
-    },
-};
