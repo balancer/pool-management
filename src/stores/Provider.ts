@@ -51,6 +51,7 @@ export interface ProviderStatus {
     backUpLoaded: boolean;
     backUpWeb3: any;
     error: Error;
+    activeProvider: any;
 }
 
 export default class ProviderStore {
@@ -70,7 +71,7 @@ export default class ProviderStore {
         this.providerStatus.injectedLoaded = false;
         this.providerStatus.injectedActive = false;
         this.providerStatus.backUpLoaded = false;
-
+        this.providerStatus.activeProvider = null;
         this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
@@ -207,7 +208,8 @@ export default class ProviderStore {
     }
 
     @action async handleClose(): Promise<void> {
-      console.log(`[Provider] HandleClose() ${this.providerStatus.active}`)
+      console.log(`[Provider] HandleClose() ${this.providerStatus.active}`);
+
       if(this.providerStatus.active)
         await this.loadWeb3();
     }
@@ -224,22 +226,27 @@ export default class ProviderStore {
       }
     }
 
-    @action async loadInjectedProvider(provider){
+    @action async loadProvider(provider){
 
         try{
           // remove any old listeners
-          if (provider.on) {
+          if (this.providerStatus.activeProvider && this.providerStatus.activeProvider.on) {
             console.log(`[Provider] Removing Old Listeners`);
-            provider.removeListener('chainChanged', this.handleNetworkChanged)
-            provider.removeListener('accountsChanged', this.handleAccountsChanged)
-            provider.removeListener('close', this.handleClose)
-            provider.removeListener('networkChanged', this.handleNetworkChanged)
+            this.providerStatus.activeProvider.removeListener('chainChanged', this.handleNetworkChanged)
+            this.providerStatus.activeProvider.removeListener('accountsChanged', this.handleAccountsChanged)
+            this.providerStatus.activeProvider.removeListener('close', this.handleClose)
+            this.providerStatus.activeProvider.removeListener('networkChanged', this.handleNetworkChanged)
+          }
+
+          if (this.providerStatus.library && this.providerStatus.library.close) {
+            console.log(`[Provider] Closing Old Library.`)
+            await this.providerStatus.library.close();
           }
 
           let web3 = new ethers.providers.Web3Provider(provider);
 
           if ((provider as any).isMetaMask) {
-            console.log(`!!!!!!! MetaMask Auto Refresh Off`)
+            console.log(`[Provider] MetaMask Auto Refresh Off`)
             ;(provider as any).autoRefreshOnNetworkChange = false
           }
 
@@ -262,14 +269,16 @@ export default class ProviderStore {
           this.providerStatus.injectedChainId = network.chainId;
           this.providerStatus.account = account;
           this.providerStatus.injectedWeb3 = web3;
-          console.log(`[Provider] Injected provider loaded.`)
+          this.providerStatus.activeProvider = provider;
+          console.log(`[Provider] Provider loaded.`)
         }catch(err){
-          console.error(`[Provider] Injected Error`, err);
+          console.error(`[Provider] Loading Error`, err);
           this.providerStatus.injectedLoaded = false;
           this.providerStatus.injectedChainId = null;
           this.providerStatus.account = null;
           this.providerStatus.library = null;
           this.providerStatus.active = false;
+          this.providerStatus.activeProvider = null;
         }
     }
 
@@ -279,12 +288,14 @@ export default class ProviderStore {
         Injected web3 loaded and active if chain Id matches.
         Backup web3 loaded and active if no injected or injected chain Id not correct.
         */
-        console.log(`[Provider] loadWeb3()`);
-
-        if(provider === null && window.ethereum)
-          await this.loadInjectedProvider(window.ethereum);
-        else if(provider)
-          await this.loadInjectedProvider(provider);
+        if(provider === null && window.ethereum){
+          console.log(`[Provider] Loading Injected Provider`);
+          await this.loadProvider(window.ethereum);
+        }
+        else if(provider){
+          console.log(`[Provider] Loading Provider`);
+          await this.loadProvider(provider);
+        }
 
         // If no injected provider or inject provider is wrong chain fall back to Infura
         if (!this.providerStatus.injectedLoaded ||
@@ -299,6 +310,7 @@ export default class ProviderStore {
             this.providerStatus.activeChainId = network.chainId;
             this.providerStatus.backUpWeb3 = web3;
             this.providerStatus.library = web3;
+            this.providerStatus.activeProvider = backupUrls[supportedChainId];
             console.log(`[Provider] BackUp Provider Loaded & Active`);
           }catch(err){
             console.error(`[Provider] loadWeb3 BackUp Error`, err);
@@ -309,6 +321,7 @@ export default class ProviderStore {
             this.providerStatus.backUpWeb3 = null;
             this.providerStatus.library = null;
             this.providerStatus.active = false;
+            this.providerStatus.activeProvider = null;
             this.providerStatus.error = new Error(ERRORS.NoWeb3);
             return;
           }
@@ -321,6 +334,6 @@ export default class ProviderStore {
         }
 
         this.providerStatus.active = true;
-        console.log(`[Provider] Successfully loaded provider.`, this.providerStatus)
+        console.log(`[Provider] Provider Active.`, this.providerStatus)
     }
 }
