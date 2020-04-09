@@ -87,15 +87,6 @@ export default class ProviderStore {
           await this.loadWeb3(provider);
     }
 
-    async loadNewWeb3Modal(): Promise<void> {
-        console.log(`[Provider] NewWeb3Modal`);
-
-        await this.web3Modal.clearCachedProvider();
-        let provider = await this.web3Modal.connect();
-        if(provider)
-          await this.loadWeb3(provider);
-    }
-
     @action setCurrentBlockNumber(blockNumber): void {
         this.chainData.currentBlockNumber = blockNumber;
     }
