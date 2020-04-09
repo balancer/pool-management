@@ -125,7 +125,6 @@ export default class TokenStore {
 
         const multiAddress = contractMetadataStore.getMultiAddress();
         const multi = providerStore.getContract(
-            web3React,
             ContractTypes.Multicall,
             multiAddress
         );
@@ -414,7 +413,6 @@ export default class TokenStore {
         if (!stale) {
             const multiAddress = contractMetadataStore.getMultiAddress();
             const multi = providerStore.getContract(
-                web3React,
                 ContractTypes.Multicall,
                 multiAddress
             );
@@ -455,7 +453,6 @@ export default class TokenStore {
 
         const multiAddress = contractMetadataStore.getMultiAddress();
         const multi = providerStore.getContract(
-            web3React,
             ContractTypes.Multicall,
             multiAddress
         );
