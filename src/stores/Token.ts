@@ -6,8 +6,12 @@ import { bnum, scale } from 'utils/helpers';
 import { parseEther, Interface } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
-import { AsyncStatus, UserAllowanceFetch } from './actions/fetch';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import {
+    AsyncStatus,
+    TokenBalanceFetch,
+    TotalSupplyFetch,
+    UserAllowanceFetch,
+} from './actions/fetch';
 import { BigNumberMap } from '../types';
 import { ActionResponse } from './actions/actions';
 
@@ -112,7 +116,6 @@ export default class TokenStore {
     }
 
     @action async fetchAccountApprovals(
-        web3React,
         tokenAddresses: string[],
         account: string,
         spender: string
@@ -374,13 +377,11 @@ export default class TokenStore {
     }
 
     @action approveMax = async (
-        web3React,
         tokenAddress,
         spender
     ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'approve',
@@ -389,13 +390,11 @@ export default class TokenStore {
     };
 
     @action revokeApproval = async (
-        web3React,
         tokenAddress,
         spender
     ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'approve',
@@ -404,7 +403,6 @@ export default class TokenStore {
     };
 
     @action fetchTotalSupplies = async (
-        web3React: Web3ReactContextInterface,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
         const { providerStore, contractMetadataStore } = this.rootStore;
@@ -448,7 +446,6 @@ export default class TokenStore {
     };
 
     @action fetchTokenBalances = async (
-        web3React: Web3ReactContextInterface,
         account: string,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
@@ -494,17 +491,12 @@ export default class TokenStore {
             return FetchCode.FAILURE;
         }
 
-        return FetchCode.SUCCESS;
-    };
-
     @action mint = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         amount: string
     ) => {
         const { providerStore } = this.rootStore;
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'mint',
@@ -538,7 +530,6 @@ export default class TokenStore {
     }
 
     @action fetchAllowance = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         owner: string,
         spender: string,
@@ -564,7 +555,6 @@ export default class TokenStore {
         }
 
         const token = providerStore.getContract(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress
         );

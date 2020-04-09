@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
     height: 150px;
@@ -38,11 +39,29 @@ const ActiveNavElement = styled(NavElement)`
     padding-left: 27px;
 `;
 
+const StyledLink = styled(Link)`
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding-left: 30px;
+    color: var(--inactive-button-text);
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 22px;
+    text-decoration: none;
+    color: var(--highlighted-selector-text);
+    background-color: var(--highlighted-selector-background);
+    border-left: 3px solid var(--highlighted-selector-border);
+    padding-left: 27px;
+`;
+
 const LeftNav = () => {
     return (
         <Wrapper>
             <NavContainer>
-                <ActiveNavElement href="/">Shared Pools</ActiveNavElement>
+                <StyledLink to={`/`}>Shared Pools</StyledLink>
                 <NavElement>My Private Pools <ComingSoon>(coming soon)</ComingSoon></NavElement>
             </NavContainer>
         </Wrapper>

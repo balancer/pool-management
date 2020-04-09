@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Web3ConnectStatus from '../Web3ConnectStatus';
+import Wallet from '../Wallet';
+import { Link } from 'react-router-dom';
 
 const HeaderFrame = styled.div`
     display: flex;
@@ -44,17 +45,32 @@ const AppName = styled.div`
     margin-left: 12px;
 `;
 
+const StyledLink = styled(Link)`
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    cursor: pointer;
+    height: 32px;
+    img {
+        font-size: 15px;
+        font-weight: 500;
+        height: 32px;
+        width: 32px;
+    }
+`;
+
 const Header = () => {
     return (
         <HeaderFrame>
             <HeaderElement>
-                <Title href="/">
+
+                <StyledLink to={`/`}>
                     <img alt="pebbles" src="pebbles-pad.svg" />
                     <AppName>Balancer</AppName>
-                </Title>
+                </StyledLink>
             </HeaderElement>
             <HeaderElement>
-                <Web3ConnectStatus />
+                <Wallet />
             </HeaderElement>
         </HeaderFrame>
     );

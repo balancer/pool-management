@@ -72,8 +72,7 @@ const Pool = observer((props: RouteComponentProps) => {
     }
 
     const pool = poolStore.getPool(poolAddress);
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     if (poolStore.poolsLoaded && !pool) {
         return (
@@ -89,7 +88,7 @@ const Pool = observer((props: RouteComponentProps) => {
         if (appSettingsStore.activePoolAddress !== poolAddress) {
             console.debug(['Set Active Pool Address']);
             appSettingsStore.setActivePoolAddress(poolAddress);
-            blockchainFetchStore.onActivePoolChanged(web3React);
+            blockchainFetchStore.onActivePoolChanged();
         }
     }
 

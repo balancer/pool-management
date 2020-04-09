@@ -179,8 +179,7 @@ const RemoveAssetsTable = observer((props: Props) => {
         },
     } = useStores();
 
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
