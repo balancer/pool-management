@@ -12,7 +12,8 @@ export enum ContractTypes {
     TestToken = 'TestToken',
     ExchangeProxy = 'ExchangeProxy',
     ExchangeProxyCallable = 'ExchangeProxyCallable',
-    Weth = 'Weth'
+    Weth = 'Weth',
+    Multicall = 'Multicall'
 }
 
 export const schema = {
@@ -21,7 +22,8 @@ export const schema = {
     TestToken: require('../abi/TestToken').abi,
     ExchangeProxy: require('../abi/ExchangeProxy').abi,
     ExchangeProxyCallable: require('../abi/ExchangeProxyCallable').abi,
-    Weth: require('../abi/Weth').abi
+    Weth: require('../abi/Weth').abi,
+    Multicall: require('../abi/Multicall').abi
 };
 
 export interface ChainData {

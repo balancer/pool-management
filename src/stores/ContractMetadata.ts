@@ -8,6 +8,7 @@ export interface ContractMetadata {
     bFactory: string;
     proxy: string;
     weth: string;
+    multicall: string;
     defaultPrecision: number;
     tokens: TokenMetadata[];
 }
@@ -64,6 +65,7 @@ export default class ContractMetadataStore {
             bFactory: metadata.default[chainName].bFactory,
             proxy: metadata.default[chainName].proxy,
             weth: metadata.default[chainName].weth,
+            multicall: metadata.default[chainName].multicall,
             defaultPrecision: metadata.default[chainName].defaultPrecision,
             tokens: [] as TokenMetadata[],
         };
@@ -112,6 +114,16 @@ export default class ContractMetadataStore {
             );
         }
         return proxyAddress;
+    }
+
+    getMultiAddress(): string {
+        const multiAddress = this.contractMetadata.multicall;
+        if (!multiAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return multiAddress;
     }
 
     getWethAddress(): string {
