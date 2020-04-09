@@ -490,6 +490,7 @@ export default class TokenStore {
             console.error('[Fetch] Balancer Token Data', { error: e });
             return FetchCode.FAILURE;
         }
+    };
 
     @action mint = async (
         tokenAddress: string,
