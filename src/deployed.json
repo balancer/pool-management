@@ -107,6 +107,14 @@
         "multicall": "0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441",
         "tokens": [
             {
+                "symbol": "ETH",
+                "address": "ether",
+                "decimals": 18,
+                "iconAddress": "ether",
+                "precision": 4,
+                "chartColor": "#f3f4f7"
+            },
+            {
                 "symbol": "WETH",
                 "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
                 "decimals": 18,

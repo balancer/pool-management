@@ -117,46 +117,38 @@ export default class TokenStore {
         account: string,
         spender: string
     ) {
-        const { providerStore } = this.rootStore;
+        const { providerStore, contractMetadataStore } = this.rootStore;
+        const calls = [];
 
-        const promises: Promise<any>[] = [];
-        const fetchBlock = providerStore.getCurrentBlockNumber();
-        tokenAddresses.forEach(tokenAddress => {
-            promises.push(
-                this.fetchAllowance(
-                    web3React,
-                    tokenAddress,
-                    account,
-                    spender,
-                    fetchBlock
-                )
-            );
+        const multiAddress = contractMetadataStore.getMultiAddress();
+        const multi = providerStore.getContract(
+            web3React,
+            ContractTypes.Multicall,
+            multiAddress
+        );
+
+        const iface = new Interface(tokenAbi);
+
+        tokenAddresses.forEach(value => {
+            calls.push([value, iface.functions.allowance.encode([
+                        account,
+                        spender
+                    ])]);
         });
 
-        let allFetchesSuccess = true;
-
         try {
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response instanceof UserAllowanceFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setAllowanceProperty(
-                            request.tokenAddress,
-                            request.owner,
-                            request.spender,
-                            payload.allowance,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                }
-            });
+            const [blockNumber, response] = await multi.aggregate(calls);
+            const allowances = response.map(value =>
+                bnum(value)
+            );
 
-            if (allFetchesSuccess) {
-                console.debug('[Fetch Account Approvals] All Fetches Success');
-            }
+            this.setAllowances(
+                tokenAddresses,
+                account,
+                spender,
+                allowances,
+                blockNumber.toNumber()
+            );
         } catch (e) {
             console.error(
                 '[Fetch Account Approvals] Failure in one or more fetches',
@@ -186,6 +178,54 @@ export default class TokenStore {
         });
 
         return result;
+    }
+
+    private setAllowances(
+        tokens: string[],
+        owner: string,
+        spender: string,
+        approvals: BigNumber[],
+        fetchBlock: number
+    ) {
+        const chainApprovals = this.allowances;
+
+        approvals.forEach((approval, index) => {
+            const tokenAddress = tokens[index];
+
+            if (
+                (this.isAllowanceFetched(
+                    tokenAddress,
+                    owner,
+                    spender
+                ) &&
+                    this.isAllowanceStale(
+                        tokenAddress,
+                        owner,
+                        spender,
+                        fetchBlock
+                    )) ||
+                !this.isAllowanceFetched(tokenAddress, owner, spender)
+            ) {
+                if (!chainApprovals[tokenAddress]) {
+                    chainApprovals[tokenAddress] = {};
+                }
+
+                if (!chainApprovals[tokenAddress][owner]) {
+                    chainApprovals[tokenAddress][owner] = {};
+                }
+
+                chainApprovals[tokenAddress][owner][spender] = {
+                    allowance: approval,
+                    lastFetched: fetchBlock,
+                };
+            }
+        });
+
+        this.allowances = {
+            ...this.allowances,
+            ...chainApprovals,
+        };
+
     }
 
     private setAllowanceProperty(
@@ -414,7 +454,7 @@ export default class TokenStore {
     ): Promise<FetchCode> => {
         const { providerStore, contractMetadataStore } = this.rootStore;
         const calls = [];
-        const fetchBlock = providerStore.getCurrentBlockNumber();
+        const promises: Promise<any>[] = [];
 
         const multiAddress = contractMetadataStore.getMultiAddress();
         const multi = providerStore.getContract(
@@ -426,14 +466,20 @@ export default class TokenStore {
         const iface = new Interface(tokenAbi);
 
         tokensToTrack.forEach(value => {
-            calls.push([value, iface.functions.balanceOf.encode([account])]);
+            if (value !== EtherKey) {
+                calls.push([value, iface.functions.balanceOf.encode([account])]);
+            }
         });
 
+        promises.push(multi.aggregate(calls));
+        promises.push(multi.getEthBalance(account));
+
         try {
-            const [blockNumber, response] = await multi.aggregate(calls);
+            const [[blockNumber, response], ethBalance] = await Promise.all(promises);
             const balances = response.map(value =>
                 bnum(iface.functions.balanceOf.decode(value))
             );
+            balances.unshift(bnum(ethBalance))
 
             this.setBalances(
                 tokensToTrack,
@@ -465,6 +511,31 @@ export default class TokenStore {
             [parseEther(amount).toString()]
         );
     };
+
+    isAllowanceFetched(
+        tokenAddress: string,
+        owner: string,
+        spender: string
+    ) {
+        const chainApprovals = this.allowances;
+        return (
+            !!chainApprovals[tokenAddress] &&
+            !!chainApprovals[tokenAddress][owner][spender]
+        );
+    }
+
+    isAllowanceStale(
+        tokenAddress: string,
+        owner: string,
+        spender: string,
+        blockNumber: number
+    ) {
+        const chainApprovals = this.allowances;
+        return (
+            chainApprovals[tokenAddress][owner][spender].lastFetched <
+            blockNumber
+        );
+    }
 
     @action fetchAllowance = async (
         web3React: Web3ReactContextInterface,
