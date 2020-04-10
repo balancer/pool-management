@@ -182,10 +182,9 @@ const WrapEth = () => {
 
     const wethAddress = contractMetadataStore.getWethAddress();
 
-    const web3React = providerStore.getActiveWeb3React();
 
     const handleMaxLinkClick = async () => {
-        const { account } = web3React;
+        const account = providerStore.providerStatus.account;
         let maxValue = '0.00';
 
         if(account){
@@ -215,7 +214,6 @@ const WrapEth = () => {
             };
 
             await providerStore.sendTransaction(
-                web3React,
                 ContractTypes.Weth,
                 contractMetadataStore.getWethAddress(),
                 'deposit',[],
@@ -227,7 +225,6 @@ const WrapEth = () => {
             let amountToUnwrap = toWei(wethAmount);
 
             await providerStore.sendTransaction(
-                web3React,
                 ContractTypes.Weth,
                 contractMetadataStore.getWethAddress(),
                 'withdraw',

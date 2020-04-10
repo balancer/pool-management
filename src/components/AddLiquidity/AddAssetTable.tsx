@@ -219,8 +219,7 @@ const AddAssetTable = observer((props: Props) => {
         },
     } = useStores();
 
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
@@ -267,7 +266,6 @@ const AddAssetTable = observer((props: Props) => {
 
         if (checked) {
             const response = await tokenStore.approveMax(
-                web3React,
                 tokenAddress,
                 pool.address
             );
@@ -281,7 +279,6 @@ const AddAssetTable = observer((props: Props) => {
             }
         } else {
             const response = await tokenStore.revokeApproval(
-                web3React,
                 tokenAddress,
                 pool.address
             );

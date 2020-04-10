@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Web3ConnectStatus from '../Web3ConnectStatus';
+import Wallet from '../Wallet';
+import { Link } from 'react-router-dom';
 
 const HeaderFrame = styled.div`
     display: flex;
@@ -19,7 +20,18 @@ const HeaderElement = styled.div`
     align-items: center;
 `;
 
-const Title = styled.a`
+const AppName = styled.div`
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: 1px;
+    color: var(--app-header-text);
+    margin-left: 12px;
+`;
+
+const StyledLink = styled(Link)`
     display: flex;
     text-decoration: none;
     align-items: center;
@@ -33,28 +45,18 @@ const Title = styled.a`
     }
 `;
 
-const AppName = styled.div`
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 15px;
-    line-height: 18px;
-    letter-spacing: 1px;
-    color: var(--app-header-text);
-    margin-left: 12px;
-`;
-
 const Header = () => {
     return (
         <HeaderFrame>
             <HeaderElement>
-                <Title href="/">
+
+                <StyledLink to={`/`}>
                     <img alt="pebbles" src="pebbles-pad.svg" />
                     <AppName>Balancer</AppName>
-                </Title>
+                </StyledLink>
             </HeaderElement>
             <HeaderElement>
-                <Web3ConnectStatus />
+                <Wallet />
             </HeaderElement>
         </HeaderFrame>
     );
