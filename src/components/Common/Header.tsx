@@ -20,20 +20,6 @@ const HeaderElement = styled.div`
     align-items: center;
 `;
 
-const Title = styled.a`
-    display: flex;
-    text-decoration: none;
-    align-items: center;
-    cursor: pointer;
-    height: 32px;
-    img {
-        font-size: 15px;
-        font-weight: 500;
-        height: 32px;
-        width: 32px;
-    }
-`;
-
 const AppName = styled.div`
     font-family: Roboto;
     font-style: normal;
