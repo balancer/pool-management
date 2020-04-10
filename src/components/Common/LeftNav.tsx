@@ -32,13 +32,6 @@ const NavElement = styled.a`
     text-decoration: none;
 `;
 
-const ActiveNavElement = styled(NavElement)`
-    color: var(--highlighted-selector-text);
-    background-color: var(--highlighted-selector-background);
-    border-left: 3px solid var(--highlighted-selector-border);
-    padding-left: 27px;
-`;
-
 const StyledLink = styled(Link)`
     display: flex;
     align-items: center;

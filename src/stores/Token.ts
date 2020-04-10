@@ -8,8 +8,6 @@ import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
 import {
     AsyncStatus,
-    TokenBalanceFetch,
-    TotalSupplyFetch,
     UserAllowanceFetch,
 } from './actions/fetch';
 import { BigNumberMap } from '../types';
@@ -473,7 +471,9 @@ export default class TokenStore {
             const balances = response.map(value =>
                 bnum(iface.functions.balanceOf.decode(value))
             );
-            balances.unshift(bnum(ethBalance))
+            if (tokensToTrack[0] === EtherKey) {
+                balances.unshift(bnum(ethBalance));
+            }
 
             this.setBalances(
                 tokensToTrack,
