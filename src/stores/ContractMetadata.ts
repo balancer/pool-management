@@ -16,6 +16,7 @@ export interface ContractMetadata {
 export interface TokenMetadata {
     address: string;
     symbol: string;
+    ticker: string;
     decimals: number;
     iconAddress: string;
     precision: number;
@@ -26,6 +27,7 @@ export interface TokenMetadata {
 export default class ContractMetadataStore {
     @observable contractMetadata: ContractMetadata;
     @observable tokenSymbols: string[];
+    @observable tickerSymbols: string[];
     @observable tokenIndex: NumberMap;
     @observable symbolToAddressMap: StringMap;
     @observable addressToSymbolMap: StringMap;
@@ -38,6 +40,10 @@ export default class ContractMetadataStore {
 
         this.tokenSymbols = this.getWhitelistedTokenMetadata().map(value => {
             return value.symbol;
+        });
+
+        this.tickerSymbols = this.getWhitelistedTokenMetadata().map(value => {
+            return value.ticker;
         });
 
         this.tokenIndex = {} as NumberMap;
@@ -74,6 +80,7 @@ export default class ContractMetadataStore {
             const {
                 address,
                 symbol,
+                ticker,
                 decimals,
                 iconAddress,
                 precision,
@@ -82,6 +89,7 @@ export default class ContractMetadataStore {
             contractMetadata.tokens.push({
                 address,
                 symbol,
+                ticker,
                 decimals,
                 iconAddress,
                 precision,

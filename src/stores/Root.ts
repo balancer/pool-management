@@ -48,10 +48,10 @@ export default class RootStore {
         await this.providerStore.loadWeb3();
 
         await this.marketStore.fetchAssetList(
-            this.contractMetadataStore.tokenSymbols
+            this.contractMetadataStore.tickerSymbols
         );
         await this.marketStore.fetchAssetPrices(
-            this.contractMetadataStore.tokenSymbols
+            this.contractMetadataStore.tickerSymbols
         );
     }
 }
