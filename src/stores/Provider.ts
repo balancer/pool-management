@@ -217,11 +217,14 @@ export default class ProviderStore {
     }
 
     @action handleAccountsChanged(accounts: string[]): void {
-      console.log(`[Provider] Accounts changed`)
+      console.log(`[Provider] Accounts changed`);
+      const { blockchainFetchStore, addLiquidityFormStore, removeLiquidityFormStore } = this.rootStore;
+      addLiquidityFormStore.closeModal();
+      removeLiquidityFormStore.closeModal();
+
       if (accounts.length === 0) {
         this.handleClose();
       } else {
-        const { blockchainFetchStore } = this.rootStore;
         this.providerStatus.account = accounts[0];
         // Loads pool & balance data for account
         blockchainFetchStore.setFetchLoop(true);
@@ -332,7 +335,8 @@ export default class ProviderStore {
           this.providerStatus.library = this.providerStatus.injectedWeb3;
           this.providerStatus.activeChainId = this.providerStatus.injectedChainId;
           this.providerStatus.injectedActive = true;
-          this.fetchUserBlockchainData(this.providerStatus.account);
+          if(this.providerStatus.account)
+            this.fetchUserBlockchainData(this.providerStatus.account);
         }
 
         this.providerStatus.active = true;

@@ -156,6 +156,7 @@ export default class TokenStore {
             );
             return FetchCode.FAILURE;
         }
+
         return FetchCode.SUCCESS;
     }
 
@@ -510,6 +511,7 @@ export default class TokenStore {
         const chainApprovals = this.allowances;
         return (
             !!chainApprovals[tokenAddress] &&
+            !!chainApprovals[tokenAddress][owner] &&
             !!chainApprovals[tokenAddress][owner][spender]
         );
     }
