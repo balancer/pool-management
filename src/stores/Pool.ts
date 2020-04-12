@@ -3,11 +3,7 @@ import { action, observable } from 'mobx';
 import { fetchPublicPools } from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
-import {
-    bnum,
-    fromPercentage,
-    tinyAddress
-} from '../utils/helpers';
+import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
 import { ContractTypes } from './Provider';
 import { getNextTokenColor } from '../utils/tokenColorPicker';
 
@@ -34,7 +30,7 @@ export default class PoolStore {
         const {
             contractMetadataStore,
             tokenStore,
-            providerStore
+            providerStore,
         } = this.rootStore;
         const account = providerStore.providerStatus.account;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
@@ -45,9 +41,7 @@ export default class PoolStore {
 
                 // We just discovered a new token, so should do an initial fetch for it outside of loop
                 if (account && !tokenStore.getBalance(token.address, account)) {
-                    tokenStore.fetchTokenBalances(account, [
-                        token.address,
-                    ]);
+                    tokenStore.fetchTokenBalances(account, [token.address]);
                 }
 
                 contractMetadataStore.addTokenMetadata(token.address, {
@@ -225,11 +219,18 @@ export default class PoolStore {
         const { tokenStore } = this.rootStore;
         const totalPoolTokens = tokenStore.getTotalSupply(pool.address);
         // TODO - fix calcs so no buffer is needed
-        const buffer = bnum(100)
-        return (ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN)).minus(buffer);
+        const buffer = bnum(100);
+        return ratio
+            .times(totalPoolTokens)
+            .integerValue(BigNumber.ROUND_DOWN)
+            .minus(buffer);
     }
 
-    getUserTokenPercentage(poolAddress: string, account: string, percentage: string) {
+    getUserTokenPercentage(
+        poolAddress: string,
+        account: string,
+        percentage: string
+    ) {
         const { tokenStore } = this.rootStore;
         const userPoolTokens = tokenStore.getBalance(poolAddress, account);
         return bnum(fromPercentage(percentage)).times(userPoolTokens);
@@ -252,7 +253,7 @@ export default class PoolStore {
         console.debug('exitPool', {
             poolAddress,
             poolAmountIn,
-            minAmountsOut
+            minAmountsOut,
         });
 
         await providerStore.sendTransaction(
@@ -261,7 +262,6 @@ export default class PoolStore {
             'exitPool',
             [poolAmountIn, minAmountsOut]
         );
-
     };
 
     @action joinPool = async (
@@ -275,10 +275,7 @@ export default class PoolStore {
             ContractTypes.BPool,
             poolAddress,
             'joinPool',
-            [
-                poolAmountOut.toString(),
-                maxAmountsIn,
-            ]
+            [poolAmountOut.toString(), maxAmountsIn]
         );
     };
 }

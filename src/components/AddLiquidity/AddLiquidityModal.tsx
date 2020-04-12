@@ -227,7 +227,9 @@ const AddLiquidityModal = observer((props: Props) => {
                 : bnum(0);
 
             const futureTotal = currentTotal.plus(previewTokens);
-            const futureShare = (previewTokens.plus(userBalance)).div(futureTotal);
+            const futureShare = previewTokens
+                .plus(userBalance)
+                .div(futureTotal);
 
             currentPoolShare = formatPercentage(existingShare, 2);
             futurePoolShare = formatPercentage(futureShare, 2);
@@ -287,7 +289,8 @@ const AddLiquidityModal = observer((props: Props) => {
                     buttonText={`Add Liquidity`}
                     active={
                         account &&
-                        addLiquidityFormStore.hasValidInput() && !addLiquidityFormStore.hasInputExceedUserBalance
+                        addLiquidityFormStore.hasValidInput() &&
+                        !addLiquidityFormStore.hasInputExceedUserBalance
                     }
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
@@ -301,9 +304,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const ref = useRef();
 
-    useOnClickOutside(ref, () =>
-        addLiquidityFormStore.closeModal()
-    );
+    useOnClickOutside(ref, () => addLiquidityFormStore.closeModal());
 
     return (
         <Container style={{ display: modalOpen ? 'block' : 'none' }}>

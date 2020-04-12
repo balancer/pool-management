@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Jazzicon from 'jazzicon';
 import { useStores } from '../../contexts/storesContext';
 
-
 const StyledIdenticon = styled.div`
     height: 1rem;
     width: 1rem;

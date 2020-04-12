@@ -98,7 +98,12 @@ const AddRemovePanel = (props: Props) => {
             <LeftColumn>
                 <AddressContainer>
                     <Identicon address={poolAddress} />
-                    <IdenticonText href={getEtherscanLink(chainId, poolAddress, 'address')} target="_blank">{poolAddress}</IdenticonText>
+                    <IdenticonText
+                        href={getEtherscanLink(chainId, poolAddress, 'address')}
+                        target="_blank"
+                    >
+                        {poolAddress}
+                    </IdenticonText>
                 </AddressContainer>
                 <InformationContainer></InformationContainer>
             </LeftColumn>

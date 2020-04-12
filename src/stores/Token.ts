@@ -6,10 +6,7 @@ import { bnum, scale } from 'utils/helpers';
 import { parseEther, Interface } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
-import {
-    AsyncStatus,
-    UserAllowanceFetch,
-} from './actions/fetch';
+import { AsyncStatus, UserAllowanceFetch } from './actions/fetch';
 import { BigNumberMap } from '../types';
 import { ActionResponse } from './actions/actions';
 
@@ -130,17 +127,15 @@ export default class TokenStore {
         const iface = new Interface(tokenAbi);
 
         tokenAddresses.forEach(value => {
-            calls.push([value, iface.functions.allowance.encode([
-                        account,
-                        spender
-                    ])]);
+            calls.push([
+                value,
+                iface.functions.allowance.encode([account, spender]),
+            ]);
         });
 
         try {
             const [blockNumber, response] = await multi.aggregate(calls);
-            const allowances = response.map(value =>
-                bnum(value)
-            );
+            const allowances = response.map(value => bnum(value));
 
             this.setAllowances(
                 tokenAddresses,
@@ -194,11 +189,7 @@ export default class TokenStore {
             const tokenAddress = tokens[index];
 
             if (
-                (this.isAllowanceFetched(
-                    tokenAddress,
-                    owner,
-                    spender
-                ) &&
+                (this.isAllowanceFetched(tokenAddress, owner, spender) &&
                     this.isAllowanceStale(
                         tokenAddress,
                         owner,
@@ -226,7 +217,6 @@ export default class TokenStore {
             ...this.allowances,
             ...chainApprovals,
         };
-
     }
 
     private setAllowanceProperty(
@@ -460,7 +450,10 @@ export default class TokenStore {
 
         tokensToTrack.forEach(value => {
             if (value !== EtherKey) {
-                calls.push([value, iface.functions.balanceOf.encode([account])]);
+                calls.push([
+                    value,
+                    iface.functions.balanceOf.encode([account]),
+                ]);
             }
         });
 
@@ -468,7 +461,9 @@ export default class TokenStore {
         promises.push(multi.getEthBalance(account));
 
         try {
-            const [[blockNumber, response], ethBalance] = await Promise.all(promises);
+            const [[blockNumber, response], ethBalance] = await Promise.all(
+                promises
+            );
             const balances = response.map(value =>
                 bnum(iface.functions.balanceOf.decode(value))
             );
@@ -490,10 +485,7 @@ export default class TokenStore {
         }
     };
 
-    @action mint = async (
-        tokenAddress: string,
-        amount: string
-    ) => {
+    @action mint = async (tokenAddress: string, amount: string) => {
         const { providerStore } = this.rootStore;
         await providerStore.sendTransaction(
             ContractTypes.TestToken,
@@ -503,11 +495,7 @@ export default class TokenStore {
         );
     };
 
-    isAllowanceFetched(
-        tokenAddress: string,
-        owner: string,
-        spender: string
-    ) {
+    isAllowanceFetched(tokenAddress: string, owner: string, spender: string) {
         const chainApprovals = this.allowances;
         return (
             !!chainApprovals[tokenAddress] &&

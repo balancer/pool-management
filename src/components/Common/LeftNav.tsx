@@ -55,7 +55,9 @@ const LeftNav = () => {
         <Wrapper>
             <NavContainer>
                 <StyledLink to={`/`}>Shared Pools</StyledLink>
-                <NavElement>My Private Pools <ComingSoon>(coming soon)</ComingSoon></NavElement>
+                <NavElement>
+                    My Private Pools <ComingSoon>(coming soon)</ComingSoon>
+                </NavElement>
             </NavContainer>
         </Wrapper>
     );

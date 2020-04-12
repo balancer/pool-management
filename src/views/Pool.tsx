@@ -12,7 +12,7 @@ import {
     formatFee,
     isAddress,
     toChecksum,
-    formatCurrency
+    formatCurrency,
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -32,7 +32,7 @@ const ErrorMessage = styled.div`
     color: var(--panel-row-text);
     width: 100%;
     height: calc(100vh - 108px);
-`
+`;
 
 const InfoPanelWrapper = styled.div`
     display: flex;
@@ -64,9 +64,7 @@ const Pool = observer((props: RouteComponentProps) => {
     if (!isAddress(poolAddress)) {
         return (
             <PoolViewWrapper>
-                <ErrorMessage>
-                    Please input a valid Pool address
-                </ErrorMessage>
+                <ErrorMessage>Please input a valid Pool address</ErrorMessage>
             </PoolViewWrapper>
         );
     }
@@ -109,18 +107,14 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? formatCurrency(
-                  marketStore.getPortfolioValue(pool),
-              )
+            ? formatCurrency(marketStore.getPortfolioValue(pool))
             : '-';
 
     let volumeText = '-';
-    if(marketStore.assetPricesLoaded && pool){
-      const volume = marketStore.getPoolVolume(pool);
+    if (marketStore.assetPricesLoaded && pool) {
+        const volume = marketStore.getPoolVolume(pool);
 
-      volumeText = formatCurrency(
-          volume
-      )
+        volumeText = formatCurrency(volume);
     }
 
     return (
@@ -139,7 +133,10 @@ const Pool = observer((props: RouteComponentProps) => {
             <AddRemovePanel poolAddress={poolAddress} />
             <InfoPanelWrapper>
                 <InfoPanel text={`$ ${liquidityText}`} subText="Liquidity" />
-                <InfoPanel text={`$ ${volumeText}`} subText="Trade Volume (24hr)" />
+                <InfoPanel
+                    text={`$ ${volumeText}`}
+                    subText="Trade Volume (24hr)"
+                />
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />
                 <InfoPanel text={shareText} subText="My Pool Share" />
             </InfoPanelWrapper>
