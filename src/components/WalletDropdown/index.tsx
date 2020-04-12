@@ -7,7 +7,7 @@ import { useStores } from 'contexts/storesContext';
 import TransactionPanel from './TransactionPanel';
 
 const StyledLink = styled.a`
-    color: #FFFFFF;
+    color: #ffffff;
     cursor: pointer;
 `;
 
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     top: 0px;
     right: 25px;
     padding: 20px;
-    transition: all .5s ease;
+    transition: all 0.5s ease;
     margin: 0;
     width: 300px;
     pointer-events: auto;
@@ -48,90 +48,80 @@ const WALLET_VIEWS = {
 };
 
 const WalletDropdown = observer(() => {
+    const {
+        root: { dropdownStore, providerStore },
+    } = useStores();
 
-        const {
-            root: { dropdownStore, providerStore },
-        } = useStores();
+    const active = providerStore.providerStatus.active;
+    const error = providerStore.providerStatus.error;
+    const account = providerStore.providerStatus.account;
+    const injectedActive = providerStore.providerStatus.injectedActive;
+    const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
 
-        const active = providerStore.providerStatus.active;
-        const error = providerStore.providerStatus.error;
-        const account = providerStore.providerStatus.account;
-        const injectedActive = providerStore.providerStatus.injectedActive;
-        const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
+    const walletDropdownOpen = dropdownStore.walletDropdownVisible;
 
-        const walletDropdownOpen = dropdownStore.walletDropdownVisible;
+    const toggleWalletDropdown = () => {
+        dropdownStore.toggleWalletDropdown();
+    };
 
-        const toggleWalletDropdown = () => {
-            dropdownStore.toggleWalletDropdown();
-        };
+    // always reset to account view
+    useEffect(() => {
+        if (walletDropdownOpen) {
+            setWalletView(WALLET_VIEWS.ACCOUNT);
+        }
+    }, [walletDropdownOpen]);
 
-        // always reset to account view
-        useEffect(() => {
-            if (walletDropdownOpen) {
-                setWalletView(WALLET_VIEWS.ACCOUNT);
-            }
-        }, [walletDropdownOpen]);
+    // close modal when a connection is successful
+    const activePrevious = usePrevious(active);
+    useEffect(() => {
+        if (walletDropdownOpen && active && !activePrevious) {
+            setWalletView(WALLET_VIEWS.ACCOUNT);
+        }
+    }, [setWalletView, active, error, walletDropdownOpen, activePrevious]);
 
-        // close modal when a connection is successful
-        const activePrevious = usePrevious(active);
-        useEffect(() => {
-            if (
-                walletDropdownOpen && (active && !activePrevious)
-            ) {
-                setWalletView(WALLET_VIEWS.ACCOUNT);
-            }
-        }, [
-            setWalletView,
-            active,
-            error,
-            walletDropdownOpen,
-            activePrevious
-        ]);
-
-        async function loadWalletDropdown(){
-          if(walletDropdownOpen){
+    async function loadWalletDropdown() {
+        if (walletDropdownOpen) {
             toggleWalletDropdown();
-          }
-          setWalletView(WALLET_VIEWS.ACCOUNT);
-          await providerStore.loadWeb3Modal();
         }
+        setWalletView(WALLET_VIEWS.ACCOUNT);
+        await providerStore.loadWeb3Modal();
+    }
 
-        function getDropdownContent() {
-            if (account &&
-                injectedActive &&
-                (walletView === WALLET_VIEWS.ACCOUNT)) {
-                return (
-                    <>
-                      <>
-                        {(window.web3 || window.ethereum) && (
-                            <StyledLink onClick={async() => {
-                                await providerStore.loadWeb3Modal();
-                                toggleWalletDropdown();
-                                // setWalletView(WALLET_VIEWS.OPTIONS)
-                            }}>Connect to a different wallet</StyledLink>
-                        )}
-                      </>
-                      <TransactionPanel />
-                    </>
-                );
-            }
-
-            if(walletDropdownOpen){
-              loadWalletDropdown();
-            }
-            return null;
-
-        }
-
-        if(walletDropdownOpen) {
+    function getDropdownContent() {
+        if (account && injectedActive && walletView === WALLET_VIEWS.ACCOUNT) {
             return (
-                <Lightbox>
-                    <Wrapper>{getDropdownContent()}</Wrapper>
-                </Lightbox>
+                <>
+                    <>
+                        {(window.web3 || window.ethereum) && (
+                            <StyledLink
+                                onClick={async () => {
+                                    await providerStore.loadWeb3Modal();
+                                    toggleWalletDropdown();
+                                    // setWalletView(WALLET_VIEWS.OPTIONS)
+                                }}
+                            >
+                                Connect to a different wallet
+                            </StyledLink>
+                        )}
+                    </>
+                    <TransactionPanel />
+                </>
             );
         }
 
+        if (walletDropdownOpen) {
+            loadWalletDropdown();
+        }
+        return null;
     }
-);
+
+    if (walletDropdownOpen) {
+        return (
+            <Lightbox>
+                <Wrapper>{getDropdownContent()}</Wrapper>
+            </Lightbox>
+        );
+    }
+});
 
 export default WalletDropdown;

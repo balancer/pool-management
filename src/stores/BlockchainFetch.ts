@@ -11,7 +11,6 @@ export default class BlockchainFetchStore {
     }
 
     @action onActivePoolChanged() {
-
         const { providerStore } = this.rootStore;
 
         if (
@@ -41,7 +40,6 @@ export default class BlockchainFetchStore {
     }
 
     @action async fetchActivePoolAllowances() {
-
         const { providerStore } = this.rootStore;
 
         const account = providerStore.providerStatus.account;
@@ -55,9 +53,7 @@ export default class BlockchainFetchStore {
         );
     }
 
-    @action setFetchLoop(
-        forceFetch?: boolean
-    ) {
+    @action setFetchLoop(forceFetch?: boolean) {
         const { providerStore } = this.rootStore;
 
         const active = providerStore.providerStatus.active;
@@ -66,10 +62,7 @@ export default class BlockchainFetchStore {
         const account = providerStore.providerStatus.account;
 
         if (active && chainId === supportedChainId) {
-            const {
-                poolStore,
-                appSettingsStore,
-            } = this.rootStore;
+            const { poolStore, appSettingsStore } = this.rootStore;
 
             library
                 .getBlockNumber()
@@ -104,9 +97,7 @@ export default class BlockchainFetchStore {
 
                         // Get user-specific blockchain data
                         if (account) {
-                            providerStore.fetchUserBlockchainData(
-                                account
-                            );
+                            providerStore.fetchUserBlockchainData(account);
                         }
                     }
                 })

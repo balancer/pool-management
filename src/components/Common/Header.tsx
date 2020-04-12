@@ -49,7 +49,6 @@ const Header = () => {
     return (
         <HeaderFrame>
             <HeaderElement>
-
                 <StyledLink to={`/`}>
                     <img alt="pebbles" src="pebbles-pad.svg" />
                     <AppName>Balancer</AppName>

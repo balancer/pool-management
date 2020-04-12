@@ -75,7 +75,7 @@ const Error = styled.button`
     :focus {
         outline: none;
     }
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: 500;
 `;
 
@@ -96,7 +96,6 @@ const SpinnerWrapper = styled(Spinner)`
 `;
 
 const Wallet = observer(() => {
-
     const {
         root: { dropdownStore, transactionStore, providerStore },
     } = useStores();
@@ -112,22 +111,24 @@ const Wallet = observer(() => {
         throw new Error(`No chain ID specified ${activeChainId}`);
     }
 
-    let hasPendingTransactions = transactionStore.hasPendingTransactions(account);
+    let hasPendingTransactions = transactionStore.hasPendingTransactions(
+        account
+    );
 
-    const toggleWalletDropdown = async() => {
-      dropdownStore.toggleWalletDropdown();
+    const toggleWalletDropdown = async () => {
+        dropdownStore.toggleWalletDropdown();
     };
 
     // handle the logo we want to show with the account
     function getStatusIcon() {
-        if(injectedActive){
-          return <Identicon />;
+        if (injectedActive) {
+            return <Identicon />;
         }
     }
 
     function getWalletDetails() {
         // Wrong network
-        if (injectedLoaded && !injectedActive ) {
+        if (injectedLoaded && !injectedActive) {
             return (
                 <Error onClick={toggleWalletDropdown}>
                     <WarningIcon src="WarningSign.svg" />
@@ -142,7 +143,11 @@ const Wallet = observer(() => {
                     )}
                     {getStatusIcon()}
                     <Address>{shortenAddress(account)}</Address>
-                    {dropdownStore.walletDropdownVisible? (<img src={Dropup} alt="v" />) : (<img src={Dropdown} alt="^" />)}
+                    {dropdownStore.walletDropdownVisible ? (
+                        <img src={Dropup} alt="v" />
+                    ) : (
+                        <img src={Dropdown} alt="^" />
+                    )}
                 </WalletButton>
             );
         } else if (error) {

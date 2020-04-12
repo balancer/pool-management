@@ -13,9 +13,9 @@ const TransactionStatusWrapper = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     a {
-      color: var(--link-text);
-      font-weight: 500;
-      font-size: 14px;
+        color: var(--link-text);
+        font-weight: 500;
+        font-size: 14px;
     }
 `;
 
@@ -52,8 +52,7 @@ const Spinner = styled.img`
 
 const TransactionState = styled.div`
     display: flex;
-    color: ${({ pending, theme }) =>
-        pending ? '#DC6BE5' : '#27AE60'};
+    color: ${({ pending, theme }) => (pending ? '#DC6BE5' : '#27AE60')};
     padding: 0.5rem 0.75rem;
     font-weight: 500;
     font-size: 0.75rem;
@@ -63,11 +62,8 @@ const TransactionState = styled.div`
 `;
 
 export default function Transaction({ hash, pending }) {
-
     const {
-        root: {
-            providerStore
-        },
+        root: { providerStore },
     } = useStores();
 
     const chainId = providerStore.providerStatus.chainId;
@@ -75,19 +71,20 @@ export default function Transaction({ hash, pending }) {
     return (
         <TransactionWrapper key={hash}>
             {pending ? (
-
                 <TransactionState pending={pending}>
                     <Spinner src={Circle} id="pending" />
                 </TransactionState>
-
             ) : (
                 <TransactionState pending={pending}>
                     <Check size="16" />
                 </TransactionState>
-
             )}
             <TransactionStatusWrapper>
-                <a href={getEtherscanLink(chainId, hash, 'transaction')} target="_blank" rel="noopener noreferrer">
+                <a
+                    href={getEtherscanLink(chainId, hash, 'transaction')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     {hash} ↗{' '}
                 </a>
             </TransactionStatusWrapper>
