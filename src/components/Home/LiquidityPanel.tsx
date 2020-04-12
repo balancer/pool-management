@@ -165,6 +165,9 @@ const LiquidityPanel = observer((props: Props) => {
     const account = providerStore.providerStatus.account;
 
     const options = {
+        animation: {
+            duration: 0
+        },
         maintainAspectRatio: false,
         legend: {
             display: false,
