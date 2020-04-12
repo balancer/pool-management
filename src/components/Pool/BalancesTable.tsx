@@ -8,7 +8,8 @@ import { Pool } from '../../types';
 import {
     formatPercentage,
     formatNormalizedTokenValue,
-    formatCurrency
+    formatCurrency,
+    getEtherscanLink
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -43,6 +44,17 @@ const HeaderRow = styled.div`
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
+`;
+
+const StyledLink = styled.a`
+    color: var(--inactive-button-text);
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 22px;
+    text-decoration: none;
+    color: var(--highlighted-selector-text);
 `;
 
 const TableRow = styled.div`
@@ -96,6 +108,7 @@ const BalancesTable = observer((props: Props) => {
     } = useStores();
 
     const account = providerStore.providerStatus.account;
+    const chainId = providerStore.providerStatus.activeChainId;
 
     const pool = poolStore.getPool(poolAddress);
     let userPoolTokens: undefined | BigNumber;
@@ -164,7 +177,9 @@ const BalancesTable = observer((props: Props) => {
                                         tokenMetadata.isSupported
                                     )}
                                 />
-                                {tokenMetadata.symbol}
+                                <StyledLink href={getEtherscanLink(chainId, tokenMetadata.address, 'address')} target="_blank">
+                                    {tokenMetadata.symbol}
+                                </StyledLink>
                             </TableCell>
                             <TableCell>
                                 {formatPercentage(
