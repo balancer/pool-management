@@ -11,6 +11,7 @@
                 "symbol": "ETH",
                 "address": "ether",
                 "decimals": 18,
+                "ticker": "ETH",
                 "iconAddress": "ether",
                 "precision": 4
             },
@@ -18,6 +19,7 @@
                 "symbol": "DAI",
                 "address": "0xDc497593C97cf51aC80F1338bD20A7572B824646",
                 "decimals": 18,
+                "ticker": "DAI",
                 "iconAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",
                 "precision": 2
             }
@@ -35,6 +37,7 @@
                 "symbol": "ETH",
                 "address": "ether",
                 "decimals": 18,
+                "ticker": "ETH",
                 "iconAddress": "ether",
                 "precision": 4,
                 "chartColor": "#f3f4f7"
@@ -43,6 +46,7 @@
                 "symbol": "WETH",
                 "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
                 "decimals": 18,
+                "ticker": "ETH",
                 "iconAddress": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
                 "precision": 4,
                 "chartColor": "#828384"
@@ -51,6 +55,7 @@
                 "symbol": "DAI",
                 "address": "0x1528F3FCc26d13F7079325Fb78D9442607781c8C",
                 "decimals": 18,
+                "ticker": "DAI",
                 "iconAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",
                 "precision": 2,
                 "chartColor": "#fab323"
@@ -59,6 +64,7 @@
                 "symbol": "MKR",
                 "address": "0xef13C0c8abcaf5767160018d268f9697aE4f5375",
                 "decimals": 18,
+                "ticker": "MKR",
                 "iconAddress": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
                 "precision": 4,
                 "chartColor": "#5eb8aa"
@@ -67,6 +73,7 @@
                 "symbol": "USDC",
                 "address": "0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5",
                 "decimals": 6,
+                "ticker": "USDC",
                 "iconAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
                 "precision": 2,
                 "chartColor": "#2875ca"
@@ -75,6 +82,7 @@
                 "symbol": "REP",
                 "address": "0x8c9e6c40d3402480ACE624730524fACC5482798c",
                 "decimals": 18,
+                "ticker": "REP",
                 "iconAddress": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
                 "precision": 4,
                 "chartColor": "#422940"
@@ -83,6 +91,7 @@
                 "symbol": "WBTC",
                 "address": "0xe0C9275E44Ea80eF17579d33c55136b7DA269aEb",
                 "decimals": 8,
+                "ticker": "BTC",
                 "iconAddress": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
                 "precision": 4,
                 "chartColor": "#779bc0"
@@ -91,6 +100,7 @@
                 "symbol": "BAT",
                 "address": "0x1f1f156E0317167c11Aa412E3d1435ea29Dc3cCE",
                 "decimals": 18,
+                "ticker": "BAT",
                 "iconAddress": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
                 "precision": 2,
                 "chartColor": "#ff5700"
@@ -99,6 +109,7 @@
                 "symbol": "SNX",
                 "address": "0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4",
                 "decimals": 18,
+                "ticker": "SNX",
                 "iconAddress": "0xc011a72400e58ecd99ee497cf89e3775d4bd732f",
                 "precision": 2,
                 "chartColor": "#ffffff"
@@ -107,6 +118,7 @@
                 "symbol": "ANT",
                 "address": "0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9",
                 "decimals": 18,
+                "ticker": "ANT",
                 "iconAddress": "0x960b236A07cf122663c4303350609A66A7B288C0",
                 "precision": 2,
                 "chartColor": "#E7983D"
@@ -115,6 +127,7 @@
                 "symbol": "ZRX",
                 "address": "0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244",
                 "decimals": 18,
+                "ticker": "ZRX",
                 "iconAddress": "0xe41d2489571d322189246dafa5ebde1f4699f498",
                 "precision": 2,
                 "chartColor": "#536DFE"
@@ -134,6 +147,7 @@
                 "symbol": "ETH",
                 "address": "ether",
                 "decimals": 18,
+                "ticker": "ETH",
                 "iconAddress": "ether",
                 "precision": 4,
                 "chartColor": "#f3f4f7"
@@ -142,6 +156,7 @@
                 "symbol": "WETH",
                 "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
                 "decimals": 18,
+                "ticker": "WETH",
                 "iconAddress": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
                 "precision": 4,
                 "chartColor": "#828384"
@@ -150,6 +165,7 @@
                 "symbol": "DAI",
                 "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
                 "decimals": 18,
+                "ticker": "DAI",
                 "iconAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",
                 "precision": 2,
                 "chartColor": "#fab323"
@@ -158,6 +174,7 @@
                 "symbol": "MKR",
                 "address": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
                 "decimals": 18,
+                "ticker": "MKR",
                 "iconAddress": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
                 "precision": 4,
                 "chartColor": "#5eb8aa"
@@ -166,14 +183,25 @@
                 "symbol": "USDC",
                 "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
                 "decimals": 6,
+                "ticker": "USDC",
                 "iconAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
                 "precision": 2,
                 "chartColor": "#2875ca"
             },
             {
+                "symbol": "BTC++",
+                "address": "0x0327112423F3A68efdF1fcF402F6c5CB9f7C33fd",
+                "decimals": 18,
+                "ticker": "BTC",
+                "precision": 6,
+                "iconAddress": "0x0327112423F3A68efdF1fcF402F6c5CB9f7C33fd",
+                "chartColor": "#34cbf8"
+            },
+            {
                 "symbol": "cUSDC",
                 "address": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
                 "decimals": 8,
+                "ticker": "cUSDC",
                 "iconAddress": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
                 "precision": 2,
                 "chartColor": "#2ecfa7"
@@ -182,6 +210,7 @@
                 "symbol": "cDAI",
                 "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
                 "decimals": 8,
+                "ticker": "cDAI",
                 "iconAddress": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
                 "precision": 2,
                 "chartColor": "#2ecfa7"
@@ -190,6 +219,7 @@
                 "symbol": "REP",
                 "address": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
                 "decimals": 18,
+                "ticker": "REP",
                 "iconAddress": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
                 "precision": 4,
                 "chartColor": "#422940"
@@ -198,6 +228,7 @@
                 "symbol": "LINK",
                 "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
                 "decimals": 18,
+                "ticker": "LINK",
                 "iconAddress": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
                 "precision": 2,
                 "chartColor": "#536DFE"
@@ -206,6 +237,7 @@
                 "symbol": "WBTC",
                 "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
                 "decimals": 8,
+                "ticker": "BTC",
                 "iconAddress": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
                 "precision": 4,
                 "chartColor": "#779bc0"
@@ -214,6 +246,7 @@
                 "symbol": "BAT",
                 "address": "0x0D8775F648430679A709E98d2b0Cb6250d2887EF",
                 "decimals": 18,
+                "ticker": "BAT",
                 "iconAddress": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
                 "precision": 2,
                 "chartColor": "#ff5700"
@@ -222,6 +255,7 @@
                 "symbol": "SNX",
                 "address": "0xC011A72400E58ecD99Ee497CF89E3775d4bd732F",
                 "decimals": 18,
+                "ticker": "SNX",
                 "iconAddress": "0xc011a72400e58ecd99ee497cf89e3775d4bd732f",
                 "precision": 2,
                 "chartColor": "#ffffff"
@@ -230,6 +264,7 @@
                 "symbol": "ANT",
                 "address": "0x960b236A07cf122663c4303350609A66A7B288C0",
                 "decimals": 18,
+                "ticker": "ANT",
                 "iconAddress": "0x960b236A07cf122663c4303350609A66A7B288C0",
                 "precision": 2,
                 "chartColor": "#E7983D"
@@ -238,6 +273,7 @@
                 "symbol": "ZRX",
                 "address": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
                 "decimals": 18,
+                "ticker": "ZRX",
                 "iconAddress": "0xe41d2489571d322189246dafa5ebde1f4699f498",
                 "precision": 2,
                 "chartColor": "#536DFE"

@@ -56,6 +56,7 @@ export default class PoolStore {
                     chartColor: getNextTokenColor(),
                     decimals: token.decimals,
                     symbol: tinyAddress(token.address, 3),
+                    ticker: '',
                     iconAddress: token.address,
                     isSupported: false,
                 });
