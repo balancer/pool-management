@@ -5,9 +5,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import WrapEth from './WrapEth';
 
-
-const Wrapper = styled.div`
-`;
+const Wrapper = styled.div``;
 
 const BuildVersion = styled.div`
     display: flex;
@@ -152,7 +150,6 @@ const WalletBalances = observer(() => {
 
     return (
         <Wrapper>
-
             <WrapEth />
             <BalanceHeader>My Wallet</BalanceHeader>
             {account ? (
@@ -160,7 +157,9 @@ const WalletBalances = observer(() => {
             ) : (
                 <BalanceElement>Connect wallet to see balances</BalanceElement>
             )}
-            <BuildVersion>BUILD ID: {process.env.REACT_APP_COMMIT_REF}</BuildVersion>
+            <BuildVersion>
+                BUILD ID: {process.env.REACT_APP_COMMIT_REF}
+            </BuildVersion>
         </Wrapper>
     );
 });

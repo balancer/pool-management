@@ -64,7 +64,7 @@ const TableCell = styled.div`
     align-items: center;
     width: ${props => props.width || '12%'};
     @media screen and (max-width: 1024px) {
-        width: 33%
+        width: 33%;
     }
 `;
 
@@ -82,7 +82,7 @@ const AssetCell = styled(TableCell)`
 const TableCellRight = styled(TableCell)`
     justify-content: flex-end;
     @media screen and (max-width: 1024px) {
-        width: 33%
+        width: 33%;
     }
 `;
 
@@ -166,7 +166,7 @@ const LiquidityPanel = observer((props: Props) => {
 
     const options = {
         animation: {
-            duration: 0
+            duration: 0,
         },
         maintainAspectRatio: false,
         legend: {
@@ -178,7 +178,13 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderAssetPercentages = (pool: Pool) => {
-        const sortedTokens = pool.tokens.slice().sort((a, b) => Number(b.denormWeightProportion) - Number(a.denormWeightProportion));
+        const sortedTokens = pool.tokens
+            .slice()
+            .sort(
+                (a, b) =>
+                    Number(b.denormWeightProportion) -
+                    Number(a.denormWeightProportion)
+            );
         return (
             <React.Fragment>
                 {sortedTokens.map((token, index) => {
@@ -209,7 +215,10 @@ const LiquidityPanel = observer((props: Props) => {
     const renderPoolsChart = () => {
         if (marketStore.assetPricesLoaded) {
             pools.sort((a, b) => {
-                return Number(marketStore.getPortfolioValue(b)) - Number(marketStore.getPortfolioValue(a));
+                return (
+                    Number(marketStore.getPortfolioValue(b)) -
+                    Number(marketStore.getPortfolioValue(a))
+                );
             });
         }
         return (
@@ -223,9 +232,7 @@ const LiquidityPanel = observer((props: Props) => {
                         const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
-                        liquidityText = formatCurrency(
-                            poolLiquidity
-                        );
+                        liquidityText = formatCurrency(poolLiquidity);
 
                         if (account) {
                             const userLiquidity = poolStore.calcUserLiquidity(
@@ -236,19 +243,20 @@ const LiquidityPanel = observer((props: Props) => {
                             if (userLiquidity) {
                                 userLiquidityText = formatCurrency(
                                     userLiquidity
-                                )
+                                );
                             }
                         }
 
                         const volume = marketStore.getPoolVolume(pool);
 
-                        volumeText = formatCurrency(
-                            volume
-                        )
+                        volumeText = formatCurrency(volume);
                     }
 
                     return (
-                        <PoolLink key={pool.address} to={`/pool/${pool.address}`}>
+                        <PoolLink
+                            key={pool.address}
+                            to={`/pool/${pool.address}`}
+                        >
                             <PoolRow>
                                 <TableCell width="15%">
                                     <Identicon address={pool.address} />
@@ -271,7 +279,9 @@ const LiquidityPanel = observer((props: Props) => {
                                         {renderAssetPercentages(pool)}
                                     </BreakdownContainer>
                                 </AssetCell>
-                                <TableCellHideMobile width="12%">{ formatFee(pool.swapFee) }</TableCellHideMobile>
+                                <TableCellHideMobile width="12%">
+                                    {formatFee(pool.swapFee)}
+                                </TableCellHideMobile>
                                 <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
                                 <TableCellRightHideMobile width="12%">{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
                                 <TableCellRightHideMobile width="15%">{`$ ${volumeText}`}</TableCellRightHideMobile>
@@ -285,8 +295,8 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPools = () => {
         // Has all token data been loaded
-        if(!pools){
-          return <PoolRow>Loading</PoolRow>;
+        if (!pools) {
+            return <PoolRow>Loading</PoolRow>;
         }
 
         // Has pool data to display and data has loaded
@@ -332,8 +342,12 @@ const LiquidityPanel = observer((props: Props) => {
                 <AssetCell>Assets</AssetCell>
                 <TableCellHideMobile width="12%">Swap Fee</TableCellHideMobile>
                 <TableCellRight width="12%">Liquidity</TableCellRight>
-                <TableCellRightHideMobile width="12%">My Liquidity</TableCellRightHideMobile>
-                <TableCellRightHideMobile width="15%">Trade Volume (24h)</TableCellRightHideMobile>
+                <TableCellRightHideMobile width="12%">
+                    My Liquidity
+                </TableCellRightHideMobile>
+                <TableCellRightHideMobile width="15%">
+                    Trade Volume (24h)
+                </TableCellRightHideMobile>
             </HeaderRow>
             {renderPools()}
             <FooterRow />

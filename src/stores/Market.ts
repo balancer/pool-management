@@ -90,18 +90,19 @@ export default class MarketStore {
         return portfolioValue;
     }
 
-    getPoolVolume(
-        pool: Pool
-    ): BigNumber | undefined {
+    getPoolVolume(pool: Pool): BigNumber | undefined {
         const { contractMetadataStore } = this.rootStore;
         let volumeTotal = bnum(0);
 
         pool.swaps.forEach(swap => {
-
             if (contractMetadataStore.isSupported(swap.tokenIn)) {
-                volumeTotal = volumeTotal.plus(this.getValue(swap.tokenInSym, swap.tokenAmountIn));
+                volumeTotal = volumeTotal.plus(
+                    this.getValue(swap.tokenInSym, swap.tokenAmountIn)
+                );
             } else if (contractMetadataStore.isSupported(swap.tokenOut)) {
-                volumeTotal = volumeTotal.plus(this.getValue(swap.tokenOutSym, swap.tokenAmountOut));
+                volumeTotal = volumeTotal.plus(
+                    this.getValue(swap.tokenOutSym, swap.tokenAmountOut)
+                );
             }
         });
 

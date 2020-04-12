@@ -280,13 +280,11 @@ export const formatBalanceTruncated = (
     }
 };
 
-export const formatCurrency = (
-    balance: BigNumber
-): string => {
+export const formatCurrency = (balance: BigNumber): string => {
     const fmt = {
         decimalSeparator: '.',
         groupSeparator: ',',
-        groupSize: 3
+        groupSize: 3,
     };
     return balance.toFormat(2, BigNumber.ROUND_DOWN, fmt);
 };

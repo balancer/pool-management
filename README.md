@@ -2,7 +2,6 @@
 
 Pool management interface for users to add and remove liquidity to Balancer pools.
 
-
 ## Development
 
 -   Copy .env.example -> .env

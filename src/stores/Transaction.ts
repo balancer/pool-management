@@ -60,15 +60,12 @@ export default class TransactionStore {
     }
 
     hasPendingTransactions(account: string): boolean {
-      let pending = this.getPendingTransactions(account);
-      if(pending.length > 0)
-        return true;
-      return false;
+        let pending = this.getPendingTransactions(account);
+        if (pending.length > 0) return true;
+        return false;
     }
 
-    @action async checkPendingTransactions(
-        account
-    ): Promise<FetchCode> {
+    @action async checkPendingTransactions(account): Promise<FetchCode> {
         const { providerStore } = this.rootStore;
         const currentBlock = providerStore.getCurrentBlockNumber();
 

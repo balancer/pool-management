@@ -9,7 +9,7 @@ import {
     formatPercentage,
     formatNormalizedTokenValue,
     formatCurrency,
-    getEtherscanLink
+    getEtherscanLink,
 } from '../../utils/helpers';
 
 const Wrapper = styled.div`
@@ -139,7 +139,9 @@ const BalancesTable = observer((props: Props) => {
                     const balanceToDisplay: string =
                         userPoolTokens && totalPoolTokens
                             ? formatNormalizedTokenValue(
-                                  token.balance.times(userPoolTokens.div(totalPoolTokens)),
+                                  token.balance.times(
+                                      userPoolTokens.div(totalPoolTokens)
+                                  ),
                                   4,
                                   20
                               )
@@ -155,12 +157,12 @@ const BalancesTable = observer((props: Props) => {
                             // TODO: Scale this using token decimals
                             const userBalanceValue = marketStore.getValue(
                                 tokenMetadata.symbol,
-                                token.balance.times(userPoolTokens.div(totalPoolTokens)),
+                                token.balance.times(
+                                    userPoolTokens.div(totalPoolTokens)
+                                )
                             );
 
-                            valueToDisplay = formatCurrency(
-                                userBalanceValue
-                            );
+                            valueToDisplay = formatCurrency(userBalanceValue);
                         } else {
                             valueToDisplay = '(Untracked)';
                         }
@@ -177,7 +179,14 @@ const BalancesTable = observer((props: Props) => {
                                         tokenMetadata.isSupported
                                     )}
                                 />
-                                <StyledLink href={getEtherscanLink(chainId, tokenMetadata.address, 'address')} target="_blank">
+                                <StyledLink
+                                    href={getEtherscanLink(
+                                        chainId,
+                                        tokenMetadata.address,
+                                        'address'
+                                    )}
+                                    target="_blank"
+                                >
                                     {tokenMetadata.symbol}
                                 </StyledLink>
                             </TableCell>

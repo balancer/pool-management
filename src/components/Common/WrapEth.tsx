@@ -168,11 +168,10 @@ const MaxLink = styled.div`
 
 enum ButtonAction {
     WRAP,
-    UNWRAP
+    UNWRAP,
 }
 
 const WrapEth = () => {
-
     const [ethAmount, setEthAmount] = useState('');
     const [wethAmount, setWethAmount] = useState('');
 
@@ -182,33 +181,22 @@ const WrapEth = () => {
 
     const wethAddress = contractMetadataStore.getWethAddress();
 
-
     const handleMaxLinkClick = async () => {
         const account = providerStore.providerStatus.account;
         let maxValue = '0.00';
 
-        if(account){
-          const balance = tokenStore.getBalance(
-              wethAddress,
-              account
-          );
+        if (account) {
+            const balance = tokenStore.getBalance(wethAddress, account);
 
-          maxValue = formatBalance(
-              balance,
-              18,
-              20
-          );
+            maxValue = formatBalance(balance, 18, 20);
         }
 
         setWethAmount(maxValue);
         return maxValue;
     };
 
-    const actionButtonHandler = async (
-        action: ButtonAction,
-    ) => {
+    const actionButtonHandler = async (action: ButtonAction) => {
         if (action === ButtonAction.WRAP) {
-
             let overrides = {
                 value: ethers.utils.parseEther(ethAmount),
             };
@@ -216,12 +204,11 @@ const WrapEth = () => {
             await providerStore.sendTransaction(
                 ContractTypes.Weth,
                 contractMetadataStore.getWethAddress(),
-                'deposit',[],
+                'deposit',
+                [],
                 overrides
             );
-
         } else if (action === ButtonAction.UNWRAP) {
-
             let amountToUnwrap = toWei(wethAmount);
 
             await providerStore.sendTransaction(
@@ -237,64 +224,56 @@ const WrapEth = () => {
         <Container>
             <WrapHeader>Eth</WrapHeader>
             <WrapElement>
-              <EthInputWrapper errorBorders={false}>
-                <input
-                    name={`input-name-wrap`}
-                    value={
-                         ethAmount
-                    }
-                    onChange={e => setEthAmount(e.target.value)}
-                    // ref={textInput}
-                    placeholder=""
-                />
-              </EthInputWrapper>
+                <EthInputWrapper errorBorders={false}>
+                    <input
+                        name={`input-name-wrap`}
+                        value={ethAmount}
+                        onChange={e => setEthAmount(e.target.value)}
+                        // ref={textInput}
+                        placeholder=""
+                    />
+                </EthInputWrapper>
 
-              <ButtonContainer>
-                <EthButton
-                    buttonText={`WRAP`}
-                    active={false}
-                    onClick={e =>
-                        actionButtonHandler(ButtonAction.WRAP)
-                    }
-                >WRAP
-                </EthButton>
-              </ButtonContainer>
+                <ButtonContainer>
+                    <EthButton
+                        buttonText={`WRAP`}
+                        active={false}
+                        onClick={e => actionButtonHandler(ButtonAction.WRAP)}
+                    >
+                        WRAP
+                    </EthButton>
+                </ButtonContainer>
             </WrapElement>
             <Advice>Keep some ETH unwrapped for transaction fees</Advice>
 
             <WrapHeader>WETH</WrapHeader>
             <WrapElement>
-              <WethInputWrapper errorBorders={false}>
-
+                <WethInputWrapper errorBorders={false}>
                     <MaxLink
                         onClick={() => {
-                            handleMaxLinkClick(
-                            );
+                            handleMaxLinkClick();
                         }}
                     >
                         Max
                     </MaxLink>
 
-                <input
-                    name={`input-name-wrap`}
-                    value={
-                         wethAmount
-                    }
-                    onChange={e => setWethAmount(e.target.value)}
-                    // ref={textInput}
-                    placeholder=""
-                />
-              </WethInputWrapper>
-              <ButtonContainer>
-                <WethButton
-                    buttonText={`UNWRAP`}
-                    active={false}
-                    onClick={e =>
-                        actionButtonHandler(ButtonAction.UNWRAP)
-                    }
-                >UNWRAP
-                </WethButton>
-              </ButtonContainer>
+                    <input
+                        name={`input-name-wrap`}
+                        value={wethAmount}
+                        onChange={e => setWethAmount(e.target.value)}
+                        // ref={textInput}
+                        placeholder=""
+                    />
+                </WethInputWrapper>
+                <ButtonContainer>
+                    <WethButton
+                        buttonText={`UNWRAP`}
+                        active={false}
+                        onClick={e => actionButtonHandler(ButtonAction.UNWRAP)}
+                    >
+                        UNWRAP
+                    </WethButton>
+                </ButtonContainer>
             </WrapElement>
         </Container>
     );
