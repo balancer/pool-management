@@ -87,7 +87,7 @@ export default function Transaction({ hash, pending }) {
 
             )}
             <TransactionStatusWrapper>
-                <a href={getEtherscanLink(chainId, hash, 'transaction')}>
+                <a href={getEtherscanLink(chainId, hash, 'transaction')} target="_blank" rel="noopener noreferrer">
                     {hash} ↗{' '}
                 </a>
             </TransactionStatusWrapper>
