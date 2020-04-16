@@ -77,15 +77,22 @@ export default class MarketStore {
 
     getPortfolioValue(pool: Pool): BigNumber {
         const { contractMetadataStore } = this.rootStore;
+        let sumValue = bnum(0);
+        let sumWeight = bnum(0);
         let portfolioValue = bnum(0);
-
         pool.tokens.forEach((token, index) => {
             if (contractMetadataStore.isSupported(token.address)) {
-                portfolioValue = portfolioValue.plus(
-                    this.getValue(token.symbol, token.balance)
-                );
+                let tokenValue = this.getValue(token.symbol, token.balance);
+                sumValue = sumValue.plus(tokenValue);
+                if (tokenValue.isGreaterThan(bnum(0))) {
+                    sumWeight = sumWeight.plus(token.denormWeightProportion);
+                }
             }
         });
+
+        if (sumWeight.isGreaterThan(bnum(0))) {
+            portfolioValue = sumValue.div(sumWeight);
+        }
 
         return portfolioValue;
     }
