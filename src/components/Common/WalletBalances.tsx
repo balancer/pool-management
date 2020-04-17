@@ -18,6 +18,13 @@ const BuildVersion = styled.div`
     bottom: 0px;
 `;
 
+const BuildLink = styled.a`
+    font-size: 10px;
+    color: var(--body-text);
+    text-decoration: none;
+    margin-left: 5px;
+`;
+
 const BalanceHeader = styled.div`
     font-family: Roboto;
     font-style: normal;
@@ -158,7 +165,13 @@ const WalletBalances = observer(() => {
                 <BalanceElement>Connect wallet to see balances</BalanceElement>
             )}
             <BuildVersion>
-                BUILD ID: {process.env.REACT_APP_COMMIT_REF}
+                BUILD ID:{' '}
+                <BuildLink
+                    href={`https://github.com/balancer-labs/pool-management/tree/${process.env.REACT_APP_COMMIT_REF}`}
+                    target="_blank"
+                >
+                    {process.env.REACT_APP_COMMIT_REF.substring(0, 12)}
+                </BuildLink>
             </BuildVersion>
         </Wrapper>
     );
