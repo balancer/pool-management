@@ -94,6 +94,8 @@ const WalletBalances = observer(() => {
 
     const account = providerStore.providerStatus.account;
 
+    const buildId = process.env.REACT_APP_COMMIT_REF || '';
+
     const renderWalletBalances = () => {
         const whitelistedTokens = contractMetadataStore.getWhitelistedTokenMetadata();
 
@@ -167,10 +169,10 @@ const WalletBalances = observer(() => {
             <BuildVersion>
                 BUILD ID:{' '}
                 <BuildLink
-                    href={`https://github.com/balancer-labs/pool-management/tree/${process.env.REACT_APP_COMMIT_REF}`}
+                    href={`https://github.com/balancer-labs/pool-management/tree/${buildId}`}
                     target="_blank"
                 >
-                    {process.env.REACT_APP_COMMIT_REF.substring(0, 12)}
+                    {buildId.substring(0, 12)}
                 </BuildLink>
             </BuildVersion>
         </Wrapper>
