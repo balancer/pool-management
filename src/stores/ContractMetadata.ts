@@ -10,6 +10,7 @@ export interface ContractMetadata {
     weth: string;
     multicall: string;
     defaultPrecision: number;
+    warnings: string[];
     tokens: TokenMetadata[];
 }
 
@@ -73,6 +74,7 @@ export default class ContractMetadataStore {
             weth: metadata.default[chainName].weth,
             multicall: metadata.default[chainName].multicall,
             defaultPrecision: metadata.default[chainName].defaultPrecision,
+            warnings: metadata.default[chainName].warnings,
             tokens: [] as TokenMetadata[],
         };
 
@@ -142,6 +144,16 @@ export default class ContractMetadataStore {
             );
         }
         return address;
+    }
+
+    getTokenWarnings(): string[] {
+        const tokens = this.contractMetadata.warnings;
+        if (!tokens) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return tokens;
     }
 
     getWhiteListedTokenAddresses(): string[] {
