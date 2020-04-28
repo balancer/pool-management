@@ -7,10 +7,11 @@ import { observer } from 'mobx-react';
 const STabs = styled(Tabs)`
     -webkit-tap-highlight-color: transparent;
     width: 100%;
+    padding-top: 8px;
 `;
 
 const STabList = styled(TabList)`
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid var(--panel-border);
     margin: 0 0 10px;
     padding: 0;
 `;
@@ -25,10 +26,11 @@ const STab = styled(Tab)`
     list-style: none;
     padding: 6px 12px;
     cursor: pointer;
+    color: var(--inactive-button-text);
     &.react-tabs__tab--selected {
-        background: #fff;
-        border-color: #aaa;
-        color: black;
+        background: var(--highlighted-selector-background);
+        border-color: var(--panel-border);
+        color: var(--header-text);
         border-radius: 5px 5px 0 0;
     }
     &.react-tabs__tab--disabled {
