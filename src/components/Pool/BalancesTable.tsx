@@ -23,16 +23,6 @@ const TableWrapper = styled.div`
     background: var(--panel-background);
 `;
 
-const Header = styled.div`
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 19px;
-    color: var(--header-text);
-    padding: 24px 0px 24px 0px;
-`;
-
 const HeaderRow = styled.div`
     display: flex;
     flex-direction: row;

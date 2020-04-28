@@ -2,12 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import BalancesTable from './BalancesTable';
+import SwapsTable from './SwapsTable';
 import { observer } from 'mobx-react';
 
 const STabs = styled(Tabs)`
     -webkit-tap-highlight-color: transparent;
     width: 100%;
     padding-top: 8px;
+    padding-bottom: 16px;
 `;
 
 const STabList = styled(TabList)`
@@ -78,7 +80,7 @@ const PoolTabs = observer((props: Props) => {
                 <BalancesTable poolAddress={poolAddress} />
             </STabPanel>
             <STabPanel>
-                <h2>Swaps Info</h2>
+                <SwapsTable poolAddress={poolAddress} />
             </STabPanel>
         </STabs>
     );

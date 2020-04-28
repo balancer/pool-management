@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import PoolAssetChartPanel from '../components/Pool/PoolAssetChartPanel';
 import AddRemovePanel from '../components/Pool/AddRemovePanel';
 import InfoPanel from '../components/Pool/InfoPanel';
-import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import RemoveLiquidityModal from '../components/RemoveLiquidity/RemoveLiquidityModal';
 import { observer } from 'mobx-react';
