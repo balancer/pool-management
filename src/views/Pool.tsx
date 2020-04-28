@@ -16,6 +16,7 @@ import {
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';
+import PoolTabs from '../components/Pool/PoolTabs';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -43,8 +44,6 @@ const InfoPanelWrapper = styled.div`
     div {
     }
 `;
-
-const SwapsTable = styled.div``;
 
 const Pool = observer((props: RouteComponentProps) => {
     const poolAddress = toChecksum(props.match.params.poolAddress);
@@ -140,8 +139,7 @@ const Pool = observer((props: RouteComponentProps) => {
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />
                 <InfoPanel text={shareText} subText="My Pool Share" />
             </InfoPanelWrapper>
-            <BalancesTable poolAddress={poolAddress} />
-            <SwapsTable />
+            <PoolTabs poolAddress={poolAddress} />
         </PoolViewWrapper>
     );
 });

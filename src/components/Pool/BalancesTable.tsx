@@ -217,7 +217,6 @@ const BalancesTable = observer((props: Props) => {
 
     return (
         <Wrapper>
-            <Header>Balances</Header>
             <TableWrapper>
                 <HeaderRow>
                     <TableCell>Token</TableCell>
