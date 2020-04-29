@@ -146,13 +146,13 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
 
 export async function fetchPoolSwaps(
     poolAddress: string,
-    startIndex: number,
-    stopIndex: number
+    pageIncrement: number,
+    skip: number
 ): Promise<any[]> {
     const query = `
       {
         pools(where: {id: "${poolAddress.toLowerCase()}"}) {
-          swaps(first: ${stopIndex} , skip: ${startIndex}, orderBy: timestamp, orderDirection: desc) {
+          swaps(first: ${pageIncrement} , skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
             timestamp
             tokenIn
             tokenInSym
@@ -178,7 +178,6 @@ export async function fetchPoolSwaps(
     });
 
     const { data } = await response.json();
-    console.log(data);
     if (data.pools.length > 0) return data.pools[0].swaps;
     else return [];
 }

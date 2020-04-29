@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { formatDate } from '../../utils/helpers';
@@ -55,6 +55,34 @@ const TableCell = styled.div`
     width: ${props => props.width || '33.33%'};
 `;
 
+const TableRowLoad = styled.div`
+    display: flex;
+    flex-direction: row;
+    color: var(--panel-row-text);
+    text-align: center;
+    border-bottom: 1px solid var(--panel-border);
+    :last-of-type {
+        border-bottom: none;
+    }
+    padding: 20px 25px 20px 25px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    justify-content: center;
+`;
+
+const TableCellLoad = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    justify-content: center;
+    cursor: pointer;
+`;
+
 const SwapsTable = observer((props: Props) => {
     const { poolAddress } = props;
 
@@ -62,17 +90,42 @@ const SwapsTable = observer((props: Props) => {
         root: { swapsTableStore },
     } = useStores();
 
-    // !!!!!!! This will be updated by pagination button
-    let startIndex = 0;
-    let stopIndex = 50;
+    const pageIncrement = 50;
+    const [graphSkip, setGraphSkip] = useState(0);
 
     useEffect(() => {
-        swapsTableStore.fetchPoolSwaps(poolAddress, startIndex, stopIndex);
-    }, [poolAddress, startIndex, stopIndex, swapsTableStore]);
+        if (graphSkip === 0) swapsTableStore.clearPoolSwaps();
+
+        swapsTableStore.fetchPoolSwaps(poolAddress, pageIncrement, graphSkip);
+    }, [poolAddress, graphSkip, swapsTableStore]);
+
+    const pageGraph = () => {
+        setGraphSkip(graphSkip + pageIncrement);
+    };
 
     const swaps = swapsTableStore.swaps;
 
+    const renderBottomRow = swaps => {
+        if (swaps.length > 0) {
+            return (
+                <TableRowLoad key={'more'}>
+                    <TableCellLoad onClick={e => pageGraph()}>
+                        LOAD MORE
+                    </TableCellLoad>
+                </TableRowLoad>
+            );
+        } else {
+            return (
+                <TableRowLoad key={'no-swaps'}>
+                    <TableCellLoad>NO SWAPS</TableCellLoad>
+                </TableRowLoad>
+            );
+        }
+    };
+
     const renderSwapsTable = swaps => {
+        let bottomRow = renderBottomRow(swaps);
+
         return (
             <React.Fragment>
                 {swaps.map((swap, index) => {
@@ -88,6 +141,8 @@ const SwapsTable = observer((props: Props) => {
                         </TableRow>
                     );
                 })}
+
+                {bottomRow}
             </React.Fragment>
         );
     };

@@ -11,13 +11,23 @@ export default class SwapsTableStore {
         this.swaps = [];
     }
 
-    @action async fetchPoolSwaps(poolAddress, startIndex, stopIndex) {
+    @action async fetchPoolSwaps(poolAddress, pageIncrement, graphSkip) {
         console.debug('[SwapsTable] Fetching Swaps: ', {
             poolAddress,
-            startIndex,
-            stopIndex,
+            pageIncrement,
+            graphSkip,
         });
 
-        this.swaps = await fetchPoolSwaps(poolAddress, startIndex, stopIndex);
+        const newSwaps = await fetchPoolSwaps(
+            poolAddress,
+            pageIncrement,
+            graphSkip
+        );
+        this.swaps = this.swaps.concat(newSwaps);
+    }
+
+    @action async clearPoolSwaps() {
+        console.debug('[SwapsTable] Clearing Old Swaps.');
+        this.swaps = [];
     }
 }
