@@ -77,7 +77,7 @@ const SwapsTable = observer((props: Props) => {
             <React.Fragment>
                 {swaps.map((swap, index) => {
                     return (
-                        <TableRow key={swap.timestamp}>
+                        <TableRow key={index}>
                             <TableCell>{formatDate(swap.timestamp)}</TableCell>
                             <TableCell>
                                 {swap.tokenAmountIn} {swap.tokenInSym}
