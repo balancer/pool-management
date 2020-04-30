@@ -55,10 +55,6 @@ const PoolRow = styled.div`
     }
 `;
 
-const FooterRow = styled.div`
-    height: 56px;
-`;
-
 const TableCell = styled.div`
     display: flex;
     align-items: center;
@@ -214,21 +210,24 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPoolsChart = () => {
         if (marketStore.assetPricesLoaded) {
-            pools.sort((a, b) => {
-                return (
-                    Number(marketStore.getPortfolioValue(b)) -
-                    Number(marketStore.getPortfolioValue(a))
+            let poolsShown = pools
+                .sort((a, b) => {
+                    return (
+                        Number(marketStore.getPortfolioValue(b)) -
+                        Number(marketStore.getPortfolioValue(a))
+                    );
+                })
+                .filter(
+                    pool => Number(marketStore.getPortfolioValue(pool)) > 0
                 );
-            });
-        }
-        return (
-            <React.Fragment>
-                {pools.map(pool => {
-                    let liquidityText = '-';
-                    let userLiquidityText = '-';
-                    let volumeText = '-';
 
-                    if (marketStore.assetPricesLoaded) {
+            return (
+                <React.Fragment>
+                    {poolsShown.map(pool => {
+                        let liquidityText = '-';
+                        let userLiquidityText = '-';
+                        let volumeText = '-';
+
                         const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
@@ -250,47 +249,47 @@ const LiquidityPanel = observer((props: Props) => {
                         const volume = marketStore.getPoolVolume(pool);
 
                         volumeText = formatCurrency(volume);
-                    }
 
-                    return (
-                        <PoolLink
-                            key={pool.address}
-                            to={`/pool/${pool.address}`}
-                        >
-                            <PoolRow>
-                                <TableCell width="15%">
-                                    <Identicon address={pool.address} />
-                                    <IdenticonText>
-                                        {shortenAddress(pool.address)}
-                                    </IdenticonText>
-                                </TableCell>
-                                <AssetCell>
-                                    <PieChartWrapper>
-                                        <Pie
-                                            type={'doughnut'}
-                                            data={formatPoolAssetChartData(
-                                                pool,
-                                                contractMetadataStore.contractMetadata
-                                            )}
-                                            options={options}
-                                        />
-                                    </PieChartWrapper>
-                                    <BreakdownContainer>
-                                        {renderAssetPercentages(pool)}
-                                    </BreakdownContainer>
-                                </AssetCell>
-                                <TableCellHideMobile width="12%">
-                                    {formatFee(pool.swapFee)}
-                                </TableCellHideMobile>
-                                <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
-                                <TableCellRightHideMobile width="12%">{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
-                                <TableCellRightHideMobile width="15%">{`$ ${volumeText}`}</TableCellRightHideMobile>
-                            </PoolRow>
-                        </PoolLink>
-                    );
-                })}
-            </React.Fragment>
-        );
+                        return (
+                            <PoolLink
+                                key={pool.address}
+                                to={`/pool/${pool.address}`}
+                            >
+                                <PoolRow>
+                                    <TableCell width="15%">
+                                        <Identicon address={pool.address} />
+                                        <IdenticonText>
+                                            {shortenAddress(pool.address)}
+                                        </IdenticonText>
+                                    </TableCell>
+                                    <AssetCell>
+                                        <PieChartWrapper>
+                                            <Pie
+                                                type={'doughnut'}
+                                                data={formatPoolAssetChartData(
+                                                    pool,
+                                                    contractMetadataStore.contractMetadata
+                                                )}
+                                                options={options}
+                                            />
+                                        </PieChartWrapper>
+                                        <BreakdownContainer>
+                                            {renderAssetPercentages(pool)}
+                                        </BreakdownContainer>
+                                    </AssetCell>
+                                    <TableCellHideMobile width="12%">
+                                        {formatFee(pool.swapFee)}
+                                    </TableCellHideMobile>
+                                    <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
+                                    <TableCellRightHideMobile width="12%">{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
+                                    <TableCellRightHideMobile width="15%">{`$ ${volumeText}`}</TableCellRightHideMobile>
+                                </PoolRow>
+                            </PoolLink>
+                        );
+                    })}
+                </React.Fragment>
+            );
+        }
     };
 
     const renderPools = () => {
@@ -350,7 +349,6 @@ const LiquidityPanel = observer((props: Props) => {
                 </TableCellRightHideMobile>
             </HeaderRow>
             {renderPools()}
-            <FooterRow />
         </Wrapper>
     );
 });
