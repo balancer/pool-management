@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { formatDate } from '../../utils/helpers';
+import { padToDecimalPlaces } from '../../utils/helpers';
+import { addZero, getEtherscanLink } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
+import { TokenIconAddress } from '../Common/WalletBalances';
+import { getAddress } from 'ethers/utils';
+
+const formatDate = timestamp => {
+    const date = new Date(timestamp * 1000);
+    return `${addZero(date.getDay())}/${addZero(
+        date.getMonth()
+    )}/${date.getFullYear()} ${addZero(date.getHours())}:${addZero(
+        date.getMinutes()
+    )}:${addZero(date.getSeconds())}`;
+};
 
 interface Props {
     poolAddress: string;
@@ -52,7 +64,7 @@ const HeaderRow = styled.div`
 const TableCell = styled.div`
     display: flex;
     align-items: center;
-    width: ${props => props.width || '33.33%'};
+    width: ${props => props.width || '20%'};
 `;
 
 const TableRowLoad = styled.div`
@@ -83,15 +95,90 @@ const TableCellLoad = styled.div`
     cursor: pointer;
 `;
 
+const TableCellTokenHeader = styled.div`
+    display: flex;
+    width: ${props => props.width || '30%'};
+    align-items: center;
+    justify-content: center;
+`;
+
+const TableCellTokenIn = styled.div`
+    display: flex;
+    width: ${props => props.width || '10%'};
+    align-items: center;
+    justify-content: flex-end;
+`;
+
+const TableCellTokenOut = styled.div`
+    display: flex;
+    width: ${props => props.width || '10%'};
+    align-items: center;
+    justify-content: flex-start;
+`;
+
+const TokenIconOut = styled.img`
+    width: 20px;
+    height: 20px;
+    margin-left: 7px;
+    margin-right: 7px;
+`;
+
+const TokenIconIn = styled.img`
+    width: 20px;
+    height: 20px;
+    margin-right: 7px;
+    margin-left: 7px;
+`;
+
+const TableCellAmountIn = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: ${props => props.width || '20%'};
+`;
+
+const TableCellAmountOut = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: ${props => props.width || '17%'};
+`;
+
+const TableCellTxHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: ${props => props.width || '20%'};
+`;
+
+const TableCellTxDetails = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: ${props => props.width || '23%'};
+`;
+
+const StyledLink = styled.a`
+    color: var(--inactive-button-text);
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 22px;
+    text-decoration: none;
+    color: var(--highlighted-selector-text);
+`;
+
 const SwapsTable = observer((props: Props) => {
     const { poolAddress } = props;
 
     const {
-        root: { swapsTableStore },
+        root: { swapsTableStore, contractMetadataStore, providerStore },
     } = useStores();
 
     const pageIncrement = 50;
     const [graphSkip, setGraphSkip] = useState(0);
+    const chainId = providerStore.providerStatus.activeChainId;
 
     useEffect(() => {
         if (graphSkip === 0) swapsTableStore.clearPoolSwaps();
@@ -123,21 +210,68 @@ const SwapsTable = observer((props: Props) => {
         }
     };
 
-    const renderSwapsTable = swaps => {
+    const renderSwapsTable = (swaps, contractMetadataStore) => {
         let bottomRow = renderBottomRow(swaps);
 
         return (
             <React.Fragment>
                 {swaps.map((swap, index) => {
+                    let tokenInIcon,
+                        tokenOutIcon = '';
+                    try {
+                        let tokenMetadata = contractMetadataStore.getTokenMetadata(
+                            getAddress(swap.tokenIn)
+                        );
+
+                        tokenInIcon = TokenIconAddress(
+                            tokenMetadata.iconAddress,
+                            tokenMetadata.isSupported
+                        );
+
+                        tokenMetadata = contractMetadataStore.getTokenMetadata(
+                            getAddress(swap.tokenOut)
+                        );
+
+                        tokenOutIcon = TokenIconAddress(
+                            tokenMetadata.iconAddress,
+                            tokenMetadata.isSupported
+                        );
+                    } catch (err) {
+                        console.log(`[SwapsTable] Error Loading Token Icon.`);
+                    }
+
+                    const tx = swap.id.split('-')[0];
+                    const amountOut = padToDecimalPlaces(
+                        swap.tokenAmountOut,
+                        18
+                    );
+                    const amountIn = padToDecimalPlaces(swap.tokenAmountIn, 18);
+
                     return (
                         <TableRow key={index}>
                             <TableCell>{formatDate(swap.timestamp)}</TableCell>
-                            <TableCell>
-                                {swap.tokenAmountIn} {swap.tokenInSym}
-                            </TableCell>
-                            <TableCell>
-                                {swap.tokenAmountOut} {swap.tokenOutSym}
-                            </TableCell>
+                            <TableCellAmountIn>{amountIn}</TableCellAmountIn>
+                            <TableCellTokenIn>
+                                {swap.tokenInSym}
+                                <TokenIconIn src={tokenInIcon} />
+                            </TableCellTokenIn>
+                            <TableCellTokenOut>
+                                <TokenIconOut src={tokenOutIcon} />
+                                {swap.tokenOutSym}
+                            </TableCellTokenOut>
+                            <TableCellAmountOut>{amountOut}</TableCellAmountOut>
+                            <TableCellTxDetails>
+                                <StyledLink
+                                    href={getEtherscanLink(
+                                        chainId,
+                                        tx,
+                                        'transaction'
+                                    )}
+                                    target="_blank"
+                                >
+                                    Tx Details
+                                </StyledLink>
+                            </TableCellTxDetails>
                         </TableRow>
                     );
                 })}
@@ -152,10 +286,11 @@ const SwapsTable = observer((props: Props) => {
             <TableWrapper>
                 <HeaderRow>
                     <TableCell>Time</TableCell>
-                    <TableCell>Token In</TableCell>
-                    <TableCell>Token Out</TableCell>
+                    <TableCellTokenHeader>Trade In</TableCellTokenHeader>
+                    <TableCellTokenHeader>Trade Out</TableCellTokenHeader>
+                    <TableCellTxHeader>Tx Details</TableCellTxHeader>
                 </HeaderRow>
-                {renderSwapsTable(swaps)}
+                {renderSwapsTable(swaps, contractMetadataStore)}
             </TableWrapper>
         </Wrapper>
     );

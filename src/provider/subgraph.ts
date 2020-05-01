@@ -153,6 +153,7 @@ export async function fetchPoolSwaps(
       {
         pools(where: {id: "${poolAddress.toLowerCase()}"}) {
           swaps(first: ${pageIncrement} , skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
+            id
             timestamp
             tokenIn
             tokenInSym
