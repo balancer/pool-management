@@ -6,6 +6,7 @@ import { addZero, getEtherscanLink } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { TokenIconAddress } from '../Common/WalletBalances';
 import { getAddress } from 'ethers/utils';
+const ExternalLink = require('../../assets/images/external-link.svg') as string;
 
 const formatDate = timestamp => {
     const date = new Date(timestamp * 1000);
@@ -169,6 +170,15 @@ const StyledLink = styled.a`
     color: var(--highlighted-selector-text);
 `;
 
+const ExternalIcon = styled.img`
+    width: 20px;
+    height: 20px;
+    margin-right: 7px;
+    margin-left: 7px;
+    filter: invert(67%) sepia(15%) saturate(333%) hue-rotate(155deg)
+        brightness(94%) contrast(88%);
+`;
+
 const SwapsTable = observer((props: Props) => {
     const { poolAddress } = props;
 
@@ -190,21 +200,30 @@ const SwapsTable = observer((props: Props) => {
         setGraphSkip(graphSkip + pageIncrement);
     };
 
+    const swapsLoaded = swapsTableStore.isLoaded;
     const swaps = swapsTableStore.swaps;
 
     const renderBottomRow = swaps => {
-        if (swaps.length > 0) {
-            return (
-                <TableRowLoad key={'more'}>
-                    <TableCellLoad onClick={e => pageGraph()}>
-                        LOAD MORE
-                    </TableCellLoad>
-                </TableRowLoad>
-            );
+        if (swapsLoaded) {
+            if (swaps.length > 0) {
+                return (
+                    <TableRowLoad key={'more'}>
+                        <TableCellLoad onClick={e => pageGraph()}>
+                            LOAD MORE
+                        </TableCellLoad>
+                    </TableRowLoad>
+                );
+            } else {
+                return (
+                    <TableRowLoad key={'no-swaps'}>
+                        <TableCellLoad>NO SWAPS</TableCellLoad>
+                    </TableRowLoad>
+                );
+            }
         } else {
             return (
-                <TableRowLoad key={'no-swaps'}>
-                    <TableCellLoad>NO SWAPS</TableCellLoad>
+                <TableRowLoad key={'loading'}>
+                    <TableCellLoad>Loading...</TableCellLoad>
                 </TableRowLoad>
             );
         }
@@ -269,7 +288,7 @@ const SwapsTable = observer((props: Props) => {
                                     )}
                                     target="_blank"
                                 >
-                                    Tx Details
+                                    <ExternalIcon src={ExternalLink} alt="^" />
                                 </StyledLink>
                             </TableCellTxDetails>
                         </TableRow>
