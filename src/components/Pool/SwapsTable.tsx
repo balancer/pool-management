@@ -23,7 +23,6 @@ interface Props {
 
 const Wrapper = styled.div`
     width: 100%;
-    padding-top: 8px;
 `;
 
 const TableWrapper = styled.div`

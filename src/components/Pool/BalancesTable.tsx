@@ -14,12 +14,11 @@ import {
 
 const Wrapper = styled.div`
     width: 100%;
-    padding-top: 8px;
 `;
 
 const TableWrapper = styled.div`
     border: 1px solid var(--panel-border);
-    border-radius: 4px;
+    border-radius: 0 4px 4px 4px;
     background: var(--panel-background);
 `;
 

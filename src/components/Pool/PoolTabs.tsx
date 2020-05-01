@@ -13,27 +13,24 @@ const STabs = styled(Tabs)`
 `;
 
 const STabList = styled(TabList)`
-    border-bottom: 1px solid var(--panel-border);
-    margin: 0 0 10px;
+    margin: 20px 0 0 0;
     padding: 0;
 `;
 
 const STab = styled(Tab)`
-    font-family: Roboto;
     display: inline-block;
-    border: 1px solid transparent;
     border-bottom: none;
     bottom: -1px;
     position: relative;
     list-style: none;
-    padding: 6px 12px;
+    padding: 10px 15px;
     cursor: pointer;
     color: var(--inactive-button-text);
     &.react-tabs__tab--selected {
         background: var(--highlighted-selector-background);
         border-color: var(--panel-border);
         color: var(--header-text);
-        border-radius: 5px 5px 0 0;
+        border-radius: 4px 4px 0 0;
     }
     &.react-tabs__tab--disabled {
         color: GrayText;
