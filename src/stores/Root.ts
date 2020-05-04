@@ -10,6 +10,7 @@ import ContractMetadataStore from './ContractMetadata';
 import MarketStore from './Market';
 import AddLiquidityFormStore from './AddLiquidityForm';
 import RemoveLiquidityFormStore from './RemoveLiquidityForm';
+import SwapsTableStore from './SwapsTable';
 
 export default class RootStore {
     providerStore: ProviderStore;
@@ -23,6 +24,7 @@ export default class RootStore {
     contractMetadataStore: ContractMetadataStore;
     addLiquidityFormStore: AddLiquidityFormStore;
     removeLiquidityFormStore: RemoveLiquidityFormStore;
+    swapsTableStore: SwapsTableStore;
 
     constructor() {
         this.providerStore = new ProviderStore(this);
@@ -36,6 +38,7 @@ export default class RootStore {
         this.contractMetadataStore = new ContractMetadataStore(this);
         this.addLiquidityFormStore = new AddLiquidityFormStore(this);
         this.removeLiquidityFormStore = new RemoveLiquidityFormStore(this);
+        this.swapsTableStore = new SwapsTableStore(this);
 
         this.asyncSetup().catch(e => {
             //TODO: Add retry on these fetches
