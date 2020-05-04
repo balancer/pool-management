@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { padToDecimalPlaces } from '../../utils/helpers';
@@ -10,7 +10,7 @@ const ExternalLink = require('../../assets/images/external-link.svg') as string;
 
 const formatDate = timestamp => {
     const date = new Date(timestamp * 1000);
-    return `${addZero(date.getDay())}/${addZero(
+    return `${addZero(date.getDate())}/${addZero(
         date.getMonth()
     )}/${date.getFullYear()} ${addZero(date.getHours())}:${addZero(
         date.getMinutes()
@@ -185,22 +185,18 @@ const SwapsTable = observer((props: Props) => {
         root: { swapsTableStore, contractMetadataStore, providerStore },
     } = useStores();
 
-    const pageIncrement = 50;
-    const [graphSkip, setGraphSkip] = useState(0);
     const chainId = providerStore.providerStatus.activeChainId;
 
-    useEffect(() => {
-        if (graphSkip === 0) swapsTableStore.clearPoolSwaps();
-
-        swapsTableStore.fetchPoolSwaps(poolAddress, pageIncrement, graphSkip);
-    }, [poolAddress, graphSkip, swapsTableStore]);
-
     const pageGraph = () => {
-        setGraphSkip(graphSkip + pageIncrement);
+        swapsTableStore.pagePoolSwaps(poolAddress);
     };
 
     const swapsLoaded = swapsTableStore.isLoaded;
     const swaps = swapsTableStore.swaps;
+
+    if (!swapsLoaded) {
+        swapsTableStore.fetchPoolSwaps(poolAddress);
+    }
 
     const renderBottomRow = swaps => {
         if (swapsLoaded) {

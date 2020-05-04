@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PoolAssetChartPanel from '../components/Pool/PoolAssetChartPanel';
 import AddRemovePanel from '../components/Pool/AddRemovePanel';
@@ -56,8 +56,15 @@ const Pool = observer((props: RouteComponentProps) => {
             addLiquidityFormStore,
             removeLiquidityFormStore,
             tokenStore,
+            swapsTableStore,
         },
     } = useStores();
+
+    useEffect(() => {
+        return function cleanup() {
+            swapsTableStore.clearPoolSwaps();
+        };
+    }, [poolAddress, swapsTableStore]);
 
     if (!isAddress(poolAddress)) {
         return (
