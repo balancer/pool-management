@@ -151,18 +151,15 @@ export async function fetchPoolSwaps(
 ): Promise<any[]> {
     const query = `
       {
-        pools(where: {id: "${poolAddress.toLowerCase()}"}) {
-          swaps(first: ${pageIncrement} , skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
-            id
-            timestamp
-            tokenIn
-            tokenInSym
-            tokenAmountIn
-            tokenOut
-            tokenOutSym
-            tokenAmountOut
-          }
-
+        swaps(where: {poolAddress: "${poolAddress.toLowerCase()}"}, first: ${pageIncrement} , skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
+          id
+          timestamp
+          tokenIn
+          tokenInSym
+          tokenAmountIn
+          tokenOut
+          tokenOutSym
+          tokenAmountOut
         }
       }
     `;
@@ -179,6 +176,5 @@ export async function fetchPoolSwaps(
     });
 
     const { data } = await response.json();
-    if (data.pools.length > 0) return data.pools[0].swaps;
-    else return [];
+    return data.swaps;
 }
