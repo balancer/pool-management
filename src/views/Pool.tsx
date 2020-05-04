@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PoolAssetChartPanel from '../components/Pool/PoolAssetChartPanel';
 import AddRemovePanel from '../components/Pool/AddRemovePanel';
 import InfoPanel from '../components/Pool/InfoPanel';
-import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import RemoveLiquidityModal from '../components/RemoveLiquidity/RemoveLiquidityModal';
 import { observer } from 'mobx-react';
@@ -16,6 +15,7 @@ import {
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';
+import PoolTabs from '../components/Pool/PoolTabs';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -44,8 +44,6 @@ const InfoPanelWrapper = styled.div`
     }
 `;
 
-const SwapsTable = styled.div``;
-
 const Pool = observer((props: RouteComponentProps) => {
     const poolAddress = toChecksum(props.match.params.poolAddress);
     const {
@@ -58,8 +56,15 @@ const Pool = observer((props: RouteComponentProps) => {
             addLiquidityFormStore,
             removeLiquidityFormStore,
             tokenStore,
+            swapsTableStore,
         },
     } = useStores();
+
+    useEffect(() => {
+        return function cleanup() {
+            swapsTableStore.clearPoolSwaps();
+        };
+    }, [poolAddress, swapsTableStore]);
 
     if (!isAddress(poolAddress)) {
         return (
@@ -140,8 +145,7 @@ const Pool = observer((props: RouteComponentProps) => {
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />
                 <InfoPanel text={shareText} subText="My Pool Share" />
             </InfoPanelWrapper>
-            <BalancesTable poolAddress={poolAddress} />
-            <SwapsTable />
+            <PoolTabs poolAddress={poolAddress} />
         </PoolViewWrapper>
     );
 });

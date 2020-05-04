@@ -14,23 +14,12 @@ import {
 
 const Wrapper = styled.div`
     width: 100%;
-    padding-top: 8px;
 `;
 
 const TableWrapper = styled.div`
     border: 1px solid var(--panel-border);
-    border-radius: 4px;
+    border-radius: 0 4px 4px 4px;
     background: var(--panel-background);
-`;
-
-const Header = styled.div`
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 19px;
-    color: var(--header-text);
-    padding: 24px 0px 24px 0px;
 `;
 
 const HeaderRow = styled.div`
@@ -217,7 +206,6 @@ const BalancesTable = observer((props: Props) => {
 
     return (
         <Wrapper>
-            <Header>Balances</Header>
             <TableWrapper>
                 <HeaderRow>
                     <TableCell>Token</TableCell>
