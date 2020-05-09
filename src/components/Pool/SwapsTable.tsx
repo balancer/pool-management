@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { padToDecimalPlaces } from '../../utils/helpers';
-import { addZero, getEtherscanLink } from '../../utils/helpers';
+import { getEtherscanLink } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { TokenIconAddress } from '../Common/WalletBalances';
 import { getAddress } from 'ethers/utils';
@@ -10,11 +10,11 @@ const ExternalLink = require('../../assets/images/external-link.svg') as string;
 
 const formatDate = timestamp => {
     const date = new Date(timestamp * 1000);
-    return `${addZero(date.getDate())}/${addZero(
-        date.getMonth()
-    )}/${date.getFullYear()} ${addZero(date.getHours())}:${addZero(
-        date.getMinutes()
-    )}:${addZero(date.getSeconds())}`;
+    let z = date.getTimezoneOffset() * 60 * 1000;
+    let tLocal = new Date(timestamp * 1000 - z);
+    let iso = tLocal.toISOString();
+    iso = iso.slice(0, 19).replace('T', ' ');
+    return iso;
 };
 
 interface Props {
