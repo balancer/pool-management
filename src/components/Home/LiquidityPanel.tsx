@@ -50,6 +50,10 @@ const PoolRow = styled.div`
     font-size: 14px;
     line-height: 16px;
 
+    @media screen and (max-width: 1024px) {
+        padding: 20px 5px 20px 5px;
+    }
+
     &:hover {
         background: var(--panel-border);
     }
@@ -60,7 +64,7 @@ const TableCell = styled.div`
     align-items: center;
     width: ${props => props.width || '12%'};
     @media screen and (max-width: 1024px) {
-        width: 33%;
+        width: 30%;
     }
 `;
 
@@ -73,6 +77,10 @@ const TableCellHideMobile = styled(TableCell)`
 
 const AssetCell = styled(TableCell)`
     width: 46%;
+
+    @media screen and (max-width: 1024px) {
+        width: 65%;
+    }
 `;
 
 const TableCellRight = styled(TableCell)`
@@ -256,12 +264,12 @@ const LiquidityPanel = observer((props: Props) => {
                                 to={`/pool/${pool.address}`}
                             >
                                 <PoolRow>
-                                    <TableCell width="15%">
+                                    <TableCellHideMobile>
                                         <Identicon address={pool.address} />
                                         <IdenticonText>
                                             {shortenAddress(pool.address)}
                                         </IdenticonText>
-                                    </TableCell>
+                                    </TableCellHideMobile>
                                     <AssetCell>
                                         <PieChartWrapper>
                                             <Pie
@@ -277,12 +285,12 @@ const LiquidityPanel = observer((props: Props) => {
                                             {renderAssetPercentages(pool)}
                                         </BreakdownContainer>
                                     </AssetCell>
-                                    <TableCellHideMobile width="12%">
+                                    <TableCellHideMobile>
                                         {formatFee(pool.swapFee)}
                                     </TableCellHideMobile>
-                                    <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
-                                    <TableCellRightHideMobile width="12%">{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
-                                    <TableCellRightHideMobile width="15%">{`$ ${volumeText}`}</TableCellRightHideMobile>
+                                    <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
+                                    <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
+                                    <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
                                 </PoolRow>
                             </PoolLink>
                         );
@@ -337,14 +345,14 @@ const LiquidityPanel = observer((props: Props) => {
     return (
         <Wrapper>
             <HeaderRow>
-                <TableCell width="15%">Pool Address</TableCell>
+                <TableCellHideMobile>Pool Address</TableCellHideMobile>
                 <AssetCell>Assets</AssetCell>
-                <TableCellHideMobile width="12%">Swap Fee</TableCellHideMobile>
-                <TableCellRight width="12%">Liquidity</TableCellRight>
-                <TableCellRightHideMobile width="12%">
+                <TableCellHideMobile>Swap Fee</TableCellHideMobile>
+                <TableCellRight>Liquidity</TableCellRight>
+                <TableCellRightHideMobile>
                     My Liquidity
                 </TableCellRightHideMobile>
-                <TableCellRightHideMobile width="15%">
+                <TableCellRightHideMobile>
                     Trade Volume (24h)
                 </TableCellRightHideMobile>
             </HeaderRow>
