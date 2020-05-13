@@ -298,6 +298,15 @@
                 "iconAddress": "0x9Cb2f26A23b8d89973F08c957C4d7cdf75CD341c",
                 "precision": 2,
                 "chartColor": "#07A2EF"
+            },
+            {
+                "symbol": "UMA",
+                "address": "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828",
+                "decimals": 18,
+                "ticker": "UMA",
+                "iconAddress": "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828",
+                "precision": 2,
+                "chartColor": "#ff4040"
             }
         ]
     }
