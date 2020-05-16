@@ -1,12 +1,12 @@
 const colors: string[] = [
-    '#FFCC80',
-    '#CE93D8',
-    '#B0BEC5',
-    '#BCAAA4',
-    '#FFF59D',
-    '#80CBC4',
-    '#F48FB1',
-    '#90CAF9',
+    '#6f6776',
+    '#9a9a97',
+    '#c5ccb8',
+    '#c38890',
+    '#a593a5',
+    '#666092',
+    '#9a4f50',
+    '#c28d75',
 ];
 
 let colorIndex = 0;
