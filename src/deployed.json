@@ -370,6 +370,15 @@
                 "iconAddress": "0x6Ee0f7BB50a54AB5253dA0667B0Dc2ee526C30a8",
                 "precision": 2,
                 "chartColor": "#93a167"
+            },
+            {
+                "symbol": "PNK",
+                "address": "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d",
+                "decimals": 18,
+                "ticker": "PNK",
+                "iconAddress": "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d",
+                "precision": 2,
+                "chartColor": "#5d2e9a"
             }
         ]
     }
