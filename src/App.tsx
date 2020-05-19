@@ -5,6 +5,7 @@ import './App.css';
 import Web3Manager from 'components/Web3Manager';
 import Header from 'components/Common/Header';
 import Home from 'views/Home';
+import Private from 'views/Private';
 import Pool from 'views/Pool';
 import LeftNav from 'components/Common/LeftNav';
 import WalletBalances from 'components/Common/WalletBalances';
@@ -29,9 +30,10 @@ const App = () => {
         return (
             <div className="app-shell">
                 <Switch>
-                    <Route path="/list" component={Home} />
                     <Route path="/pool/:poolAddress" component={Pool} />
-                    <Redirect from="/" to="/list" />
+                    <Route path="/private" component={Private} />
+                    <Redirect from="/list" to="/" />
+                    <Route path="/" component={Home} />
                 </Switch>
             </div>
         );

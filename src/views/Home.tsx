@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import WarningMessage from '../components/Home/WarningMessage';
 import MyLiquidity from '../components/Home/MyLiquidity';
-import AllPools from '../components/Home/AllPools';
+import SharedPools from '../components/Home/SharedPools';
 
 const HomeWrapper = styled.div`
     position: relative;
@@ -18,7 +18,7 @@ const Home = () => {
         <HomeWrapper>
             <WarningMessage />
             <MyLiquidity />
-            <AllPools />
+            <SharedPools />
         </HomeWrapper>
     );
 };

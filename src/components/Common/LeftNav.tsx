@@ -13,25 +13,6 @@ const NavContainer = styled.div`
     margin-top: 20px;
 `;
 
-const ComingSoon = styled.p`
-    margin-left: 5px;
-    font-size: 10px;
-`;
-
-const NavElement = styled.a`
-    display: flex;
-    align-items: center;
-    height: 40px;
-    padding-left: 30px;
-    color: var(--inactive-button-text);
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 22px;
-    text-decoration: none;
-`;
-
 const StyledLink = styled(Link)`
     display: flex;
     align-items: center;
@@ -45,8 +26,6 @@ const StyledLink = styled(Link)`
     line-height: 22px;
     text-decoration: none;
     color: var(--highlighted-selector-text);
-    background-color: var(--highlighted-selector-background);
-    border-left: 3px solid var(--highlighted-selector-border);
     padding-left: 27px;
 `;
 
@@ -55,9 +34,7 @@ const LeftNav = () => {
         <Wrapper>
             <NavContainer>
                 <StyledLink to={`/`}>Shared Pools</StyledLink>
-                <NavElement>
-                    My Private Pools <ComingSoon>(coming soon)</ComingSoon>
-                </NavElement>
+                <StyledLink to={`/private`}>Private Pools</StyledLink>
             </NavContainer>
         </Wrapper>
     );
