@@ -6,10 +6,7 @@ import RemoveAssetTable from './RemoveAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 
-import {
-    bnum,
-    formatPercentage,
-} from '../../utils/helpers';
+import { bnum, formatPercentage } from '../../utils/helpers';
 
 const Container = styled.div`
     display: block;
@@ -123,8 +120,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
         },
     } = useStores();
 
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
 
@@ -149,7 +145,6 @@ const RemoveLiquidityModal = observer((props: Props) => {
             shareToWithdraw
         );
         await poolStore.exitPool(
-            web3React,
             pool.address,
             poolTokens.integerValue().toString(),
             poolStore.formatZeroMinAmountsOut(pool.address)
@@ -174,33 +169,36 @@ const RemoveLiquidityModal = observer((props: Props) => {
         if (pool && currentTotal) {
             const previewTokens = removeLiquidityFormStore.hasValidInput()
                 ? poolStore.getUserTokenPercentage(
-                    pool.address,
-                    account,
-                    removeLiquidityFormStore.getShareToWithdraw()
-                )
+                      pool.address,
+                      account,
+                      removeLiquidityFormStore.getShareToWithdraw()
+                  )
                 : bnum(0);
 
             const futureTotal = currentTotal.minus(previewTokens);
-            const futureShare = (userBalance.minus(previewTokens)).div(futureTotal);
+            const futureShare = userBalance
+                .minus(previewTokens)
+                .div(futureTotal);
 
             currentPoolShare = formatPercentage(existingShare, 2);
             futurePoolShare = formatPercentage(futureShare, 2);
         }
 
         if (!account) {
-            return <Notification>Connect wallet to remove liquidity</Notification>;
+            return (
+                <Notification>Connect wallet to remove liquidity</Notification>
+            );
         }
 
         if (removeLiquidityFormStore.hasValidInput()) {
             const text = account ? (
                 <React.Fragment>
-                    Withdrawing {removeLiquidityFormStore.getShareToWithdraw()}% of your liquidity. Your pool share will go from {currentPoolShare} to{' '}
-                    {futurePoolShare}
+                    Withdrawing {removeLiquidityFormStore.getShareToWithdraw()}%
+                    of your liquidity. Your pool share will go from{' '}
+                    {currentPoolShare} to {futurePoolShare}
                 </React.Fragment>
             ) : (
-                <React.Fragment>
-                    
-                </React.Fragment>
+                <React.Fragment></React.Fragment>
             );
             return <Notification>{text}</Notification>;
         } else {
@@ -229,9 +227,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
     const ref = useRef();
 
-    useOnClickOutside(ref, () =>
-        removeLiquidityFormStore.closeModal()
-    );
+    useOnClickOutside(ref, () => removeLiquidityFormStore.closeModal());
 
     return (
         <Container style={{ display: modalOpen ? 'block' : 'none' }}>

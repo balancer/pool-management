@@ -13,10 +13,12 @@ export async function fetchAssetPrices(
 ): Promise<MarketAssetPriceMap> {
     let idQueryString = '';
     symbolsToFetch.forEach((symbol, index) => {
-        if (index === symbolsToFetch.length - 1) {
-            idQueryString += `${assetData[symbol].id}`;
-        } else {
-            idQueryString += `${assetData[symbol].id}%2C`;
+        if (symbol !== '') {
+            if (index === symbolsToFetch.length - 1) {
+                idQueryString += `${assetData[symbol].id}`;
+            } else {
+                idQueryString += `${assetData[symbol].id}%2C`;
+            }
         }
     });
 

@@ -3,18 +3,14 @@ import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
 import { bnum, scale } from 'utils/helpers';
-import { parseEther } from 'ethers/utils';
+import { parseEther, Interface } from 'ethers/utils';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
-import {
-    AsyncStatus,
-    TokenBalanceFetch,
-    TotalSupplyFetch,
-    UserAllowanceFetch,
-} from './actions/fetch';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import { AsyncStatus, UserAllowanceFetch } from './actions/fetch';
 import { BigNumberMap } from '../types';
 import { ActionResponse } from './actions/actions';
+
+const tokenAbi = require('../abi/TestToken').abi;
 
 export interface ContractMetadata {
     bFactory: string;
@@ -115,51 +111,39 @@ export default class TokenStore {
     }
 
     @action async fetchAccountApprovals(
-        web3React,
         tokenAddresses: string[],
         account: string,
         spender: string
     ) {
-        const { providerStore } = this.rootStore;
+        const { providerStore, contractMetadataStore } = this.rootStore;
+        const calls = [];
 
-        const promises: Promise<any>[] = [];
-        const fetchBlock = providerStore.getCurrentBlockNumber();
-        tokenAddresses.forEach(tokenAddress => {
-            promises.push(
-                this.fetchAllowance(
-                    web3React,
-                    tokenAddress,
-                    account,
-                    spender,
-                    fetchBlock
-                )
-            );
+        const multiAddress = contractMetadataStore.getMultiAddress();
+        const multi = providerStore.getContract(
+            ContractTypes.Multicall,
+            multiAddress
+        );
+
+        const iface = new Interface(tokenAbi);
+
+        tokenAddresses.forEach(value => {
+            calls.push([
+                value,
+                iface.functions.allowance.encode([account, spender]),
+            ]);
         });
 
-        let allFetchesSuccess = true;
-
         try {
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response instanceof UserAllowanceFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setAllowanceProperty(
-                            request.tokenAddress,
-                            request.owner,
-                            request.spender,
-                            payload.allowance,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                }
-            });
+            const [blockNumber, response] = await multi.aggregate(calls);
+            const allowances = response.map(value => bnum(value));
 
-            if (allFetchesSuccess) {
-                console.debug('[Fetch Account Approvals] All Fetches Success');
-            }
+            this.setAllowances(
+                tokenAddresses,
+                account,
+                spender,
+                allowances,
+                blockNumber.toNumber()
+            );
         } catch (e) {
             console.error(
                 '[Fetch Account Approvals] Failure in one or more fetches',
@@ -167,6 +151,7 @@ export default class TokenStore {
             );
             return FetchCode.FAILURE;
         }
+
         return FetchCode.SUCCESS;
     }
 
@@ -189,6 +174,49 @@ export default class TokenStore {
         });
 
         return result;
+    }
+
+    private setAllowances(
+        tokens: string[],
+        owner: string,
+        spender: string,
+        approvals: BigNumber[],
+        fetchBlock: number
+    ) {
+        const chainApprovals = this.allowances;
+
+        approvals.forEach((approval, index) => {
+            const tokenAddress = tokens[index];
+
+            if (
+                (this.isAllowanceFetched(tokenAddress, owner, spender) &&
+                    this.isAllowanceStale(
+                        tokenAddress,
+                        owner,
+                        spender,
+                        fetchBlock
+                    )) ||
+                !this.isAllowanceFetched(tokenAddress, owner, spender)
+            ) {
+                if (!chainApprovals[tokenAddress]) {
+                    chainApprovals[tokenAddress] = {};
+                }
+
+                if (!chainApprovals[tokenAddress][owner]) {
+                    chainApprovals[tokenAddress][owner] = {};
+                }
+
+                chainApprovals[tokenAddress][owner][spender] = {
+                    allowance: approval,
+                    lastFetched: fetchBlock,
+                };
+            }
+        });
+
+        this.allowances = {
+            ...this.allowances,
+            ...chainApprovals,
+        };
     }
 
     private setAllowanceProperty(
@@ -216,35 +244,86 @@ export default class TokenStore {
         this.allowances = chainApprovals;
     }
 
-    private setTotalSupplyProperty(
-        tokenAddress: string,
-        totalSupply: BigNumber,
-        blockFetched: number
-    ): void {
-        this.totalSupplies[tokenAddress] = {
-            totalSupply: totalSupply,
-            lastFetched: blockFetched,
+    isBalanceFetched(tokenAddress: string, account: string) {
+        return (
+            !!this.balances[tokenAddress] &&
+            !!this.balances[tokenAddress][account]
+        );
+    }
+
+    isBalanceStale(tokenAddress: string, account: string, blockNumber: number) {
+        return this.balances[tokenAddress][account].lastFetched < blockNumber;
+    }
+
+    isSupplyFetched(tokenAddress: string) {
+        return !!this.totalSupplies[tokenAddress];
+    }
+
+    isSupplyStale(tokenAddress: string, blockNumber: number): boolean {
+        return this.totalSupplies[tokenAddress].lastFetched < blockNumber;
+    }
+
+    @action private setTotalSupplies(
+        tokens: string[],
+        supplies: BigNumber[],
+        fetchBlock: number
+    ) {
+        const fetchedSupplies: TotalSupplyMap = {};
+
+        supplies.forEach((supply, index) => {
+            const tokenAddress = tokens[index];
+
+            if (
+                (this.isSupplyFetched(tokenAddress) &&
+                    this.isSupplyStale(tokenAddress, fetchBlock)) ||
+                !this.isSupplyFetched(tokenAddress)
+            ) {
+                fetchedSupplies[tokenAddress] = {
+                    totalSupply: supply,
+                    lastFetched: fetchBlock,
+                };
+            }
+        });
+
+        this.totalSupplies = {
+            ...this.totalSupplies,
+            ...fetchedSupplies,
         };
     }
 
-    private setBalanceProperty(
-        tokenAddress: string,
+    @action private setBalances(
+        tokens: string[],
+        balances: BigNumber[],
         account: string,
-        balance: BigNumber,
-        blockFetched: number
-    ): void {
-        const chainBalances = this.balances;
+        fetchBlock: number
+    ) {
+        const fetchedBalances: TokenBalanceMap = {};
 
-        if (!chainBalances[tokenAddress]) {
-            chainBalances[tokenAddress] = {};
-        }
+        balances.forEach((balance, index) => {
+            const tokenAddress = tokens[index];
 
-        chainBalances[tokenAddress][account] = {
-            balance: balance,
-            lastFetched: blockFetched,
+            if (
+                (this.isBalanceFetched(tokenAddress, account) &&
+                    this.isBalanceStale(tokenAddress, account, fetchBlock)) ||
+                !this.isBalanceFetched(tokenAddress, account)
+            ) {
+                if (this.balances[tokenAddress]) {
+                    fetchedBalances[tokenAddress] = this.balances[tokenAddress];
+                } else {
+                    fetchedBalances[tokenAddress] = {};
+                }
+
+                fetchedBalances[tokenAddress][account] = {
+                    balance: balance,
+                    lastFetched: fetchBlock,
+                };
+            }
+        });
+
+        this.balances = {
+            ...this.balances,
+            ...fetchedBalances,
         };
-
-        this.balances = chainBalances;
     }
 
     getTotalSupply(tokenAddress: string): BigNumber | undefined {
@@ -286,13 +365,11 @@ export default class TokenStore {
     }
 
     @action approveMax = async (
-        web3React,
         tokenAddress,
         spender
     ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'approve',
@@ -301,13 +378,11 @@ export default class TokenStore {
     };
 
     @action revokeApproval = async (
-        web3React,
         tokenAddress,
         spender
     ): Promise<ActionResponse> => {
         const { providerStore } = this.rootStore;
         return await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'approve',
@@ -316,167 +391,103 @@ export default class TokenStore {
     };
 
     @action fetchTotalSupplies = async (
-        web3React: Web3ReactContextInterface,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
-        const { providerStore } = this.rootStore;
-
-        const promises: Promise<any>[] = [];
+        const { providerStore, contractMetadataStore } = this.rootStore;
+        const calls = [];
         const fetchBlock = providerStore.getCurrentBlockNumber();
-        tokensToTrack.forEach((value, index) => {
-            promises.push(this.fetchTotalSupply(web3React, value, fetchBlock));
-        });
 
-        let allFetchesSuccess = true;
+        const stale =
+            fetchBlock <= this.getTotalSupplyLastFetched(tokensToTrack[0]);
+        if (!stale) {
+            const multiAddress = contractMetadataStore.getMultiAddress();
+            const multi = providerStore.getContract(
+                ContractTypes.Multicall,
+                multiAddress
+            );
 
-        try {
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response instanceof TotalSupplyFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setTotalSupplyProperty(
-                            request.tokenAddress,
-                            payload.totalSupply,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                }
+            const iface = new Interface(tokenAbi);
+
+            tokensToTrack.forEach(value => {
+                calls.push([value, iface.functions.totalSupply.encode([])]);
             });
 
-            if (allFetchesSuccess) {
+            try {
+                const [blockNumber, response] = await multi.aggregate(calls);
+                const supplies = response.map(value =>
+                    bnum(iface.functions.totalSupply.decode(value))
+                );
+
+                this.setTotalSupplies(
+                    tokensToTrack,
+                    supplies,
+                    blockNumber.toNumber()
+                );
                 console.debug('[All Fetches Success]');
+            } catch (e) {
+                console.error('[Fetch] Total Supply Data', { error: e });
+                return FetchCode.FAILURE;
             }
-        } catch (e) {
-            console.error('[Fetch] Total Supply Data', { error: e });
-            return FetchCode.FAILURE;
         }
         return FetchCode.SUCCESS;
     };
 
     @action fetchTokenBalances = async (
-        web3React: Web3ReactContextInterface,
         account: string,
         tokensToTrack: string[]
     ): Promise<FetchCode> => {
-        const { providerStore } = this.rootStore;
+        const { providerStore, contractMetadataStore } = this.rootStore;
+        const calls = [];
         const promises: Promise<any>[] = [];
-        const fetchBlock = providerStore.getCurrentBlockNumber();
-        tokensToTrack.forEach((value, index) => {
-            promises.push(
-                this.fetchBalanceOf(web3React, value, account, fetchBlock)
-            );
+
+        const multiAddress = contractMetadataStore.getMultiAddress();
+        const multi = providerStore.getContract(
+            ContractTypes.Multicall,
+            multiAddress
+        );
+
+        const iface = new Interface(tokenAbi);
+
+        tokensToTrack.forEach(value => {
+            if (value !== EtherKey) {
+                calls.push([
+                    value,
+                    iface.functions.balanceOf.encode([account]),
+                ]);
+            }
         });
 
-        let allFetchesSuccess = true;
+        promises.push(multi.aggregate(calls));
+        promises.push(multi.getEthBalance(account));
 
         try {
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response instanceof TokenBalanceFetch) {
-                    const { status, request, payload } = response;
-                    if (status === AsyncStatus.SUCCESS) {
-                        this.setBalanceProperty(
-                            request.tokenAddress,
-                            request.account,
-                            payload.balance,
-                            payload.lastFetched
-                        );
-                    } else {
-                        allFetchesSuccess = false;
-                    }
-                }
-            });
-
-            if (allFetchesSuccess) {
-                console.debug('[All Fetches Success]');
+            const [[blockNumber, response], ethBalance] = await Promise.all(
+                promises
+            );
+            const balances = response.map(value =>
+                bnum(iface.functions.balanceOf.decode(value))
+            );
+            if (tokensToTrack[0] === EtherKey) {
+                balances.unshift(bnum(ethBalance));
             }
+
+            this.setBalances(
+                tokensToTrack,
+                balances,
+                account,
+                blockNumber.toNumber()
+            );
+
+            console.debug('[All Fetches Success]');
         } catch (e) {
             console.error('[Fetch] Balancer Token Data', { error: e });
             return FetchCode.FAILURE;
         }
-        return FetchCode.SUCCESS;
     };
 
-    @action fetchBalanceOf = async (
-        web3React: Web3ReactContextInterface,
-        tokenAddress: string,
-        account: string,
-        fetchBlock: number
-    ): Promise<TokenBalanceFetch> => {
-        const { providerStore } = this.rootStore;
-
-        /* Before and after the network operation, check for staleness
-            If the fetch is stale, don't do network call
-            If the fetch is stale after network call, don't set DB variable
-        */
-        const stale =
-            fetchBlock <= this.getBalanceLastFetched(tokenAddress, account);
-        if (!stale) {
-            let balance;
-
-            if (tokenAddress === EtherKey) {
-                const { library } = web3React;
-                balance = bnum(await library.getBalance(account));
-            } else {
-                const token = providerStore.getContract(
-                    web3React,
-                    ContractTypes.TestToken,
-                    tokenAddress
-                );
-                balance = bnum(await token.balanceOf(account));
-            }
-
-            const stale =
-                fetchBlock <= this.getBalanceLastFetched(tokenAddress, account);
-            if (!stale) {
-                console.debug('[Balance Fetch]', {
-                    tokenAddress,
-                    account,
-                    balance: balance.toString(),
-                    fetchBlock,
-                });
-                return new TokenBalanceFetch({
-                    status: AsyncStatus.SUCCESS,
-                    request: {
-                        tokenAddress,
-                        account,
-                        fetchBlock,
-                    },
-                    payload: {
-                        balance,
-                        lastFetched: fetchBlock,
-                    },
-                });
-            }
-        } else {
-            console.debug('[Balance Fetch] - Stale', {
-                tokenAddress,
-                account,
-                fetchBlock,
-            });
-            return new TokenBalanceFetch({
-                status: AsyncStatus.STALE,
-                request: {
-                    tokenAddress,
-                    account,
-                    fetchBlock,
-                },
-                payload: undefined,
-            });
-        }
-    };
-
-    @action mint = async (
-        web3React: Web3ReactContextInterface,
-        tokenAddress: string,
-        amount: string
-    ) => {
+    @action mint = async (tokenAddress: string, amount: string) => {
         const { providerStore } = this.rootStore;
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress,
             'mint',
@@ -484,73 +495,29 @@ export default class TokenStore {
         );
     };
 
-    @action fetchTotalSupply = async (
-        web3React: Web3ReactContextInterface,
-        tokenAddress: string,
-        fetchBlock: number
-    ): Promise<TotalSupplyFetch> => {
-        const { providerStore } = this.rootStore;
-        const token = providerStore.getContract(
-            web3React,
-            ContractTypes.TestToken,
-            tokenAddress
+    isAllowanceFetched(tokenAddress: string, owner: string, spender: string) {
+        const chainApprovals = this.allowances;
+        return (
+            !!chainApprovals[tokenAddress] &&
+            !!chainApprovals[tokenAddress][owner] &&
+            !!chainApprovals[tokenAddress][owner][spender]
         );
+    }
 
-        const stale =
-            fetchBlock <= this.getTotalSupplyLastFetched(tokenAddress);
-        if (!stale) {
-            try {
-                const totalSupply = bnum(await token.totalSupply());
-
-                const stale =
-                    fetchBlock <= this.getTotalSupplyLastFetched(tokenAddress);
-                if (!stale) {
-                    console.debug('[Total Supply Fetch]', {
-                        tokenAddress,
-                        totalSupply: totalSupply.toString(),
-                        fetchBlock,
-                    });
-                    return new TotalSupplyFetch({
-                        status: AsyncStatus.SUCCESS,
-                        request: {
-                            tokenAddress,
-                            fetchBlock,
-                        },
-                        payload: {
-                            totalSupply,
-                            lastFetched: fetchBlock,
-                        },
-                    });
-                }
-            } catch (e) {
-                return new TotalSupplyFetch({
-                    status: AsyncStatus.FAILURE,
-                    request: {
-                        tokenAddress,
-                        fetchBlock,
-                    },
-                    payload: undefined,
-                    error: e.message,
-                });
-            }
-        } else {
-            console.debug('[Total Supply Fetch] - Stale', {
-                tokenAddress,
-                fetchBlock,
-            });
-            return new TotalSupplyFetch({
-                status: AsyncStatus.STALE,
-                request: {
-                    tokenAddress,
-                    fetchBlock,
-                },
-                payload: undefined,
-            });
-        }
-    };
+    isAllowanceStale(
+        tokenAddress: string,
+        owner: string,
+        spender: string,
+        blockNumber: number
+    ) {
+        const chainApprovals = this.allowances;
+        return (
+            chainApprovals[tokenAddress][owner][spender].lastFetched <
+            blockNumber
+        );
+    }
 
     @action fetchAllowance = async (
-        web3React: Web3ReactContextInterface,
         tokenAddress: string,
         owner: string,
         spender: string,
@@ -576,7 +543,6 @@ export default class TokenStore {
         }
 
         const token = providerStore.getContract(
-            web3React,
             ContractTypes.TestToken,
             tokenAddress
         );

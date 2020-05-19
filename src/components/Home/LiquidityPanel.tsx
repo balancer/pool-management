@@ -50,13 +50,13 @@ const PoolRow = styled.div`
     font-size: 14px;
     line-height: 16px;
 
+    @media screen and (max-width: 1024px) {
+        padding: 20px 5px 20px 5px;
+    }
+
     &:hover {
         background: var(--panel-border);
     }
-`;
-
-const FooterRow = styled.div`
-    height: 56px;
 `;
 
 const TableCell = styled.div`
@@ -64,7 +64,7 @@ const TableCell = styled.div`
     align-items: center;
     width: ${props => props.width || '12%'};
     @media screen and (max-width: 1024px) {
-        width: 33%
+        width: 30%;
     }
 `;
 
@@ -77,12 +77,16 @@ const TableCellHideMobile = styled(TableCell)`
 
 const AssetCell = styled(TableCell)`
     width: 46%;
+
+    @media screen and (max-width: 1024px) {
+        width: 65%;
+    }
 `;
 
 const TableCellRight = styled(TableCell)`
     justify-content: flex-end;
     @media screen and (max-width: 1024px) {
-        width: 33%
+        width: 33%;
     }
 `;
 
@@ -162,9 +166,12 @@ const LiquidityPanel = observer((props: Props) => {
         root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
     const { pools, dataSource } = props;
-    const { account } = providerStore.getActiveWeb3React();
+    const account = providerStore.providerStatus.account;
 
     const options = {
+        animation: {
+            duration: 0,
+        },
         maintainAspectRatio: false,
         legend: {
             display: false,
@@ -175,7 +182,13 @@ const LiquidityPanel = observer((props: Props) => {
     };
 
     const renderAssetPercentages = (pool: Pool) => {
-        const sortedTokens = pool.tokens.slice().sort((a, b) => Number(b.denormWeightProportion) - Number(a.denormWeightProportion));
+        const sortedTokens = pool.tokens
+            .slice()
+            .sort(
+                (a, b) =>
+                    Number(b.denormWeightProportion) -
+                    Number(a.denormWeightProportion)
+            );
         return (
             <React.Fragment>
                 {sortedTokens.map((token, index) => {
@@ -205,24 +218,28 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPoolsChart = () => {
         if (marketStore.assetPricesLoaded) {
-            pools.sort((a, b) => {
-                return Number(marketStore.getPortfolioValue(b)) - Number(marketStore.getPortfolioValue(a));
-            });
-        }
-        return (
-            <React.Fragment>
-                {pools.map(pool => {
-                    let liquidityText = '-';
-                    let userLiquidityText = '-';
-                    let volumeText = '-';
+            let poolsShown = pools
+                .sort((a, b) => {
+                    return (
+                        Number(marketStore.getPortfolioValue(b)) -
+                        Number(marketStore.getPortfolioValue(a))
+                    );
+                })
+                .filter(
+                    pool => Number(marketStore.getPortfolioValue(pool)) > 0
+                );
 
-                    if (marketStore.assetPricesLoaded) {
+            return (
+                <React.Fragment>
+                    {poolsShown.map(pool => {
+                        let liquidityText = '-';
+                        let userLiquidityText = '-';
+                        let volumeText = '-';
+
                         const poolLiquidity = marketStore.getPortfolioValue(
                             pool
                         );
-                        liquidityText = formatCurrency(
-                            poolLiquidity
-                        );
+                        liquidityText = formatCurrency(poolLiquidity);
 
                         if (account) {
                             const userLiquidity = poolStore.calcUserLiquidity(
@@ -233,57 +250,60 @@ const LiquidityPanel = observer((props: Props) => {
                             if (userLiquidity) {
                                 userLiquidityText = formatCurrency(
                                     userLiquidity
-                                )
+                                );
                             }
                         }
 
                         const volume = marketStore.getPoolVolume(pool);
 
-                        volumeText = formatCurrency(
-                            volume
-                        )
-                    }
+                        volumeText = formatCurrency(volume);
 
-                    return (
-                        <PoolLink key={pool.address} to={`/pool/${pool.address}`}>
-                            <PoolRow>
-                                <TableCell width="15%">
-                                    <Identicon address={pool.address} />
-                                    <IdenticonText>
-                                        {shortenAddress(pool.address)}
-                                    </IdenticonText>
-                                </TableCell>
-                                <AssetCell>
-                                    <PieChartWrapper>
-                                        <Pie
-                                            type={'doughnut'}
-                                            data={formatPoolAssetChartData(
-                                                pool,
-                                                contractMetadataStore.contractMetadata
-                                            )}
-                                            options={options}
-                                        />
-                                    </PieChartWrapper>
-                                    <BreakdownContainer>
-                                        {renderAssetPercentages(pool)}
-                                    </BreakdownContainer>
-                                </AssetCell>
-                                <TableCellHideMobile width="12%">{ formatFee(pool.swapFee) }</TableCellHideMobile>
-                                <TableCellRight width="12%">{`$ ${liquidityText}`}</TableCellRight>
-                                <TableCellRightHideMobile width="12%">{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
-                                <TableCellRightHideMobile width="15%">{`$ ${volumeText}`}</TableCellRightHideMobile>
-                            </PoolRow>
-                        </PoolLink>
-                    );
-                })}
-            </React.Fragment>
-        );
+                        return (
+                            <PoolLink
+                                key={pool.address}
+                                to={`/pool/${pool.address}`}
+                            >
+                                <PoolRow>
+                                    <TableCellHideMobile>
+                                        <Identicon address={pool.address} />
+                                        <IdenticonText>
+                                            {shortenAddress(pool.address)}
+                                        </IdenticonText>
+                                    </TableCellHideMobile>
+                                    <AssetCell>
+                                        <PieChartWrapper>
+                                            <Pie
+                                                type={'doughnut'}
+                                                data={formatPoolAssetChartData(
+                                                    pool,
+                                                    contractMetadataStore.contractMetadata
+                                                )}
+                                                options={options}
+                                            />
+                                        </PieChartWrapper>
+                                        <BreakdownContainer>
+                                            {renderAssetPercentages(pool)}
+                                        </BreakdownContainer>
+                                    </AssetCell>
+                                    <TableCellHideMobile>
+                                        {formatFee(pool.swapFee)}
+                                    </TableCellHideMobile>
+                                    <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
+                                    <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
+                                    <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
+                                </PoolRow>
+                            </PoolLink>
+                        );
+                    })}
+                </React.Fragment>
+            );
+        }
     };
 
     const renderPools = () => {
         // Has all token data been loaded
-        if(!pools){
-          return <PoolRow>Loading</PoolRow>;
+        if (!pools) {
+            return <PoolRow>Loading</PoolRow>;
         }
 
         // Has pool data to display and data has loaded
@@ -325,15 +345,18 @@ const LiquidityPanel = observer((props: Props) => {
     return (
         <Wrapper>
             <HeaderRow>
-                <TableCell width="15%">Pool Address</TableCell>
+                <TableCellHideMobile>Pool Address</TableCellHideMobile>
                 <AssetCell>Assets</AssetCell>
-                <TableCellHideMobile width="12%">Swap Fee</TableCellHideMobile>
-                <TableCellRight width="12%">Liquidity</TableCellRight>
-                <TableCellRightHideMobile width="12%">My Liquidity</TableCellRightHideMobile>
-                <TableCellRightHideMobile width="15%">Trade Volume (24h)</TableCellRightHideMobile>
+                <TableCellHideMobile>Swap Fee</TableCellHideMobile>
+                <TableCellRight>Liquidity</TableCellRight>
+                <TableCellRightHideMobile>
+                    My Liquidity
+                </TableCellRightHideMobile>
+                <TableCellRightHideMobile>
+                    Trade Volume (24h)
+                </TableCellRightHideMobile>
             </HeaderRow>
             {renderPools()}
-            <FooterRow />
         </Wrapper>
     );
 });

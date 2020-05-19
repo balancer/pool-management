@@ -77,31 +77,48 @@ export default class MarketStore {
 
     getPortfolioValue(pool: Pool): BigNumber {
         const { contractMetadataStore } = this.rootStore;
+        let sumValue = bnum(0);
+        let sumWeight = bnum(0);
         let portfolioValue = bnum(0);
-
         pool.tokens.forEach((token, index) => {
             if (contractMetadataStore.isSupported(token.address)) {
-                portfolioValue = portfolioValue.plus(
-                    this.getValue(token.symbol, token.balance)
-                );
+                let ticker = contractMetadataStore.getTokenMetadata(
+                    token.address
+                ).ticker;
+                let tokenValue = this.getValue(ticker, token.balance);
+                sumValue = sumValue.plus(tokenValue);
+                if (tokenValue.isGreaterThan(bnum(0))) {
+                    sumWeight = sumWeight.plus(token.denormWeightProportion);
+                }
             }
         });
+
+        if (sumWeight.isGreaterThan(bnum(0))) {
+            portfolioValue = sumValue.div(sumWeight);
+        }
 
         return portfolioValue;
     }
 
-    getPoolVolume(
-        pool: Pool
-    ): BigNumber | undefined {
+    getPoolVolume(pool: Pool): BigNumber | undefined {
         const { contractMetadataStore } = this.rootStore;
         let volumeTotal = bnum(0);
 
         pool.swaps.forEach(swap => {
-
             if (contractMetadataStore.isSupported(swap.tokenIn)) {
-                volumeTotal = volumeTotal.plus(this.getValue(swap.tokenInSym, swap.tokenAmountIn));
+                let ticker = contractMetadataStore.getTokenMetadata(
+                    swap.tokenIn
+                ).ticker;
+                volumeTotal = volumeTotal.plus(
+                    this.getValue(ticker, swap.tokenAmountIn)
+                );
             } else if (contractMetadataStore.isSupported(swap.tokenOut)) {
-                volumeTotal = volumeTotal.plus(this.getValue(swap.tokenOutSym, swap.tokenAmountOut));
+                let ticker = contractMetadataStore.getTokenMetadata(
+                    swap.tokenOut
+                ).ticker;
+                volumeTotal = volumeTotal.plus(
+                    this.getValue(ticker, swap.tokenAmountOut)
+                );
             }
         });
 

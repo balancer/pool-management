@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PoolAssetChartPanel from '../components/Pool/PoolAssetChartPanel';
 import AddRemovePanel from '../components/Pool/AddRemovePanel';
 import InfoPanel from '../components/Pool/InfoPanel';
-import BalancesTable from '../components/Pool/BalancesTable';
 import AddLiquidityModal from '../components/AddLiquidity/AddLiquidityModal';
 import RemoveLiquidityModal from '../components/RemoveLiquidity/RemoveLiquidityModal';
 import { observer } from 'mobx-react';
@@ -12,10 +11,11 @@ import {
     formatFee,
     isAddress,
     toChecksum,
-    formatCurrency
+    formatCurrency,
 } from '../utils/helpers';
 import { getUserShareText } from '../components/Common/PoolOverview';
 import { RouteComponentProps, withRouter } from 'react-router';
+import PoolTabs from '../components/Pool/PoolTabs';
 
 const PoolViewWrapper = styled.div`
     display: flex;
@@ -32,7 +32,7 @@ const ErrorMessage = styled.div`
     color: var(--panel-row-text);
     width: 100%;
     height: calc(100vh - 108px);
-`
+`;
 
 const InfoPanelWrapper = styled.div`
     display: flex;
@@ -43,8 +43,6 @@ const InfoPanelWrapper = styled.div`
     div {
     }
 `;
-
-const SwapsTable = styled.div``;
 
 const Pool = observer((props: RouteComponentProps) => {
     const poolAddress = toChecksum(props.match.params.poolAddress);
@@ -58,22 +56,26 @@ const Pool = observer((props: RouteComponentProps) => {
             addLiquidityFormStore,
             removeLiquidityFormStore,
             tokenStore,
+            swapsTableStore,
         },
     } = useStores();
+
+    useEffect(() => {
+        return function cleanup() {
+            swapsTableStore.clearPoolSwaps();
+        };
+    }, [poolAddress, swapsTableStore]);
 
     if (!isAddress(poolAddress)) {
         return (
             <PoolViewWrapper>
-                <ErrorMessage>
-                    Please input a valid Pool address
-                </ErrorMessage>
+                <ErrorMessage>Please input a valid Pool address</ErrorMessage>
             </PoolViewWrapper>
         );
     }
 
     const pool = poolStore.getPool(poolAddress);
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     if (poolStore.poolsLoaded && !pool) {
         return (
@@ -89,7 +91,7 @@ const Pool = observer((props: RouteComponentProps) => {
         if (appSettingsStore.activePoolAddress !== poolAddress) {
             console.debug(['Set Active Pool Address']);
             appSettingsStore.setActivePoolAddress(poolAddress);
-            blockchainFetchStore.onActivePoolChanged(web3React);
+            blockchainFetchStore.onActivePoolChanged();
         }
     }
 
@@ -110,18 +112,14 @@ const Pool = observer((props: RouteComponentProps) => {
 
     const liquidityText =
         marketStore.assetPricesLoaded && pool
-            ? formatCurrency(
-                  marketStore.getPortfolioValue(pool),
-              )
+            ? formatCurrency(marketStore.getPortfolioValue(pool))
             : '-';
 
     let volumeText = '-';
-    if(marketStore.assetPricesLoaded && pool){
-      const volume = marketStore.getPoolVolume(pool);
+    if (marketStore.assetPricesLoaded && pool) {
+        const volume = marketStore.getPoolVolume(pool);
 
-      volumeText = formatCurrency(
-          volume
-      )
+        volumeText = formatCurrency(volume);
     }
 
     return (
@@ -140,12 +138,14 @@ const Pool = observer((props: RouteComponentProps) => {
             <AddRemovePanel poolAddress={poolAddress} />
             <InfoPanelWrapper>
                 <InfoPanel text={`$ ${liquidityText}`} subText="Liquidity" />
-                <InfoPanel text={`$ ${volumeText}`} subText="Trade Volume (24hr)" />
+                <InfoPanel
+                    text={`$ ${volumeText}`}
+                    subText="Trade Volume (24hr)"
+                />
                 <InfoPanel text={feeText} subText="Pool Swap Fee" />
                 <InfoPanel text={shareText} subText="My Pool Share" />
             </InfoPanelWrapper>
-            <BalancesTable poolAddress={poolAddress} />
-            <SwapsTable />
+            <PoolTabs poolAddress={poolAddress} />
         </PoolViewWrapper>
     );
 });

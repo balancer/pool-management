@@ -80,16 +80,19 @@ const AddRemovePanel = (props: Props) => {
             poolStore,
         },
     } = useStores();
-    const { chainId, account } = providerStore.getActiveWeb3React();
+    const account = providerStore.providerStatus.account;
+    const chainId = providerStore.providerStatus.activeChainId;
 
     const pool = poolStore.getPool(poolAddress);
     let userProportion = undefined;
+    let isFinalized = false;
 
     if (pool) {
         userProportion = poolStore.getUserShareProportion(
             pool.address,
             account
         );
+        isFinalized = pool.finalized;
     }
 
     return (
@@ -97,45 +100,54 @@ const AddRemovePanel = (props: Props) => {
             <LeftColumn>
                 <AddressContainer>
                     <Identicon address={poolAddress} />
-                    <IdenticonText href={getEtherscanLink(chainId, poolAddress, 'address')} target="_blank">{poolAddress}</IdenticonText>
+                    <IdenticonText
+                        href={getEtherscanLink(chainId, poolAddress, 'address')}
+                        target="_blank"
+                    >
+                        {poolAddress}
+                    </IdenticonText>
                 </AddressContainer>
                 <InformationContainer></InformationContainer>
             </LeftColumn>
-            <RightColumn>
-                <Button
-                    buttonText={'Add Liquidity'}
-                    active={!!pool}
-                    onClick={() => {
-                        if (pool) {
-                            addLiquidityFormStore.openModal(
-                                poolAddress,
-                                account,
-                                pool.tokensList,
-                                ModalMode.ADD_LIQUIDITY
-                            );
+            {isFinalized ? (
+                <RightColumn>
+                    <Button
+                        buttonText={'Add Liquidity'}
+                        active={!!pool}
+                        onClick={() => {
+                            if (pool) {
+                                addLiquidityFormStore.openModal(
+                                    poolAddress,
+                                    account,
+                                    pool.tokensList,
+                                    ModalMode.ADD_LIQUIDITY
+                                );
+                            }
+                        }}
+                    />
+                    <Spacer />
+                    <Button
+                        buttonText={'Remove Liquidity'}
+                        active={
+                            !!pool &&
+                            account &&
+                            userProportion &&
+                            userProportion.gt(0)
                         }
-                    }}
-                />
-                <Spacer />
-                <Button
-                    buttonText={'Remove Liquidity'}
-                    active={
-                        !!pool &&
-                        account &&
-                        userProportion &&
-                        userProportion.gt(0)
-                    }
-                    onClick={() => {
-                        if (pool) {
-                            removeLiquidityFormStore.openModal(
-                                poolAddress,
-                                account,
-                                pool.tokensList
-                            );
-                        }
-                    }}
-                />
-            </RightColumn>
+                        onClick={() => {
+                            if (pool) {
+                                removeLiquidityFormStore.openModal(
+                                    poolAddress,
+                                    account,
+                                    pool.tokensList
+                                );
+                            }
+                        }}
+                    />
+                </RightColumn>
+            ) : (
+                <div />
+            )}
         </Wrapper>
     );
 };

@@ -179,8 +179,7 @@ const RemoveAssetsTable = observer((props: Props) => {
         },
     } = useStores();
 
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
@@ -193,12 +192,18 @@ const RemoveAssetsTable = observer((props: Props) => {
         const { value } = event.target;
         removeLiquidityFormStore.setShareToWithdraw(value);
         if (account && removeLiquidityFormStore.hasValidInput()) {
-            removeLiquidityFormStore.validateUserShareInput(pool.address, account);
+            removeLiquidityFormStore.validateUserShareInput(
+                pool.address,
+                account
+            );
         }
     };
 
     const handleMaxLinkClick = async () => {
-        const userShare = poolStore.getUserShareProportion(pool.address, account);
+        const userShare = poolStore.getUserShareProportion(
+            pool.address,
+            account
+        );
         let maxValue = '0.00';
 
         if (userShare && userShare.gt(0)) {
@@ -207,12 +212,14 @@ const RemoveAssetsTable = observer((props: Props) => {
 
         removeLiquidityFormStore.setShareToWithdraw(maxValue);
         if (removeLiquidityFormStore.hasValidInput()) {
-            removeLiquidityFormStore.validateUserShareInput(pool.address, account);
+            removeLiquidityFormStore.validateUserShareInput(
+                pool.address,
+                account
+            );
         }
     };
 
     const renderWithdrawInput = () => {
-
         let existingShare = account
             ? poolStore.getUserShareProportion(pool.address, account)
             : bnum(0);

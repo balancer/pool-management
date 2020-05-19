@@ -2,21 +2,19 @@ import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
 import { NumberMap, Pool, PoolShare, PoolToken, Swap } from '../types';
 import { bnum } from '../utils/helpers';
-import {getSupportedChainId, SUBGRAPH_URLS} from "./connectors";
+import { getSupportedChainId, SUBGRAPH_URLS } from './connectors';
 
 const chainId = getSupportedChainId();
-const SUBGRAPH_URL =
-    SUBGRAPH_URLS[chainId];
+const SUBGRAPH_URL = SUBGRAPH_URLS[chainId];
 
-
-export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
+export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
     // Returns all swaps for all pools in last 24hours
-    var ts = Math.round((new Date()).getTime() / 1000);
-    var tsYesterday = ts - (24 * 3600);
+    var ts = Math.round(new Date().getTime() / 1000);
+    var tsYesterday = ts - 24 * 3600;
 
     const query = `
         {
-          pools (where: {finalized: true}) {
+          pools {
             id
             publicSwap
             finalized
@@ -69,7 +67,11 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
     const { data } = await response.json();
 
     return data.pools.map(pool => {
-
+        let tokenslist = pool.tokensList
+            ? pool.tokensList.map(tokenAddress => {
+                  return getAddress(tokenAddress);
+              })
+            : [];
         const parsedPool: Pool = {
             address: getAddress(pool.id),
             publicSwap: pool.publicSwap,
@@ -77,9 +79,7 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
             swapFee: bnum(pool.swapFee),
             totalWeight: bnum(pool.totalWeight),
             totalShares: bnum(pool.totalShares),
-            tokensList: pool.tokensList.map(tokenAddress => {
-                return getAddress(tokenAddress);
-            }),
+            tokensList: tokenslist,
             tokens: pool.tokens.map(token => {
                 return {
                     address: getAddress(token.address),
@@ -108,9 +108,9 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
                     tokenInSym: swap.tokenInSym,
                     tokenOut: getAddress(swap.tokenOut),
                     tokenAmountOut: bnum(swap.tokenAmountOut),
-                    tokenOutSym: swap.tokenOutSym
-                } as Swap
-            })
+                    tokenOutSym: swap.tokenOutSym,
+                } as Swap;
+            }),
         };
 
         parsedPool.tokensList = parsedPool.tokensList.sort((a, b) => {
@@ -145,4 +145,39 @@ export async function fetchPublicPools(tokenIndex: NumberMap): Promise<Pool[]> {
 
         return parsedPool;
     });
+}
+
+export async function fetchPoolSwaps(
+    poolAddress: string,
+    pageIncrement: number,
+    skip: number
+): Promise<any[]> {
+    const query = `
+      {
+        swaps(where: {poolAddress: "${poolAddress.toLowerCase()}"}, first: ${pageIncrement} , skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
+          id
+          timestamp
+          tokenIn
+          tokenInSym
+          tokenAmountIn
+          tokenOut
+          tokenOutSym
+          tokenAmountOut
+        }
+      }
+    `;
+
+    const response = await fetch(SUBGRAPH_URL, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            query,
+        }),
+    });
+
+    const { data } = await response.json();
+    return data.swaps;
 }

@@ -2,7 +2,6 @@ import { action, observable } from 'mobx';
 import { providers } from 'ethers';
 import RootStore from 'stores/Root';
 import { TransactionResponse } from 'ethers/providers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 
 export interface TransactionRecord {
     hash: string;
@@ -60,14 +59,17 @@ export default class TransactionStore {
         return [] as TransactionRecord[];
     }
 
-    @action async checkPendingTransactions(
-        web3React: Web3ReactContextInterface,
-        account
-    ): Promise<FetchCode> {
+    hasPendingTransactions(account: string): boolean {
+        let pending = this.getPendingTransactions(account);
+        if (pending.length > 0) return true;
+        return false;
+    }
+
+    @action async checkPendingTransactions(account): Promise<FetchCode> {
         const { providerStore } = this.rootStore;
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        const { library } = web3React;
+        const library = providerStore.providerStatus.library;
         if (this.txRecords[account]) {
             const records = this.txRecords[account];
             records.forEach(value => {

@@ -8,13 +8,16 @@ export interface ContractMetadata {
     bFactory: string;
     proxy: string;
     weth: string;
+    multicall: string;
     defaultPrecision: number;
+    warnings: string[];
     tokens: TokenMetadata[];
 }
 
 export interface TokenMetadata {
     address: string;
     symbol: string;
+    ticker: string;
     decimals: number;
     iconAddress: string;
     precision: number;
@@ -25,6 +28,7 @@ export interface TokenMetadata {
 export default class ContractMetadataStore {
     @observable contractMetadata: ContractMetadata;
     @observable tokenSymbols: string[];
+    @observable tickerSymbols: string[];
     @observable tokenIndex: NumberMap;
     @observable symbolToAddressMap: StringMap;
     @observable addressToSymbolMap: StringMap;
@@ -37,6 +41,10 @@ export default class ContractMetadataStore {
 
         this.tokenSymbols = this.getWhitelistedTokenMetadata().map(value => {
             return value.symbol;
+        });
+
+        this.tickerSymbols = this.getWhitelistedTokenMetadata().map(value => {
+            return value.ticker;
         });
 
         this.tokenIndex = {} as NumberMap;
@@ -64,7 +72,9 @@ export default class ContractMetadataStore {
             bFactory: metadata.default[chainName].bFactory,
             proxy: metadata.default[chainName].proxy,
             weth: metadata.default[chainName].weth,
+            multicall: metadata.default[chainName].multicall,
             defaultPrecision: metadata.default[chainName].defaultPrecision,
+            warnings: metadata.default[chainName].warnings,
             tokens: [] as TokenMetadata[],
         };
 
@@ -72,6 +82,7 @@ export default class ContractMetadataStore {
             const {
                 address,
                 symbol,
+                ticker,
                 decimals,
                 iconAddress,
                 precision,
@@ -80,6 +91,7 @@ export default class ContractMetadataStore {
             contractMetadata.tokens.push({
                 address,
                 symbol,
+                ticker,
                 decimals,
                 iconAddress,
                 precision,
@@ -114,6 +126,16 @@ export default class ContractMetadataStore {
         return proxyAddress;
     }
 
+    getMultiAddress(): string {
+        const multiAddress = this.contractMetadata.multicall;
+        if (!multiAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return multiAddress;
+    }
+
     getWethAddress(): string {
         const address = this.contractMetadata.weth;
         if (!address) {
@@ -122,6 +144,16 @@ export default class ContractMetadataStore {
             );
         }
         return address;
+    }
+
+    getTokenWarnings(): string[] {
+        const tokens = this.contractMetadata.warnings;
+        if (!tokens) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return tokens;
     }
 
     getWhiteListedTokenAddresses(): string[] {

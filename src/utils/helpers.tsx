@@ -3,7 +3,6 @@ import React from 'react';
 import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
-import { SUPPORTED_THEMES } from '../theme';
 import { Pool } from '../types';
 
 // Utils
@@ -173,13 +172,6 @@ export function getQueryParam(windowLocation, name) {
     return q && q[1];
 }
 
-export function checkSupportedTheme(themeName) {
-    if (themeName && themeName.toUpperCase() in SUPPORTED_THEMES) {
-        return themeName.toUpperCase();
-    }
-    return null;
-}
-
 export const copyToClipboard = e => {
     const value = e.target.title.replace(',', '');
     var aux = document.createElement('input');
@@ -288,13 +280,11 @@ export const formatBalanceTruncated = (
     }
 };
 
-export const formatCurrency = (
-    balance: BigNumber
-): string => {
+export const formatCurrency = (balance: BigNumber): string => {
     const fmt = {
         decimalSeparator: '.',
         groupSeparator: ',',
-        groupSize: 3
+        groupSize: 3,
     };
     return balance.toFormat(2, BigNumber.ROUND_DOWN, fmt);
 };

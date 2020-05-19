@@ -3,19 +3,21 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import Jazzicon from 'jazzicon';
-import { useActiveWeb3React } from 'provider/providerHooks';
+import { useStores } from '../../contexts/storesContext';
 
 const StyledIdenticon = styled.div`
     height: 1rem;
     width: 1rem;
     border-radius: 1.125rem;
-    background-color: ${({ theme }) => theme.silverGray};
 `;
 
 export default function Identicon() {
     const ref = useRef();
 
-    const { account } = useActiveWeb3React();
+    const {
+        root: { providerStore },
+    } = useStores();
+    const account = providerStore.providerStatus.account;
 
     useEffect(() => {
         if (account && ref.current) {

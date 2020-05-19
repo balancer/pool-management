@@ -1,6 +1,5 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { supportedChainId } from '../provider/connectors';
 
 export default class BlockchainFetchStore {
@@ -11,85 +10,64 @@ export default class BlockchainFetchStore {
         this.rootStore = rootStore;
     }
 
-    @action onActivePoolChanged(web3React: Web3ReactContextInterface) {
+    @action onActivePoolChanged() {
+        const { providerStore } = this.rootStore;
+
         if (
-            web3React.active &&
-            web3React.account &&
-            web3React.chainId === supportedChainId
+            providerStore.providerStatus.active &&
+            providerStore.providerStatus.account &&
+            providerStore.providerStatus.activeChainId === supportedChainId
         ) {
-            this.fetchActivePoolAllowances(web3React);
+            this.fetchActivePoolAllowances();
         }
     }
 
-    @action fetchPoolTotalSupplies(web3React) {
+    @action fetchPoolTotalSupplies() {
         const { tokenStore, poolStore } = this.rootStore;
         const poolAddresses = poolStore
             .getPublicPools()
             .map(pool => pool.address);
-        tokenStore.fetchTotalSupplies(web3React, poolAddresses);
+        tokenStore.fetchTotalSupplies(poolAddresses);
     }
 
-    @action fetchPoolUserBalances(web3React) {
-        const { tokenStore, poolStore } = this.rootStore;
-        const { account } = web3React;
+    @action fetchPoolUserBalances() {
+        const { tokenStore, poolStore, providerStore } = this.rootStore;
+        const account = providerStore.providerStatus.account;
         const poolAddresses = poolStore
             .getPublicPools()
             .map(pool => pool.address);
-        tokenStore.fetchTokenBalances(web3React, account, poolAddresses);
+        tokenStore.fetchTokenBalances(account, poolAddresses);
     }
 
-    @action fetchActivePoolSupply(web3React) {
-        const { appSettingsStore, tokenStore } = this.rootStore;
-        const poolAddress = appSettingsStore.getActivePoolAddress();
-        tokenStore
-            .fetchTotalSupplies(web3React, [poolAddress])
-            .then(result => {});
-    }
+    @action async fetchActivePoolAllowances() {
+        const { providerStore } = this.rootStore;
 
-    @action async fetchActivePoolAllowances(web3React) {
-        const { account } = web3React;
+        const account = providerStore.providerStatus.account;
         const { appSettingsStore, poolStore, tokenStore } = this.rootStore;
         const poolAddress = appSettingsStore.getActivePoolAddress();
         const tokenAddresses = poolStore.getPoolTokens(poolAddress);
         await tokenStore.fetchAccountApprovals(
-            web3React,
             tokenAddresses,
             account,
             poolAddress
         );
     }
 
-    @action async fetchActivePoolUserBalance(web3React) {
-        const { account } = web3React;
-        const { appSettingsStore, tokenStore } = this.rootStore;
-        const poolAddress = appSettingsStore.getActivePoolAddress();
-        await tokenStore.fetchTokenBalances(web3React, account, [poolAddress]);
-    }
+    @action setFetchLoop(forceFetch?: boolean) {
+        const { providerStore } = this.rootStore;
 
-    @action setFetchLoop(
-        web3React: Web3ReactContextInterface,
-        forceFetch?: boolean
-    ) {
-        if (web3React.active && web3React.chainId === supportedChainId) {
-            const { library, account, chainId } = web3React;
-            const {
-                providerStore,
-                poolStore,
-                appSettingsStore,
-            } = this.rootStore;
+        const active = providerStore.providerStatus.active;
+        const chainId = providerStore.providerStatus.activeChainId;
+        const library = providerStore.providerStatus.library;
+        const account = providerStore.providerStatus.account;
+
+        if (active && chainId === supportedChainId) {
+            const { poolStore, appSettingsStore } = this.rootStore;
 
             library
                 .getBlockNumber()
                 .then(blockNumber => {
                     const lastCheckedBlock = providerStore.getCurrentBlockNumber();
-
-                    // console.debug('[Fetch Loop] Staleness Evaluation', {
-                    //     blockNumber,
-                    //     lastCheckedBlock,
-                    //     forceFetch,
-                    //     account: web3React.account,
-                    //     doFetch: blockNumber !== lastCheckedBlock || forceFetch,
-                    // });
 
                     const doFetch =
                         blockNumber !== lastCheckedBlock || forceFetch;
@@ -104,31 +82,27 @@ export default class BlockchainFetchStore {
                         providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        poolStore.fetchPublicPools(web3React).then(() => {
+                        poolStore.fetchAllPools().then(() => {
                             // Fetch user pool shares after pools loaded
-                            this.fetchPoolTotalSupplies(web3React);
+                            this.fetchPoolTotalSupplies();
 
                             if (account) {
-                                this.fetchPoolUserBalances(web3React);
+                                this.fetchPoolUserBalances();
                             }
 
                             if (account && appSettingsStore.hasActivePool()) {
-                                this.fetchActivePoolAllowances(web3React);
+                                this.fetchActivePoolAllowances();
                             }
                         });
 
                         // Get user-specific blockchain data
                         if (account) {
-                            providerStore.fetchUserBlockchainData(
-                                web3React,
-                                account
-                            );
+                            providerStore.fetchUserBlockchainData(account);
                         }
                     }
                 })
                 .catch(error => {
                     console.error('[Fetch Loop Failure]', {
-                        web3React,
                         providerStore,
                         forceFetch,
                         chainId,

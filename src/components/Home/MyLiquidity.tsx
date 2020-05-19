@@ -16,19 +16,18 @@ const Header = styled.div`
     font-size: 18px;
     line-height: 19px;
     color: var(--header-text);
-    padding: 24px 0px 24px 0px;
+    padding: 0px 0px 24px 0px;
 `;
 
 const MyLiquidity = observer(() => {
     const {
         root: { poolStore, providerStore },
     } = useStores();
-    const { account } = providerStore.getActiveWeb3React();
+    const account = providerStore.providerStatus.account;
 
     let pools: Pool[] = [];
 
     if (account) {
-
         poolStore.getPublicPools().every(pool => {
             const userShare = poolStore.getUserShareProportion(
                 pool.address,
@@ -36,9 +35,9 @@ const MyLiquidity = observer(() => {
             );
 
             // userShare in undefined if token balances or supplies haven't been loaded
-            if(!userShare){
-              pools = undefined;
-              return false;
+            if (!userShare) {
+                pools = undefined;
+                return false;
             }
 
             if (userShare.gt(0)) {

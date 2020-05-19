@@ -5,9 +5,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import WrapEth from './WrapEth';
 
-
-const Wrapper = styled.div`
-`;
+const Wrapper = styled.div``;
 
 const BuildVersion = styled.div`
     display: flex;
@@ -18,6 +16,13 @@ const BuildVersion = styled.div`
     color: var(--body-text);
     position: fixed;
     bottom: 0px;
+`;
+
+const BuildLink = styled.a`
+    font-size: 10px;
+    color: var(--body-text);
+    text-decoration: none;
+    margin-left: 5px;
 `;
 
 const BalanceHeader = styled.div`
@@ -52,9 +57,11 @@ const IconAndNameContainer = styled.div`
     align-items: center;
 `;
 
+const NotSupported = require('../../assets/images/question.svg') as string;
+
 export const TokenIconAddress = (address, isSupported) => {
     if (!isSupported) {
-        return ``;
+        return NotSupported;
     }
     if (address === 'ether') {
         return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png`;
@@ -87,7 +94,9 @@ const WalletBalances = observer(() => {
         root: { tokenStore, contractMetadataStore, providerStore },
     } = useStores();
 
-    const { account } = providerStore.getActiveWeb3React();
+    const account = providerStore.providerStatus.account;
+
+    const buildId = process.env.REACT_APP_COMMIT_REF || '';
 
     const renderWalletBalances = () => {
         const whitelistedTokens = contractMetadataStore.getWhitelistedTokenMetadata();
@@ -152,7 +161,6 @@ const WalletBalances = observer(() => {
 
     return (
         <Wrapper>
-
             <WrapEth />
             <BalanceHeader>My Wallet</BalanceHeader>
             {account ? (
@@ -160,7 +168,15 @@ const WalletBalances = observer(() => {
             ) : (
                 <BalanceElement>Connect wallet to see balances</BalanceElement>
             )}
-            <BuildVersion>BUILD ID: {process.env.REACT_APP_COMMIT_REF}</BuildVersion>
+            <BuildVersion>
+                BUILD ID:{' '}
+                <BuildLink
+                    href={`https://github.com/balancer-labs/pool-management/tree/${buildId}`}
+                    target="_blank"
+                >
+                    {buildId.substring(0, 12)}
+                </BuildLink>
+            </BuildVersion>
         </Wrapper>
     );
 });

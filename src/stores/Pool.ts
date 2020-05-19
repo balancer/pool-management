@@ -1,14 +1,9 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { fetchPublicPools } from 'provider/subgraph';
+import { fetchAllPools } from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
-import {
-    bnum,
-    fromPercentage,
-    tinyAddress
-} from '../utils/helpers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
 import { ContractTypes } from './Provider';
 import { getNextTokenColor } from '../utils/tokenColorPicker';
 
@@ -31,12 +26,13 @@ export default class PoolStore {
         this.pools = {} as PoolMap;
     }
 
-    @action processUnknownTokens(web3React, pool: Pool): Pool {
+    @action processUnknownTokens(pool: Pool): Pool {
         const {
             contractMetadataStore,
             tokenStore,
+            providerStore,
         } = this.rootStore;
-        const { account } = web3React;
+        const account = providerStore.providerStatus.account;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
 
         pool.tokens.forEach((token, index) => {
@@ -45,9 +41,7 @@ export default class PoolStore {
 
                 // We just discovered a new token, so should do an initial fetch for it outside of loop
                 if (account && !tokenStore.getBalance(token.address, account)) {
-                    tokenStore.fetchTokenBalances(web3React, account, [
-                        token.address,
-                    ]);
+                    tokenStore.fetchTokenBalances(account, [token.address]);
                 }
 
                 contractMetadataStore.addTokenMetadata(token.address, {
@@ -56,6 +50,7 @@ export default class PoolStore {
                     chartColor: getNextTokenColor(),
                     decimals: token.decimals,
                     symbol: tinyAddress(token.address, 3),
+                    ticker: '',
                     iconAddress: token.address,
                     isSupported: false,
                 });
@@ -64,21 +59,21 @@ export default class PoolStore {
         return pool;
     }
 
-    @action async fetchPublicPools(web3React) {
+    @action async fetchAllPools() {
         const { providerStore, contractMetadataStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
+        console.debug('[fetchAllPools] Fetch pools');
+        const pools = await fetchAllPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
-            const processedPool = this.processUnknownTokens(web3React, pool);
+            const processedPool = this.processUnknownTokens(pool);
             this.setPool(pool.address, processedPool, currentBlock);
         });
         this.poolsLoaded = true;
 
-        console.debug('[fetchPublicPools] Pools fetched & stored');
+        console.debug('[fetchAllPools] Pools fetched & stored');
     }
 
     @action private setPool(
@@ -203,10 +198,20 @@ export default class PoolStore {
         return undefined;
     }
 
-    getPublicPools(filter?: object): Pool[] {
+    getPublicPools(): Pool[] {
         let pools: Pool[] = [];
         Object.keys(this.pools).forEach(key => {
             if (this.pools[key].data.finalized) {
+                pools.push(this.pools[key].data);
+            }
+        });
+        return pools;
+    }
+
+    getPrivatePools(): Pool[] {
+        let pools: Pool[] = [];
+        Object.keys(this.pools).forEach(key => {
+            if (!this.pools[key].data.finalized) {
                 pools.push(this.pools[key].data);
             }
         });
@@ -224,11 +229,18 @@ export default class PoolStore {
         const { tokenStore } = this.rootStore;
         const totalPoolTokens = tokenStore.getTotalSupply(pool.address);
         // TODO - fix calcs so no buffer is needed
-        const buffer = bnum(100)
-        return (ratio.times(totalPoolTokens).integerValue(BigNumber.ROUND_DOWN)).minus(buffer);
+        const buffer = bnum(100);
+        return ratio
+            .times(totalPoolTokens)
+            .integerValue(BigNumber.ROUND_DOWN)
+            .minus(buffer);
     }
 
-    getUserTokenPercentage(poolAddress: string, account: string, percentage: string) {
+    getUserTokenPercentage(
+        poolAddress: string,
+        account: string,
+        percentage: string
+    ) {
         const { tokenStore } = this.rootStore;
         const userPoolTokens = tokenStore.getBalance(poolAddress, account);
         return bnum(fromPercentage(percentage)).times(userPoolTokens);
@@ -242,7 +254,6 @@ export default class PoolStore {
     }
 
     @action exitPool = async (
-        web3React: Web3ReactContextInterface,
         poolAddress: string,
         poolAmountIn: string,
         minAmountsOut: string[]
@@ -252,21 +263,18 @@ export default class PoolStore {
         console.debug('exitPool', {
             poolAddress,
             poolAmountIn,
-            minAmountsOut
+            minAmountsOut,
         });
 
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.BPool,
             poolAddress,
             'exitPool',
             [poolAmountIn, minAmountsOut]
         );
-
     };
 
     @action joinPool = async (
-        web3React: Web3ReactContextInterface,
         poolAddress: string,
         poolAmountOut: string,
         maxAmountsIn: string[]
@@ -274,14 +282,10 @@ export default class PoolStore {
         const { providerStore } = this.rootStore;
 
         await providerStore.sendTransaction(
-            web3React,
             ContractTypes.BPool,
             poolAddress,
             'joinPool',
-            [
-                poolAmountOut.toString(),
-                maxAmountsIn,
-            ]
+            [poolAmountOut.toString(), maxAmountsIn]
         );
     };
 }

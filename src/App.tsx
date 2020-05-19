@@ -2,9 +2,10 @@ import React from 'react';
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import './App.css';
-import Web3ReactManager from 'components/Web3ReactManager';
+import Web3Manager from 'components/Web3Manager';
 import Header from 'components/Common/Header';
 import Home from 'views/Home';
+import Private from 'views/Private';
 import Pool from 'views/Pool';
 import LeftNav from 'components/Common/LeftNav';
 import WalletBalances from 'components/Common/WalletBalances';
@@ -29,16 +30,17 @@ const App = () => {
         return (
             <div className="app-shell">
                 <Switch>
-                    <Route path="/list" component={Home} />
                     <Route path="/pool/:poolAddress" component={Pool} />
-                    <Redirect from="/" to="/list" />
+                    <Route path="/private" component={Private} />
+                    <Redirect from="/list" to="/" />
+                    <Route path="/" component={Home} />
                 </Switch>
             </div>
         );
     };
 
     return (
-        <Web3ReactManager>
+        <Web3Manager>
             <HashRouter>
                 <Header />
                 <Container>
@@ -49,7 +51,7 @@ const App = () => {
                     {renderViews()}
                 </Container>
             </HashRouter>
-        </Web3ReactManager>
+        </Web3Manager>
     );
 };
 

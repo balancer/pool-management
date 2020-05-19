@@ -60,6 +60,39 @@ const ExitComponent = styled.div`
     cursor: pointer;
 `;
 
+const Warning = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: var(--warning);
+    height: 67px;
+    border: 1px solid var(--warning);
+    border-radius: 4px;
+    padding-left: 20px;
+    margin-bottom: 30px;
+`;
+
+const Message = styled.div`
+    display: inline;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.2px;
+`;
+
+const WarningIcon = styled.img`
+    width: 22px;
+    height: 26px;
+    margin-right: 20px;
+    color: var(--warning);
+`;
+
+const Link = styled.a`
+    color: color: var(--warning);
+`;
+
 const AddLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
@@ -133,11 +166,16 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const { poolAddress } = props;
     const {
-        root: { poolStore, tokenStore, providerStore, addLiquidityFormStore },
+        root: {
+            poolStore,
+            tokenStore,
+            providerStore,
+            addLiquidityFormStore,
+            contractMetadataStore,
+        },
     } = useStores();
 
-    const web3React = providerStore.getActiveWeb3React();
-    const { account } = web3React;
+    const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
 
@@ -166,7 +204,7 @@ const AddLiquidityModal = observer((props: Props) => {
         token?: PoolToken
     ) => {
         if (action === ButtonAction.UNLOCK) {
-            await tokenStore.approveMax(web3React, token.address, pool.address);
+            await tokenStore.approveMax(token.address, pool.address);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
 
@@ -198,10 +236,38 @@ const AddLiquidityModal = observer((props: Props) => {
             });
 
             await poolStore.joinPool(
-                web3React,
                 pool.address,
                 poolTokens.toString(),
                 addLiquidityFormStore.maxUintInputAmounts()
+            );
+        }
+    };
+
+    const renderWarning = () => {
+        let warning = false;
+        const tokenWarnings = contractMetadataStore.getTokenWarnings();
+
+        pool.tokens.forEach(token => {
+            if (tokenWarnings.includes(token.address)) warning = true;
+        });
+
+        if (warning) {
+            return (
+                <Warning>
+                    <WarningIcon src="WarningSign.svg" />
+                    <Message>
+                        This pool contains a non-standard token that may cause
+                        potential balance issues or unknown arbitrage
+                        opportunites.{' '}
+                        <Link
+                            href="https://docs.balancer.finance/protocol/limitations#erc20-tokens"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Learn more
+                        </Link>
+                    </Message>
+                </Warning>
             );
         }
     };
@@ -229,7 +295,9 @@ const AddLiquidityModal = observer((props: Props) => {
                 : bnum(0);
 
             const futureTotal = currentTotal.plus(previewTokens);
-            const futureShare = (previewTokens.plus(userBalance)).div(futureTotal);
+            const futureShare = previewTokens
+                .plus(userBalance)
+                .div(futureTotal);
 
             currentPoolShare = formatPercentage(existingShare, 2);
             futurePoolShare = formatPercentage(futureShare, 2);
@@ -289,7 +357,8 @@ const AddLiquidityModal = observer((props: Props) => {
                     buttonText={`Add Liquidity`}
                     active={
                         account &&
-                        addLiquidityFormStore.hasValidInput() && !addLiquidityFormStore.hasInputExceedUserBalance
+                        addLiquidityFormStore.hasValidInput() &&
+                        !addLiquidityFormStore.hasInputExceedUserBalance
                     }
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
@@ -303,9 +372,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const ref = useRef();
 
-    useOnClickOutside(ref, () =>
-        addLiquidityFormStore.closeModal()
-    );
+    useOnClickOutside(ref, () => addLiquidityFormStore.closeModal());
 
     return (
         <Container style={{ display: modalOpen ? 'block' : 'none' }}>
@@ -327,6 +394,7 @@ const AddLiquidityModal = observer((props: Props) => {
                         <div>Loading</div>
                     ) : (
                         <React.Fragment>
+                            {renderWarning()}
                             {renderNotification()}
                             {renderActionButton()}
                         </React.Fragment>

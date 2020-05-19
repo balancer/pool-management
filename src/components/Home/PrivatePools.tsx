@@ -15,19 +15,19 @@ const Header = styled.div`
     font-size: 18px;
     line-height: 19px;
     color: var(--header-text);
-    padding: 24px 0px 24px 0px;
+    padding: 0px 0px 24px 0px;
 `;
 
-const AllPools = observer(() => {
+const PrivatePools = observer(() => {
     const {
         root: { poolStore },
     } = useStores();
 
-    const pools = poolStore.getPublicPools();
+    const pools = poolStore.getPrivatePools();
 
     return (
         <Wrapper>
-            <Header>All Pools</Header>
+            <Header>Private Pools</Header>
             <LiquidityPanel
                 pools={pools}
                 dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
@@ -36,4 +36,4 @@ const AllPools = observer(() => {
     );
 });
 
-export default AllPools;
+export default PrivatePools;

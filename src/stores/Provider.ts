@@ -1,10 +1,10 @@
 import { action, observable, ObservableMap } from 'mobx';
 import RootStore from 'stores/Root';
 import { ethers } from 'ethers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { ActionResponse, sendAction } from './actions/actions';
-import { supportedChainId, web3ContextNames } from '../provider/connectors';
+import { web3Window as window } from 'provider/Web3Window';
+import { backupUrls, supportedChainId, web3Modal } from 'provider/connectors';
 
 export enum ContractTypes {
     BPool = 'BPool',
@@ -12,7 +12,8 @@ export enum ContractTypes {
     TestToken = 'TestToken',
     ExchangeProxy = 'ExchangeProxy',
     ExchangeProxyCallable = 'ExchangeProxyCallable',
-    Weth = 'Weth'
+    Weth = 'Weth',
+    Multicall = 'Multicall',
 }
 
 export const schema = {
@@ -21,7 +22,8 @@ export const schema = {
     TestToken: require('../abi/TestToken').abi,
     ExchangeProxy: require('../abi/ExchangeProxy').abi,
     ExchangeProxyCallable: require('../abi/ExchangeProxyCallable').abi,
-    Weth: require('../abi/Weth').abi
+    Weth: require('../abi/Weth').abi,
+    Multicall: require('../abi/Multicall').abi,
 };
 
 export interface ChainData {
@@ -34,63 +36,75 @@ enum ERRORS {
     BlockchainActionNoAccount = 'Attempting to do blockchain transaction with no account',
     BlockchainActionNoChainId = 'Attempting to do blockchain transaction with no chainId',
     BlockchainActionNoResponse = 'No error or response received from blockchain action',
+    NoWeb3 = 'Error Loading Web3',
 }
 
 type ChainDataMap = ObservableMap<number, ChainData>;
 
+export interface ProviderStatus {
+    activeChainId: number;
+    account: string;
+    library: any;
+    active: boolean;
+    injectedLoaded: boolean;
+    injectedActive: boolean;
+    injectedChainId: number;
+    injectedWeb3: any;
+    backUpLoaded: boolean;
+    backUpWeb3: any;
+    error: Error;
+    activeProvider: any;
+}
+
 export default class ProviderStore {
-    @observable provider: any;
-    @observable accounts: string[];
-    @observable defaultAccount: string | null;
-    @observable web3Contexts: object;
-    @observable blockNumber: number;
-    @observable supportedNetworks: number[];
     @observable chainData: ChainData;
-    @observable activeChainId: number;
-    @observable activeFetchLoop: any;
-    @observable activeAccount: string;
+    @observable providerStatus: ProviderStatus;
+    web3Modal: any;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
-        this.web3Contexts = {};
         this.chainData = { currentBlockNumber: -1 } as ChainData;
-    }
-
-    isBlockStale(blockNumber: number) {
-        return blockNumber < this.chainData.currentBlockNumber;
+        this.web3Modal = web3Modal;
+        this.providerStatus = {} as ProviderStatus;
+        this.providerStatus.active = false;
+        this.providerStatus.injectedLoaded = false;
+        this.providerStatus.injectedActive = false;
+        this.providerStatus.backUpLoaded = false;
+        this.providerStatus.activeProvider = null;
+        this.handleNetworkChanged = this.handleNetworkChanged.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
     }
 
     getCurrentBlockNumber(): number {
         return this.chainData.currentBlockNumber;
     }
 
+    async loadWeb3Modal(): Promise<void> {
+        let provider = await this.web3Modal.connect();
+        console.log(`[Provider] Web3Modal`);
+        if (provider) await this.loadWeb3(provider);
+    }
+
     @action setCurrentBlockNumber(blockNumber): void {
         this.chainData.currentBlockNumber = blockNumber;
     }
 
-    @action setActiveAccount(account: string) {
-        this.activeAccount = account;
-    }
-
-    @action fetchUserBlockchainData = async (
-        web3React: Web3ReactContextInterface,
-        account: string
-    ) => {
+    @action fetchUserBlockchainData = async (account: string) => {
         const {
             transactionStore,
             tokenStore,
             contractMetadataStore,
         } = this.rootStore;
 
-        console.debug('[Fetch Start - User Blockchain Data]', {
+        console.debug('[Provider] fetchUserBlockchainData', {
             account,
         });
 
-        transactionStore.checkPendingTransactions(web3React, account);
+        transactionStore.checkPendingTransactions(account);
         tokenStore
             .fetchTokenBalances(
-                web3React,
                 account,
                 contractMetadataStore.getTrackedTokenAddresses()
             )
@@ -115,48 +129,27 @@ export default class ProviderStore {
     }
 
     getContract(
-        web3React: Web3ReactContextInterface,
         type: ContractTypes,
         address: string,
         signerAccount?: string
     ): ethers.Contract {
-        const { library } = web3React;
+        const library = this.providerStatus.library;
 
         if (signerAccount) {
             return new ethers.Contract(
                 address,
                 schema[type],
-                this.getProviderOrSigner(library, signerAccount)
+                this.getProviderOrSigner(
+                    this.providerStatus.library,
+                    signerAccount
+                )
             );
         }
 
         return new ethers.Contract(address, schema[type], library);
     }
 
-    getActiveWeb3React(): Web3ReactContextInterface {
-        const contextBackup = this.web3Contexts[web3ContextNames.backup];
-        const contextInjected = this.web3Contexts[web3ContextNames.injected];
-
-        return contextInjected.active &&
-            contextInjected.chainId === supportedChainId
-            ? contextInjected
-            : contextBackup;
-    }
-
-    getWeb3React(name): Web3ReactContextInterface {
-        if (!this.web3Contexts[name]) {
-            throw new Error(ERRORS.ContextNotFound);
-        }
-        return this.web3Contexts[name];
-    }
-
-    @action setWeb3Context(name, context: Web3ReactContextInterface) {
-        console.debug('[setWeb3Context]', name, context);
-        this.web3Contexts[name] = context;
-    }
-
     @action sendTransaction = async (
-        web3React: Web3ReactContextInterface,
         contractType: ContractTypes,
         contractAddress: string,
         action: string,
@@ -164,7 +157,8 @@ export default class ProviderStore {
         overrides?: any
     ): Promise<ActionResponse> => {
         const { transactionStore } = this.rootStore;
-        const { chainId, account } = web3React;
+        const chainId = this.providerStatus.activeChainId;
+        const account = this.providerStatus.account;
 
         overrides = overrides ? overrides : {};
 
@@ -177,7 +171,6 @@ export default class ProviderStore {
         }
 
         const contract = this.getContract(
-            web3React,
             contractType,
             contractAddress,
             account
@@ -203,4 +196,178 @@ export default class ProviderStore {
 
         return response;
     };
+
+    @action async handleNetworkChanged(
+        networkId: string | number
+    ): Promise<void> {
+        console.log(
+            `[Provider] Network change: ${networkId} ${this.providerStatus.active}`
+        );
+        // network change could mean switching from injected to backup or vice-versa
+        if (this.providerStatus.active) {
+            await this.loadWeb3();
+            const { blockchainFetchStore } = this.rootStore;
+            blockchainFetchStore.setFetchLoop(true);
+        }
+    }
+
+    @action async handleClose(): Promise<void> {
+        console.log(`[Provider] HandleClose() ${this.providerStatus.active}`);
+
+        if (this.providerStatus.active) await this.loadWeb3();
+    }
+
+    @action handleAccountsChanged(accounts: string[]): void {
+        console.log(`[Provider] Accounts changed`);
+        const {
+            blockchainFetchStore,
+            addLiquidityFormStore,
+            removeLiquidityFormStore,
+        } = this.rootStore;
+        addLiquidityFormStore.closeModal();
+        removeLiquidityFormStore.closeModal();
+
+        if (accounts.length === 0) {
+            this.handleClose();
+        } else {
+            this.providerStatus.account = accounts[0];
+            // Loads pool & balance data for account
+            blockchainFetchStore.setFetchLoop(true);
+        }
+    }
+
+    @action async loadProvider(provider) {
+        try {
+            // remove any old listeners
+            if (
+                this.providerStatus.activeProvider &&
+                this.providerStatus.activeProvider.on
+            ) {
+                console.log(`[Provider] Removing Old Listeners`);
+                this.providerStatus.activeProvider.removeListener(
+                    'chainChanged',
+                    this.handleNetworkChanged
+                );
+                this.providerStatus.activeProvider.removeListener(
+                    'accountsChanged',
+                    this.handleAccountsChanged
+                );
+                this.providerStatus.activeProvider.removeListener(
+                    'close',
+                    this.handleClose
+                );
+                this.providerStatus.activeProvider.removeListener(
+                    'networkChanged',
+                    this.handleNetworkChanged
+                );
+            }
+
+            if (
+                this.providerStatus.library &&
+                this.providerStatus.library.close
+            ) {
+                console.log(`[Provider] Closing Old Library.`);
+                await this.providerStatus.library.close();
+            }
+
+            let web3 = new ethers.providers.Web3Provider(provider);
+
+            if ((provider as any).isMetaMask) {
+                console.log(`[Provider] MetaMask Auto Refresh Off`);
+                (provider as any).autoRefreshOnNetworkChange = false;
+            }
+
+            if (provider.on) {
+                console.log(`[Provider] Subscribing Listeners`);
+                provider.on('chainChanged', this.handleNetworkChanged); // For now assume network/chain ids are same thing as only rare case when they don't match
+                provider.on('accountsChanged', this.handleAccountsChanged);
+                provider.on('close', this.handleClose);
+                provider.on('networkChanged', this.handleNetworkChanged);
+            }
+
+            let network = await web3.getNetwork();
+
+            const accounts = await web3.listAccounts();
+            let account = null;
+            if (accounts.length > 0) account = accounts[0];
+
+            this.providerStatus.injectedLoaded = true;
+            this.providerStatus.injectedChainId = network.chainId;
+            this.providerStatus.account = account;
+            this.providerStatus.injectedWeb3 = web3;
+            this.providerStatus.activeProvider = provider;
+            console.log(`[Provider] Provider loaded.`);
+        } catch (err) {
+            console.error(`[Provider] Loading Error`, err);
+            this.providerStatus.injectedLoaded = false;
+            this.providerStatus.injectedChainId = null;
+            this.providerStatus.account = null;
+            this.providerStatus.library = null;
+            this.providerStatus.active = false;
+            this.providerStatus.activeProvider = null;
+        }
+    }
+
+    @action async loadWeb3(provider = null) {
+        /*
+        Handles loading web3 provider.
+        Injected web3 loaded and active if chain Id matches.
+        Backup web3 loaded and active if no injected or injected chain Id not correct.
+        */
+        if (provider === null && window.ethereum) {
+            console.log(`[Provider] Loading Injected Provider`);
+            await this.loadProvider(window.ethereum);
+        } else if (provider) {
+            console.log(`[Provider] Loading Provider`);
+            await this.loadProvider(provider);
+        }
+
+        // If no injected provider or inject provider is wrong chain fall back to Infura
+        if (
+            !this.providerStatus.injectedLoaded ||
+            this.providerStatus.injectedChainId !== supportedChainId
+        ) {
+            console.log(
+                `[Provider] Reverting To Backup Provider.`,
+                this.providerStatus
+            );
+            try {
+                let web3 = new ethers.providers.JsonRpcProvider(
+                    backupUrls[supportedChainId]
+                );
+                let network = await web3.getNetwork();
+                this.providerStatus.injectedActive = false;
+                this.providerStatus.backUpLoaded = true;
+                this.providerStatus.account = null;
+                this.providerStatus.activeChainId = network.chainId;
+                this.providerStatus.backUpWeb3 = web3;
+                this.providerStatus.library = web3;
+                this.providerStatus.activeProvider =
+                    backupUrls[supportedChainId];
+                console.log(`[Provider] BackUp Provider Loaded & Active`);
+            } catch (err) {
+                console.error(`[Provider] loadWeb3 BackUp Error`, err);
+                this.providerStatus.injectedActive = false;
+                this.providerStatus.backUpLoaded = false;
+                this.providerStatus.account = null;
+                this.providerStatus.activeChainId = null;
+                this.providerStatus.backUpWeb3 = null;
+                this.providerStatus.library = null;
+                this.providerStatus.active = false;
+                this.providerStatus.activeProvider = null;
+                this.providerStatus.error = new Error(ERRORS.NoWeb3);
+                return;
+            }
+        } else {
+            console.log(`[Provider] Injected provider active.`);
+            this.providerStatus.library = this.providerStatus.injectedWeb3;
+            this.providerStatus.activeChainId = this.providerStatus.injectedChainId;
+            this.providerStatus.injectedActive = true;
+            if (this.providerStatus.account)
+                this.fetchUserBlockchainData(this.providerStatus.account);
+        }
+
+        this.providerStatus.active = true;
+        console.log(`[Provider] Provider Active.`, this.providerStatus);
+    }
 }
