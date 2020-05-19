@@ -7,6 +7,7 @@ import Header from 'components/Common/Header';
 import Home from 'views/Home';
 import Private from 'views/Private';
 import Pool from 'views/Pool';
+import New from 'views/New';
 import LeftNav from 'components/Common/LeftNav';
 import WalletBalances from 'components/Common/WalletBalances';
 
@@ -30,6 +31,7 @@ const App = () => {
         return (
             <div className="app-shell">
                 <Switch>
+                    <Route path="/pool/new" component={New} />
                     <Route path="/pool/:poolAddress" component={Pool} />
                     <Route path="/private" component={Private} />
                     <Redirect from="/list" to="/" />
