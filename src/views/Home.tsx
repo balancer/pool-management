@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import WarningMessage from '../components/Home/WarningMessage';
 import MyLiquidity from '../components/Home/MyLiquidity';
 import SharedPools from '../components/Home/SharedPools';
 
@@ -16,7 +15,6 @@ const HomeWrapper = styled.div`
 const Home = () => {
     return (
         <HomeWrapper>
-            <WarningMessage />
             <MyLiquidity />
             <SharedPools />
         </HomeWrapper>
