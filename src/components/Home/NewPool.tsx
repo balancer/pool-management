@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from '../../contexts/storesContext';
 
 const Wrapper = styled.div`
     padding-top: 8px;
@@ -18,12 +17,6 @@ const Header = styled.div`
 `;
 
 const NewPool = observer(() => {
-    const {
-        root: { poolStore },
-    } = useStores();
-
-    const pools = poolStore.getPrivatePools();
-
     return (
         <Wrapper>
             <Header>Tokens</Header>
