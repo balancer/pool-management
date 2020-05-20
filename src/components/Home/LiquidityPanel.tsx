@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Identicon from '../Common/Identicon';
 import { Pie } from 'react-chartjs-2';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
@@ -265,7 +264,6 @@ const LiquidityPanel = observer((props: Props) => {
                             >
                                 <PoolRow>
                                     <TableCellHideMobile>
-                                        <Identicon address={pool.address} />
                                         <IdenticonText>
                                             {shortenAddress(pool.address)}
                                         </IdenticonText>
