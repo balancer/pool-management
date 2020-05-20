@@ -116,6 +116,16 @@ export default class ContractMetadataStore {
         return metadata.isSupported;
     }
 
+    getBFactoryAddress(): string {
+        const proxyAddress = this.contractMetadata.bFactory;
+        if (!proxyAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return proxyAddress;
+    }
+
     getProxyAddress(): string {
         const proxyAddress = this.contractMetadata.proxy;
         if (!proxyAddress) {
