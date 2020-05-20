@@ -39,6 +39,7 @@ const InputWrapper = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    color: var(--input-text);
     border: 1px solid var(--panel-border);
     background-color: var(--panel-background);
     border-radius: 4px;
@@ -178,6 +179,7 @@ const NewPool = observer(() => {
                             }}
                             placeholder=""
                         />
+                        %
                     </InputWrapper>
                 </SingleElement>
             </Section>
