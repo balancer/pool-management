@@ -8,6 +8,7 @@ import { backupUrls, supportedChainId, web3Modal } from 'provider/connectors';
 
 export enum ContractTypes {
     BPool = 'BPool',
+    BActions = 'BActions',
     BFactory = 'BFactory',
     TestToken = 'TestToken',
     ExchangeProxy = 'ExchangeProxy',
@@ -18,6 +19,7 @@ export enum ContractTypes {
 
 export const schema = {
     BPool: require('../abi/BPool').abi,
+    BActions: require('../abi/BActions').abi,
     BFactory: require('../abi/BFactory').abi,
     TestToken: require('../abi/TestToken').abi,
     ExchangeProxy: require('../abi/ExchangeProxy').abi,
