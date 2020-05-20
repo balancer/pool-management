@@ -124,11 +124,11 @@ const PoolAssetChartPanel = observer((props: Props) => {
                         options={options}
                     />
                 ) : (
-                    <div>Loading</div>
+                    <div></div>
                 )}
             </PieChartWrapper>
             <BreakdownContainer>
-                {pool ? renderAssetPercentages(pool) : <div>Loading</div>}
+                {pool ? renderAssetPercentages(pool) : <div></div>}
             </BreakdownContainer>
         </Wrapper>
     );

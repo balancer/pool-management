@@ -67,6 +67,13 @@ const TableCell = styled.div`
     width: ${props => props.width || '20%'};
 `;
 
+const TableCellHideMobile = styled(TableCell)`
+    @media screen and (max-width: 1024px) {
+        display: none;
+        width: 0%;
+    }
+`;
+
 const TableRowLoad = styled.div`
     display: flex;
     flex-direction: row;
@@ -130,11 +137,21 @@ const TokenIconIn = styled.img`
     margin-left: 7px;
 `;
 
+const TokenSymbol = styled.div`
+    @media screen and (max-width: 1024px) {
+        display: none;
+        width: 0%;
+    }
+`;
+
 const TableCellAmountIn = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-end;
     width: ${props => props.width || '20%'};
+    @media screen and (max-width: 1024px) {
+        width: 40%;
+    }
 `;
 
 const TableCellAmountOut = styled.div`
@@ -142,6 +159,9 @@ const TableCellAmountOut = styled.div`
     align-items: center;
     justify-content: flex-end;
     width: ${props => props.width || '17%'};
+    @media screen and (max-width: 1024px) {
+        width: 40%;
+    }
 `;
 
 const TableCellTxHeader = styled.div`
@@ -263,15 +283,17 @@ const SwapsTable = observer((props: Props) => {
 
                     return (
                         <TableRow key={index}>
-                            <TableCell>{formatDate(swap.timestamp)}</TableCell>
+                            <TableCellHideMobile>
+                                {formatDate(swap.timestamp)}
+                            </TableCellHideMobile>
                             <TableCellAmountIn>{amountIn}</TableCellAmountIn>
                             <TableCellTokenIn>
-                                {swap.tokenInSym}
+                                <TokenSymbol>{swap.tokenInSym}</TokenSymbol>
                                 <TokenIconIn src={tokenInIcon} />
                             </TableCellTokenIn>
                             <TableCellTokenOut>
                                 <TokenIconOut src={tokenOutIcon} />
-                                {swap.tokenOutSym}
+                                <TokenSymbol>{swap.tokenOutSym}</TokenSymbol>
                             </TableCellTokenOut>
                             <TableCellAmountOut>{amountOut}</TableCellAmountOut>
                             <TableCellTxDetails>
@@ -299,7 +321,7 @@ const SwapsTable = observer((props: Props) => {
         <Wrapper>
             <TableWrapper>
                 <HeaderRow>
-                    <TableCell>Time</TableCell>
+                    <TableCellHideMobile>Time</TableCellHideMobile>
                     <TableCellTokenHeader>Trade In</TableCellTokenHeader>
                     <TableCellTokenHeader>Trade Out</TableCellTokenHeader>
                     <TableCellTxHeader>Tx Details</TableCellTxHeader>

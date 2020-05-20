@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
-import { getEtherscanLink } from 'utils/helpers';
+import { getEtherscanLink, shortenAddress } from 'utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { ModalMode } from '../../stores/AddLiquidityForm';
 
@@ -104,7 +104,7 @@ const AddRemovePanel = (props: Props) => {
                         href={getEtherscanLink(chainId, poolAddress, 'address')}
                         target="_blank"
                     >
-                        {poolAddress}
+                        {shortenAddress(poolAddress)}
                     </IdenticonText>
                 </AddressContainer>
                 <InformationContainer></InformationContainer>
