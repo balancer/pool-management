@@ -39,6 +39,22 @@ export default class BlockchainFetchStore {
         tokenStore.fetchTokenBalances(account, poolAddresses);
     }
 
+    @action fetchBActionsAllowances() {
+        const {
+            tokenStore,
+            providerStore,
+            contractMetadataStore,
+        } = this.rootStore;
+
+        const account = providerStore.providerStatus.account;
+        const trackedTokenAddresses = contractMetadataStore.getTrackedTokenAddresses();
+        const addresses = trackedTokenAddresses.filter(
+            address => address !== 'ether'
+        );
+        const bActionsAddress = contractMetadataStore.getBActionsAddress();
+        tokenStore.fetchAccountApprovals(addresses, account, bActionsAddress);
+    }
+
     @action async fetchActivePoolAllowances() {
         const { providerStore } = this.rootStore;
 
@@ -88,6 +104,7 @@ export default class BlockchainFetchStore {
 
                             if (account) {
                                 this.fetchPoolUserBalances();
+                                this.fetchBActionsAllowances();
                             }
 
                             if (account && appSettingsStore.hasActivePool()) {
