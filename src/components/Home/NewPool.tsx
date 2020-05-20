@@ -117,6 +117,38 @@ const NewPool = observer(() => {
         createPoolFormStore.addToken(newToken);
     };
 
+    const handleCreateButtonClick = async () => {
+        const bActions = contractMetadataStore.getBActionsAddress();
+        const factory = contractMetadataStore.getBFactoryAddress();
+        const tokens = createPoolFormStore.tokens;
+        const balances = tokens.map(token => {
+            const balanceInput = createPoolFormStore.balances[token];
+            const balance = bnum(balanceInput.value);
+            const denormalizedBalance = tokenStore.denormalizeBalance(
+                balance,
+                token
+            );
+            return denormalizedBalance.toString();
+        });
+        const denorms = tokens.map(token => {
+            const weightInput = createPoolFormStore.weights[token];
+            const weight = weightInput.value;
+            return toWei(weight)
+                .div(2)
+                .toString();
+        });
+        const swapFee = toWei(createPoolFormStore.fee.value)
+            .div(100)
+            .toString();
+        const finalize = true;
+        await providerStore.sendTransaction(
+            ContractTypes.BActions,
+            bActions,
+            'create',
+            [factory, tokens, balances, denorms, swapFee, finalize]
+        );
+    };
+
     const handleInputChange = async event => {
         const { value } = event.target;
         createPoolFormStore.setFee(value);
@@ -147,6 +179,15 @@ const NewPool = observer(() => {
                             placeholder=""
                         />
                     </InputWrapper>
+                </SingleElement>
+            </Section>
+            <Section>
+                <SingleElement>
+                    <Button
+                        buttonText={'Create'}
+                        active={true}
+                        onClick={e => handleCreateButtonClick()}
+                    />
                 </SingleElement>
             </Section>
         </Wrapper>
