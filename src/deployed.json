@@ -300,6 +300,33 @@
                 "chartColor": "#9a4f50"
             },
             {
+                "symbol": "imBTC",
+                "address": "0x3212b29E33587A00FB1C83346f5dBFA69A458923",
+                "decimals": 8,
+                "ticker": "BTC",
+                "iconAddress": "0x3212b29E33587A00FB1C83346f5dBFA69A458923",
+                "precision": 4,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "pBTC",
+                "address": "0x5228a22e72ccC52d415EcFd199F99D0665E7733b",
+                "decimals": 18,
+                "ticker": "BTC",
+                "iconAddress": "0x5228a22e72ccC52d415EcFd199F99D0665E7733b",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "sBTC",
+                "address": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
+                "decimals": 18,
+                "ticker": "BTC",
+                "iconAddress": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
                 "symbol": "DZAR",
                 "address": "0x9Cb2f26A23b8d89973F08c957C4d7cdf75CD341c",
                 "decimals": 6,
@@ -370,6 +397,15 @@
                 "iconAddress": "0x6Ee0f7BB50a54AB5253dA0667B0Dc2ee526C30a8",
                 "precision": 2,
                 "chartColor": "#93a167"
+            },
+            {
+                "symbol": "PNK",
+                "address": "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d",
+                "decimals": 18,
+                "ticker": "PNK",
+                "iconAddress": "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d",
+                "precision": 2,
+                "chartColor": "#5d2e9a"
             }
         ]
     }

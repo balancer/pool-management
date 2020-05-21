@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
-import { getEtherscanLink } from 'utils/helpers';
+import { getEtherscanLink, shortenAddress } from 'utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { ModalMode } from '../../stores/AddLiquidityForm';
 
@@ -85,12 +85,14 @@ const AddRemovePanel = (props: Props) => {
 
     const pool = poolStore.getPool(poolAddress);
     let userProportion = undefined;
+    let isFinalized = false;
 
     if (pool) {
         userProportion = poolStore.getUserShareProportion(
             pool.address,
             account
         );
+        isFinalized = pool.finalized;
     }
 
     return (
@@ -102,46 +104,50 @@ const AddRemovePanel = (props: Props) => {
                         href={getEtherscanLink(chainId, poolAddress, 'address')}
                         target="_blank"
                     >
-                        {poolAddress}
+                        {shortenAddress(poolAddress)}
                     </IdenticonText>
                 </AddressContainer>
                 <InformationContainer></InformationContainer>
             </LeftColumn>
-            <RightColumn>
-                <Button
-                    buttonText={'Add Liquidity'}
-                    active={!!pool}
-                    onClick={() => {
-                        if (pool) {
-                            addLiquidityFormStore.openModal(
-                                poolAddress,
-                                account,
-                                pool.tokensList,
-                                ModalMode.ADD_LIQUIDITY
-                            );
+            {isFinalized ? (
+                <RightColumn>
+                    <Button
+                        buttonText={'Add Liquidity'}
+                        active={!!pool}
+                        onClick={() => {
+                            if (pool) {
+                                addLiquidityFormStore.openModal(
+                                    poolAddress,
+                                    account,
+                                    pool.tokensList,
+                                    ModalMode.ADD_LIQUIDITY
+                                );
+                            }
+                        }}
+                    />
+                    <Spacer />
+                    <Button
+                        buttonText={'Remove Liquidity'}
+                        active={
+                            !!pool &&
+                            account &&
+                            userProportion &&
+                            userProportion.gt(0)
                         }
-                    }}
-                />
-                <Spacer />
-                <Button
-                    buttonText={'Remove Liquidity'}
-                    active={
-                        !!pool &&
-                        account &&
-                        userProportion &&
-                        userProportion.gt(0)
-                    }
-                    onClick={() => {
-                        if (pool) {
-                            removeLiquidityFormStore.openModal(
-                                poolAddress,
-                                account,
-                                pool.tokensList
-                            );
-                        }
-                    }}
-                />
-            </RightColumn>
+                        onClick={() => {
+                            if (pool) {
+                                removeLiquidityFormStore.openModal(
+                                    poolAddress,
+                                    account,
+                                    pool.tokensList
+                                );
+                            }
+                        }}
+                    />
+                </RightColumn>
+            ) : (
+                <div />
+            )}
         </Wrapper>
     );
 };

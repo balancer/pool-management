@@ -49,6 +49,7 @@
 }
 
 body {
+    background-color: var(--background);
 }
 
 #root::-webkit-scrollbar {
@@ -57,7 +58,7 @@ body {
 
 .app-shell {
     background-color: var(--background);
-    height: calc(100vh - 81px);
+    height: calc(100vh - 78px);
     width: 100%;
     overflow-y: scroll;
 }

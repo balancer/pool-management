@@ -67,10 +67,27 @@ const TableCell = styled.div`
     display: flex;
     align-items: center;
     width: ${props => props.width || '20%'};
+    @media screen and (max-width: 1024px) {
+        width: 30%;
+    }
+`;
+
+const TableCellHideMobile = styled(TableCell)`
+    @media screen and (max-width: 1024px) {
+        display: none;
+        width: 0%;
+    }
 `;
 
 const TableCellRight = styled(TableCell)`
     justify-content: flex-end;
+`;
+
+const TableCellRightHideMobile = styled(TableCellRight)`
+    @media screen and (max-width: 1024px) {
+        display: none;
+        width: 0%;
+    }
 `;
 
 const TokenIcon = styled.img`
@@ -192,11 +209,13 @@ const BalancesTable = observer((props: Props) => {
                                 )}{' '}
                                 {isSupported ? tokenMetadata.symbol : ''}
                             </TableCell>
-                            <TableCell>
+                            <TableCellHideMobile>
                                 {balanceToDisplay}{' '}
                                 {isSupported ? tokenMetadata.symbol : ''}
-                            </TableCell>
-                            <TableCellRight>$ {valueToDisplay}</TableCellRight>
+                            </TableCellHideMobile>
+                            <TableCellRightHideMobile>
+                                $ {valueToDisplay}
+                            </TableCellRightHideMobile>
                         </TableRow>
                     );
                 })}
@@ -211,8 +230,10 @@ const BalancesTable = observer((props: Props) => {
                     <TableCell>Token</TableCell>
                     <TableCell>Weight</TableCell>
                     <TableCell>Pool Balance</TableCell>
-                    <TableCell>My Pool Balance</TableCell>
-                    <TableCellRight>My Asset Value</TableCellRight>
+                    <TableCellHideMobile>My Pool Balance</TableCellHideMobile>
+                    <TableCellRightHideMobile>
+                        My Asset Value
+                    </TableCellRightHideMobile>
                 </HeaderRow>
                 {pool ? (
                     renderBalanceTable(pool, userPoolTokens, totalPoolTokens)

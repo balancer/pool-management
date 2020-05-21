@@ -1,6 +1,6 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { fetchPublicPools } from 'provider/subgraph';
+import { fetchAllPools } from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
@@ -59,13 +59,13 @@ export default class PoolStore {
         return pool;
     }
 
-    @action async fetchPublicPools() {
+    @action async fetchAllPools() {
         const { providerStore, contractMetadataStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        console.debug('[fetchPublicPools] Fetch pools');
-        const pools = await fetchPublicPools(contractMetadataStore.tokenIndex);
+        console.debug('[fetchAllPools] Fetch pools');
+        const pools = await fetchAllPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
             const processedPool = this.processUnknownTokens(pool);
@@ -73,7 +73,7 @@ export default class PoolStore {
         });
         this.poolsLoaded = true;
 
-        console.debug('[fetchPublicPools] Pools fetched & stored');
+        console.debug('[fetchAllPools] Pools fetched & stored');
     }
 
     @action private setPool(
@@ -198,10 +198,20 @@ export default class PoolStore {
         return undefined;
     }
 
-    getPublicPools(filter?: object): Pool[] {
+    getPublicPools(): Pool[] {
         let pools: Pool[] = [];
         Object.keys(this.pools).forEach(key => {
             if (this.pools[key].data.finalized) {
+                pools.push(this.pools[key].data);
+            }
+        });
+        return pools;
+    }
+
+    getPrivatePools(): Pool[] {
+        let pools: Pool[] = [];
+        Object.keys(this.pools).forEach(key => {
+            if (!this.pools[key].data.finalized) {
                 pools.push(this.pools[key].data);
             }
         });

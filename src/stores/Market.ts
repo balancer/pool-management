@@ -82,7 +82,10 @@ export default class MarketStore {
         let portfolioValue = bnum(0);
         pool.tokens.forEach((token, index) => {
             if (contractMetadataStore.isSupported(token.address)) {
-                let tokenValue = this.getValue(token.symbol, token.balance);
+                let ticker = contractMetadataStore.getTokenMetadata(
+                    token.address
+                ).ticker;
+                let tokenValue = this.getValue(ticker, token.balance);
                 sumValue = sumValue.plus(tokenValue);
                 if (tokenValue.isGreaterThan(bnum(0))) {
                     sumWeight = sumWeight.plus(token.denormWeightProportion);
@@ -103,12 +106,18 @@ export default class MarketStore {
 
         pool.swaps.forEach(swap => {
             if (contractMetadataStore.isSupported(swap.tokenIn)) {
+                let ticker = contractMetadataStore.getTokenMetadata(
+                    swap.tokenIn
+                ).ticker;
                 volumeTotal = volumeTotal.plus(
-                    this.getValue(swap.tokenInSym, swap.tokenAmountIn)
+                    this.getValue(ticker, swap.tokenAmountIn)
                 );
             } else if (contractMetadataStore.isSupported(swap.tokenOut)) {
+                let ticker = contractMetadataStore.getTokenMetadata(
+                    swap.tokenOut
+                ).ticker;
                 volumeTotal = volumeTotal.plus(
-                    this.getValue(swap.tokenOutSym, swap.tokenAmountOut)
+                    this.getValue(ticker, swap.tokenAmountOut)
                 );
             }
         });
