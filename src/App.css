@@ -49,6 +49,7 @@
 }
 
 body {
+    background-color: var(--background);
 }
 
 #root::-webkit-scrollbar {
