@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { bnum, toWei } from 'utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
+import { EtherKey } from '../../stores/Token';
 import { useStores } from '../../contexts/storesContext';
 import CreatePoolTable from '../CreatePool/CreatePoolTable';
 import Button from '../Common/Button';
@@ -111,7 +112,7 @@ const NewPool = observer(() => {
         const trackedTokenAddresses = contractMetadataStore.getTrackedTokenAddresses();
         const tokens = createPoolFormStore.tokens;
         const newToken = trackedTokenAddresses.find(token => {
-            const isEther = token === 'ether';
+            const isEther = token === EtherKey;
             const alreadyExists = tokens.includes(token);
             return !isEther && !alreadyExists;
         });

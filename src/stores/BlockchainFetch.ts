@@ -1,6 +1,7 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { supportedChainId } from '../provider/connectors';
+import { EtherKey } from './Token';
 
 export default class BlockchainFetchStore {
     @observable activeFetchLoop: any;
@@ -49,7 +50,7 @@ export default class BlockchainFetchStore {
         const account = providerStore.providerStatus.account;
         const trackedTokenAddresses = contractMetadataStore.getTrackedTokenAddresses();
         const addresses = trackedTokenAddresses.filter(
-            address => address !== 'ether'
+            address => address !== EtherKey
         );
         const bActionsAddress = contractMetadataStore.getBActionsAddress();
         tokenStore.fetchAccountApprovals(addresses, account, bActionsAddress);
