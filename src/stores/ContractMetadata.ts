@@ -246,7 +246,7 @@ export default class ContractMetadataStore {
         return tokenMetadata;
     }
 
-    getFilteredTokenMetadata(chainId: number, filter: string): TokenMetadata[] {
+    getFilteredTokenMetadata(filter: string): TokenMetadata[] {
         const tokens = this.contractMetadata.tokens || undefined;
 
         if (!tokens) {
