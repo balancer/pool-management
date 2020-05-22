@@ -19,15 +19,16 @@ export default class CreatePoolFormStore {
 
     constructor(rootStore) {
         this.rootStore = rootStore;
-        this.tokens = [
-            '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
-            '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
-        ];
+        this.tokens = [];
         this.checkboxes = {} as CheckboxMap;
         this.weights = {} as InputMap;
         this.balances = {} as InputMap;
-        this.initializeCheckboxes(this.tokens);
-        this.initializeInputs(this.tokens);
+        this.fee = {
+            value: '',
+            touched: false,
+            validation: ValidationStatus.EMPTY,
+        };
+        this.setDefaults();
     }
 
     @action addToken(token: string) {
@@ -116,15 +117,18 @@ export default class CreatePoolFormStore {
         return weightNumber.div(totalWeight);
     }
 
-    private initializeInputs(tokenAddresses: string[]) {
-        tokenAddresses.forEach(tokenAddress => {
-            this.initializeTokenInputs(tokenAddress);
-        });
-        this.fee = {
-            value: '',
-            touched: false,
-            validation: ValidationStatus.EMPTY,
-        };
+    private setDefaults() {
+        const { contractMetadataStore } = this.rootStore;
+        const tokenMetadata = contractMetadataStore.getWhitelistedTokenMetadata();
+        const daiToken = tokenMetadata.find(token => token.symbol === 'DAI');
+        this.addToken(daiToken.address);
+        this.setTokenWeight(daiToken.address, '30');
+        this.setTokenBalance(daiToken.address, '15');
+        const usdcToken = tokenMetadata.find(token => token.symbol === 'USDC');
+        this.addToken(usdcToken.address);
+        this.setTokenWeight(usdcToken.address, '20');
+        this.setTokenBalance(usdcToken.address, '10');
+        this.setFee('0.15');
     }
 
     private initializeTokenInputs(tokenAddress: string) {
@@ -138,12 +142,6 @@ export default class CreatePoolFormStore {
             touched: false,
             validation: ValidationStatus.EMPTY,
         };
-    }
-
-    private initializeCheckboxes(tokenAddresses: string[]) {
-        tokenAddresses.forEach(tokenAddress => {
-            this.initializeCheckbox(tokenAddress);
-        });
     }
 
     private initializeCheckbox(tokenAddress: string) {
