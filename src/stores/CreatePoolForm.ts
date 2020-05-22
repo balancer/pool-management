@@ -10,6 +10,11 @@ export default class CreatePoolFormStore {
     @observable weights: InputMap;
     @observable balances: InputMap;
     @observable fee: Input;
+    @observable assetModal = {
+        open: false,
+        inputValue: '',
+        activeTokenIndex: 0,
+    };
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -46,8 +51,11 @@ export default class CreatePoolFormStore {
         this.balances[tokenAddress].value = balance;
     }
 
-    @action setToken(tokenIndex: string, token: string) {
+    @action setToken(token: string) {
+        const tokenIndex = this.assetModal.activeTokenIndex;
         this.tokens[tokenIndex] = token;
+        this.initializeTokenInputs(token);
+        this.initializeCheckbox(token);
     }
 
     @action setFee(fee: string) {
@@ -60,6 +68,25 @@ export default class CreatePoolFormStore {
 
     @action setApprovalCheckboxChecked(tokenAddress: string, checked: boolean) {
         this.checkboxes[tokenAddress].checked = checked;
+    }
+
+    @action openModal(tokenAddress: string) {
+        const tokenIndex = this.tokens.findIndex(
+            token => token === tokenAddress
+        );
+        this.assetModal = {
+            open: true,
+            inputValue: '',
+            activeTokenIndex: tokenIndex,
+        };
+    }
+
+    @action closeModal() {
+        this.assetModal.open = false;
+    }
+
+    @action setModalInputValue(value: string) {
+        this.assetModal.inputValue = value;
     }
 
     getWeightInput(tokenAddress): Input {
