@@ -6,6 +6,7 @@ import { ContractTypes } from '../../stores/Provider';
 import { EtherKey } from '../../stores/Token';
 import { useStores } from '../../contexts/storesContext';
 import CreatePoolTable from '../CreatePool/CreatePoolTable';
+import SelectAssetModal from '../CreatePool/SelectAssetModal';
 import Button from '../Common/Button';
 
 const Wrapper = styled.div`
@@ -193,6 +194,7 @@ const NewPool = observer(() => {
                     />
                 </SingleElement>
             </Section>
+            <SelectAssetModal />
         </Wrapper>
     );
 });
