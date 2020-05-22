@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { formatPercentage } from '../../utils/helpers';
 const Cross = require('../../assets/images/x.svg') as string;
+const Dropdown = require('../../assets/images/dropdown.svg') as string;
 
 const Wrapper = styled.div`
     width: calc(80% - 20px);
@@ -198,10 +199,20 @@ const InputWrapper = styled.div`
 `;
 
 const ExternalIcon = styled.img`
-    width: 16px;
-    height: 16px;
+    cursor: pointer;
     filter: invert(67%) sepia(15%) saturate(333%) hue-rotate(155deg)
         brightness(94%) contrast(88%);
+`;
+
+const DropdownIcon = styled(ExternalIcon)`
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+`;
+
+const CloseIcon = styled(ExternalIcon)`
+    width: 16px;
+    height: 16px;
 `;
 
 const CreatePoolTable = observer(() => {
@@ -271,6 +282,10 @@ const CreatePoolTable = observer(() => {
         createPoolFormStore.setTokenBalance(tokenAddress, value);
     };
 
+    const handleChangeClick = async (tokenAddress: string) => {
+        createPoolFormStore.openModal(tokenAddress);
+    };
+
     const handleRemoveClick = async (tokenAddress: string) => {
         createPoolFormStore.removeToken(tokenAddress);
     };
@@ -333,6 +348,13 @@ const CreatePoolTable = observer(() => {
                                     )}
                                 />
                                 {tokenMetadata.symbol}
+                                <DropdownIcon
+                                    src={Dropdown}
+                                    alt="v"
+                                    onClick={e => {
+                                        handleChangeClick(token);
+                                    }}
+                                />
                             </TableCell>
                             <TableCell>
                                 <Toggle>
@@ -387,7 +409,7 @@ const CreatePoolTable = observer(() => {
                                 </DepositAmount>
                             </TableCellRight>
                             <TableCellRight width={'15%'}>
-                                <ExternalIcon
+                                <CloseIcon
                                     src={Cross}
                                     alt="x"
                                     onClick={e => {
