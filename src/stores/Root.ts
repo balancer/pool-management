@@ -7,6 +7,7 @@ import PoolStore from './Pool';
 import DropdownStore from './Dropdown';
 import AppSettingsStore from './AppSettings';
 import ContractMetadataStore from './ContractMetadata';
+import ProxyStore from './Proxy';
 import MarketStore from './Market';
 import AddLiquidityFormStore from './AddLiquidityForm';
 import RemoveLiquidityFormStore from './RemoveLiquidityForm';
@@ -23,6 +24,7 @@ export default class RootStore {
     dropdownStore: DropdownStore;
     appSettingsStore: AppSettingsStore;
     contractMetadataStore: ContractMetadataStore;
+    proxyStore: ProxyStore;
     addLiquidityFormStore: AddLiquidityFormStore;
     removeLiquidityFormStore: RemoveLiquidityFormStore;
     createPoolFormStore: CreatePoolFormStore;
@@ -38,6 +40,7 @@ export default class RootStore {
         this.dropdownStore = new DropdownStore(this);
         this.appSettingsStore = new AppSettingsStore(this);
         this.contractMetadataStore = new ContractMetadataStore(this);
+        this.proxyStore = new ProxyStore(this);
         this.addLiquidityFormStore = new AddLiquidityFormStore(this);
         this.removeLiquidityFormStore = new RemoveLiquidityFormStore(this);
         this.createPoolFormStore = new CreatePoolFormStore(this);
