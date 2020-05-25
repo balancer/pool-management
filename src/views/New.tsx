@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import NewPool from '../components/Home/NewPool';
 
-const PrivateWrapper = styled.div`
+const NewWrapper = styled.div`
     position: relative;
     padding: 32px 30px 0px 30px;
 
@@ -13,9 +13,9 @@ const PrivateWrapper = styled.div`
 
 const Private = () => {
     return (
-        <PrivateWrapper>
+        <NewWrapper>
             <NewPool />
-        </PrivateWrapper>
+        </NewWrapper>
     );
 };
 
