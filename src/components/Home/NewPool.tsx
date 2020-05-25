@@ -102,6 +102,7 @@ const NewPool = observer(() => {
             contractMetadataStore,
             createPoolFormStore,
             providerStore,
+            proxyStore,
             tokenStore,
         },
     } = useStores();
@@ -121,6 +122,7 @@ const NewPool = observer(() => {
     };
 
     const handleCreateButtonClick = async () => {
+        const dsProxyAddress = proxyStore.getInstanceAddress();
         const bActions = contractMetadataStore.getBActionsAddress();
         const factory = contractMetadataStore.getBFactoryAddress();
         const tokens = createPoolFormStore.tokens;
@@ -144,11 +146,16 @@ const NewPool = observer(() => {
             .div(100)
             .toString();
         const finalize = true;
-        await providerStore.sendTransaction(
+        const data = proxyStore.wrapTransaction(
             ContractTypes.BActions,
-            bActions,
             'create',
             [factory, tokens, balances, denorms, swapFee, finalize]
+        );
+        await providerStore.sendTransaction(
+            ContractTypes.DSProxy,
+            dsProxyAddress,
+            'execute',
+            [bActions, data]
         );
     };
 
