@@ -7,6 +7,7 @@ import { getSupportedChainName } from '../provider/connectors';
 export interface ContractMetadata {
     bFactory: string;
     bActions: string;
+    dsProxyRegistry: string;
     proxy: string;
     weth: string;
     multicall: string;
@@ -72,6 +73,7 @@ export default class ContractMetadataStore {
         const contractMetadata = {
             bFactory: metadata.default[chainName].bFactory,
             bActions: metadata.default[chainName].bActions,
+            dsProxyRegistry: metadata.default[chainName].dsProxyRegistry,
             proxy: metadata.default[chainName].proxy,
             weth: metadata.default[chainName].weth,
             multicall: metadata.default[chainName].multicall,
@@ -136,6 +138,16 @@ export default class ContractMetadataStore {
             );
         }
         return proxyAddress;
+    }
+
+    getDsProxyRegistryAddress(): string {
+        const dsProxyRegistryAddress = this.contractMetadata.dsProxyRegistry;
+        if (!dsProxyRegistryAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return dsProxyRegistryAddress;
     }
 
     getProxyAddress(): string {
