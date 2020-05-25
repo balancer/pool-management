@@ -8,6 +8,7 @@ import Home from 'views/Home';
 import Private from 'views/Private';
 import Pool from 'views/Pool';
 import New from 'views/New';
+import Setup from 'views/Setup';
 import LeftNav from 'components/Common/LeftNav';
 import WalletBalances from 'components/Common/WalletBalances';
 
@@ -34,6 +35,7 @@ const App = () => {
                     <Route path="/pool/new" component={New} />
                     <Route path="/pool/:poolAddress" component={Pool} />
                     <Route path="/private" component={Private} />
+                    <Route path="/setup" component={Setup} />
                     <Redirect from="/list" to="/" />
                     <Route path="/" component={Home} />
                 </Switch>
