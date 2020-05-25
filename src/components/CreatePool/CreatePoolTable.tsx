@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { formatPercentage } from '../../utils/helpers';
+import { bnum, formatCurrency, formatPercentage } from '../../utils/helpers';
 const Cross = require('../../assets/images/x.svg') as string;
 const Dropdown = require('../../assets/images/dropdown.svg') as string;
 
 const Wrapper = styled.div`
-    width: calc(80% - 20px);
+    width: 90%;
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     background: var(--panel-background);
@@ -48,7 +48,7 @@ const TableRow = styled.div`
 const TableCell = styled.div`
     display: flex;
     align-items: center;
-    width: ${props => props.width || '20%'};
+    width: ${props => props.width || '10%'};
 `;
 
 const TableCellRight = styled(TableCell)`
@@ -198,6 +198,10 @@ const InputWrapper = styled.div`
     }
 `;
 
+const ValueLabel = styled.span`
+    color: ${props => (props.excess ? 'var(--error-color)' : '')};
+`;
+
 const ExternalIcon = styled.img`
     cursor: pointer;
     filter: invert(67%) sepia(15%) saturate(333%) hue-rotate(155deg)
@@ -220,6 +224,7 @@ const CreatePoolTable = observer(() => {
         root: {
             tokenStore,
             providerStore,
+            marketStore,
             contractMetadataStore,
             createPoolFormStore,
         },
@@ -301,6 +306,21 @@ const CreatePoolTable = observer(() => {
     };
 
     const renderAssetTable = (tokens: string[]) => {
+        const tokenValues = {};
+        for (const token of tokens) {
+            const balanceInput = createPoolFormStore.getBalanceInput(token);
+            const balance = bnum(balanceInput.value);
+            const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
+            const tokenValue = marketStore.getValue(
+                tokenMetadata.symbol,
+                balance
+            );
+            tokenValues[token] = tokenValue;
+        }
+        const totalTokenValue = tokens.reduce((acc, val) => {
+            return acc.plus(tokenValues[val]);
+        }, bnum(0));
+
         return (
             <React.Fragment>
                 {tokens.map(token => {
@@ -338,9 +358,24 @@ const CreatePoolTable = observer(() => {
 
                     let hasError = false;
 
+                    let valueText = '';
+                    if (!tokenValues[token].isNaN()) {
+                        valueText += `$ ${formatCurrency(tokenValues[token])}`;
+                    }
+                    const valueShare = tokenValues[token].div(totalTokenValue);
+                    if (!valueShare.isNaN()) {
+                        valueText += ` (${formatPercentage(valueShare, 2)})`;
+                    }
+                    const relativeWeight = createPoolFormStore.getRelativeWeight(
+                        token
+                    );
+                    const excessiveShare = valueShare
+                        .minus(relativeWeight)
+                        .gt(0.01);
+
                     return (
                         <TableRow key={token}>
-                            <TableCell>
+                            <TableCell width={'15%'}>
                                 <TokenIcon
                                     src={TokenIconAddress(
                                         tokenMetadata.iconAddress,
@@ -369,7 +404,7 @@ const CreatePoolTable = observer(() => {
                                     <ToggleSlider></ToggleSlider>
                                 </Toggle>
                             </TableCell>
-                            <TableCellRight width={'15%'}>
+                            <TableCellRight width={'20%'}>
                                 <WeightAmount>
                                     <InputWrapper errorBorders={hasError}>
                                         <input
@@ -387,10 +422,10 @@ const CreatePoolTable = observer(() => {
                                     </InputWrapper>
                                 </WeightAmount>
                             </TableCellRight>
-                            <TableCellRight width={'10%'}>
+                            <TableCellRight>
                                 {formatRelativeWeight(token)}
                             </TableCellRight>
-                            <TableCellRight>
+                            <TableCellRight width={'20%'}>
                                 <DepositAmount>
                                     <InputWrapper errorBorders={hasError}>
                                         <input
@@ -409,6 +444,11 @@ const CreatePoolTable = observer(() => {
                                 </DepositAmount>
                             </TableCellRight>
                             <TableCellRight width={'15%'}>
+                                <ValueLabel excess={excessiveShare}>
+                                    {valueText}
+                                </ValueLabel>
+                            </TableCellRight>
+                            <TableCellRight>
                                 <CloseIcon
                                     src={Cross}
                                     alt="x"
@@ -427,13 +467,14 @@ const CreatePoolTable = observer(() => {
     return (
         <Wrapper>
             <HeaderRow>
-                <TableCell>Asset</TableCell>
+                <TableCell width={'15%'}>Asset</TableCell>
                 <TableCell>Unlock</TableCell>
-                <TableCellRight width={'25%'}>
+                <TableCellRight width={'30%'}>
                     Weight (total max: 100)
                 </TableCellRight>
-                <TableCellRight>Amount</TableCellRight>
-                <TableCellRight width={'15%'}>Remove</TableCellRight>
+                <TableCellRight width={'20%'}>Amount</TableCellRight>
+                <TableCellRight width={'15%'}>Value</TableCellRight>
+                <TableCellRight>Remove</TableCellRight>
             </HeaderRow>
             {renderAssetTable(tokens)}
         </Wrapper>
