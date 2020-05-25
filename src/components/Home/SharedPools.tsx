@@ -32,7 +32,7 @@ const CreateLink = styled(Link)`
 
 const SharedPools = observer(() => {
     const {
-        root: { poolStore, providerStore },
+        root: { poolStore, providerStore, proxyStore },
     } = useStores();
 
     const pools = poolStore.getPublicPools();
@@ -43,7 +43,9 @@ const SharedPools = observer(() => {
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <CreateLink to={`/pool/new`}>
+                <CreateLink
+                    to={proxyStore.hasInstance() ? '/pool/new' : '/setup'}
+                >
                     <Button
                         buttonText={'Create Pool'}
                         active={!!account}
