@@ -224,6 +224,7 @@ const CreatePoolTable = observer(() => {
         root: {
             tokenStore,
             providerStore,
+            proxyStore,
             marketStore,
             contractMetadataStore,
             createPoolFormStore,
@@ -233,13 +234,13 @@ const CreatePoolTable = observer(() => {
     const account = providerStore.providerStatus.account;
 
     let accountApprovalsLoaded = false;
-    const bActionsAddress = contractMetadataStore.getBActionsAddress();
     const tokens = createPoolFormStore.tokens;
+    const proxyAddress = proxyStore.getInstanceAddress();
 
     accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
         tokens,
         account,
-        bActionsAddress
+        proxyAddress
     );
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
@@ -251,7 +252,7 @@ const CreatePoolTable = observer(() => {
         if (checked) {
             const response = await tokenStore.approveMax(
                 tokenAddress,
-                bActionsAddress
+                proxyAddress
             );
 
             // Revert change on metamask error
@@ -264,7 +265,7 @@ const CreatePoolTable = observer(() => {
         } else {
             const response = await tokenStore.revokeApproval(
                 tokenAddress,
-                bActionsAddress
+                proxyAddress
             );
 
             // Revert change on metamask error
@@ -342,7 +343,7 @@ const CreatePoolTable = observer(() => {
                         hasMaxApproval = tokenStore.hasMaxApproval(
                             token,
                             account,
-                            bActionsAddress
+                            proxyAddress
                         );
                     }
 
