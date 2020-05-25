@@ -2,6 +2,7 @@
     "contractName": "BActions",
     "abi": [
         {
+            "constant": false,
             "inputs": [
                 {
                     "internalType": "contract BFactory",
@@ -42,10 +43,12 @@
                     "type": "address"
                 }
             ],
+            "payable": false,
             "stateMutability": "nonpayable",
             "type": "function"
         },
         {
+            "constant": false,
             "inputs": [
                 {
                     "internalType": "contract BPool",
@@ -55,10 +58,12 @@
             ],
             "name": "finalize",
             "outputs": [],
+            "payable": false,
             "stateMutability": "nonpayable",
             "type": "function"
         },
         {
+            "constant": false,
             "inputs": [
                 {
                     "internalType": "contract BPool",
@@ -83,10 +88,12 @@
             ],
             "name": "rebind",
             "outputs": [],
+            "payable": false,
             "stateMutability": "nonpayable",
             "type": "function"
         },
         {
+            "constant": false,
             "inputs": [
                 {
                     "internalType": "contract BPool",
@@ -101,10 +108,12 @@
             ],
             "name": "setController",
             "outputs": [],
+            "payable": false,
             "stateMutability": "nonpayable",
             "type": "function"
         },
         {
+            "constant": false,
             "inputs": [
                 {
                     "internalType": "contract BPool",
@@ -119,10 +128,12 @@
             ],
             "name": "setPublicSwap",
             "outputs": [],
+            "payable": false,
             "stateMutability": "nonpayable",
             "type": "function"
         },
         {
+            "constant": false,
             "inputs": [
                 {
                     "internalType": "contract BPool",
@@ -137,6 +148,7 @@
             ],
             "name": "setSwapFee",
             "outputs": [],
+            "payable": false,
             "stateMutability": "nonpayable",
             "type": "function"
         }
