@@ -40,10 +40,7 @@ export default class Proxy {
     };
 
     hasInstance = (): boolean => {
-        return (
-            this.instance &&
-            this.instance !== '0x0000000000000000000000000000000000000000'
-        );
+        return this.instance !== '0x0000000000000000000000000000000000000000';
     };
 
     wrapTransaction(
