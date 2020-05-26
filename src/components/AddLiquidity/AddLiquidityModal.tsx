@@ -224,7 +224,7 @@ const AddLiquidityModal = observer((props: Props) => {
                         addLiquidityFormStore.joinRatio.times(token.balance),
                         token.address
                     )
-                    .integerValue(BigNumber.ROUND_DOWN);
+                    .integerValue(BigNumber.ROUND_UP);
                 tokenAmountsIn.push(tokenAmountIn.toString());
             });
 
@@ -240,7 +240,7 @@ const AddLiquidityModal = observer((props: Props) => {
             await poolStore.joinPool(
                 pool.address,
                 poolTokens.toString(),
-                addLiquidityFormStore.maxUintInputAmounts()
+                tokenAmountsIn.reverse()
             );
         }
     };
