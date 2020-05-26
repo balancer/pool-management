@@ -54,7 +54,6 @@ export default class Proxy {
         const abi = schema[contractType];
         const iface = new Interface(abi);
         const data = iface.functions[action].encode(params);
-        console.log(contractType, action, params, data);
         return data;
     }
 }
