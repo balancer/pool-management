@@ -103,24 +103,31 @@ export default class MarketStore {
     getPoolVolume(pool: Pool): BigNumber | undefined {
         const { contractMetadataStore } = this.rootStore;
         let volumeTotal = bnum(0);
-
-        pool.swaps.forEach(swap => {
-            if (contractMetadataStore.isSupported(swap.tokenIn)) {
-                let ticker = contractMetadataStore.getTokenMetadata(
-                    swap.tokenIn
-                ).ticker;
-                volumeTotal = volumeTotal.plus(
-                    this.getValue(ticker, swap.tokenAmountIn)
-                );
-            } else if (contractMetadataStore.isSupported(swap.tokenOut)) {
-                let ticker = contractMetadataStore.getTokenMetadata(
-                    swap.tokenOut
-                ).ticker;
-                volumeTotal = volumeTotal.plus(
-                    this.getValue(ticker, swap.tokenAmountOut)
-                );
-            }
-        });
+        if (pool.tokens.length > 0) {
+            pool.swaps.forEach(swap => {
+                if (contractMetadataStore.hasTokenMetadata(swap.tokenIn)) {
+                    if (contractMetadataStore.isSupported(swap.tokenIn)) {
+                        let ticker = contractMetadataStore.getTokenMetadata(
+                            swap.tokenIn
+                        ).ticker;
+                        volumeTotal = volumeTotal.plus(
+                            this.getValue(ticker, swap.tokenAmountIn)
+                        );
+                    }
+                } else if (
+                    contractMetadataStore.hasTokenMetadata(swap.tokenOut)
+                ) {
+                    if (contractMetadataStore.isSupported(swap.tokenOut)) {
+                        let ticker = contractMetadataStore.getTokenMetadata(
+                            swap.tokenOut
+                        ).ticker;
+                        volumeTotal = volumeTotal.plus(
+                            this.getValue(ticker, swap.tokenAmountOut)
+                        );
+                    }
+                }
+            });
+        }
 
         return volumeTotal;
     }
