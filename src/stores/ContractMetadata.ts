@@ -216,7 +216,6 @@ export default class ContractMetadataStore {
         );
 
         if (!tokenMetadata) {
-            console.log(`address ${address}`);
             throw new Error(
                 'Attempting to get metadata for untracked token address'
             );
