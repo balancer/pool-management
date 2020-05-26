@@ -159,7 +159,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return !tokenStore.hasMaxApproval(
                 token.address,
                 account,
-                pool.address
+                proxyAddress
             );
         });
     };
@@ -170,6 +170,7 @@ const AddLiquidityModal = observer((props: Props) => {
             poolStore,
             tokenStore,
             providerStore,
+            proxyStore,
             addLiquidityFormStore,
             contractMetadataStore,
         },
@@ -178,6 +179,7 @@ const AddLiquidityModal = observer((props: Props) => {
     const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
+    const proxyAddress = proxyStore.getInstanceAddress();
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -190,7 +192,7 @@ const AddLiquidityModal = observer((props: Props) => {
         const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
             poolStore.getPoolTokens(pool.address),
             account,
-            pool.address
+            proxyAddress
         );
 
         if (accountApprovalsLoaded) {
@@ -204,7 +206,7 @@ const AddLiquidityModal = observer((props: Props) => {
         token?: PoolToken
     ) => {
         if (action === ButtonAction.UNLOCK) {
-            await tokenStore.approveMax(token.address, pool.address);
+            await tokenStore.approveMax(token.address, proxyAddress);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
 
