@@ -105,14 +105,14 @@ export default class MarketStore {
         let volumeTotal = bnum(0);
 
         pool.swaps.forEach(swap => {
-            if (contractMetadataStore.isSupported(swap.tokenIn)) {
+            if (contractMetadataStore.hasTokenMetadata(swap.tokenIn)) {
                 let ticker = contractMetadataStore.getTokenMetadata(
                     swap.tokenIn
                 ).ticker;
                 volumeTotal = volumeTotal.plus(
                     this.getValue(ticker, swap.tokenAmountIn)
                 );
-            } else if (contractMetadataStore.isSupported(swap.tokenOut)) {
+            } else if (contractMetadataStore.hasTokenMetadata(swap.tokenOut)) {
                 let ticker = contractMetadataStore.getTokenMetadata(
                     swap.tokenOut
                 ).ticker;

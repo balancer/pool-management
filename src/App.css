@@ -50,10 +50,7 @@
 
 body {
     background-color: var(--background);
-}
-
-#root::-webkit-scrollbar {
-    display: none;
+    overflow-y: hidden;
 }
 
 .app-shell {
