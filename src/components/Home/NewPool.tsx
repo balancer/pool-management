@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
+import { useHistory } from 'react-router-dom';
 import { bnum, toWei } from 'utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
 import { EtherKey } from '../../stores/Token';
@@ -106,6 +107,14 @@ const NewPool = observer(() => {
             tokenStore,
         },
     } = useStores();
+
+    const history = useHistory();
+
+    useEffect(() => {
+        if (!proxyStore.hasInstance()) {
+            history.push('/setup');
+        }
+    }, []);
 
     const feeInput = createPoolFormStore.fee;
     let hasError = false;

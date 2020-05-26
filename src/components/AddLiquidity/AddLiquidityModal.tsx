@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import AddAssetTable from './AddAssetTable';
@@ -175,6 +176,15 @@ const AddLiquidityModal = observer((props: Props) => {
             contractMetadataStore,
         },
     } = useStores();
+
+    const history = useHistory();
+
+    useEffect(() => {
+        if (!proxyStore.hasInstance()) {
+            addLiquidityFormStore.closeModal();
+            history.push('/setup');
+        }
+    }, []);
 
     const account = providerStore.providerStatus.account;
 

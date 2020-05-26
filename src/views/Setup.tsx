@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import { useStores } from '../contexts/storesContext';
 import Button from '../components/Common/Button';
 import { ContractTypes } from '../stores/Provider';
@@ -53,8 +54,16 @@ const ButtonWrapper = styled.div`
 
 const Setup = () => {
     const {
-        root: { providerStore, contractMetadataStore },
+        root: { providerStore, proxyStore, contractMetadataStore },
     } = useStores();
+
+    const history = useHistory();
+
+    useEffect(() => {
+        if (!proxyStore.hasInstance()) {
+            history.push('/setup');
+        }
+    }, []);
 
     const handleButtonClick = async () => {
         await providerStore.sendTransaction(
