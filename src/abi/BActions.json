@@ -71,6 +71,61 @@
                     "type": "address"
                 },
                 {
+                    "internalType": "uint256",
+                    "name": "poolAmountOut",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "maxAmountsIn",
+                    "type": "uint256[]"
+                }
+            ],
+            "name": "joinPool",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "internalType": "contract BPool",
+                    "name": "pool",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "tokenIn",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenAmountIn",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "minPoolAmountOut",
+                    "type": "uint256"
+                }
+            ],
+            "name": "joinswapExternAmountIn",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "internalType": "contract BPool",
+                    "name": "pool",
+                    "type": "address"
+                },
+                {
                     "internalType": "address[]",
                     "name": "tokens",
                     "type": "address[]"
