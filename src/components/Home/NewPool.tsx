@@ -108,7 +108,7 @@ const NewPool = observer(() => {
             tokenStore,
         },
     } = useStores();
-
+    const account = providerStore.providerStatus.account;
     const history = useHistory();
     const hasProxyInstance = proxyStore.hasInstance();
 
@@ -175,19 +175,37 @@ const NewPool = observer(() => {
         createPoolFormStore.setFee(value);
     };
 
+    const renderAddButton = () => {
+        return (
+            <Button
+                buttonText={`Add Token`}
+                active={account && createPoolFormStore.tokens.length !== 8}
+                onClick={e => handleAddButtonClick()}
+            />
+        );
+    };
+
+    const renderCreateButton = () => {
+        return (
+            <Button
+                buttonText={`Create`}
+                active={
+                    account &&
+                    createPoolFormStore.hasValidInput() &&
+                    !createPoolFormStore.hasInputExceedUserBalance
+                }
+                onClick={e => handleCreateButtonClick()}
+            />
+        );
+    };
+
     return (
         <Wrapper>
             <WarningMessage />
             <Header>Tokens</Header>
             <CreatePoolTable />
             <Section>
-                <SingleElement>
-                    <Button
-                        buttonText={'Add Token'}
-                        active={true}
-                        onClick={e => handleAddButtonClick()}
-                    />
-                </SingleElement>
+                <SingleElement>{renderAddButton()}</SingleElement>
             </Section>
             <Section>
                 <Header>Swap fee</Header>
@@ -205,13 +223,7 @@ const NewPool = observer(() => {
                 </SingleElement>
             </Section>
             <Section>
-                <SingleElement>
-                    <Button
-                        buttonText={'Create'}
-                        active={true}
-                        onClick={e => handleCreateButtonClick()}
-                    />
-                </SingleElement>
+                <SingleElement>{renderCreateButton()}</SingleElement>
             </Section>
             <SelectAssetModal />
         </Wrapper>
