@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import Button from '../components/Common/Button';
 import { ContractTypes } from '../stores/Provider';
@@ -49,23 +50,36 @@ const Explainer = styled.div`
 const ButtonWrapper = styled.div`
     display: flex;
     justify-content: center;
-    margin-top: 32px;
+    margin: 32px 0 16px 0;
 `;
 
-const Setup = () => {
+const Setup = observer(() => {
     const {
-        root: { providerStore, contractMetadataStore },
+        root: { providerStore, proxyStore, contractMetadataStore },
     } = useStores();
 
+    const isDeploying = proxyStore.isDeploying();
+    const hasInstance = proxyStore.hasInstance();
     const history = useHistory();
 
     const handleButtonClick = async () => {
-        await providerStore.sendTransaction(
-            ContractTypes.DSProxyRegistry,
-            contractMetadataStore.getDsProxyRegistryAddress(),
-            'build',
-            []
-        );
+        if (isInstanceReady()) {
+            history.goBack();
+        } else {
+            const tx = await providerStore.sendTransaction(
+                ContractTypes.DSProxyRegistry,
+                contractMetadataStore.getDsProxyRegistryAddress(),
+                'build',
+                []
+            );
+            proxyStore.setDeploying(true);
+            await tx.txResponse.wait(10);
+            proxyStore.setDeploying(false);
+        }
+    };
+
+    const isInstanceReady = () => {
+        return hasInstance && !isDeploying;
     };
 
     return (
@@ -78,15 +92,20 @@ const Setup = () => {
                     </Explainer>
                     <ButtonWrapper>
                         <Button
-                            buttonText={'Setup'}
-                            active={true}
+                            buttonText={isInstanceReady() ? 'Next' : 'Setup'}
+                            active={!isDeploying}
                             onClick={e => handleButtonClick()}
                         />
                     </ButtonWrapper>
+                    {isDeploying ? (
+                        <Explainer>Waiting for confirmations…</Explainer>
+                    ) : (
+                        <div />
+                    )}
                 </Section>
             </SectionWrapper>
         </SetupWrapper>
     );
-};
+});
 
 export default Setup;
