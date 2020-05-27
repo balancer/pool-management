@@ -54,17 +54,10 @@ const ButtonWrapper = styled.div`
 
 const Setup = () => {
     const {
-        root: { providerStore, proxyStore, contractMetadataStore },
+        root: { providerStore, contractMetadataStore },
     } = useStores();
 
     const history = useHistory();
-    const hasProxyInstance = proxyStore.hasInstance();
-
-    useEffect(() => {
-        if (hasProxyInstance) {
-            history.push('/');
-        }
-    }, [hasProxyInstance, history]);
 
     const handleButtonClick = async () => {
         await providerStore.sendTransaction(
