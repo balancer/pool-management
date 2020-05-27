@@ -60,8 +60,8 @@ const Setup = () => {
     const history = useHistory();
 
     useEffect(() => {
-        if (!proxyStore.hasInstance()) {
-            history.push('/setup');
+        if (proxyStore.hasInstance()) {
+            history.push('/');
         }
     }, []);
 
