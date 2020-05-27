@@ -6,10 +6,12 @@ import { FetchCode } from './Transaction';
 
 export default class Proxy {
     @observable instance: string;
+    @observable deploying: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
+        this.deploying = false;
     }
 
     @action fetchInstance = async (account: string): Promise<FetchCode> => {
@@ -35,12 +37,20 @@ export default class Proxy {
         return FetchCode.SUCCESS;
     };
 
+    @action setDeploying = (deploying: boolean) => {
+        this.deploying = deploying;
+    };
+
     getInstanceAddress = (): string => {
         return this.instance;
     };
 
     hasInstance = (): boolean => {
         return this.instance !== '0x0000000000000000000000000000000000000000';
+    };
+
+    isDeploying = (): boolean => {
+        return this.deploying;
     };
 
     wrapTransaction(
