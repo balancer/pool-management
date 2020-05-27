@@ -166,6 +166,8 @@ const InputWrapper = styled.div`
         :-webkit-autofill:focus,
         :-webkit-autofill:active,
         :-internal-autofill-selected {
+            -webkit-appearance: none;
+            margin: 0;
             -webkit-text-fill-color: var(--body-text);
         }
         ::placeholder {
@@ -173,6 +175,11 @@ const InputWrapper = styled.div`
         }
         :focus {
             outline: none;
+        }
+        :-webkit-outer-spin-button,
+        :-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     }
     border: ${props =>
@@ -282,6 +289,8 @@ const CreatePoolTable = observer(() => {
     const handleWeightInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
         createPoolFormStore.setTokenWeight(tokenAddress, value);
+        createPoolFormStore.setActiveInputKey(tokenAddress);
+        createPoolFormStore.refreshWeights(tokenAddress);
     };
 
     const handleAmountInputChange = async (event, tokenAddress: string) => {
@@ -375,7 +384,8 @@ const CreatePoolTable = observer(() => {
                         .minus(relativeWeight)
                         .gt(0.01);
 
-                    let hasWeightError = false;
+                    let hasWeightError =
+                        weightInput.validation === ValidationStatus.BAD_WEIGHT;
 
                     let hasError =
                         balanceInput.validation ===
@@ -417,6 +427,7 @@ const CreatePoolTable = observer(() => {
                                     <InputWrapper errorBorders={hasWeightError}>
                                         <input
                                             id={`input-${token}`}
+                                            type="number"
                                             name={`input-name-${token}`}
                                             value={weightInput.value}
                                             onChange={e => {
@@ -438,6 +449,7 @@ const CreatePoolTable = observer(() => {
                                     <InputWrapper errorBorders={hasError}>
                                         <input
                                             id={`input-${token}`}
+                                            type="number"
                                             name={`input-name-${token}`}
                                             value={balanceInput.value}
                                             onChange={e => {

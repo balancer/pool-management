@@ -192,7 +192,8 @@ const NewPool = observer(() => {
                 active={
                     account &&
                     createPoolFormStore.hasValidInput() &&
-                    !createPoolFormStore.hasInputExceedUserBalance
+                    !createPoolFormStore.hasInputExceedUserBalance &&
+                    !createPoolFormStore.hasWeightExceededTotal
                 }
                 onClick={e => handleCreateButtonClick()}
             />
