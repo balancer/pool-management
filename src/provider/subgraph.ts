@@ -113,36 +113,6 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
             }),
         };
 
-        parsedPool.tokensList = parsedPool.tokensList.sort((a, b) => {
-            const aKnown = !!tokenIndex[a];
-            const bKnown = !!tokenIndex[b];
-            if (aKnown && bKnown) {
-                return tokenIndex[a] < tokenIndex[b] ? -1 : 1;
-            } else if (aKnown && !bKnown) {
-                return -1;
-            } else if (!aKnown && bKnown) {
-                return 1;
-            } else {
-                // Both unknown, sort by address
-                return a.localeCompare(b);
-            }
-        });
-
-        parsedPool.tokens = parsedPool.tokens.sort((a, b) => {
-            const aKnown = !!tokenIndex[a.symbol];
-            const bKnown = !!tokenIndex[b.symbol];
-            if (aKnown && bKnown) {
-                return tokenIndex[a.symbol] < tokenIndex[b.symbol] ? -1 : 1;
-            } else if (aKnown && !bKnown) {
-                return -1;
-            } else if (!aKnown && bKnown) {
-                return 1;
-            } else {
-                // Both unknown, sort by address
-                return a.address.localeCompare(b.address);
-            }
-        });
-
         return parsedPool;
     });
 }
