@@ -31,19 +31,15 @@ const WarningIcon = styled.img`
     color: var(--warning);
 `;
 
-const Link = styled.a`
-    color: color: var(--warning);
-`;
-
 const WarningMessage = () => {
     return (
         <Wrapper>
             <Warning>
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
-                    This feature is in beta. Currently, only shared pools are
-                    supported. Asset choice is also limited. Use carefully and
-                    with small amounts.
+                    This feature is in beta. Currently, only creating shared
+                    pools is supported. Asset choice is also limited. Use
+                    carefully and with small amounts.
                 </Message>
             </Warning>
         </Wrapper>

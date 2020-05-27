@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import { useStores } from '../contexts/storesContext';
 import Button from '../components/Common/Button';
 import { ContractTypes } from '../stores/Provider';
@@ -56,8 +55,6 @@ const Setup = () => {
     const {
         root: { providerStore, contractMetadataStore },
     } = useStores();
-
-    const history = useHistory();
 
     const handleButtonClick = async () => {
         await providerStore.sendTransaction(

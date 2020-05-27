@@ -4,6 +4,7 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { bnum, formatCurrency, formatPercentage } from '../../utils/helpers';
+import { ValidationStatus } from '../../stores/actions/validators';
 const Cross = require('../../assets/images/x.svg') as string;
 const Dropdown = require('../../assets/images/dropdown.svg') as string;
 
@@ -286,6 +287,8 @@ const CreatePoolTable = observer(() => {
     const handleAmountInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
         createPoolFormStore.setTokenBalance(tokenAddress, value);
+        createPoolFormStore.setActiveInputKey(tokenAddress);
+        createPoolFormStore.refreshInputAmounts(tokenAddress, account);
     };
 
     const handleChangeClick = async (tokenAddress: string) => {
@@ -313,7 +316,7 @@ const CreatePoolTable = observer(() => {
             const balance = bnum(balanceInput.value);
             const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
             const tokenValue = marketStore.getValue(
-                tokenMetadata.symbol,
+                tokenMetadata.ticker,
                 balance
             );
             tokenValues[token] = tokenValue;
@@ -357,8 +360,6 @@ const CreatePoolTable = observer(() => {
                         visuallyChecked = false;
                     }
 
-                    let hasError = false;
-
                     let valueText = '';
                     if (!tokenValues[token].isNaN()) {
                         valueText += `$ ${formatCurrency(tokenValues[token])}`;
@@ -373,6 +374,12 @@ const CreatePoolTable = observer(() => {
                     const excessiveShare = valueShare
                         .minus(relativeWeight)
                         .gt(0.01);
+
+                    let hasWeightError = false;
+
+                    let hasError =
+                        balanceInput.validation ===
+                        ValidationStatus.INSUFFICIENT_BALANCE;
 
                     return (
                         <TableRow key={token}>
@@ -407,7 +414,7 @@ const CreatePoolTable = observer(() => {
                             </TableCell>
                             <TableCellRight width={'20%'}>
                                 <WeightAmount>
-                                    <InputWrapper errorBorders={hasError}>
+                                    <InputWrapper errorBorders={hasWeightError}>
                                         <input
                                             id={`input-${token}`}
                                             name={`input-name-${token}`}

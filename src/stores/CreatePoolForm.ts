@@ -1,11 +1,13 @@
 import { observable, action } from 'mobx';
 import RootStore from 'stores/Root';
 import { Checkbox, CheckboxMap, Input, InputMap } from '../types';
-import { ValidationStatus } from './actions/validators';
+import { bnum } from '../utils/helpers';
+import { validateTokenValue, ValidationStatus } from './actions/validators';
 import { BigNumber } from 'utils/bignumber';
 
 export default class CreatePoolFormStore {
     @observable tokens: string[];
+    @observable activeInputKey: string | undefined;
     @observable checkboxes: CheckboxMap;
     @observable weights: InputMap;
     @observable balances: InputMap;
@@ -15,6 +17,8 @@ export default class CreatePoolFormStore {
         inputValue: '',
         activeTokenIndex: 0,
     };
+    @observable hasInputExceedUserBalance: boolean;
+
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -63,6 +67,10 @@ export default class CreatePoolFormStore {
         this.fee.value = fee;
     }
 
+    @action setActiveInputKey(tokenAddress: string) {
+        this.activeInputKey = tokenAddress;
+    }
+
     @action setApprovalCheckboxTouched(tokenAddress: string, touched: boolean) {
         this.checkboxes[tokenAddress].touched = touched;
     }
@@ -88,6 +96,65 @@ export default class CreatePoolFormStore {
 
     @action setModalInputValue(value: string) {
         this.assetModal.inputValue = value;
+    }
+
+    hasValidInput(): boolean {
+        if (this.activeInputKey) {
+            return (
+                this.balances[this.activeInputKey].validation ===
+                    ValidationStatus.VALID ||
+                this.balances[this.activeInputKey].validation ===
+                    ValidationStatus.INSUFFICIENT_BALANCE
+            );
+        } else {
+            return false;
+        }
+    }
+
+    @action refreshInputAmounts(token: string, account: string) {
+        let hasInputExceedUserBalance = false;
+
+        const validationStatus = this.getInputValidationStatus(
+            token,
+            account,
+            bnum(this.balances[token].value)
+        );
+
+        this.balances[token].validation = validationStatus;
+
+        if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+            hasInputExceedUserBalance = true;
+        }
+
+        this.hasInputExceedUserBalance = hasInputExceedUserBalance;
+    }
+
+    private getInputValidationStatus(
+        tokenAddress: string,
+        account: string | undefined,
+        inputBalance: BigNumber
+    ): ValidationStatus {
+        const { tokenStore } = this.rootStore;
+
+        // Always valid if no account
+        if (!account) {
+            return ValidationStatus.VALID;
+        }
+
+        const accountBalance = tokenStore.normalizeBalance(
+            tokenStore.getBalance(tokenAddress, account),
+            tokenAddress
+        );
+
+        let status = validateTokenValue(inputBalance.toString());
+
+        if (status === ValidationStatus.VALID) {
+            status = inputBalance.lte(accountBalance)
+                ? ValidationStatus.VALID
+                : ValidationStatus.INSUFFICIENT_BALANCE;
+        }
+
+        return status;
     }
 
     getWeightInput(tokenAddress): Input {
@@ -123,11 +190,9 @@ export default class CreatePoolFormStore {
         const daiToken = tokenMetadata.find(token => token.symbol === 'DAI');
         this.addToken(daiToken.address);
         this.setTokenWeight(daiToken.address, '30');
-        this.setTokenBalance(daiToken.address, '15');
         const usdcToken = tokenMetadata.find(token => token.symbol === 'USDC');
         this.addToken(usdcToken.address);
         this.setTokenWeight(usdcToken.address, '20');
-        this.setTokenBalance(usdcToken.address, '10');
         this.setFee('0.15');
     }
 
