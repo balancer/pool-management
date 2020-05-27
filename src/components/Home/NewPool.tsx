@@ -109,12 +109,13 @@ const NewPool = observer(() => {
     } = useStores();
 
     const history = useHistory();
+    const hasProxyInstance = proxyStore.hasInstance();
 
     useEffect(() => {
-        if (!proxyStore.hasInstance()) {
+        if (!hasProxyInstance) {
             history.push('/setup');
         }
-    }, []);
+    }, [hasProxyInstance, history]);
 
     const feeInput = createPoolFormStore.fee;
     let hasError = false;

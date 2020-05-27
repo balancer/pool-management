@@ -58,12 +58,13 @@ const Setup = () => {
     } = useStores();
 
     const history = useHistory();
+    const hasProxyInstance = proxyStore.hasInstance();
 
     useEffect(() => {
-        if (proxyStore.hasInstance()) {
+        if (hasProxyInstance) {
             history.push('/');
         }
-    }, []);
+    }, [hasProxyInstance, history]);
 
     const handleButtonClick = async () => {
         await providerStore.sendTransaction(

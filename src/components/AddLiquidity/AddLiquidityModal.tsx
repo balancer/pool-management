@@ -178,13 +178,14 @@ const AddLiquidityModal = observer((props: Props) => {
     } = useStores();
 
     const history = useHistory();
+    const hasProxyInstance = proxyStore.hasInstance();
 
     useEffect(() => {
-        if (!proxyStore.hasInstance()) {
+        if (!hasProxyInstance) {
             addLiquidityFormStore.closeModal();
             history.push('/setup');
         }
-    }, []);
+    }, [hasProxyInstance, addLiquidityFormStore, history]);
 
     const account = providerStore.providerStatus.account;
 
