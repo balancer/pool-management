@@ -17,6 +17,7 @@ export default class CreatePoolFormStore {
         inputValue: '',
         activeTokenIndex: 0,
     };
+    @observable hasWeightExceededTotal: boolean;
     @observable hasInputExceedUserBalance: boolean;
 
     rootStore: RootStore;
@@ -109,6 +110,26 @@ export default class CreatePoolFormStore {
         } else {
             return false;
         }
+    }
+
+    @action refreshWeights(token: string) {
+        let hasWeightExceededTotal = false;
+
+        const validationStatus =
+            bnum(this.weights[token].value).gte(bnum(2)) &&
+            bnum(this.weights[token].value).lte(bnum(98))
+                ? ValidationStatus.VALID
+                : ValidationStatus.BAD_WEIGHT;
+
+        this.weights[token].validation = validationStatus;
+        const totalWeight = this.tokens.reduce((totalWeight, token) => {
+            const weight = this.getWeightInput(token);
+            return totalWeight.plus(weight.value);
+        }, new BigNumber(0));
+        if (totalWeight.gte(bnum(100))) {
+            hasWeightExceededTotal = true;
+        }
+        this.hasWeightExceededTotal = hasWeightExceededTotal;
     }
 
     @action refreshInputAmounts(token: string, account: string) {
