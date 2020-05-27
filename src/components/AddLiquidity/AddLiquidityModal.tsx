@@ -229,7 +229,10 @@ const AddLiquidityModal = observer((props: Props) => {
             const poolTotal = tokenStore.getTotalSupply(pool.address);
 
             let tokenAmountsIn: string[] = [];
-            pool.tokens.forEach(token => {
+            pool.tokensList.forEach(tokenAddress => {
+                const token = pool.tokens.find(
+                    token => token.address === tokenAddress
+                );
                 const tokenAmountIn = tokenStore
                     .denormalizeBalance(
                         addLiquidityFormStore.joinRatio.times(token.balance),
@@ -251,7 +254,7 @@ const AddLiquidityModal = observer((props: Props) => {
             await poolStore.joinPool(
                 pool.address,
                 poolTokens.toString(),
-                tokenAmountsIn.reverse()
+                tokenAmountsIn
             );
         }
     };
