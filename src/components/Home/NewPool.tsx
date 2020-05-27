@@ -8,6 +8,7 @@ import { EtherKey } from '../../stores/Token';
 import { useStores } from '../../contexts/storesContext';
 import CreatePoolTable from '../CreatePool/CreatePoolTable';
 import SelectAssetModal from '../CreatePool/SelectAssetModal';
+import WarningMessage from '../CreatePool/WarningMessage';
 import Button from '../Common/Button';
 
 const Wrapper = styled.div`
@@ -21,7 +22,7 @@ const Header = styled.div`
     font-size: 18px;
     line-height: 19px;
     color: var(--header-text);
-    padding: 0px 0px 24px 0px;
+    padding: 24px 0px 24px 0px;
 `;
 
 const SingleElement = styled.div`
@@ -176,6 +177,7 @@ const NewPool = observer(() => {
 
     return (
         <Wrapper>
+            <WarningMessage />
             <Header>Tokens</Header>
             <CreatePoolTable />
             <Section>
