@@ -98,7 +98,9 @@ const Setup = observer(() => {
                         />
                     </ButtonWrapper>
                     {isDeploying ? (
-                        <Explainer>Waiting for confirmations…</Explainer>
+                        <Explainer>
+                            Waiting for 10 block confirmations…
+                        </Explainer>
                     ) : (
                         <div />
                     )}
