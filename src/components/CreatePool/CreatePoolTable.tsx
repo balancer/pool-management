@@ -219,7 +219,7 @@ const ExternalIcon = styled.img`
 const DropdownIcon = styled(ExternalIcon)`
     width: 12px;
     height: 12px;
-    margin-left: 8px;
+    padding: 8px;
 `;
 
 const CloseIcon = styled(ExternalIcon)`
