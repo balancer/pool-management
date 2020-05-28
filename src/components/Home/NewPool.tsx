@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { bnum, toWei } from 'utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
 import { EtherKey } from '../../stores/Token';
+import { ValidationStatus } from '../../stores/actions/validators';
 import { useStores } from '../../contexts/storesContext';
 import CreatePoolTable from '../CreatePool/CreatePoolTable';
 import SelectAssetModal from '../CreatePool/SelectAssetModal';
@@ -108,18 +109,19 @@ const NewPool = observer(() => {
             tokenStore,
         },
     } = useStores();
+
     const account = providerStore.providerStatus.account;
     const history = useHistory();
     const hasProxyInstance = proxyStore.hasInstance();
+
+    const feeInput = createPoolFormStore.fee;
+    let hasError = feeInput.validation === ValidationStatus.BAD_FEE;
 
     useEffect(() => {
         if (!hasProxyInstance) {
             history.push('/setup');
         }
     }, [hasProxyInstance, history]);
-
-    const feeInput = createPoolFormStore.fee;
-    let hasError = false;
 
     const handleAddButtonClick = async () => {
         const trackedTokenAddresses = contractMetadataStore.getTrackedTokenAddresses();
@@ -193,7 +195,8 @@ const NewPool = observer(() => {
                     account &&
                     createPoolFormStore.hasValidInput() &&
                     !createPoolFormStore.hasInputExceedUserBalance &&
-                    !createPoolFormStore.hasWeightExceededTotal
+                    !createPoolFormStore.hasWeightExceededTotal &&
+                    !hasError
                 }
                 onClick={e => handleCreateButtonClick()}
             />

@@ -66,6 +66,13 @@ export default class CreatePoolFormStore {
 
     @action setFee(fee: string) {
         this.fee.value = fee;
+
+        const validationStatus =
+            bnum(this.fee.value).gte(bnum(0.0001)) &&
+            bnum(this.fee.value).lte(bnum(10))
+                ? ValidationStatus.VALID
+                : ValidationStatus.BAD_FEE;
+        this.fee.validation = validationStatus;
     }
 
     @action setActiveInputKey(tokenAddress: string) {

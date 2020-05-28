@@ -8,6 +8,7 @@ export enum ValidationStatus {
     NEGATIVE = 'Negative',
     INSUFFICIENT_BALANCE = 'Insufficient Balance',
     BAD_WEIGHT = 'Invalid weight',
+    BAD_FEE = 'Invalid fee',
     NO_POOLS = 'There are no Pools with selected tokens',
     MAX_DIGITS_EXCEEDED = 'Maximum Digits Exceeded',
     MAX_VALUE_EXCEEDED = 'Maximum Value Exceeded',
