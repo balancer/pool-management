@@ -66,7 +66,7 @@ export default function Transaction({ hash, pending }) {
         root: { providerStore },
     } = useStores();
 
-    const chainId = providerStore.providerStatus.chainId;
+    const activeChainId = providerStore.providerStatus.activeChainId;
 
     return (
         <TransactionWrapper key={hash}>
@@ -81,7 +81,7 @@ export default function Transaction({ hash, pending }) {
             )}
             <TransactionStatusWrapper>
                 <a
-                    href={getEtherscanLink(chainId, hash, 'transaction')}
+                    href={getEtherscanLink(activeChainId, hash, 'transaction')}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
