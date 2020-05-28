@@ -10,7 +10,7 @@ export default class CreatePoolFormStore {
     @observable activeInputKey: string | undefined;
     @observable checkboxes: CheckboxMap;
     @observable weights: InputMap;
-    @observable balances: InputMap;
+    @observable amounts: InputMap;
     @observable fee: Input;
     @observable assetModal = {
         open: false,
@@ -27,7 +27,7 @@ export default class CreatePoolFormStore {
         this.tokens = [];
         this.checkboxes = {} as CheckboxMap;
         this.weights = {} as InputMap;
-        this.balances = {} as InputMap;
+        this.amounts = {} as InputMap;
         this.fee = {
             value: '',
             touched: false,
@@ -53,8 +53,8 @@ export default class CreatePoolFormStore {
         this.weights[tokenAddress].value = denormWeight;
     }
 
-    @action setTokenBalance(tokenAddress: string, balance: string) {
-        this.balances[tokenAddress].value = balance;
+    @action setTokenAmount(tokenAddress: string, amount: string) {
+        this.amounts[tokenAddress].value = amount;
     }
 
     @action setToken(token: string) {
@@ -109,9 +109,9 @@ export default class CreatePoolFormStore {
     hasValidInput(): boolean {
         if (this.activeInputKey) {
             return (
-                this.balances[this.activeInputKey].validation ===
+                this.amounts[this.activeInputKey].validation ===
                     ValidationStatus.VALID ||
-                this.balances[this.activeInputKey].validation ===
+                this.amounts[this.activeInputKey].validation ===
                     ValidationStatus.INSUFFICIENT_BALANCE
             );
         } else {
@@ -139,16 +139,16 @@ export default class CreatePoolFormStore {
         this.hasWeightExceededTotal = hasWeightExceededTotal;
     }
 
-    @action refreshInputAmounts(token: string, account: string) {
+    @action refreshAmounts(token: string, account: string) {
         let hasInputExceedUserBalance = false;
 
         const validationStatus = this.getInputValidationStatus(
             token,
             account,
-            bnum(this.balances[token].value)
+            bnum(this.amounts[token].value)
         );
 
-        this.balances[token].validation = validationStatus;
+        this.amounts[token].validation = validationStatus;
 
         if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
             hasInputExceedUserBalance = true;
@@ -160,7 +160,7 @@ export default class CreatePoolFormStore {
     private getInputValidationStatus(
         tokenAddress: string,
         account: string | undefined,
-        inputBalance: BigNumber
+        inputAmount: BigNumber
     ): ValidationStatus {
         const { tokenStore } = this.rootStore;
 
@@ -174,10 +174,10 @@ export default class CreatePoolFormStore {
             tokenAddress
         );
 
-        let status = validateTokenValue(inputBalance.toString());
+        let status = validateTokenValue(inputAmount.toString());
 
         if (status === ValidationStatus.VALID) {
-            status = inputBalance.lte(accountBalance)
+            status = inputAmount.lte(accountBalance)
                 ? ValidationStatus.VALID
                 : ValidationStatus.INSUFFICIENT_BALANCE;
         }
@@ -189,8 +189,8 @@ export default class CreatePoolFormStore {
         return this.weights[tokenAddress];
     }
 
-    getBalanceInput(tokenAddress): Input {
-        return this.balances[tokenAddress];
+    getAmountInput(tokenAddress): Input {
+        return this.amounts[tokenAddress];
     }
 
     getCheckbox(tokenAddress: string): Checkbox {
@@ -230,7 +230,7 @@ export default class CreatePoolFormStore {
             touched: false,
             validation: ValidationStatus.EMPTY,
         };
-        this.balances[tokenAddress] = {
+        this.amounts[tokenAddress] = {
             value: '',
             touched: false,
             validation: ValidationStatus.EMPTY,
