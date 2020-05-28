@@ -23,7 +23,7 @@ const Header = styled.div`
     font-size: 18px;
     line-height: 19px;
     color: var(--header-text);
-    padding: 24px 0px 24px 0px;
+    padding: 0px 0px 24px 0px;
 `;
 
 const SingleElement = styled.div`
