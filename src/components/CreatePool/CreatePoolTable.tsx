@@ -291,6 +291,7 @@ const CreatePoolTable = observer(() => {
         createPoolFormStore.setTokenWeight(tokenAddress, value);
         createPoolFormStore.setActiveInputKey(tokenAddress);
         createPoolFormStore.refreshWeights(tokenAddress);
+        createPoolFormStore.refreshAmounts(tokenAddress, account);
     };
 
     const handleAmountInputChange = async (event, tokenAddress: string) => {

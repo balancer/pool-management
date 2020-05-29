@@ -140,18 +140,38 @@ export default class CreatePoolFormStore {
     }
 
     @action refreshAmounts(token: string, account: string) {
+        const { contractMetadataStore, marketStore } = this.rootStore;
+
         let hasInputExceedUserBalance = false;
 
-        const validationStatus = this.getInputValidationStatus(
-            token,
-            account,
-            bnum(this.amounts[token].value)
-        );
+        const amount = bnum(this.amounts[token].value);
+        const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
+        const tokenValue = marketStore.getValue(tokenMetadata.ticker, amount);
+        const totalValue = tokenValue.div(this.weights[token].value);
 
-        this.amounts[token].validation = validationStatus;
+        for (const token of this.tokens) {
+            const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
+            const value = totalValue.times(this.weights[token].value);
+            const price = marketStore.getValue(tokenMetadata.ticker, bnum(1));
+            const amount = value.div(price);
+            const inputValue = amount.isNaN() ? '' : amount.toString();
 
-        if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
-            hasInputExceedUserBalance = true;
+            let hasInputExceedUserBalance = false;
+
+            const validationStatus = this.getInputValidationStatus(
+                token,
+                account,
+                amount
+            );
+
+            if (token !== this.activeInputKey) {
+                this.amounts[token].value = inputValue;
+            }
+            this.amounts[token].validation = validationStatus;
+
+            if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+                hasInputExceedUserBalance = true;
+            }
         }
 
         this.hasInputExceedUserBalance = hasInputExceedUserBalance;
