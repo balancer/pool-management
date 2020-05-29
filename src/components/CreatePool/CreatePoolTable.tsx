@@ -291,13 +291,14 @@ const CreatePoolTable = observer(() => {
         createPoolFormStore.setTokenWeight(tokenAddress, value);
         createPoolFormStore.setActiveInputKey(tokenAddress);
         createPoolFormStore.refreshWeights(tokenAddress);
+        createPoolFormStore.refreshAmounts(tokenAddress, account);
     };
 
     const handleAmountInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
-        createPoolFormStore.setTokenBalance(tokenAddress, value);
+        createPoolFormStore.setTokenAmount(tokenAddress, value);
         createPoolFormStore.setActiveInputKey(tokenAddress);
-        createPoolFormStore.refreshInputAmounts(tokenAddress, account);
+        createPoolFormStore.refreshAmounts(tokenAddress, account);
     };
 
     const handleChangeClick = async (tokenAddress: string) => {
@@ -321,12 +322,12 @@ const CreatePoolTable = observer(() => {
     const renderAssetTable = (tokens: string[]) => {
         const tokenValues = {};
         for (const token of tokens) {
-            const balanceInput = createPoolFormStore.getBalanceInput(token);
-            const balance = bnum(balanceInput.value);
+            const amountInput = createPoolFormStore.getAmountInput(token);
+            const amount = bnum(amountInput.value);
             const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
             const tokenValue = marketStore.getValue(
                 tokenMetadata.ticker,
-                balance
+                amount
             );
             tokenValues[token] = tokenValue;
         }
@@ -345,7 +346,7 @@ const CreatePoolTable = observer(() => {
                     const weightInput = createPoolFormStore.getWeightInput(
                         token
                     );
-                    const balanceInput = createPoolFormStore.getBalanceInput(
+                    const amountInput = createPoolFormStore.getAmountInput(
                         token
                     );
 
@@ -369,14 +370,10 @@ const CreatePoolTable = observer(() => {
                         visuallyChecked = false;
                     }
 
-                    let valueText = '';
-                    if (!tokenValues[token].isNaN()) {
-                        valueText += `$ ${formatCurrency(tokenValues[token])}`;
-                    }
+                    const valueText = tokenValues[token].isNaN()
+                        ? ''
+                        : `$ ${formatCurrency(tokenValues[token])}`;
                     const valueShare = tokenValues[token].div(totalTokenValue);
-                    if (!valueShare.isNaN()) {
-                        valueText += ` (${formatPercentage(valueShare, 2)})`;
-                    }
                     const relativeWeight = createPoolFormStore.getRelativeWeight(
                         token
                     );
@@ -388,7 +385,7 @@ const CreatePoolTable = observer(() => {
                         weightInput.validation === ValidationStatus.BAD_WEIGHT;
 
                     let hasError =
-                        balanceInput.validation ===
+                        amountInput.validation ===
                         ValidationStatus.INSUFFICIENT_BALANCE;
 
                     return (
@@ -451,7 +448,7 @@ const CreatePoolTable = observer(() => {
                                             id={`input-${token}`}
                                             type="number"
                                             name={`input-name-${token}`}
-                                            value={balanceInput.value}
+                                            value={amountInput.value}
                                             onChange={e => {
                                                 handleAmountInputChange(
                                                     e,

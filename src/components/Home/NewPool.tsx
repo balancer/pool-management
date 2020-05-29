@@ -140,10 +140,10 @@ const NewPool = observer(() => {
         const factory = contractMetadataStore.getBFactoryAddress();
         const tokens = createPoolFormStore.tokens;
         const balances = tokens.map(token => {
-            const balanceInput = createPoolFormStore.balances[token];
-            const balance = bnum(balanceInput.value);
+            const amountInput = createPoolFormStore.amounts[token];
+            const amount = bnum(amountInput.value);
             const denormalizedBalance = tokenStore.denormalizeBalance(
-                balance,
+                amount,
                 token
             );
             return denormalizedBalance.toString();
