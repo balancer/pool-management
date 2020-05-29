@@ -146,13 +146,32 @@ export default class CreatePoolFormStore {
 
         const amount = bnum(this.amounts[token].value);
         const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
+
+        if (!marketStore.hasAssetPrice(tokenMetadata.ticker)) {
+            const validationStatus = this.getInputValidationStatus(
+                token,
+                account,
+                amount
+            );
+
+            this.amounts[token].validation = validationStatus;
+
+            if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
+                this.hasInputExceedUserBalance = true;
+            }
+
+            return;
+        }
+
         const tokenValue = marketStore.getValue(tokenMetadata.ticker, amount);
         const totalValue = tokenValue.div(this.weights[token].value);
 
         for (const token of this.tokens) {
             const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
             const value = totalValue.times(this.weights[token].value);
-            const price = marketStore.getValue(tokenMetadata.ticker, bnum(1));
+            const price = marketStore.hasAssetPrice(tokenMetadata.ticker)
+                ? marketStore.getAssetPrice(tokenMetadata.ticker)
+                : bnum(0);
             const amount = value.div(price);
             const inputValue = amount.isNaN() ? '' : amount.toString();
 
@@ -162,7 +181,7 @@ export default class CreatePoolFormStore {
                 amount
             );
 
-            if (token !== this.activeInputKey) {
+            if (token !== this.activeInputKey && price.gt(0)) {
                 this.amounts[token].value = inputValue;
             }
             this.amounts[token].validation = validationStatus;
