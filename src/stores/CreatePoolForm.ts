@@ -156,8 +156,6 @@ export default class CreatePoolFormStore {
             const amount = value.div(price);
             const inputValue = amount.isNaN() ? '' : amount.toString();
 
-            let hasInputExceedUserBalance = false;
-
             const validationStatus = this.getInputValidationStatus(
                 token,
                 account,

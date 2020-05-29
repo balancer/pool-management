@@ -72,6 +72,9 @@ const Setup = observer(() => {
                 'build',
                 []
             );
+            if (tx.error) {
+                return;
+            }
             proxyStore.setDeploying(true);
             await tx.txResponse.wait(10);
             proxyStore.setDeploying(false);
