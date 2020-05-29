@@ -133,7 +133,7 @@ export default class CreatePoolFormStore {
             const weight = this.getWeightInput(token);
             return totalWeight.plus(weight.value);
         }, new BigNumber(0));
-        if (totalWeight.gte(bnum(100))) {
+        if (totalWeight.gt(bnum(100))) {
             hasWeightExceededTotal = true;
         }
         this.hasWeightExceededTotal = hasWeightExceededTotal;
