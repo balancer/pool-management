@@ -3,18 +3,16 @@ import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { BigNumberMap, Pool } from '../../types';
-import { formatBalanceTruncated } from '../../utils/helpers';
-import { BigNumber } from '../../utils/bignumber';
+import { bnum, formatCurrency, formatPercentage } from '../../utils/helpers';
 import { ValidationStatus } from '../../stores/actions/validators';
+const Cross = require('../../assets/images/x.svg') as string;
+const Dropdown = require('../../assets/images/dropdown.svg') as string;
 
 const Wrapper = styled.div`
-    width: calc(80% - 20px);
+    width: 90%;
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     background: var(--panel-background);
-    margin-top: 32px;
-    margin-left: 20px;
 `;
 
 const HeaderRow = styled.div`
@@ -51,7 +49,7 @@ const TableRow = styled.div`
 const TableCell = styled.div`
     display: flex;
     align-items: center;
-    width: ${props => props.width || '25%'};
+    width: ${props => props.width || '10%'};
 `;
 
 const TableCellRight = styled(TableCell)`
@@ -64,7 +62,7 @@ const TokenIcon = styled.img`
     margin-right: 13px;
 `;
 
-const DepositAmount = styled.div`
+const WeightAmount = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -73,14 +71,13 @@ const DepositAmount = styled.div`
     border-radius: 4px;
 `;
 
-const MaxLink = styled.div`
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 16px;
+const DepositAmount = styled.div`
     display: flex;
-    text-decoration-line: underline;
-    color: var(--link-text);
-    cursor: pointer;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    border-radius: 4px;
 `;
 
 const Toggle = styled.label`
@@ -169,6 +166,8 @@ const InputWrapper = styled.div`
         :-webkit-autofill:focus,
         :-webkit-autofill:active,
         :-internal-autofill-selected {
+            -webkit-appearance: none;
+            margin: 0;
             -webkit-text-fill-color: var(--body-text);
         }
         ::placeholder {
@@ -176,6 +175,11 @@ const InputWrapper = styled.div`
         }
         :focus {
             outline: none;
+        }
+        :-webkit-outer-spin-button,
+        :-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     }
     border: ${props =>
@@ -202,69 +206,56 @@ const InputWrapper = styled.div`
     }
 `;
 
-interface Props {
-    poolAddress: string;
-}
+const ValueLabel = styled.span`
+    color: ${props => (props.excess ? 'var(--error-color)' : '')};
+`;
 
-const AddAssetTable = observer((props: Props) => {
-    const { poolAddress } = props;
+const ExternalIcon = styled.img`
+    cursor: pointer;
+    filter: invert(67%) sepia(15%) saturate(333%) hue-rotate(155deg)
+        brightness(94%) contrast(88%);
+`;
 
+const DropdownIcon = styled(ExternalIcon)`
+    width: 12px;
+    height: 12px;
+    padding: 8px;
+`;
+
+const CloseIcon = styled(ExternalIcon)`
+    width: 16px;
+    height: 16px;
+`;
+
+const CreatePoolTable = observer(() => {
     const {
         root: {
-            poolStore,
             tokenStore,
             providerStore,
             proxyStore,
+            marketStore,
             contractMetadataStore,
-            addLiquidityFormStore,
+            createPoolFormStore,
         },
     } = useStores();
 
     const account = providerStore.providerStatus.account;
 
-    const pool = poolStore.getPool(poolAddress);
-    const proxyAddress = proxyStore.getInstanceAddress();
-    let userBalances: undefined | BigNumberMap;
     let accountApprovalsLoaded = false;
+    const tokens = createPoolFormStore.tokens;
+    const proxyAddress = proxyStore.getInstanceAddress();
 
-    if (pool) {
-        userBalances = tokenStore.getAccountBalances(pool.tokensList, account);
-        accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
-            poolStore.getPoolTokens(pool.address),
-            account,
-            proxyAddress
-        );
-    }
-
-    const handleMaxLinkClick = async (
-        tokenAddress: string,
-        balance: BigNumber
-    ) => {
-        let maxValue = '0.00';
-        const userBalance = tokenStore.normalizeBalance(balance, tokenAddress);
-
-        if (userBalance && !userBalance.eq(0)) {
-            maxValue = userBalance.toString();
-        }
-
-        addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
-        addLiquidityFormStore.setActiveInputKey(tokenAddress);
-
-        const ratio = addLiquidityFormStore.calcRatio(
-            pool,
-            tokenAddress,
-            maxValue
-        );
-
-        addLiquidityFormStore.setJoinRatio(ratio);
-        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
-    };
+    accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
+        tokens,
+        account,
+        proxyAddress
+    );
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
         const { checked } = event.target;
 
-        addLiquidityFormStore.setApprovalCheckboxTouched(tokenAddress, true);
-        addLiquidityFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
+        createPoolFormStore.setApprovalCheckboxTouched(tokenAddress, true);
+        createPoolFormStore.setApprovalCheckboxChecked(tokenAddress, checked);
 
         if (checked) {
             const response = await tokenStore.approveMax(
@@ -274,7 +265,7 @@ const AddAssetTable = observer((props: Props) => {
 
             // Revert change on metamask error
             if (response.error) {
-                addLiquidityFormStore.setApprovalCheckboxChecked(
+                createPoolFormStore.setApprovalCheckboxChecked(
                     tokenAddress,
                     !checked
                 );
@@ -287,7 +278,7 @@ const AddAssetTable = observer((props: Props) => {
 
             // Revert change on metamask error
             if (response.error) {
-                addLiquidityFormStore.setApprovalCheckboxChecked(
+                createPoolFormStore.setApprovalCheckboxChecked(
                     tokenAddress,
                     !checked
                 );
@@ -295,44 +286,75 @@ const AddAssetTable = observer((props: Props) => {
         }
     };
 
-    const handleInputChange = async (event, tokenAddress: string) => {
+    const handleWeightInputChange = async (event, tokenAddress: string) => {
         const { value } = event.target;
-        addLiquidityFormStore.setInputValue(tokenAddress, value);
-        addLiquidityFormStore.setActiveInputKey(tokenAddress);
-        const ratio = addLiquidityFormStore.calcRatio(
-            pool,
-            tokenAddress,
-            value
-        );
-        addLiquidityFormStore.setJoinRatio(ratio);
-        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
+        createPoolFormStore.setTokenWeight(tokenAddress, value);
+        createPoolFormStore.setActiveInputKey(tokenAddress);
+        createPoolFormStore.refreshWeights(tokenAddress);
+        createPoolFormStore.refreshAmounts(tokenAddress, account);
     };
 
-    const renderAssetTable = (
-        pool: Pool,
-        userBalances: undefined | BigNumberMap
-    ) => {
+    const handleAmountInputChange = async (event, tokenAddress: string) => {
+        const { value } = event.target;
+        createPoolFormStore.setTokenAmount(tokenAddress, value);
+        createPoolFormStore.setActiveInputKey(tokenAddress);
+        createPoolFormStore.refreshAmounts(tokenAddress, account);
+    };
+
+    const handleChangeClick = async (tokenAddress: string) => {
+        createPoolFormStore.openModal(tokenAddress);
+    };
+
+    const handleRemoveClick = async (tokenAddress: string) => {
+        createPoolFormStore.removeToken(tokenAddress);
+    };
+
+    const formatRelativeWeight = (tokenAddress: string) => {
+        const relativeWeight = createPoolFormStore.getRelativeWeight(
+            tokenAddress
+        );
+        if (relativeWeight.isNaN()) {
+            return '-';
+        }
+        return formatPercentage(relativeWeight, 2);
+    };
+
+    const renderAssetTable = (tokens: string[]) => {
+        const tokenValues = {};
+        for (const token of tokens) {
+            const amountInput = createPoolFormStore.getAmountInput(token);
+            const amount = bnum(amountInput.value);
+            const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
+            const tokenValue = marketStore.getValue(
+                tokenMetadata.ticker,
+                amount
+            );
+            tokenValues[token] = tokenValue;
+        }
+        const totalTokenValue = tokens.reduce((acc, val) => {
+            return acc.plus(tokenValues[val]);
+        }, bnum(0));
+
         return (
             <React.Fragment>
-                {pool.tokensList.map(tokenAddress => {
-                    const token = pool.tokens.find(token => {
-                        return token.address === tokenAddress;
-                    });
-
+                {tokens.map(token => {
                     const tokenMetadata = contractMetadataStore.getTokenMetadata(
-                        tokenAddress
+                        token
                     );
 
-                    const checkbox = addLiquidityFormStore.getCheckbox(
-                        tokenAddress
+                    const checkbox = createPoolFormStore.getCheckbox(token);
+                    const weightInput = createPoolFormStore.getWeightInput(
+                        token
                     );
-                    const input = addLiquidityFormStore.getInput(tokenAddress);
+                    const amountInput = createPoolFormStore.getAmountInput(
+                        token
+                    );
 
                     let hasMaxApproval = false;
 
                     if (accountApprovalsLoaded) {
                         hasMaxApproval = tokenStore.hasMaxApproval(
-                            tokenAddress,
+                            token,
                             account,
                             proxyAddress
                         );
@@ -348,35 +370,27 @@ const AddAssetTable = observer((props: Props) => {
                         visuallyChecked = false;
                     }
 
-                    let normalizedUserBalance = '0';
-                    let userBalanceToDisplay = '-';
+                    const valueText = tokenValues[token].isNaN()
+                        ? ''
+                        : `$ ${formatCurrency(tokenValues[token])}`;
+                    const valueShare = tokenValues[token].div(totalTokenValue);
+                    const relativeWeight = createPoolFormStore.getRelativeWeight(
+                        token
+                    );
+                    const excessiveShare = valueShare
+                        .minus(relativeWeight)
+                        .gt(0.01);
 
-                    if (userBalances && userBalances[tokenAddress]) {
-                        normalizedUserBalance = formatBalanceTruncated(
-                            userBalances[tokenAddress],
-                            tokenMetadata.decimals,
-                            tokenMetadata.precision,
-                            20
-                        );
-
-                        userBalanceToDisplay = normalizedUserBalance;
-                    }
+                    let hasWeightError =
+                        weightInput.validation === ValidationStatus.BAD_WEIGHT;
 
                     let hasError =
-                        input.validation ===
+                        amountInput.validation ===
                         ValidationStatus.INSUFFICIENT_BALANCE;
 
-                    if (
-                        addLiquidityFormStore.activeInputKey === token.address
-                    ) {
-                        hasError =
-                            input.validation !== ValidationStatus.VALID &&
-                            input.validation !== ValidationStatus.EMPTY;
-                    }
-
                     return (
-                        <TableRow key={token.address}>
-                            <TableCell>
+                        <TableRow key={token}>
+                            <TableCell width={'15%'}>
                                 <TokenIcon
                                     src={TokenIconAddress(
                                         tokenMetadata.iconAddress,
@@ -384,6 +398,13 @@ const AddAssetTable = observer((props: Props) => {
                                     )}
                                 />
                                 {tokenMetadata.symbol}
+                                <DropdownIcon
+                                    src={Dropdown}
+                                    alt="v"
+                                    onClick={e => {
+                                        handleChangeClick(token);
+                                    }}
+                                />
                             </TableCell>
                             <TableCell>
                                 <Toggle>
@@ -392,57 +413,66 @@ const AddAssetTable = observer((props: Props) => {
                                         checked={visuallyChecked}
                                         disabled={!account}
                                         onChange={e =>
-                                            handleCheckboxChange(
-                                                e,
-                                                tokenAddress
-                                            )
+                                            handleCheckboxChange(e, token)
                                         }
                                     />
                                     <ToggleSlider></ToggleSlider>
                                 </Toggle>
                             </TableCell>
-                            <TableCell>
-                                {userBalanceToDisplay} {token.symbol}
-                            </TableCell>
-                            <TableCellRight>
-                                <DepositAmount>
-                                    <InputWrapper errorBorders={hasError}>
-                                        {userBalances &&
-                                        userBalances[tokenAddress] ? (
-                                            <MaxLink
-                                                onClick={() => {
-                                                    handleMaxLinkClick(
-                                                        tokenAddress,
-                                                        userBalances[
-                                                            tokenAddress
-                                                        ]
-                                                    );
-                                                }}
-                                            >
-                                                Max
-                                            </MaxLink>
-                                        ) : (
-                                            <div />
-                                        )}
+                            <TableCellRight width={'20%'}>
+                                <WeightAmount>
+                                    <InputWrapper errorBorders={hasWeightError}>
                                         <input
-                                            id={`input-${tokenAddress}`}
-                                            name={`input-name-${tokenAddress}`}
-                                            value={
-                                                addLiquidityFormStore.getInput(
-                                                    tokenAddress
-                                                ).value
-                                            }
+                                            id={`input-${token}`}
+                                            type="number"
+                                            name={`input-name-${token}`}
+                                            value={weightInput.value}
                                             onChange={e => {
-                                                handleInputChange(
+                                                handleWeightInputChange(
                                                     e,
-                                                    tokenAddress
+                                                    token
                                                 );
                                             }}
-                                            // ref={textInput}
+                                            placeholder=""
+                                        />
+                                    </InputWrapper>
+                                </WeightAmount>
+                            </TableCellRight>
+                            <TableCellRight>
+                                {formatRelativeWeight(token)}
+                            </TableCellRight>
+                            <TableCellRight width={'20%'}>
+                                <DepositAmount>
+                                    <InputWrapper errorBorders={hasError}>
+                                        <input
+                                            id={`input-${token}`}
+                                            type="number"
+                                            name={`input-name-${token}`}
+                                            value={amountInput.value}
+                                            onChange={e => {
+                                                handleAmountInputChange(
+                                                    e,
+                                                    token
+                                                );
+                                            }}
                                             placeholder=""
                                         />
                                     </InputWrapper>
                                 </DepositAmount>
+                            </TableCellRight>
+                            <TableCellRight width={'15%'}>
+                                <ValueLabel excess={excessiveShare}>
+                                    {valueText}
+                                </ValueLabel>
+                            </TableCellRight>
+                            <TableCellRight>
+                                <CloseIcon
+                                    src={Cross}
+                                    alt="x"
+                                    onClick={e => {
+                                        handleRemoveClick(token);
+                                    }}
+                                />
                             </TableCellRight>
                         </TableRow>
                     );
@@ -454,20 +484,18 @@ const AddAssetTable = observer((props: Props) => {
     return (
         <Wrapper>
             <HeaderRow>
-                <TableCell>Asset</TableCell>
+                <TableCell width={'15%'}>Asset</TableCell>
                 <TableCell>Unlock</TableCell>
-                <TableCell>Wallet Balance</TableCell>
-                <TableCellRight>Deposit Amount</TableCellRight>
+                <TableCellRight width={'30%'}>
+                    Weight (total max: 100)
+                </TableCellRight>
+                <TableCellRight width={'20%'}>Amount</TableCellRight>
+                <TableCellRight width={'15%'}>Value</TableCellRight>
+                <TableCellRight>Remove</TableCellRight>
             </HeaderRow>
-            {pool &&
-            addLiquidityFormStore.isActivePool(poolAddress) &&
-            addLiquidityFormStore.isActiveAccount(account) ? (
-                renderAssetTable(pool, userBalances)
-            ) : (
-                <TableRow>Loading</TableRow>
-            )}
+            {renderAssetTable(tokens)}
         </Wrapper>
     );
 });
 
-export default AddAssetTable;
+export default CreatePoolTable;

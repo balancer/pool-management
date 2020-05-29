@@ -6,6 +6,8 @@ import { getSupportedChainName } from '../provider/connectors';
 
 export interface ContractMetadata {
     bFactory: string;
+    bActions: string;
+    dsProxyRegistry: string;
     proxy: string;
     weth: string;
     multicall: string;
@@ -70,6 +72,8 @@ export default class ContractMetadataStore {
 
         const contractMetadata = {
             bFactory: metadata.default[chainName].bFactory,
+            bActions: metadata.default[chainName].bActions,
+            dsProxyRegistry: metadata.default[chainName].dsProxyRegistry,
             proxy: metadata.default[chainName].proxy,
             weth: metadata.default[chainName].weth,
             multicall: metadata.default[chainName].multicall,
@@ -114,6 +118,36 @@ export default class ContractMetadataStore {
     isSupported(tokenAddress: string): boolean {
         const metadata = this.getTokenMetadata(tokenAddress);
         return metadata.isSupported;
+    }
+
+    getBFactoryAddress(): string {
+        const proxyAddress = this.contractMetadata.bFactory;
+        if (!proxyAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return proxyAddress;
+    }
+
+    getBActionsAddress(): string {
+        const proxyAddress = this.contractMetadata.bActions;
+        if (!proxyAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return proxyAddress;
+    }
+
+    getDsProxyRegistryAddress(): string {
+        const dsProxyRegistryAddress = this.contractMetadata.dsProxyRegistry;
+        if (!dsProxyRegistryAddress) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return dsProxyRegistryAddress;
     }
 
     getProxyAddress(): string {
@@ -224,7 +258,7 @@ export default class ContractMetadataStore {
         return tokenMetadata;
     }
 
-    getFilteredTokenMetadata(chainId: number, filter: string): TokenMetadata[] {
+    getFilteredTokenMetadata(filter: string): TokenMetadata[] {
         const tokens = this.contractMetadata.tokens || undefined;
 
         if (!tokens) {

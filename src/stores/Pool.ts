@@ -279,13 +279,25 @@ export default class PoolStore {
         poolAmountOut: string,
         maxAmountsIn: string[]
     ) => {
-        const { providerStore } = this.rootStore;
+        const {
+            contractMetadataStore,
+            providerStore,
+            proxyStore,
+        } = this.rootStore;
 
-        await providerStore.sendTransaction(
-            ContractTypes.BPool,
-            poolAddress,
+        const dsProxyAddress = proxyStore.getInstanceAddress();
+        const bActionsAddress = contractMetadataStore.getBActionsAddress();
+
+        const data = proxyStore.wrapTransaction(
+            ContractTypes.BActions,
             'joinPool',
-            [poolAmountOut.toString(), maxAmountsIn]
+            [poolAddress, poolAmountOut.toString(), maxAmountsIn]
+        );
+        await providerStore.sendTransaction(
+            ContractTypes.DSProxy,
+            dsProxyAddress,
+            'execute',
+            [bActionsAddress, data]
         );
     };
 }

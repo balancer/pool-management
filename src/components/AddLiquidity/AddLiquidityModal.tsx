@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import AddAssetTable from './AddAssetTable';
@@ -159,7 +160,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return !tokenStore.hasMaxApproval(
                 token.address,
                 account,
-                pool.address
+                proxyAddress
             );
         });
     };
@@ -170,14 +171,26 @@ const AddLiquidityModal = observer((props: Props) => {
             poolStore,
             tokenStore,
             providerStore,
+            proxyStore,
             addLiquidityFormStore,
             contractMetadataStore,
         },
     } = useStores();
 
+    const history = useHistory();
+    const hasProxyInstance = proxyStore.hasInstance();
+
+    useEffect(() => {
+        if (!hasProxyInstance) {
+            addLiquidityFormStore.closeModal();
+            history.push('/setup');
+        }
+    }, [hasProxyInstance, addLiquidityFormStore, history]);
+
     const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
+    const proxyAddress = proxyStore.getInstanceAddress();
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -190,7 +203,7 @@ const AddLiquidityModal = observer((props: Props) => {
         const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
             poolStore.getPoolTokens(pool.address),
             account,
-            pool.address
+            proxyAddress
         );
 
         if (accountApprovalsLoaded) {
@@ -204,7 +217,7 @@ const AddLiquidityModal = observer((props: Props) => {
         token?: PoolToken
     ) => {
         if (action === ButtonAction.UNLOCK) {
-            await tokenStore.approveMax(token.address, pool.address);
+            await tokenStore.approveMax(token.address, proxyAddress);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
 
@@ -216,13 +229,16 @@ const AddLiquidityModal = observer((props: Props) => {
             const poolTotal = tokenStore.getTotalSupply(pool.address);
 
             let tokenAmountsIn: string[] = [];
-            pool.tokens.forEach(token => {
+            pool.tokensList.forEach(tokenAddress => {
+                const token = pool.tokens.find(
+                    token => token.address === tokenAddress
+                );
                 const tokenAmountIn = tokenStore
                     .denormalizeBalance(
                         addLiquidityFormStore.joinRatio.times(token.balance),
                         token.address
                     )
-                    .integerValue(BigNumber.ROUND_DOWN);
+                    .integerValue(BigNumber.ROUND_UP);
                 tokenAmountsIn.push(tokenAmountIn.toString());
             });
 
@@ -238,7 +254,7 @@ const AddLiquidityModal = observer((props: Props) => {
             await poolStore.joinPool(
                 pool.address,
                 poolTokens.toString(),
-                addLiquidityFormStore.maxUintInputAmounts()
+                tokenAmountsIn
             );
         }
     };
