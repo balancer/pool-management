@@ -323,10 +323,9 @@ const CreatePoolTable = observer(() => {
             const amountInput = createPoolFormStore.getAmountInput(token);
             const amount = bnum(amountInput.value);
             const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
-            const tokenValue = marketStore.getValue(
-                tokenMetadata.ticker,
-                amount
-            );
+            const tokenValue = marketStore.hasAssetPrice(tokenMetadata.ticker)
+                ? marketStore.getValue(tokenMetadata.ticker, amount)
+                : bnum(NaN);
             tokenValues[token] = tokenValue;
         }
 
@@ -366,7 +365,7 @@ const CreatePoolTable = observer(() => {
                     }
 
                     const valueText = tokenValues[token].isNaN()
-                        ? ''
+                        ? '-'
                         : `$ ${formatCurrency(tokenValues[token])}`;
 
                     let hasWeightError =
