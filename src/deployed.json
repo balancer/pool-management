@@ -403,10 +403,10 @@
             },
             {
                 "symbol": "PNK",
-                "address": "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d",
+                "address": "0x93ED3FBe21207Ec2E8f2d3c3de6e058Cb73Bc04d",
                 "decimals": 18,
                 "ticker": "PNK",
-                "iconAddress": "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d",
+                "iconAddress": "0x93ED3FBe21207Ec2E8f2d3c3de6e058Cb73Bc04d",
                 "precision": 2,
                 "chartColor": "#5d2e9a"
             },
@@ -414,7 +414,7 @@
                 "symbol": "AST",
                 "address": "0x27054b13b1B798B345b591a4d22e6562d47eA75a",
                 "decimals": 4,
-                "ticker": "PNK",
+                "ticker": "AST",
                 "iconAddress": "0x27054b13b1B798B345b591a4d22e6562d47eA75a",
                 "precision": 2,
                 "chartColor": "#0649ff"
