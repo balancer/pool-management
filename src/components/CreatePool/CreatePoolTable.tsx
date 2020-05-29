@@ -206,9 +206,7 @@ const InputWrapper = styled.div`
     }
 `;
 
-const ValueLabel = styled.span`
-    color: ${props => (props.excess ? 'var(--error-color)' : '')};
-`;
+const ValueLabel = styled.span``;
 
 const ExternalIcon = styled.img`
     cursor: pointer;
@@ -325,15 +323,11 @@ const CreatePoolTable = observer(() => {
             const amountInput = createPoolFormStore.getAmountInput(token);
             const amount = bnum(amountInput.value);
             const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
-            const tokenValue = marketStore.getValue(
-                tokenMetadata.ticker,
-                amount
-            );
+            const tokenValue = marketStore.hasAssetPrice(tokenMetadata.ticker)
+                ? marketStore.getValue(tokenMetadata.ticker, amount)
+                : bnum(NaN);
             tokenValues[token] = tokenValue;
         }
-        const totalTokenValue = tokens.reduce((acc, val) => {
-            return acc.plus(tokenValues[val]);
-        }, bnum(0));
 
         return (
             <React.Fragment>
@@ -371,15 +365,8 @@ const CreatePoolTable = observer(() => {
                     }
 
                     const valueText = tokenValues[token].isNaN()
-                        ? ''
+                        ? '-'
                         : `$ ${formatCurrency(tokenValues[token])}`;
-                    const valueShare = tokenValues[token].div(totalTokenValue);
-                    const relativeWeight = createPoolFormStore.getRelativeWeight(
-                        token
-                    );
-                    const excessiveShare = valueShare
-                        .minus(relativeWeight)
-                        .gt(0.01);
 
                     let hasWeightError =
                         weightInput.validation === ValidationStatus.BAD_WEIGHT;
@@ -461,9 +448,7 @@ const CreatePoolTable = observer(() => {
                                 </DepositAmount>
                             </TableCellRight>
                             <TableCellRight width={'15%'}>
-                                <ValueLabel excess={excessiveShare}>
-                                    {valueText}
-                                </ValueLabel>
+                                <ValueLabel>{valueText}</ValueLabel>
                             </TableCellRight>
                             <TableCellRight>
                                 <CloseIcon
