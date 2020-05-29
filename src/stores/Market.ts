@@ -67,7 +67,7 @@ export default class MarketStore {
 
     // Tokens with unknown symbol have 0 value
     getValue(symbol: string, balance: BigNumber): BigNumber {
-        if (!this.assets[symbol] || !this.assets[symbol].price) {
+        if (!this.hasAssetPrice(symbol)) {
             // console.warn('Symbol price not found for ' + symbol);
             return bnum(0);
         }
@@ -133,5 +133,9 @@ export default class MarketStore {
         return this.assets[assetSymbol].price
             ? this.assets[assetSymbol].price.value
             : undefined;
+    }
+
+    hasAssetPrice(assetSymbol: string): boolean {
+        return !!this.assets[assetSymbol] && !!this.assets[assetSymbol].price;
     }
 }
