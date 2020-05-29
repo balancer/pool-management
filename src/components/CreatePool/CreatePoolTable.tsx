@@ -370,14 +370,10 @@ const CreatePoolTable = observer(() => {
                         visuallyChecked = false;
                     }
 
-                    let valueText = '';
-                    if (!tokenValues[token].isNaN()) {
-                        valueText += `$ ${formatCurrency(tokenValues[token])}`;
-                    }
+                    const valueText = tokenValues[token].isNaN()
+                        ? ''
+                        : `$ ${formatCurrency(tokenValues[token])}`;
                     const valueShare = tokenValues[token].div(totalTokenValue);
-                    if (!valueShare.isNaN()) {
-                        valueText += ` (${formatPercentage(valueShare, 2)})`;
-                    }
                     const relativeWeight = createPoolFormStore.getRelativeWeight(
                         token
                     );
