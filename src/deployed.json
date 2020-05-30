@@ -418,7 +418,36 @@
                 "iconAddress": "0x27054b13b1B798B345b591a4d22e6562d47eA75a",
                 "precision": 2,
                 "chartColor": "#0649ff"
+            },
+            {
+                "symbol": "ETHBTCRSI7030",
+                "address": "0xbf70A33A13fBe8D0106Df321Da0Cf654d2E9Ab50",
+                "decimals": 18,
+                "ticker": "ETHBTCRSI",
+                "iconAddress": "0xbf70A33A13fBe8D0106Df321Da0Cf654d2E9Ab50",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "ETHRSIAPY",
+                "address": "0x136faE4333EA36A24bb751E2d505D6ca4Fd9f00b",
+                "decimals": 18,
+                "ticker": "ETHRSIAPY",
+                "iconAddress": "0x136faE4333EA36A24bb751E2d505D6ca4Fd9f00b",
+                "precision": 2,
+                "chartColor": "#93a167"
+            },
+            {
+                "symbol": "ETHMNY",
+                "address": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
+                "decimals": 2,
+                "ticker": "ETHMNY",
+                "iconAddress": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
+                "precision": 2,
+                "chartColor": "#ff005d"
             }
+            
+            	
         ]
     }
 }
