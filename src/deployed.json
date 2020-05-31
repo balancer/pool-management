@@ -499,6 +499,15 @@
                 "iconAddress": "0xB4EFd85c19999D84251304bDA99E90B92300Bd93",
                 "precision": 2,
                 "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "VETH",
+                "address": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
+                "decimals": 18,
+                "ticker": "VETH",
+                "iconAddress": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
+                "precision": 2,
+                "chartColor": "#baa55c"
             }
         ]
     }
