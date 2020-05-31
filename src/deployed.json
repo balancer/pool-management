@@ -481,6 +481,15 @@
                 "iconAddress": "0x408e41876cCCDC0F92210600ef50372656052a38",
                 "precision": 2,
                 "chartColor": "#be955c"
+            },
+            {
+                "symbol": "NEST",
+                "address": "0x04abEdA201850aC0124161F037Efd70c74ddC74C",
+                "decimals": 18,
+                "ticker": "NEST",
+                "iconAddress": "0x04abEdA201850aC0124161F037Efd70c74ddC74C",
+                "precision": 2,
+                "chartColor": "#be955c"
             }
         ]
     }
