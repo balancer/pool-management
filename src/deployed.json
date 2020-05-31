@@ -195,15 +195,6 @@
                 "chartColor": "#9d9f7f"
             },
             {
-                "symbol": "tBTC",
-                "address": "0x1bBE271d15Bb64dF0bc6CD28Df9Ff322F2eBD847",
-                "decimals": 18,
-                "ticker": "BTC",
-                "iconAddress": "0x1bBE271d15Bb64dF0bc6CD28Df9Ff322F2eBD847",
-                "precision": 6,
-                "chartColor": "#557064"
-            },
-            {
                 "symbol": "BTC++",
                 "address": "0x0327112423F3A68efdF1fcF402F6c5CB9f7C33fd",
                 "decimals": 18,
@@ -518,7 +509,6 @@
                 "precision": 2,
                 "chartColor": "#3aa31c"
             }
-            
         ]
     }
 }
