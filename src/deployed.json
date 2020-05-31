@@ -463,9 +463,16 @@
                 "iconAddress": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
                 "precision": 2,
                 "chartColor": "#254bd4"
+            },
+            {
+                "symbol": "STA",
+                "address": "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
+                "decimals": 18,
+                "ticker": "STA",
+                "iconAddress": "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
+                "precision": 2,
+                "chartColor": "#6e6962"
             }
-            
-            	
         ]
     }
 }
