@@ -445,6 +445,24 @@
                 "iconAddress": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
                 "precision": 2,
                 "chartColor": "#ff005d"
+            },
+            {
+                "symbol": "KNC",
+                "address": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                "decimals": 18,
+                "ticker": "KNC",
+                "iconAddress": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                "precision": 2,
+                "chartColor": "#42d042"
+            },
+            {
+                "symbol": "LRC",
+                "address": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+                "decimals": 18,
+                "ticker": "LRC",
+                "iconAddress": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+                "precision": 2,
+                "chartColor": "#254bd4"
             }
             
             	
