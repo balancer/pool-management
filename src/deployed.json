@@ -439,28 +439,28 @@
             },
             {
                 "symbol": "ETHMNY",
-                "address": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
+                "address": "0xbF4a2DdaA16148a9D0fA2093FfAC450ADb7cd4aa",
                 "decimals": 2,
                 "ticker": "ETHMNY",
-                "iconAddress": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
+                "iconAddress": "0xbF4a2DdaA16148a9D0fA2093FfAC450ADb7cd4aa",
                 "precision": 2,
                 "chartColor": "#ff005d"
             },
             {
                 "symbol": "KNC",
-                "address": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                "address": "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
                 "decimals": 18,
                 "ticker": "KNC",
-                "iconAddress": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                "iconAddress": "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
                 "precision": 2,
                 "chartColor": "#42d042"
             },
             {
                 "symbol": "LRC",
-                "address": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+                "address": "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD",
                 "decimals": 18,
                 "ticker": "LRC",
-                "iconAddress": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+                "iconAddress": "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD",
                 "precision": 2,
                 "chartColor": "#254bd4"
             },
