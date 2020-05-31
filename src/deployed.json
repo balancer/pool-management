@@ -195,15 +195,6 @@
                 "chartColor": "#9d9f7f"
             },
             {
-                "symbol": "tBTC",
-                "address": "0x1bBE271d15Bb64dF0bc6CD28Df9Ff322F2eBD847",
-                "decimals": 18,
-                "ticker": "BTC",
-                "iconAddress": "0x1bBE271d15Bb64dF0bc6CD28Df9Ff322F2eBD847",
-                "precision": 6,
-                "chartColor": "#557064"
-            },
-            {
                 "symbol": "BTC++",
                 "address": "0x0327112423F3A68efdF1fcF402F6c5CB9f7C33fd",
                 "decimals": 18,
@@ -439,28 +430,28 @@
             },
             {
                 "symbol": "ETHMNY",
-                "address": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
+                "address": "0xbF4a2DdaA16148a9D0fA2093FfAC450ADb7cd4aa",
                 "decimals": 2,
                 "ticker": "ETHMNY",
-                "iconAddress": "0xbf4a2ddaa16148a9d0fa2093ffac450adb7cd4aa",
+                "iconAddress": "0xbF4a2DdaA16148a9D0fA2093FfAC450ADb7cd4aa",
                 "precision": 2,
                 "chartColor": "#ff005d"
             },
             {
                 "symbol": "KNC",
-                "address": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                "address": "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
                 "decimals": 18,
                 "ticker": "KNC",
-                "iconAddress": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+                "iconAddress": "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
                 "precision": 2,
                 "chartColor": "#42d042"
             },
             {
                 "symbol": "LRC",
-                "address": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+                "address": "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD",
                 "decimals": 18,
                 "ticker": "LRC",
-                "iconAddress": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+                "iconAddress": "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD",
                 "precision": 2,
                 "chartColor": "#254bd4"
             },
@@ -490,6 +481,33 @@
                 "iconAddress": "0x04abEdA201850aC0124161F037Efd70c74ddC74C",
                 "precision": 2,
                 "chartColor": "#be955c"
+            },
+            {
+                "symbol": "RPL",
+                "address": "0xB4EFd85c19999D84251304bDA99E90B92300Bd93",
+                "decimals": 18,
+                "ticker": "RPL",
+                "iconAddress": "0xB4EFd85c19999D84251304bDA99E90B92300Bd93",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "VETH",
+                "address": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
+                "decimals": 18,
+                "ticker": "VETH",
+                "iconAddress": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
+                "precision": 2,
+                "chartColor": "#baa55c"
+            },
+            {
+                "symbol": "GHOST",
+                "address": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
+                "decimals": 18,
+                "ticker": "GHOST",
+                "iconAddress": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
+                "precision": 2,
+                "chartColor": "#3aa31c"
             }
         ]
     }
