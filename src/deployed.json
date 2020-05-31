@@ -490,6 +490,15 @@
                 "iconAddress": "0x04abEdA201850aC0124161F037Efd70c74ddC74C",
                 "precision": 2,
                 "chartColor": "#be955c"
+            },
+            {
+                "symbol": "RPL",
+                "address": "0xB4EFd85c19999D84251304bDA99E90B92300Bd93",
+                "decimals": 18,
+                "ticker": "RPL",
+                "iconAddress": "0xB4EFd85c19999D84251304bDA99E90B92300Bd93",
+                "precision": 2,
+                "chartColor": "#a593a5"
             }
         ]
     }
