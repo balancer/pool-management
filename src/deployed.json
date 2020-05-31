@@ -508,7 +508,17 @@
                 "iconAddress": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
                 "precision": 2,
                 "chartColor": "#baa55c"
+            },
+            {
+                "symbol": "GHOST",
+                "address": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
+                "decimals": 18,
+                "ticker": "GHOST",
+                "iconAddress": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
+                "precision": 2,
+                "chartColor": "#3aa31c"
             }
+            
         ]
     }
 }
