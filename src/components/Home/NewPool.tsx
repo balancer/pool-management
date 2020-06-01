@@ -11,6 +11,7 @@ import CreatePoolTable from '../CreatePool/CreatePoolTable';
 import SelectAssetModal from '../CreatePool/SelectAssetModal';
 import WarningMessage from '../CreatePool/WarningMessage';
 import Button from '../Common/Button';
+import { BigNumber } from 'utils/bignumber';
 
 const Wrapper = styled.div`
     padding-top: 8px;
@@ -142,11 +143,10 @@ const NewPool = observer(() => {
         const balances = tokens.map(token => {
             const amountInput = createPoolFormStore.amounts[token];
             const amount = bnum(amountInput.value);
-            const denormalizedBalance = tokenStore.denormalizeBalance(
-                amount,
-                token
-            );
-            return denormalizedBalance.toString();
+            return tokenStore
+                .denormalizeBalance(amount, token)
+                .integerValue(BigNumber.ROUND_DOWN)
+                .toString();
         });
         const denorms = tokens.map(token => {
             const weightInput = createPoolFormStore.weights[token];
