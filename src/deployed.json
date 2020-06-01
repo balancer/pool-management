@@ -508,6 +508,15 @@
                 "iconAddress": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
                 "precision": 2,
                 "chartColor": "#3aa31c"
+            },
+            {
+                "symbol": "sETH",
+                "address": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
+                "decimals": 18,
+                "ticker": "sETH",
+                "iconAddress": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
+                "precision": 2,
+                "chartColor": "#3aa31c"
             }
         ]
     }
