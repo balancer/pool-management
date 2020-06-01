@@ -156,9 +156,8 @@ export default class CreatePoolFormStore {
 
             this.amounts[token].validation = validationStatus;
 
-            if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
-                this.hasInputExceedUserBalance = true;
-            }
+            this.hasInputExceedUserBalance =
+                validationStatus === ValidationStatus.INSUFFICIENT_BALANCE;
 
             return;
         }
