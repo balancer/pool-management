@@ -206,17 +206,23 @@ export default class CreatePoolFormStore {
             return ValidationStatus.VALID;
         }
 
-        const accountBalance = tokenStore.normalizeBalance(
-            tokenStore.getBalance(tokenAddress, account),
+        const denormalizedBalance = tokenStore.denormalizeBalance(
+            inputAmount,
             tokenAddress
         );
+
+        const accountBalance = tokenStore.getBalance(tokenAddress, account);
 
         let status = validateTokenValue(inputAmount.toString());
 
         if (status === ValidationStatus.VALID) {
-            status = inputAmount.lte(accountBalance)
-                ? ValidationStatus.VALID
-                : ValidationStatus.INSUFFICIENT_BALANCE;
+            if (accountBalance.lte(denormalizedBalance)) {
+                status = ValidationStatus.INSUFFICIENT_BALANCE;
+            } else if (denormalizedBalance.lt(bnum('1000000'))) {
+                status = ValidationStatus.MINIMUM_BALANCE;
+            } else {
+                status = ValidationStatus.VALID;
+            }
         }
 
         return status;

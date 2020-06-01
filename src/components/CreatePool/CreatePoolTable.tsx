@@ -373,7 +373,9 @@ const CreatePoolTable = observer(() => {
 
                     let hasError =
                         amountInput.validation ===
-                        ValidationStatus.INSUFFICIENT_BALANCE;
+                            ValidationStatus.INSUFFICIENT_BALANCE ||
+                        amountInput.validation ===
+                            ValidationStatus.MINIMUM_BALANCE;
 
                     return (
                         <TableRow key={token}>
