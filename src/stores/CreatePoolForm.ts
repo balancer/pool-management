@@ -215,7 +215,7 @@ export default class CreatePoolFormStore {
         let status = validateTokenValue(inputAmount.toString());
 
         if (status === ValidationStatus.VALID) {
-            if (accountBalance.lte(denormalizedBalance)) {
+            if (accountBalance.lt(denormalizedBalance)) {
                 status = ValidationStatus.INSUFFICIENT_BALANCE;
             } else if (denormalizedBalance.lt(bnum('1000000'))) {
                 status = ValidationStatus.MINIMUM_BALANCE;
