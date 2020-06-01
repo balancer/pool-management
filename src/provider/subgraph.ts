@@ -14,7 +14,7 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
 
     const query = `
         {
-          pools {
+          pools (first: 1000) {
             id
             publicSwap
             finalized
