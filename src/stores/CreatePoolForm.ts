@@ -17,8 +17,7 @@ export default class CreatePoolFormStore {
         inputValue: '',
         activeTokenIndex: 0,
     };
-    @observable hasWeightExceededTotal: boolean;
-    @observable hasInputExceedUserBalance: boolean;
+    @observable validationStatus: ValidationStatus;
 
     rootStore: RootStore;
 
@@ -33,6 +32,7 @@ export default class CreatePoolFormStore {
             touched: false,
             validation: ValidationStatus.EMPTY,
         };
+        this.validationStatus = ValidationStatus.EMPTY;
         this.setDefaults();
     }
 
@@ -40,6 +40,7 @@ export default class CreatePoolFormStore {
         this.tokens.push(token);
         this.initializeTokenInputs(token);
         this.initializeCheckbox(token);
+        this.validate();
     }
 
     @action removeToken(tokenAddress: string) {
@@ -47,6 +48,7 @@ export default class CreatePoolFormStore {
             token => token === tokenAddress
         );
         this.tokens.splice(tokenIndex, 1);
+        this.validate();
     }
 
     @action setTokenWeight(tokenAddress: string, denormWeight: string) {
@@ -62,17 +64,18 @@ export default class CreatePoolFormStore {
         this.tokens[tokenIndex] = token;
         this.initializeTokenInputs(token);
         this.initializeCheckbox(token);
+        this.validate();
     }
 
     @action setFee(fee: string) {
         this.fee.value = fee;
-
         const validationStatus =
             bnum(this.fee.value).gte(bnum(0.0001)) &&
             bnum(this.fee.value).lte(bnum(10))
                 ? ValidationStatus.VALID
                 : ValidationStatus.BAD_FEE;
         this.fee.validation = validationStatus;
+        this.validate();
     }
 
     @action setActiveInputKey(tokenAddress: string) {
@@ -106,43 +109,18 @@ export default class CreatePoolFormStore {
         this.assetModal.inputValue = value;
     }
 
-    hasValidInput(): boolean {
-        if (this.activeInputKey) {
-            return (
-                this.amounts[this.activeInputKey].validation ===
-                    ValidationStatus.VALID ||
-                this.amounts[this.activeInputKey].validation ===
-                    ValidationStatus.INSUFFICIENT_BALANCE
-            );
-        } else {
-            return false;
-        }
-    }
-
     @action refreshWeights(token: string) {
-        let hasWeightExceededTotal = false;
-
         const validationStatus =
             bnum(this.weights[token].value).gte(bnum(2)) &&
             bnum(this.weights[token].value).lte(bnum(98))
                 ? ValidationStatus.VALID
                 : ValidationStatus.BAD_WEIGHT;
-
         this.weights[token].validation = validationStatus;
-        const totalWeight = this.tokens.reduce((totalWeight, token) => {
-            const weight = this.getWeightInput(token);
-            return totalWeight.plus(weight.value);
-        }, new BigNumber(0));
-        if (totalWeight.gt(bnum(100))) {
-            hasWeightExceededTotal = true;
-        }
-        this.hasWeightExceededTotal = hasWeightExceededTotal;
+        this.validate();
     }
 
     @action refreshAmounts(token: string, account: string) {
         const { contractMetadataStore, marketStore } = this.rootStore;
-
-        let hasInputExceedUserBalance = false;
 
         const amount = bnum(this.amounts[token].value);
         const tokenMetadata = contractMetadataStore.getTokenMetadata(token);
@@ -155,11 +133,7 @@ export default class CreatePoolFormStore {
             );
 
             this.amounts[token].validation = validationStatus;
-
-            if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
-                this.hasInputExceedUserBalance = true;
-            }
-
+            this.validate();
             return;
         }
 
@@ -185,13 +159,41 @@ export default class CreatePoolFormStore {
                 this.amounts[token].value = inputValue;
             }
             this.amounts[token].validation = validationStatus;
+        }
+        this.validate();
+    }
 
-            if (validationStatus === ValidationStatus.INSUFFICIENT_BALANCE) {
-                hasInputExceedUserBalance = true;
+    private validate() {
+        // We want these checks to be in specific order
+        // so that validation message shows the error of the highest priority
+        this.validationStatus = ValidationStatus.VALID;
+        // fee
+        const feeInput = this.fee;
+        if (feeInput.validation !== ValidationStatus.VALID) {
+            this.validationStatus = feeInput.validation;
+        }
+        // amount
+        for (const token of this.tokens) {
+            const amountInput = this.getAmountInput(token);
+            if (amountInput.validation !== ValidationStatus.VALID) {
+                this.validationStatus = amountInput.validation;
             }
         }
-
-        this.hasInputExceedUserBalance = hasInputExceedUserBalance;
+        // total weight
+        const totalWeight = this.tokens.reduce((totalWeight, token) => {
+            const weightInput = this.getWeightInput(token);
+            return totalWeight.plus(weightInput.value);
+        }, new BigNumber(0));
+        if (totalWeight.gt(bnum(100))) {
+            this.validationStatus = ValidationStatus.BAD_WEIGHT;
+        }
+        // weight
+        for (const token of this.tokens) {
+            const weightInput = this.getWeightInput(token);
+            if (weightInput.validation !== ValidationStatus.VALID) {
+                this.validationStatus = weightInput.validation;
+            }
+        }
     }
 
     private getInputValidationStatus(
@@ -216,7 +218,7 @@ export default class CreatePoolFormStore {
         let status = validateTokenValue(inputAmount.toString());
 
         if (status === ValidationStatus.VALID) {
-            if (accountBalance.lte(denormalizedBalance)) {
+            if (accountBalance.lt(denormalizedBalance)) {
                 status = ValidationStatus.INSUFFICIENT_BALANCE;
             } else if (denormalizedBalance.lt(bnum('1000000'))) {
                 status = ValidationStatus.MINIMUM_BALANCE;
@@ -255,15 +257,21 @@ export default class CreatePoolFormStore {
         return weightNumber.div(totalWeight);
     }
 
+    hasValidInput(): boolean {
+        return this.validationStatus === ValidationStatus.VALID;
+    }
+
     private setDefaults() {
         const { contractMetadataStore } = this.rootStore;
         const tokenMetadata = contractMetadataStore.getWhitelistedTokenMetadata();
         const daiToken = tokenMetadata.find(token => token.symbol === 'DAI');
         this.addToken(daiToken.address);
         this.setTokenWeight(daiToken.address, '30');
+        this.refreshWeights(daiToken.address);
         const usdcToken = tokenMetadata.find(token => token.symbol === 'USDC');
         this.addToken(usdcToken.address);
         this.setTokenWeight(usdcToken.address, '20');
+        this.refreshWeights(usdcToken.address);
         this.setFee('0.15');
     }
 
