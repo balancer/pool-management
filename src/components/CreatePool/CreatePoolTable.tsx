@@ -368,14 +368,12 @@ const CreatePoolTable = observer(() => {
                         ? '-'
                         : `$ ${formatCurrency(tokenValues[token])}`;
 
-                    let hasWeightError =
-                        weightInput.validation === ValidationStatus.BAD_WEIGHT;
-
-                    let hasError =
-                        amountInput.validation ===
-                            ValidationStatus.INSUFFICIENT_BALANCE ||
-                        amountInput.validation ===
-                            ValidationStatus.MINIMUM_BALANCE;
+                    const hasWeightError =
+                        weightInput.validation !== ValidationStatus.VALID &&
+                        weightInput.validation !== ValidationStatus.EMPTY;
+                    const hasAmountError =
+                        amountInput.validation !== ValidationStatus.VALID &&
+                        amountInput.validation !== ValidationStatus.EMPTY;
 
                     return (
                         <TableRow key={token}>
@@ -432,7 +430,7 @@ const CreatePoolTable = observer(() => {
                             </TableCellRight>
                             <TableCellRight width={'20%'}>
                                 <DepositAmount>
-                                    <InputWrapper errorBorders={hasError}>
+                                    <InputWrapper errorBorders={hasAmountError}>
                                         <input
                                             id={`input-${token}`}
                                             type="number"
