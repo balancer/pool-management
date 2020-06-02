@@ -267,9 +267,11 @@ export default class CreatePoolFormStore {
         const daiToken = tokenMetadata.find(token => token.symbol === 'DAI');
         this.addToken(daiToken.address);
         this.setTokenWeight(daiToken.address, '30');
+        this.refreshWeights(daiToken.address);
         const usdcToken = tokenMetadata.find(token => token.symbol === 'USDC');
         this.addToken(usdcToken.address);
         this.setTokenWeight(usdcToken.address, '20');
+        this.refreshWeights(usdcToken.address);
         this.setFee('0.15');
     }
 
