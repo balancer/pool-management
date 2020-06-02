@@ -130,6 +130,8 @@ const NewPool = observer(() => {
     const feeInput = createPoolFormStore.fee;
     const hasFeeError = feeInput.validation === ValidationStatus.BAD_FEE;
 
+    const validationStatus = createPoolFormStore.validationStatus;
+
     useEffect(() => {
         if (!hasProxyInstance) {
             history.push('/setup');
@@ -229,8 +231,7 @@ const NewPool = observer(() => {
             return '';
         }
 
-        const status = createPoolFormStore.validationStatus;
-        const notificationText = getText(status);
+        const notificationText = getText(validationStatus);
         return <Notification>{notificationText}</Notification>;
     };
 
@@ -257,7 +258,7 @@ const NewPool = observer(() => {
                     </InputWrapper>
                 </SingleElement>
             </Section>
-            {createPoolFormStore.validationStatus !== ValidationStatus.VALID ? (
+            {validationStatus !== ValidationStatus.VALID ? (
                 <Section>{renderNotification()}</Section>
             ) : (
                 <div />
