@@ -257,7 +257,11 @@ const NewPool = observer(() => {
                     </InputWrapper>
                 </SingleElement>
             </Section>
-            <Section>{renderNotification()}</Section>
+            {createPoolFormStore.validationStatus !== ValidationStatus.VALID ? (
+                <Section>{renderNotification()}</Section>
+            ) : (
+                <div />
+            )}
             <Section>
                 <SingleElement>{renderCreateButton()}</SingleElement>
             </Section>
