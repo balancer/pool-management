@@ -113,6 +113,15 @@ const Notification = styled.div`
 `;
 
 const NewPool = observer(() => {
+    const findLockedToken = (
+        tokens: string[],
+        account: string
+    ): string | undefined => {
+        return tokens.find(token => {
+            return !tokenStore.hasMaxApproval(token, account, proxyAddress);
+        });
+    };
+
     const {
         root: {
             contractMetadataStore,
@@ -126,11 +135,25 @@ const NewPool = observer(() => {
     const account = providerStore.providerStatus.account;
     const history = useHistory();
     const hasProxyInstance = proxyStore.hasInstance();
+    const proxyAddress = proxyStore.getInstanceAddress();
 
     const feeInput = createPoolFormStore.fee;
     const hasFeeError = feeInput.validation === ValidationStatus.BAD_FEE;
 
     const validationStatus = createPoolFormStore.validationStatus;
+
+    const tokens = createPoolFormStore.tokens;
+    let lockedToken;
+    if (account) {
+        const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
+            tokens,
+            account,
+            proxyAddress
+        );
+        if (accountApprovalsLoaded) {
+            lockedToken = findLockedToken(tokens, account);
+        }
+    }
 
     useEffect(() => {
         if (!hasProxyInstance) {
@@ -186,6 +209,10 @@ const NewPool = observer(() => {
         );
     };
 
+    const handleUnlockButtonClick = async () => {
+        await tokenStore.approveMax(lockedToken, proxyAddress);
+    };
+
     const handleInputChange = async event => {
         const { value } = event.target;
         createPoolFormStore.setFee(value);
@@ -207,6 +234,17 @@ const NewPool = observer(() => {
                 buttonText={`Create`}
                 active={account && createPoolFormStore.hasValidInput()}
                 onClick={e => handleCreateButtonClick()}
+            />
+        );
+    };
+
+    const renderUnlockButton = () => {
+        const token = contractMetadataStore.getTokenMetadata(lockedToken);
+        return (
+            <Button
+                buttonText={`Unlock ${token.symbol}`}
+                active={account && lockedToken}
+                onClick={e => handleUnlockButtonClick()}
             />
         );
     };
@@ -264,7 +302,9 @@ const NewPool = observer(() => {
                 <div />
             )}
             <Section>
-                <SingleElement>{renderCreateButton()}</SingleElement>
+                <SingleElement>
+                    {lockedToken ? renderUnlockButton() : renderCreateButton()}
+                </SingleElement>
             </Section>
             <SelectAssetModal />
         </Wrapper>
