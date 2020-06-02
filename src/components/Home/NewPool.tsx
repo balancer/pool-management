@@ -100,6 +100,18 @@ const InputWrapper = styled.div`
     }
 `;
 
+const Notification = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 90%;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: var(--panel-background);
+    color: var(--error-color);
+`;
+
 const NewPool = observer(() => {
     const {
         root: {
@@ -116,7 +128,7 @@ const NewPool = observer(() => {
     const hasProxyInstance = proxyStore.hasInstance();
 
     const feeInput = createPoolFormStore.fee;
-    let hasError = feeInput.validation === ValidationStatus.BAD_FEE;
+    const hasFeeError = feeInput.validation === ValidationStatus.BAD_FEE;
 
     useEffect(() => {
         if (!hasProxyInstance) {
@@ -191,16 +203,35 @@ const NewPool = observer(() => {
         return (
             <Button
                 buttonText={`Create`}
-                active={
-                    account &&
-                    createPoolFormStore.hasValidInput() &&
-                    !createPoolFormStore.hasInputExceedUserBalance &&
-                    !createPoolFormStore.hasWeightExceededTotal &&
-                    !hasError
-                }
+                active={account && createPoolFormStore.hasValidInput()}
                 onClick={e => handleCreateButtonClick()}
             />
         );
+    };
+
+    const renderNotification = () => {
+        function getText(status: ValidationStatus) {
+            if (status === ValidationStatus.EMPTY)
+                return "Values can't be empty ";
+            if (status === ValidationStatus.ZERO) return "Values can't be zero";
+            if (status === ValidationStatus.NOT_FLOAT)
+                return 'Values should be numbers';
+            if (status === ValidationStatus.NEGATIVE)
+                return 'Values should be positive numbers';
+            if (status === ValidationStatus.INSUFFICIENT_BALANCE)
+                return 'Insufficient balance';
+            if (status === ValidationStatus.MINIMUM_BALANCE)
+                return 'Values should have at least 6 decimals';
+            if (status === ValidationStatus.BAD_WEIGHT)
+                return 'Weights should be numbers from 2 to 98. Total weight should not exceed 100.';
+            if (status === ValidationStatus.BAD_FEE)
+                return 'Fee should be from 0.0001% to 10%';
+            return '';
+        }
+
+        const status = createPoolFormStore.validationStatus;
+        const notificationText = getText(status);
+        return <Notification>{notificationText}</Notification>;
     };
 
     return (
@@ -214,7 +245,7 @@ const NewPool = observer(() => {
             <Section>
                 <Header>Swap fee</Header>
                 <SingleElement>
-                    <InputWrapper errorBorders={hasError}>
+                    <InputWrapper errorBorders={hasFeeError}>
                         <input
                             value={feeInput.value}
                             onChange={e => {
@@ -226,6 +257,7 @@ const NewPool = observer(() => {
                     </InputWrapper>
                 </SingleElement>
             </Section>
+            <Section>{renderNotification()}</Section>
             <Section>
                 <SingleElement>{renderCreateButton()}</SingleElement>
             </Section>
