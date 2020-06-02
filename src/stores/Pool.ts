@@ -286,6 +286,7 @@ export default class PoolStore {
         } = this.rootStore;
 
         const dsProxyAddress = proxyStore.getInstanceAddress();
+        console.log(`dsProxy ${dsProxyAddress}`);
         const bActionsAddress = contractMetadataStore.getBActionsAddress();
 
         const data = proxyStore.wrapTransaction(
@@ -293,6 +294,7 @@ export default class PoolStore {
             'joinPool',
             [poolAddress, poolAmountOut.toString(), maxAmountsIn]
         );
+        console.log(`data ${data}`);
         await providerStore.sendTransaction(
             ContractTypes.DSProxy,
             dsProxyAddress,

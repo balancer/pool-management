@@ -242,7 +242,7 @@ const AddLiquidityModal = observer((props: Props) => {
                 tokenAmountsIn.push(tokenAmountIn.toString());
             });
 
-            console.debug('joinPool', {
+            console.log('joinPool', {
                 joinRatio: addLiquidityFormStore.joinRatio.toString(),
                 poolTokens: poolTokens.toString(),
                 inputs: addLiquidityFormStore.formatInputsForJoin(),
