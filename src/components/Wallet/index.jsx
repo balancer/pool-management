@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { shortenAddress } from 'utils/helpers';
 import WalletDropdown from 'components/WalletDropdown';
 import Circle from 'assets/images/circle.svg';
-import Identicon from '../Identicon';
+import Identicon from '../Common/Identicon';
 import { useStores } from '../../contexts/storesContext';
 import Button from '../Common/Button';
 
@@ -120,9 +120,9 @@ const Wallet = observer(() => {
     };
 
     // handle the logo we want to show with the account
-    function getStatusIcon() {
+    function getStatusIcon(account) {
         if (injectedActive) {
-            return <Identicon />;
+            return <Identicon address={account} />;
         }
     }
 
@@ -141,7 +141,7 @@ const Wallet = observer(() => {
                     {hasPendingTransactions && (
                         <SpinnerWrapper src={Circle} alt="loader" />
                     )}
-                    {getStatusIcon()}
+                    {getStatusIcon(account)}
                     <Address>{shortenAddress(account)}</Address>
                     {dropdownStore.walletDropdownVisible ? (
                         <img src={Dropup} alt="v" />
