@@ -4,7 +4,6 @@ import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
 import { getEtherscanLink, shortenAddress } from 'utils/helpers';
 import { useStores } from '../../contexts/storesContext';
-import { ModalMode } from '../../stores/AddLiquidityForm';
 
 const Wrapper = styled.div`
     display: flex;
@@ -117,8 +116,7 @@ const AddRemovePanel = (props: Props) => {
                                 addLiquidityFormStore.openModal(
                                     poolAddress,
                                     account,
-                                    pool.tokensList,
-                                    ModalMode.ADD_LIQUIDITY
+                                    pool.tokensList
                                 );
                             }
                         }}
