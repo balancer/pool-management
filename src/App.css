@@ -6,9 +6,7 @@
     --error-color: #ff8a80;
     --header-text: #ffffff;
     --app-header-text: #fafafa;
-    --info-border: #ffffff;
     --link-text: #82b1ff;
-    --pie-chart-color: #b388ff;
     --token-balance-text: #90a4ae;
     --warning: #ff8a80;
     --address-color: #82b1ff;
@@ -27,14 +25,9 @@
     --inactive-button-border: rgba(140, 158, 255, 0.2);
     --inactive-button-text: rgba(255, 255, 255, 0.6);
 
-    /* Fonts */
-    --roboto: 'Roboto', sans-serif;
-
     /* Panel Styles */
     --panel-border: #41476b;
     --panel-background: #282932;
-    --panel-hover-border: #4c5480;
-    --panel-hover-background: #31313b;
     --panel-header-background: #282932;
     --panel-row-text: #fafafa;
 
@@ -44,8 +37,6 @@
     --highlighted-selector-border: #7785d5;
     --highlighted-selector-text: #ffffff;
     --selector-background: #2e2f39;
-    --selector-border: #41476b;
-    --selector-text: #fafafa;
 }
 
 body {
