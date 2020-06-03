@@ -80,10 +80,10 @@ export interface Checkbox {
 }
 
 export interface Swap {
-  tokenIn
-  tokenInSym
-  tokenAmountIn
-  tokenOut
-  tokenOutSym
-  tokenAmountOut
+    tokenIn;
+    tokenInSym;
+    tokenAmountIn;
+    tokenOut;
+    tokenOutSym;
+    tokenAmountOut;
 }
