@@ -19,7 +19,6 @@ const StyledLink = styled(NavLink)`
     height: 40px;
     padding-left: 30px;
     color: var(--inactive-button-text);
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;

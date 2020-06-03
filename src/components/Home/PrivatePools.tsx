@@ -9,7 +9,6 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 18px;

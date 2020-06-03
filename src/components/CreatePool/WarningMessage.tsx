@@ -18,7 +18,6 @@ const Warning = styled.div`
 
 const Message = styled.div`
     display: inline;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;

@@ -26,7 +26,6 @@ const BuildLink = styled.a`
 `;
 
 const BalanceHeader = styled.div`
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 12px;
@@ -43,7 +42,6 @@ const BalanceElement = styled.div`
     justify-content: space-between;
     color: var(--highlighted-selector-text);
     padding: 0px 30px 0px 30px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;

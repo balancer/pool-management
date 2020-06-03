@@ -6,7 +6,6 @@ import { ContractTypes } from '../../stores/Provider';
 import { ethers } from 'ethers';
 
 const Container = styled.div`
-    font-family: var(--roboto);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -15,7 +14,6 @@ const Container = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-    font-family: var(--roboto);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -26,7 +24,6 @@ const EthButton = styled.div`
     border-radius: 4px;
     width: 70px;
     height: 38px;
-    font-family: var(--roboto);
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -53,7 +50,6 @@ const WethButton = styled(EthButton)`
 
 const WrapHeader = styled.div`
     align-items: left;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 12px;
@@ -66,7 +62,6 @@ const WrapHeader = styled.div`
 
 const Advice = styled.div`
     align-items: left;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 10px;
@@ -80,7 +75,6 @@ const Advice = styled.div`
 const EthInputWrapper = styled.div`
     height: 38px;
     padding: 0px 17px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     display: flex;
@@ -148,7 +142,6 @@ const WrapElement = styled.div`
     justify-content: space-between;
     color: var(--highlighted-selector-text);
     padding: 0px 30px 0px 30px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;

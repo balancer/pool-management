@@ -49,7 +49,6 @@ const IdenticonText = styled.a`
     margin-left: 10px;
     color: var(--body-text);
     text-decoration: none;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -59,7 +58,6 @@ const IdenticonText = styled.a`
 const InformationContainer = styled.div`
     margin-top: 16px;
     color: var(--body-text);
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
