@@ -87,3 +87,8 @@ export interface Swap {
     tokenOutSym;
     tokenAmountOut;
 }
+
+export class Web3 {
+    currentProvider;
+    setProvider;
+}

@@ -1,5 +1,6 @@
 // Libraries
-import Web3 from 'web3';
+import { Web3 } from 'types';
+import { web3Window as window } from '../provider/Web3Window';
 
 class Web3Extended extends Web3 {
     stop = () => {
@@ -55,6 +56,6 @@ class Web3Extended extends Web3 {
 const web3 = new Web3Extended();
 //TODO: What was this for?
 // web3.utils.BN.config({ EXPONENTIAL_AT: [-18, 21] });
-window.web3Provider = web3;
+// window.web3Provider = web3;
 
 export default web3;

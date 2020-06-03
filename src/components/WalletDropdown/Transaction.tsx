@@ -1,9 +1,10 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Check } from 'react-feather';
+import { observer } from 'mobx-react';
 import { getEtherscanLink } from 'utils/helpers';
-import Circle from '../../assets/images/circle.svg';
 import { useStores } from '../../contexts/storesContext';
+const Circle = require('../../assets/images/circle.svg') as string;
 
 const TransactionStatusWrapper = styled.div`
     display: flex;
@@ -61,7 +62,7 @@ const TransactionState = styled.div`
     }
 `;
 
-export default function Transaction({ hash, pending }) {
+const Transaction = observer(({ hash, pending }) => {
     const {
         root: { providerStore },
     } = useStores();
@@ -90,4 +91,6 @@ export default function Transaction({ hash, pending }) {
             </TransactionStatusWrapper>
         </TransactionWrapper>
     );
-}
+});
+
+export default Transaction;

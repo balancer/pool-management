@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import copy from 'copy-to-clipboard';
 
 export function useInterval(callback, delay) {
-    const savedCallback = useRef();
+    const savedCallback = useRef(null);
 
     // Remember the latest function.
     useEffect(() => {
