@@ -18,7 +18,6 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 18px;
@@ -38,7 +37,6 @@ const Section = styled.div`
 const InputWrapper = styled.div`
     height: 30px;
     padding: 0px 17px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     display: flex;

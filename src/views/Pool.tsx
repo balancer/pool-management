@@ -40,8 +40,6 @@ const InfoPanelWrapper = styled.div`
     flex-wrap: wrap;
     width: 100%;
     justify-content: flex-start;
-    div {
-    }
 `;
 
 const Pool = observer((props: RouteComponentProps) => {

@@ -4,7 +4,6 @@ import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
 import { getEtherscanLink, shortenAddress } from 'utils/helpers';
 import { useStores } from '../../contexts/storesContext';
-import { ModalMode } from '../../stores/AddLiquidityForm';
 
 const Wrapper = styled.div`
     display: flex;
@@ -49,7 +48,6 @@ const IdenticonText = styled.a`
     margin-left: 10px;
     color: var(--body-text);
     text-decoration: none;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -59,7 +57,6 @@ const IdenticonText = styled.a`
 const InformationContainer = styled.div`
     margin-top: 16px;
     color: var(--body-text);
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -119,8 +116,7 @@ const AddRemovePanel = (props: Props) => {
                                 addLiquidityFormStore.openModal(
                                     poolAddress,
                                     account,
-                                    pool.tokensList,
-                                    ModalMode.ADD_LIQUIDITY
+                                    pool.tokensList
                                 );
                             }
                         }}

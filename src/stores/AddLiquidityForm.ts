@@ -1,14 +1,16 @@
-import {action, observable} from 'mobx';
+import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
-import {BigNumberMap, Checkbox, CheckboxMap, Input, InputMap, Pool,} from '../types';
-import {bnum, hasMaxApproval, MAX_UINT} from '../utils/helpers';
-import {validateTokenValue, ValidationStatus} from './actions/validators';
-import {BigNumber} from 'utils/bignumber';
-
-export enum ModalMode {
-    ADD_LIQUIDITY,
-    REMOVE_LIQUIDITY,
-}
+import {
+    BigNumberMap,
+    Checkbox,
+    CheckboxMap,
+    Input,
+    InputMap,
+    Pool,
+} from '../types';
+import { bnum, hasMaxApproval, MAX_UINT } from '../utils/helpers';
+import { validateTokenValue, ValidationStatus } from './actions/validators';
+import { BigNumber } from 'utils/bignumber';
 
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
@@ -19,7 +21,6 @@ export default class AddLiquidityFormStore {
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
-    @observable modalMode: ModalMode;
     @observable joinRatio: BigNumber;
     @observable hasInputExceedUserBalance: boolean;
     rootStore: RootStore;
@@ -30,14 +31,8 @@ export default class AddLiquidityFormStore {
         this.resetJoinInputs();
     }
 
-    @action openModal(
-        poolAddress,
-        account,
-        tokenAddresses: string[],
-        modalMode: ModalMode
-    ) {
+    @action openModal(poolAddress, account, tokenAddresses: string[]) {
         this.modalOpen = true;
-        this.modalMode = modalMode;
         this.resetApprovalCheckboxStatusMap();
         this.activePool = poolAddress;
         this.activeAccount = account;
@@ -252,9 +247,7 @@ export default class AddLiquidityFormStore {
                         bnum(value)
                     );
 
-                    this.inputs[
-                        token.address
-                    ].validation  = validation;
+                    this.inputs[token.address].validation = validation;
 
                     if (validation === ValidationStatus.INSUFFICIENT_BALANCE) {
                         hasInputExceedUserBalance = true;

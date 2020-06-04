@@ -28,7 +28,6 @@ const HeaderRow = styled.div`
     color: var(--body-text);
     border-bottom: 1px solid var(--panel-border);
     padding: 20px 25px 20px 25px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -37,7 +36,6 @@ const HeaderRow = styled.div`
 
 const StyledLink = styled.a`
     color: var(--inactive-button-text);
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -56,7 +54,6 @@ const TableRow = styled.div`
         border-bottom: none;
     }
     padding: 20px 25px 20px 25px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;

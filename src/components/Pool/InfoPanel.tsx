@@ -15,7 +15,6 @@ const Wrapper = styled.div`
         width: 100%;
         margin-left: 0px;
     }
-    font-family: Roboto;
     font-style: normal;
     margin-top: 30px;
     margin-left: 25px;
