@@ -24,7 +24,6 @@ const Panel = styled.div`
 const TransactionHeader = styled.div`
     border-top: 1px solid var(--panel-border);
     align-items: left;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 14px;

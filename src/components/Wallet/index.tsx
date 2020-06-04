@@ -4,13 +4,13 @@ import { Activity } from 'react-feather';
 import { observer } from 'mobx-react';
 import { shortenAddress } from 'utils/helpers';
 import WalletDropdown from 'components/WalletDropdown';
-import Circle from 'assets/images/circle.svg';
-import Identicon from '../Identicon';
+import Identicon from '../Common/Identicon';
 import { useStores } from '../../contexts/storesContext';
 import Button from '../Common/Button';
 
-import Dropdown from '../../assets/images/dropdown.svg';
-import Dropup from '../../assets/images/dropup.svg';
+const Circle = require('../../assets/images/circle.svg') as string;
+const Dropdown = require('../../assets/images/dropdown.svg') as string;
+const Dropup = require('../../assets/images/dropup.svg') as string;
 
 const WarningIcon = styled.img`
     width: 22px;
@@ -20,12 +20,12 @@ const WarningIcon = styled.img`
 `;
 
 const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 `;
 
 const Spinner = styled.img`
@@ -120,9 +120,9 @@ const Wallet = observer(() => {
     };
 
     // handle the logo we want to show with the account
-    function getStatusIcon() {
+    function getStatusIcon(account) {
         if (injectedActive) {
-            return <Identicon />;
+            return <Identicon address={account} />;
         }
     }
 
@@ -141,7 +141,7 @@ const Wallet = observer(() => {
                     {hasPendingTransactions && (
                         <SpinnerWrapper src={Circle} alt="loader" />
                     )}
-                    {getStatusIcon()}
+                    {getStatusIcon(account)}
                     <Address>{shortenAddress(account)}</Address>
                     {dropdownStore.walletDropdownVisible ? (
                         <img src={Dropup} alt="v" />

@@ -20,7 +20,6 @@ const Wrapper = styled.div`
 const HeaderRow = styled.div`
     display: flex;
     flex-direction: row;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -28,7 +27,6 @@ const HeaderRow = styled.div`
     color: var(--body-text);
     border-bottom: 1px solid var(--panel-border);
     padding: 20px 25px 20px 25px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -41,7 +39,6 @@ const TableRow = styled.div`
     color: var(--panel-row-text);
     text-align: left;
     padding: 16px 20px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -142,7 +139,6 @@ const ToggleSlider = styled.span`
 const InputWrapper = styled.div`
     height: 30px;
     padding: 0px 17px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     display: flex;

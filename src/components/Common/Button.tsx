@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
-    font-family: var(--roboto);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -13,7 +12,6 @@ const ButtonBase = styled.div`
     border-radius: 4px;
     width: 155px;
     height: 38px;
-    font-family: var(--roboto);
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
