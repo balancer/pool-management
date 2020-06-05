@@ -406,9 +406,8 @@ const CreatePoolTable = observer(() => {
                                 <WeightAmount>
                                     <InputWrapper errorBorders={hasWeightError}>
                                         <input
-                                            id={`input-${token}`}
-                                            type="number"
-                                            name={`input-name-${token}`}
+                                            id={`input-weight-${token}`}
+                                            name={`input-weight-name-${token}`}
                                             value={weightInput.value}
                                             onChange={e => {
                                                 handleWeightInputChange(
@@ -428,9 +427,8 @@ const CreatePoolTable = observer(() => {
                                 <DepositAmount>
                                     <InputWrapper errorBorders={hasAmountError}>
                                         <input
-                                            id={`input-${token}`}
-                                            type="number"
-                                            name={`input-name-${token}`}
+                                            id={`input-amount-${token}`}
+                                            name={`input-amount-name-${token}`}
                                             value={amountInput.value}
                                             onChange={e => {
                                                 handleAmountInputChange(
