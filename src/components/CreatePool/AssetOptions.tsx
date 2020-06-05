@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useStores } from '../../contexts/storesContext';
 import { TokenIconAddress } from '../Common/WalletBalances';
-import { bnum, formatBalanceTruncated } from 'utils/helpers';
+import { bnum, formatBalanceTruncated, isEmpty } from 'utils/helpers';
 import { isChainIdSupported } from '../../provider/connectors';
 import { EtherKey } from '../../stores/Token';
 import { observer } from 'mobx-react';
@@ -85,8 +85,40 @@ const AssetOptions = observer(() => {
     const account = providerStore.providerStatus.account;
     const chainId = providerStore.providerStatus.activeChainId;
 
-    const assetModal = createPoolFormStore.assetModal;
     const tokens = createPoolFormStore.tokens;
+    const assetModalInput = createPoolFormStore.assetModal.inputValue;
+
+    useEffect(() => {
+        async function fetchToken() {
+            const address = assetModalInput;
+            if (contractMetadataStore.hasTokenMetadata(address)) {
+                const tokenMetadata = await contractMetadataStore.getTokenMetadata(
+                    address
+                );
+                if (!tokenMetadata.isSupported) {
+                    // TODO update metadata (symbol)
+                    // TODO fetch allowance
+                    // TODO fetch balance
+                }
+            } else {
+                const tokenMetadata = await contractMetadataStore.fetchTokenMetadata(
+                    address,
+                    account
+                );
+                if (!tokenMetadata) {
+                    return;
+                }
+                contractMetadataStore.addTokenMetadata(address, tokenMetadata);
+                // TODO fetch allowance
+                // TODO fetch balance
+            }
+        }
+
+        // TODO check that input is valid address
+        if (!isEmpty(assetModalInput)) {
+            fetchToken();
+        }
+    }, [assetModalInput, account, contractMetadataStore]); // Only re-run the effect on token address change
 
     const getAssetOptions = (filter, account): Asset[] => {
         const filteredWhitelistedTokenMetadata = contractMetadataStore
@@ -94,8 +126,8 @@ const AssetOptions = observer(() => {
             .filter(token => {
                 const isEther = token.address === EtherKey;
                 const isSupported = token.isSupported;
-                const alreadyExists = tokens.includes(token.address);
-                return !isEther && isSupported && !alreadyExists;
+                const alreadySelected = tokens.includes(token.address);
+                return !isEther && isSupported && !alreadySelected;
             });
 
         const filteredWhitelistedTokens = filteredWhitelistedTokenMetadata.map(
@@ -154,7 +186,7 @@ const AssetOptions = observer(() => {
     };
 
     const assets = sortAssetOptions(
-        getAssetOptions(assetModal.inputValue, account),
+        getAssetOptions(assetModalInput, account),
         account
     );
 
