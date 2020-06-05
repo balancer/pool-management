@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
+import { ContractTypes } from 'stores/Provider';
 import * as deployed from 'deployed.json';
 import { NumberMap, StringMap } from '../types';
 import { getSupportedChainName } from '../provider/connectors';
@@ -105,6 +106,44 @@ export default class ContractMetadataStore {
         });
 
         this.contractMetadata = contractMetadata;
+    }
+
+    async fetchTokenMetadata(
+        address: string,
+        account: string
+    ): Promise<TokenMetadata | undefined> {
+        console.log(`[Token] fetchTokenMetadata: ${address} ${account}`);
+
+        const { providerStore } = this.rootStore;
+        // TODO icon address
+
+        try {
+            // symbol/decimal call will fail if not an actual token.
+            const tokenContract = providerStore.getContract(
+                ContractTypes.TestToken,
+                address
+            );
+
+            const symbol = await tokenContract.symbol();
+            const decimals = await tokenContract.decimals();
+
+            const precision = 4;
+
+            const tokenMetadata = {
+                address,
+                symbol,
+                ticker: symbol,
+                decimals,
+                iconAddress: address,
+                precision,
+                chartColor: '#000000',
+                isSupported: true,
+            };
+
+            return tokenMetadata;
+        } catch (error) {
+            return;
+        }
     }
 
     getTokenColor(tokenAddress: string): string {
