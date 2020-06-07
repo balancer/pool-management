@@ -553,6 +553,15 @@
                 "iconAddress": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215",
                 "precision": 2,
                 "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "NMR",
+                "address": "0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671",
+                "decimals": 18,
+                "ticker": "NMR",
+                "iconAddress": "0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671",
+                "precision": 2,
+                "chartColor": "#6e6962"
             }
         ]
     }
