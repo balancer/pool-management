@@ -39,9 +39,8 @@ const WarningMessage = () => {
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
                     This feature is in beta. Currently, only creating shared
-                    pools is supported and asset choice is limited. Use
-                    carefully and with small amounts. You can add more liquidity
-                    later, after pool creation.
+                    pools is supported. Use carefully and with small amounts.
+                    You can add more liquidity later, after pool creation.
                 </Message>
             </Warning>
         </Wrapper>

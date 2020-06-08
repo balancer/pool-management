@@ -1,6 +1,8 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
+import { ContractTypes } from 'stores/Provider';
 import * as deployed from 'deployed.json';
+import { toChecksum } from '../utils/helpers';
 import { NumberMap, StringMap } from '../types';
 import { getSupportedChainName } from '../provider/connectors';
 
@@ -105,6 +107,45 @@ export default class ContractMetadataStore {
         });
 
         this.contractMetadata = contractMetadata;
+    }
+
+    async fetchTokenMetadata(
+        address: string,
+        account: string
+    ): Promise<TokenMetadata | undefined> {
+        console.log(`[Token] fetchTokenMetadata: ${address} ${account}`);
+
+        const { contractMetadataStore, providerStore } = this.rootStore;
+
+        // Checksum addr needed for retrieval of icon from trustwallet asset repo
+        const iconAddress = toChecksum(address);
+
+        try {
+            // symbol/decimal call will fail if not an actual token.
+            const tokenContract = providerStore.getContract(
+                ContractTypes.TestToken,
+                address
+            );
+
+            const defaultPrecision = contractMetadataStore.getDefaultPrecision();
+            const symbol = await tokenContract.symbol();
+            const decimals = await tokenContract.decimals();
+
+            const tokenMetadata = {
+                address,
+                symbol,
+                ticker: symbol,
+                decimals,
+                iconAddress,
+                precision: defaultPrecision,
+                chartColor: '#828384',
+                isSupported: true,
+            };
+
+            return tokenMetadata;
+        } catch (error) {
+            return;
+        }
     }
 
     getTokenColor(tokenAddress: string): string {
