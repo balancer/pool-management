@@ -2,7 +2,12 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useStores } from '../../contexts/storesContext';
 import { TokenIconAddress } from '../Common/WalletBalances';
-import { bnum, formatBalanceTruncated, isEmpty } from 'utils/helpers';
+import {
+    bnum,
+    formatBalanceTruncated,
+    isEmpty,
+    isAddress,
+} from 'utils/helpers';
 import { isChainIdSupported } from '../../provider/connectors';
 import { EtherKey } from '../../stores/Token';
 import { observer } from 'mobx-react';
@@ -120,8 +125,7 @@ const AssetOptions = observer(() => {
             }
         }
 
-        // TODO check that input is valid address
-        if (!isEmpty(assetModalInput)) {
+        if (!isEmpty(assetModalInput) && isAddress(assetModalInput)) {
             fetchToken();
         }
     }, [
