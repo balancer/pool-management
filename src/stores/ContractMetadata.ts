@@ -127,15 +127,13 @@ export default class ContractMetadataStore {
             const symbol = await tokenContract.symbol();
             const decimals = await tokenContract.decimals();
 
-            const precision = 4;
-
             const tokenMetadata = {
                 address,
                 symbol,
                 ticker: symbol,
                 decimals,
                 iconAddress: address,
-                precision,
+                precision: 4,
                 chartColor: '#000000',
                 isSupported: true,
             };
