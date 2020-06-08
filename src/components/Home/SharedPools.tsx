@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
-import Button from '../Common/Button';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
 import { useStores } from '../../contexts/storesContext';
 
 const Wrapper = styled.div`
@@ -25,30 +23,17 @@ const Header = styled.div`
     padding: 0px 0px 24px 0px;
 `;
 
-const CreateLink = styled(Link)`
-    text-decoration: none;
-`;
-
 const SharedPools = observer(() => {
     const {
-        root: { poolStore, providerStore },
+        root: { poolStore },
     } = useStores();
 
     const pools = poolStore.getPublicPools();
-
-    const account = providerStore.providerStatus.account;
 
     return (
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <CreateLink to={'/pool/new'}>
-                    <Button
-                        buttonText={'Create Pool'}
-                        active={!!account}
-                        onClick={e => {}}
-                    />
-                </CreateLink>
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
 import AddAssetTable from './AddAssetTable';
@@ -158,7 +157,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return !tokenStore.hasMaxApproval(
                 token.address,
                 account,
-                proxyAddress
+                pool.address
             );
         });
     };
@@ -169,26 +168,14 @@ const AddLiquidityModal = observer((props: Props) => {
             poolStore,
             tokenStore,
             providerStore,
-            proxyStore,
             addLiquidityFormStore,
             contractMetadataStore,
         },
     } = useStores();
 
-    const history = useHistory();
-    const hasProxyInstance = proxyStore.hasInstance();
-
-    useEffect(() => {
-        if (!hasProxyInstance) {
-            addLiquidityFormStore.closeModal();
-            history.push('/setup');
-        }
-    }, [hasProxyInstance, addLiquidityFormStore, history]);
-
     const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
-    const proxyAddress = proxyStore.getInstanceAddress();
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -201,7 +188,7 @@ const AddLiquidityModal = observer((props: Props) => {
         const accountApprovalsLoaded = tokenStore.areAccountApprovalsLoaded(
             poolStore.getPoolTokens(pool.address),
             account,
-            proxyAddress
+            poolAddress
         );
 
         if (accountApprovalsLoaded) {
@@ -215,7 +202,7 @@ const AddLiquidityModal = observer((props: Props) => {
         token?: PoolToken
     ) => {
         if (action === ButtonAction.UNLOCK) {
-            await tokenStore.approveMax(token.address, proxyAddress);
+            await tokenStore.approveMax(token.address, poolAddress);
         } else if (action === ButtonAction.ADD_LIQUIDITY) {
             // Add Liquidity
 
