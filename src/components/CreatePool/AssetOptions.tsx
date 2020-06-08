@@ -76,6 +76,7 @@ const AssetOptions = observer(() => {
     const {
         root: {
             providerStore,
+            proxyStore,
             contractMetadataStore,
             createPoolFormStore,
             tokenStore,
@@ -87,6 +88,7 @@ const AssetOptions = observer(() => {
 
     const tokens = createPoolFormStore.tokens;
     const assetModalInput = createPoolFormStore.assetModal.inputValue;
+    const proxyAddress = proxyStore.getInstanceAddress();
 
     useEffect(() => {
         async function fetchToken() {
@@ -109,8 +111,12 @@ const AssetOptions = observer(() => {
                     return;
                 }
                 contractMetadataStore.addTokenMetadata(address, tokenMetadata);
-                // TODO fetch allowance
-                // TODO fetch balance
+                tokenStore.fetchAccountApprovals(
+                    [address],
+                    account,
+                    proxyAddress
+                );
+                tokenStore.fetchTokenBalances(account, [address]);
             }
         }
 
@@ -118,7 +124,13 @@ const AssetOptions = observer(() => {
         if (!isEmpty(assetModalInput)) {
             fetchToken();
         }
-    }, [assetModalInput, account, contractMetadataStore]); // Only re-run the effect on token address change
+    }, [
+        assetModalInput,
+        account,
+        proxyAddress,
+        contractMetadataStore,
+        tokenStore,
+    ]);
 
     const getAssetOptions = (filter, account): Asset[] => {
         const filteredWhitelistedTokenMetadata = contractMetadataStore
