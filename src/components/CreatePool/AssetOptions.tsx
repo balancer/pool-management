@@ -98,16 +98,7 @@ const AssetOptions = observer(() => {
     useEffect(() => {
         async function fetchToken() {
             const address = assetModalInput;
-            if (contractMetadataStore.hasTokenMetadata(address)) {
-                const tokenMetadata = await contractMetadataStore.getTokenMetadata(
-                    address
-                );
-                if (!tokenMetadata.isSupported) {
-                    // TODO update metadata (symbol)
-                    // TODO fetch allowance
-                    // TODO fetch balance
-                }
-            } else {
+            if (!contractMetadataStore.hasTokenMetadata(address)) {
                 const tokenMetadata = await contractMetadataStore.fetchTokenMetadata(
                     address,
                     account
