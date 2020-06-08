@@ -125,9 +125,8 @@ const AssetOptions = observer(() => {
             .getFilteredTokenMetadata(filter)
             .filter(token => {
                 const isEther = token.address === EtherKey;
-                const isSupported = token.isSupported;
                 const alreadySelected = tokens.includes(token.address);
-                return !isEther && isSupported && !alreadySelected;
+                return !isEther && !alreadySelected;
             });
 
         const filteredWhitelistedTokens = filteredWhitelistedTokenMetadata.map(
