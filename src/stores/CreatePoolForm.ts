@@ -155,10 +155,12 @@ export default class CreatePoolFormStore {
                 amount
             );
 
-            if (token !== this.activeInputKey && price.gt(0)) {
-                this.amounts[token].value = inputValue;
+            if (price.gt(0)) {
+                this.amounts[token].validation = validationStatus;
+                if (token !== this.activeInputKey) {
+                    this.amounts[token].value = inputValue;
+                }
             }
-            this.amounts[token].validation = validationStatus;
         }
         this.validate();
     }
