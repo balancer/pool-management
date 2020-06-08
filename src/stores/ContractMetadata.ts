@@ -114,7 +114,7 @@ export default class ContractMetadataStore {
     ): Promise<TokenMetadata | undefined> {
         console.log(`[Token] fetchTokenMetadata: ${address} ${account}`);
 
-        const { providerStore } = this.rootStore;
+        const { contractMetadataStore, providerStore } = this.rootStore;
         // TODO icon address
 
         try {
@@ -124,6 +124,7 @@ export default class ContractMetadataStore {
                 address
             );
 
+            const defaultPrecision = contractMetadataStore.getDefaultPrecision();
             const symbol = await tokenContract.symbol();
             const decimals = await tokenContract.decimals();
 
@@ -133,8 +134,8 @@ export default class ContractMetadataStore {
                 ticker: symbol,
                 decimals,
                 iconAddress: address,
-                precision: 4,
-                chartColor: '#000000',
+                precision: defaultPrecision,
+                chartColor: '#828384',
                 isSupported: true,
             };
 
