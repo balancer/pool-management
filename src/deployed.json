@@ -408,7 +408,7 @@
                 "ticker": "AST",
                 "iconAddress": "0x27054b13b1B798B345b591a4d22e6562d47eA75a",
                 "precision": 2,
-                "chartColor": "#0649ff"
+                "chartColor": "#416aa3"
             },
             {
                 "symbol": "ETHBTCRSI7030",
@@ -444,7 +444,7 @@
                 "ticker": "KNC",
                 "iconAddress": "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
                 "precision": 2,
-                "chartColor": "#42d042"
+                "chartColor": "#557064"
             },
             {
                 "symbol": "LRC",
@@ -453,7 +453,7 @@
                 "ticker": "LRC",
                 "iconAddress": "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD",
                 "precision": 2,
-                "chartColor": "#254bd4"
+                "chartColor": "#6e6962"
             },
             {
                 "symbol": "STA",
@@ -507,7 +507,7 @@
                 "ticker": "GHOST",
                 "iconAddress": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
                 "precision": 2,
-                "chartColor": "#3aa31c"
+                "chartColor": "#557064"
             },
             {
                 "symbol": "sETH",
@@ -516,7 +516,7 @@
                 "ticker": "sETH",
                 "iconAddress": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
                 "precision": 2,
-                "chartColor": "#3aa31c"
+                "chartColor": "#557064"
             },
             {
                 "symbol": "GNO",
