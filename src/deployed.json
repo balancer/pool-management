@@ -564,6 +564,15 @@
                 "iconAddress": "0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671",
                 "precision": 2,
                 "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "LEND",
+                "address": "0x80fB784B7eD66730e8b1DBd9820aFD29931aab03",
+                "decimals": 18,
+                "ticker": "LEND",
+                "iconAddress": "0x80fB784B7eD66730e8b1DBd9820aFD29931aab03",
+                "precision": 2,
+                "chartColor": "#c7bdf4"
             }
         ],
         "warnings": [
