@@ -112,7 +112,7 @@ export default class ContractMetadataStore {
         address: string,
         account: string
     ): Promise<TokenMetadata | undefined> {
-        console.log(`[Token] fetchTokenMetadata: ${address} ${account}`);
+        console.log(`[ContractMetadata] fetchTokenMetadata: ${address}`);
 
         const { contractMetadataStore, providerStore } = this.rootStore;
 
