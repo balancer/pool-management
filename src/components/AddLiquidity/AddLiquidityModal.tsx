@@ -7,7 +7,6 @@ import AddAssetTable from './AddAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
-import { ModalMode } from '../../stores/AddLiquidityForm';
 import { bnum, formatPercentage } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
 
@@ -75,7 +74,6 @@ const Warning = styled.div`
 
 const Message = styled.div`
     display: inline;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -352,10 +350,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderActionButton = () => {
-        if (
-            lockedToken &&
-            addLiquidityFormStore.modalMode === ModalMode.ADD_LIQUIDITY
-        ) {
+        if (lockedToken) {
             return (
                 <Button
                     buttonText={`Unlock ${lockedToken.symbol}`}
@@ -365,9 +360,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     }
                 />
             );
-        } else if (
-            addLiquidityFormStore.modalMode === ModalMode.ADD_LIQUIDITY
-        ) {
+        } else {
             return (
                 <Button
                     buttonText={`Add Liquidity`}

@@ -80,10 +80,15 @@ export interface Checkbox {
 }
 
 export interface Swap {
-  tokenIn
-  tokenInSym
-  tokenAmountIn
-  tokenOut
-  tokenOutSym
-  tokenAmountOut
+    tokenIn;
+    tokenInSym;
+    tokenAmountIn;
+    tokenOut;
+    tokenOutSym;
+    tokenAmountOut;
+}
+
+export class Web3 {
+    currentProvider;
+    setProvider;
 }

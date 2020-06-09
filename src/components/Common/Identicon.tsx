@@ -9,7 +9,7 @@ const StyledIdenticon = styled.div`
 `;
 
 const Identicon = ({ address }) => {
-    const ref = useRef();
+    const ref = useRef(null);
 
     useEffect(() => {
         if (address && ref.current) {

@@ -3,8 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { useStores } from 'contexts/storesContext';
 import { useInterval } from 'utils/helperHooks';
 import { observer } from 'mobx-react';
-
-import Circle from '../../assets/images/circle.svg';
+const Circle = require('../../assets/images/circle.svg') as string;
 
 const MessageWrapper = styled.div`
     display: flex;
@@ -15,12 +14,12 @@ const MessageWrapper = styled.div`
 `;
 
 const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 `;
 
 const Spinner = styled.img`

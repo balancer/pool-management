@@ -517,6 +517,42 @@
                 "iconAddress": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
                 "precision": 2,
                 "chartColor": "#3aa31c"
+            },
+            {
+                "symbol": "GNO",
+                "address": "0x6810e776880C02933D47DB1b9fc05908e5386b96",
+                "decimals": 18,
+                "ticker": "GNO",
+                "iconAddress": "0x6810e776880C02933D47DB1b9fc05908e5386b96",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "GEN",
+                "address": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
+                "decimals": 18,
+                "ticker": "GEN",
+                "iconAddress": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "DXD",
+                "address": "0xa1d65E8fB6e87b60FECCBc582F7f97804B725521",
+                "decimals": 18,
+                "ticker": "DXD",
+                "iconAddress": "0xa1d65E8fB6e87b60FECCBc582F7f97804B725521",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "CHAI",
+                "address": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215",
+                "decimals": 18,
+                "ticker": "CHAI",
+                "iconAddress": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215",
+                "precision": 2,
+                "chartColor": "#9a9a97"
             }
         ]
     }

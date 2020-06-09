@@ -18,7 +18,6 @@ const Wrapper = styled.div`
     width: 20%;
     border: 1px solid var(--panel-border);
     border-radius: 4px;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -66,7 +65,6 @@ const BreakdownContainer = styled.div`
 const AssetPercentageContainer = styled.div`
     display: flex;
     align-items: center;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -76,7 +74,6 @@ const AssetPercentageContainer = styled.div`
 `;
 
 const AssetPercentageText = styled.div`
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 14px;

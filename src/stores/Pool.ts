@@ -26,7 +26,7 @@ export default class PoolStore {
         this.pools = {} as PoolMap;
     }
 
-    @action processUnknownTokens(pool: Pool): Pool {
+    @action processUnknownTokens(pool: Pool) {
         const {
             contractMetadataStore,
             tokenStore,
@@ -56,7 +56,6 @@ export default class PoolStore {
                 });
             }
         });
-        return pool;
     }
 
     @action async fetchAllPools() {
@@ -68,34 +67,23 @@ export default class PoolStore {
         const pools = await fetchAllPools(contractMetadataStore.tokenIndex);
 
         pools.forEach(pool => {
-            const processedPool = this.processUnknownTokens(pool);
-            this.setPool(pool.address, processedPool, currentBlock);
+            this.processUnknownTokens(pool);
         });
+        this.setPools(pools, currentBlock);
         this.poolsLoaded = true;
 
         console.debug('[fetchAllPools] Pools fetched & stored');
     }
 
-    @action private setPool(
-        poolAddress: string,
-        newPool: Pool,
-        blockFetched: number
-    ) {
-        const poolData = this.getPoolData(poolAddress);
-        // If already exists, only overwrite if stale
-        if (poolData) {
-            if (blockFetched > poolData.blockLastFetched) {
-                this.pools[poolAddress] = {
-                    blockLastFetched: blockFetched,
-                    data: newPool,
-                };
-            }
-        } else {
-            this.pools[poolAddress] = {
+    @action private setPools(pools: Pool[], blockFetched: number) {
+        const poolMap = {};
+        for (const pool of pools) {
+            poolMap[pool.address] = {
                 blockLastFetched: blockFetched,
-                data: newPool,
+                data: pool,
             };
         }
+        this.pools = poolMap;
     }
 
     getPoolToken(poolAddress: string, tokenAddress: string): PoolToken {

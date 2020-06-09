@@ -37,7 +37,6 @@ const AssetPanel = styled.div`
 const AssetWrapper = styled.div`
     display: flex;
     flex-direction: row;
-    font-family: Roboto;
     font-style: normal;
     font-weight: normal;
 `;
