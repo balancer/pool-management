@@ -7,6 +7,7 @@ import {
     formatBalanceTruncated,
     isEmpty,
     isAddress,
+    toChecksum,
 } from 'utils/helpers';
 import { isChainIdSupported } from '../../provider/connectors';
 import { EtherKey } from '../../stores/Token';
@@ -69,6 +70,11 @@ const TokenBalance = styled.div`
     margin-top: 12px;
 `;
 
+const ErrorLabel = styled.div`
+    margin-left: 4px;
+    color: var(--error-color);
+`;
+
 interface Asset {
     address: string;
     iconAddress: string;
@@ -97,7 +103,7 @@ const AssetOptions = observer(() => {
 
     useEffect(() => {
         async function fetchToken() {
-            const address = assetModalInput;
+            const address = toChecksum(assetModalInput);
             if (!contractMetadataStore.hasTokenMetadata(address)) {
                 const tokenMetadata = await contractMetadataStore.fetchTokenMetadata(
                     address,
@@ -126,6 +132,11 @@ const AssetOptions = observer(() => {
         contractMetadataStore,
         tokenStore,
     ]);
+
+    const isInvalidToken = (address): boolean => {
+        const warnings = contractMetadataStore.getTokenWarnings();
+        return warnings.includes(address);
+    };
 
     const getAssetOptions = (filter, account): Asset[] => {
         const filteredWhitelistedTokenMetadata = contractMetadataStore
@@ -196,8 +207,11 @@ const AssetOptions = observer(() => {
         account
     );
 
-    const selectAsset = token => {
-        createPoolFormStore.setToken(token.address);
+    const selectAsset = address => {
+        if (isInvalidToken(address)) {
+            return;
+        }
+        createPoolFormStore.setToken(address);
         createPoolFormStore.closeModal();
     };
 
@@ -206,7 +220,7 @@ const AssetOptions = observer(() => {
             {assets.map(token => (
                 <AssetPanel
                     onClick={() => {
-                        selectAsset(token);
+                        selectAsset(token.address);
                     }}
                     key={token.address}
                 >
@@ -221,6 +235,11 @@ const AssetOptions = observer(() => {
                     </AssetWrapper>
                     <TokenBalance>
                         {token.userBalance} {token.symbol}
+                        {isInvalidToken(token.address) ? (
+                            <ErrorLabel>Bad ERC20</ErrorLabel>
+                        ) : (
+                            <div />
+                        )}
                     </TokenBalance>
                 </AssetPanel>
             ))}

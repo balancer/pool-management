@@ -2,7 +2,7 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as deployed from 'deployed.json';
-import { toChecksum } from '../utils/helpers';
+import { isAddress, toChecksum } from '../utils/helpers';
 import { NumberMap, StringMap } from '../types';
 import { getSupportedChainName } from '../provider/connectors';
 
@@ -113,12 +113,9 @@ export default class ContractMetadataStore {
         address: string,
         account: string
     ): Promise<TokenMetadata | undefined> {
-        console.log(`[Token] fetchTokenMetadata: ${address} ${account}`);
+        console.log(`[ContractMetadata] fetchTokenMetadata: ${address}`);
 
         const { contractMetadataStore, providerStore } = this.rootStore;
-
-        // Checksum addr needed for retrieval of icon from trustwallet asset repo
-        const iconAddress = toChecksum(address);
 
         try {
             // symbol/decimal call will fail if not an actual token.
@@ -136,7 +133,7 @@ export default class ContractMetadataStore {
                 symbol,
                 ticker: symbol,
                 decimals,
-                iconAddress,
+                iconAddress: address,
                 precision: defaultPrecision,
                 chartColor: '#828384',
                 isSupported: true,
@@ -310,10 +307,11 @@ export default class ContractMetadataStore {
 
         let filteredMetadata: TokenMetadata[] = [];
 
-        if (filter.indexOf('0x') === 0) {
+        if (isAddress(filter)) {
+            const address = toChecksum(filter);
             //Search by address
             filteredMetadata = tokens.filter(value => {
-                return value.address === filter;
+                return value.address === address;
             });
         } else {
             //Search by symbol
