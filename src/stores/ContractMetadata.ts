@@ -2,6 +2,7 @@ import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as deployed from 'deployed.json';
+import { isAddress, toChecksum } from '../utils/helpers';
 import { NumberMap, StringMap } from '../types';
 import { getSupportedChainName } from '../provider/connectors';
 
@@ -306,10 +307,11 @@ export default class ContractMetadataStore {
 
         let filteredMetadata: TokenMetadata[] = [];
 
-        if (filter.indexOf('0x') === 0) {
+        if (isAddress(filter)) {
+            const address = toChecksum(filter);
             //Search by address
             filteredMetadata = tokens.filter(value => {
-                return value.address === filter;
+                return value.address === address;
             });
         } else {
             //Search by symbol
