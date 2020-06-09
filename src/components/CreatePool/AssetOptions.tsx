@@ -7,6 +7,7 @@ import {
     formatBalanceTruncated,
     isEmpty,
     isAddress,
+    toChecksum,
 } from 'utils/helpers';
 import { isChainIdSupported } from '../../provider/connectors';
 import { EtherKey } from '../../stores/Token';
@@ -102,7 +103,7 @@ const AssetOptions = observer(() => {
 
     useEffect(() => {
         async function fetchToken() {
-            const address = assetModalInput;
+            const address = toChecksum(assetModalInput);
             if (!contractMetadataStore.hasTokenMetadata(address)) {
                 const tokenMetadata = await contractMetadataStore.fetchTokenMetadata(
                     address,
