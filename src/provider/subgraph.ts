@@ -30,7 +30,7 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
               symbol
               denormWeight
             }
-            shares {
+            shares (first: 1000) {
               id
               poolId {
                 id
@@ -41,7 +41,7 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
               balance
             }
 
-            swaps(where: {timestamp_gt: ${tsYesterday}}) {
+            swaps(first: 1000, where: {timestamp_gt: ${tsYesterday}}) {
               tokenIn
               tokenInSym
               tokenAmountIn
