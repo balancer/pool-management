@@ -134,8 +134,8 @@ const AssetOptions = observer(() => {
     ]);
 
     const isInvalidToken = (address): boolean => {
-        const warnings = contractMetadataStore.getTokenWarnings();
-        return warnings.includes(address);
+        const errors = contractMetadataStore.getTokenErrors();
+        return errors.includes(address);
     };
 
     const getAssetOptions = (filter, account): Asset[] => {

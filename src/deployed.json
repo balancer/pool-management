@@ -24,7 +24,8 @@
                 "precision": 2
             }
         ],
-        "warnings": []
+        "warnings": [],
+        "errors": []
     },
     "kovan": {
         "chainId": 42,
@@ -136,7 +137,8 @@
                 "chartColor": "#536DFE"
             }
         ],
-        "warnings": [
+        "warnings": [],
+        "errors": [
             "0xEC4b4fFfb58B6c85D41025b07d93167B8192062E",
             "0xe7d8E7742ca6906a14F7e46770Fdfe6B7014e62D"
         ]
@@ -575,7 +577,8 @@
                 "chartColor": "#c7bdf4"
             }
         ],
-        "warnings": [
+        "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
+        "errors": [
             "0x0bb217E40F8a5Cb79Adf04E1aAb60E5abd0dfC1e",
             "0x13f25cd52b21650caa8225C9942337d914C9B030",
             "0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af",
@@ -588,7 +591,6 @@
             "0x38c6A68304cdEfb9BEc48BbFaABA5C5B47818bb2",
             "0x4270bb238f6DD8B1c3ca01f96CA65b2647c06D3C",
             "0x4470BB87d77b963A013DB939BE332f927f2b992e",
-            "0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF",
             "0x56ba2Ee7890461f463F7be02aAC3099f6d5811A8",
             "0x5E6b6d9aBAd9093fdc861Ea1600eBa1b355Cd940",
             "0x622dFfCc4e83C64ba959530A5a5580687a57581b",
