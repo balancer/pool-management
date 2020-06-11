@@ -15,6 +15,7 @@ export interface ContractMetadata {
     multicall: string;
     defaultPrecision: number;
     warnings: string[];
+    errors: string[];
     tokens: TokenMetadata[];
 }
 
@@ -81,6 +82,7 @@ export default class ContractMetadataStore {
             multicall: metadata.default[chainName].multicall,
             defaultPrecision: metadata.default[chainName].defaultPrecision,
             warnings: metadata.default[chainName].warnings,
+            errors: metadata.default[chainName].errors,
             tokens: [] as TokenMetadata[],
         };
 
@@ -220,6 +222,16 @@ export default class ContractMetadataStore {
 
     getTokenWarnings(): string[] {
         const tokens = this.contractMetadata.warnings;
+        if (!tokens) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return tokens;
+    }
+
+    getTokenErrors(): string[] {
+        const tokens = this.contractMetadata.errors;
         if (!tokens) {
             throw new Error(
                 '[Invariant] Trying to get non-loaded static address'
