@@ -593,6 +593,15 @@
                 "iconAddress": "0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c",
                 "precision": 2,
                 "chartColor": "#387080"
+            },
+            {
+                "symbol": "GRID",
+                "address": "0x12B19D3e2ccc14Da04FAe33e63652ce469b3F2FD",
+                "decimals": 18,
+                "ticker": "GRID",
+                "iconAddress": "0x12B19D3e2ccc14Da04FAe33e63652ce469b3F2FD",
+                "precision": 2,
+                "chartColor": "#387080"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
