@@ -602,6 +602,15 @@
                 "iconAddress": "0x12B19D3e2ccc14Da04FAe33e63652ce469b3F2FD",
                 "precision": 2,
                 "chartColor": "#387080"
+            },
+            {
+                "symbol": "renBTC",
+                "address": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+                "decimals": 8,
+                "ticker": "renBTC",
+                "iconAddress": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+                "precision": 2,
+                "chartColor": "#aaaaaa"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
