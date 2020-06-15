@@ -134,8 +134,8 @@ const AssetOptions = observer(() => {
     ]);
 
     const isInvalidToken = (address): boolean => {
-        const warnings = contractMetadataStore.getTokenWarnings();
-        return warnings.includes(address);
+        const errors = contractMetadataStore.getTokenErrors();
+        return errors.includes(address);
     };
 
     const getAssetOptions = (filter, account): Asset[] => {
@@ -143,8 +143,11 @@ const AssetOptions = observer(() => {
             .getFilteredTokenMetadata(filter)
             .filter(token => {
                 const isEther = token.address === EtherKey;
+                const isSupported =
+                    token.isSupported ||
+                    token.address.toLowerCase() === filter.toLowerCase();
                 const alreadySelected = tokens.includes(token.address);
-                return !isEther && !alreadySelected;
+                return !isEther && isSupported && !alreadySelected;
             });
 
         const filteredWhitelistedTokens = filteredWhitelistedTokenMetadata.map(
