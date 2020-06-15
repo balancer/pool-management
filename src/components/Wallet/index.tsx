@@ -16,7 +16,7 @@ const WarningIcon = styled.img`
     width: 22px;
     height: 26px;
     margin-right: 0px;
-    color: var(--warning);
+    color: var(--error-color);
 `;
 
 const rotate = keyframes`
@@ -61,7 +61,7 @@ const WalletButton = styled.button`
 
 const Error = styled.button`
     background-color: var(--panel);
-    border: 1px solid var(--warning);
+    border: 1px solid var(--error-color);
     display: flex;
     flex-flow: row nowrap;
     width: 100%;
@@ -80,6 +80,7 @@ const Error = styled.button`
 `;
 
 const ErrorMessage = styled.span`
+    color: var(--error-color);
     margin: 0 0.5rem 0 0.25rem;
     font-size: 0.83rem;
 `;
@@ -131,7 +132,7 @@ const Wallet = observer(() => {
         if (injectedLoaded && !injectedActive) {
             return (
                 <Error onClick={toggleWalletDropdown}>
-                    <WarningIcon src="WarningSign.svg" />
+                    <WarningIcon src="ErrorSign.svg" />
                     <ErrorMessage>Wrong Network</ErrorMessage>
                 </Error>
             );
