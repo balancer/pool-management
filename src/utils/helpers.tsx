@@ -60,7 +60,7 @@ export function setPropertyToZeroIfEmpty(value?): string {
 }
 
 export function hasMaxApproval(amount: BigNumber): boolean {
-    return amount.gte(bnum(MAX_UINT.div(2).toString()));
+    return amount.gte(bnum('79228162514264337593543950335')); // uint96(-1)
 }
 
 export function toAddressStub(address) {

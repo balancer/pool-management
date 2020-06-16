@@ -593,6 +593,15 @@
                 "iconAddress": "0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c",
                 "precision": 2,
                 "chartColor": "#387080"
+            },
+            {
+                "symbol": "COMP",
+                "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
+                "decimals": 18,
+                "ticker": "COMP",
+                "iconAddress": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
+                "precision": 2,
+                "chartColor": "#387080"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
