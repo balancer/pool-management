@@ -288,4 +288,32 @@ export default class PoolStore {
             [bActionsAddress, data]
         );
     };
+
+    @action joinswapExternAmountIn = async (
+        poolAddress: string,
+        tokenIn: string,
+        tokenAmountIn: string,
+        minPoolAmountOut: string
+    ) => {
+        const {
+            contractMetadataStore,
+            providerStore,
+            proxyStore,
+        } = this.rootStore;
+
+        const dsProxyAddress = proxyStore.getInstanceAddress();
+        const bActionsAddress = contractMetadataStore.getBActionsAddress();
+
+        const data = proxyStore.wrapTransaction(
+            ContractTypes.BActions,
+            'joinswapExternAmountIn',
+            [poolAddress, tokenIn, tokenAmountIn, minPoolAmountOut]
+        );
+        await providerStore.sendTransaction(
+            ContractTypes.DSProxy,
+            dsProxyAddress,
+            'execute',
+            [bActionsAddress, data]
+        );
+    };
 }

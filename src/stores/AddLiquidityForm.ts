@@ -12,15 +12,22 @@ import { bnum, hasMaxApproval, MAX_UINT } from '../utils/helpers';
 import { validateTokenValue, ValidationStatus } from './actions/validators';
 import { BigNumber } from 'utils/bignumber';
 
+export enum DepositType {
+    MULTI_ASSET,
+    SINGLE_ASSET,
+}
+
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;
     @observable inputs: InputMap;
     @observable joinInputs: BigNumberMap;
     @observable activeInputKey: string | undefined;
+    @observable activeToken: string;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable depositType: DepositType;
     @observable joinRatio: BigNumber;
     @observable hasInputExceedUserBalance: boolean;
     rootStore: RootStore;
@@ -33,7 +40,9 @@ export default class AddLiquidityFormStore {
 
     @action openModal(poolAddress, account, tokenAddresses: string[]) {
         this.modalOpen = true;
+        this.depositType = DepositType.MULTI_ASSET;
         this.resetApprovalCheckboxStatusMap();
+        this.activeToken = tokenAddresses[0];
         this.activePool = poolAddress;
         this.activeAccount = account;
         this.initializeCheckboxes(tokenAddresses);
@@ -163,6 +172,10 @@ export default class AddLiquidityFormStore {
         }
     }
 
+    @action setActiveToken(assetAddress) {
+        this.activeToken = assetAddress;
+    }
+
     @action setActivePool(poolAddress) {
         this.activePool = poolAddress;
     }
@@ -176,6 +189,10 @@ export default class AddLiquidityFormStore {
             checked: false,
             touched: false,
         };
+    }
+
+    setDepositType(depositType: DepositType) {
+        this.depositType = depositType;
     }
 
     calcRatio(
