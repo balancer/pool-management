@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
+import SingleMultiToggle from '../Common/SingleMultiToggle';
 import RemoveAssetTable from './RemoveAssetTable';
+import { DepositType } from '../../stores/RemoveLiquidityForm';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 
@@ -144,11 +146,20 @@ const RemoveLiquidityModal = observer((props: Props) => {
             account,
             shareToWithdraw
         );
-        await poolStore.exitPool(
-            pool.address,
-            poolTokens.integerValue().toString(),
-            poolStore.formatZeroMinAmountsOut(pool.address)
-        );
+        if (removeLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            await poolStore.exitPool(
+                pool.address,
+                poolTokens.integerValue().toString(),
+                poolStore.formatZeroMinAmountsOut(pool.address)
+            );
+        } else {
+            await poolStore.exitswapPoolAmountIn(
+                pool.address,
+                removeLiquidityFormStore.activeToken,
+                poolTokens.integerValue().toString(),
+                '0'
+            );
+        }
     };
 
     const renderNotification = () => {
@@ -241,6 +252,14 @@ const RemoveLiquidityModal = observer((props: Props) => {
                     </ExitComponent>
                 </RemoveLiquidityHeader>
                 <RemoveLiquidityBody>
+                    <SingleMultiToggle
+                        depositType={removeLiquidityFormStore.depositType}
+                        onSelect={depositType => {
+                            removeLiquidityFormStore.setDepositType(
+                                depositType
+                            );
+                        }}
+                    />
                     <RemoveLiquidityContent>
                         <PoolOverview poolAddress={poolAddress} />
                         <RemoveAssetTable poolAddress={poolAddress} />

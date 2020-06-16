@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
+import RadioButton from '../Common/RadioButton';
+import { DepositType } from '../../stores/RemoveLiquidityForm';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
@@ -71,6 +73,10 @@ const MaxLink = styled.div`
     text-decoration-line: underline;
     color: var(--link-text);
     cursor: pointer;
+`;
+
+const RadioButtonWrapper = styled.div`
+    margin-right: 8px;
 `;
 
 const WithdrawAmount = styled.div`
@@ -294,21 +300,44 @@ const RemoveAssetsTable = observer((props: Props) => {
                     );
 
                     if (removeLiquidityFormStore.hasValidInput()) {
-                        const tokensToWithdraw = userLiquidityContribution.times(
-                            fromPercentage(
-                                removeLiquidityFormStore.getShareToWithdraw()
-                            )
-                        );
+                        if (
+                            removeLiquidityFormStore.depositType ===
+                            DepositType.MULTI_ASSET
+                        ) {
+                            const tokensToWithdraw = userLiquidityContribution.times(
+                                fromPercentage(
+                                    removeLiquidityFormStore.getShareToWithdraw()
+                                )
+                            );
 
-                        withdrawPreviewBalanceText = formatNormalizedTokenValue(
-                            tokensToWithdraw,
-                            precision
-                        );
+                            withdrawPreviewBalanceText = formatNormalizedTokenValue(
+                                tokensToWithdraw,
+                                precision
+                            );
+                        }
                     }
 
                     return (
                         <TableRow key={token.address}>
                             <TableCell>
+                                {removeLiquidityFormStore.depositType ===
+                                DepositType.SINGLE_ASSET ? (
+                                    <RadioButtonWrapper>
+                                        <RadioButton
+                                            checked={
+                                                removeLiquidityFormStore.activeToken ===
+                                                token.address
+                                            }
+                                            onChange={e => {
+                                                removeLiquidityFormStore.setActiveToken(
+                                                    token.address
+                                                );
+                                            }}
+                                        />
+                                    </RadioButtonWrapper>
+                                ) : (
+                                    <div />
+                                )}
                                 <TokenIcon
                                     src={TokenIconAddress(
                                         tokenMetadata.iconAddress,

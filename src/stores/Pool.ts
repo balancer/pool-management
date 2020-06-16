@@ -262,6 +262,29 @@ export default class PoolStore {
         );
     };
 
+    @action exitswapPoolAmountIn = async (
+        poolAddress: string,
+        tokenOut: string,
+        poolAmountIn: string,
+        minAmountOut: string
+    ) => {
+        const { providerStore } = this.rootStore;
+
+        console.debug('exitswapPoolAmountIn', {
+            poolAddress,
+            tokenOut,
+            poolAmountIn,
+            minAmountOut,
+        });
+
+        await providerStore.sendTransaction(
+            ContractTypes.BPool,
+            poolAddress,
+            'exitswapPoolAmountIn',
+            [tokenOut, poolAmountIn, minAmountOut]
+        );
+    };
+
     @action joinPool = async (
         poolAddress: string,
         poolAmountOut: string,

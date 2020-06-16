@@ -5,11 +5,18 @@ import { validateTokenValue, ValidationStatus } from './actions/validators';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, toPercentage } from '../utils/helpers';
 
+export enum DepositType {
+    MULTI_ASSET,
+    SINGLE_ASSET,
+}
+
 export default class RemoveLiquidityFormStore {
+    @observable activeToken: string;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
     @observable shareToWithdraw: Input;
+    @observable depositType: DepositType;
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -19,8 +26,10 @@ export default class RemoveLiquidityFormStore {
 
     @action openModal(poolAddress, account, tokenAddresses: string[]) {
         this.modalOpen = true;
+        this.activeToken = tokenAddresses[0];
         this.activePool = poolAddress;
         this.activeAccount = account;
+        this.depositType = DepositType.MULTI_ASSET;
     }
 
     setShareToWithdraw(value: string) {
@@ -30,6 +39,14 @@ export default class RemoveLiquidityFormStore {
             this.shareToWithdraw.validation =
                 ValidationStatus.MAX_VALUE_EXCEEDED;
         }
+    }
+
+    setDepositType(depositType: DepositType) {
+        this.depositType = depositType;
+    }
+
+    setActiveToken(asset: string) {
+        this.activeToken = asset;
     }
 
     @action validateUserShareInput(poolAddress: string, account: string) {
