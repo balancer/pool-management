@@ -607,7 +607,7 @@
                 "symbol": "renBTC",
                 "address": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
                 "decimals": 8,
-                "ticker": "renBTC",
+                "ticker": "renbtc",
                 "iconAddress": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
                 "precision": 2,
                 "chartColor": "#aaaaaa"
@@ -616,10 +616,19 @@
                 "symbol": "COMP",
                 "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "COMP",
                 "iconAddress": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "precision": 2,
                 "chartColor": "#387080"
+            },
+            {
+                "symbol": "ETHRSIAPY2",
+                "address": "0x9f49ed43C90A540d1cF12f6170aCE8d0B88a14E6",
+                "decimals": 18,
+                "ticker": "ETHRSIAPY2",
+                "iconAddress": "0x9f49ed43C90A540d1cF12f6170aCE8d0B88a14E6",
+                "precision": 2,
+                "chartColor": "#93a167"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
