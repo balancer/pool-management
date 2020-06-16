@@ -625,7 +625,7 @@
                 "symbol": "ETHRSIAPY2",
                 "address": "0x9f49ed43C90A540d1cF12f6170aCE8d0B88a14E6",
                 "decimals": 18,
-                "ticker": "ETHRSIAPY2",
+                "ticker": "",
                 "iconAddress": "0x9f49ed43C90A540d1cF12f6170aCE8d0B88a14E6",
                 "precision": 2,
                 "chartColor": "#93a167"
