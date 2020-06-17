@@ -9,7 +9,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
+import { EtherKey } from '../../stores/Token';
 import { bnum, formatPercentage } from '../../utils/helpers';
+import { calcPoolOutGivenSingleIn } from '../../utils/math';
 import { BigNumber } from '../../utils/bignumber';
 
 const Container = styled.div`
@@ -307,28 +309,52 @@ const AddLiquidityModal = observer((props: Props) => {
                     tokenAmountsIn
                 );
             } else {
-                const tokenIn = addLiquidityFormStore.activeToken;
+                const tokenInAddress = addLiquidityFormStore.activeToken;
                 const amount = new BigNumber(
-                    addLiquidityFormStore.getInput(tokenIn).value
+                    addLiquidityFormStore.getInput(tokenInAddress).value
                 );
                 const tokenAmountIn = tokenStore
-                    .denormalizeBalance(amount, tokenIn)
-                    .integerValue(BigNumber.ROUND_UP)
-                    .toString();
-                const minPoolAmountOut = '0';
+                    .denormalizeBalance(amount, tokenInAddress)
+                    .integerValue(BigNumber.ROUND_UP);
+                const tokenIn = pool.tokens.find(
+                    token => token.address === tokenInAddress
+                );
+
+                const tokenBalanceIn = tokenStore.denormalizeBalance(
+                    tokenIn.balance,
+                    tokenInAddress
+                );
+                const tokenWeightIn = tokenIn.denormWeight;
+                const poolSupply = tokenStore.denormalizeBalance(
+                    pool.totalShares,
+                    EtherKey
+                );
+                const totalWeight = pool.totalWeight;
+                const swapFee = pool.swapFee;
+                const poolAmountOut = calcPoolOutGivenSingleIn(
+                    tokenBalanceIn,
+                    tokenWeightIn,
+                    poolSupply,
+                    totalWeight,
+                    tokenAmountIn,
+                    swapFee
+                );
+                const minPoolAmountOut = poolAmountOut
+                    .times(0.99)
+                    .integerValue(BigNumber.ROUND_DOWN);
 
                 console.debug('joinswapExternAmountIn', {
-                    tokenIn,
+                    tokenInAddress,
                     amount,
-                    tokenAmountIn,
-                    minPoolAmountOut,
+                    tokenAmountIn: tokenAmountIn.toString(),
+                    minPoolAmountOut: minPoolAmountOut.toString(),
                 });
 
                 await poolStore.joinswapExternAmountIn(
                     pool.address,
-                    tokenIn,
-                    tokenAmountIn,
-                    minPoolAmountOut
+                    tokenInAddress,
+                    tokenAmountIn.toString(),
+                    minPoolAmountOut.toString()
                 );
             }
         }
@@ -443,20 +469,22 @@ const AddLiquidityModal = observer((props: Props) => {
         }
 
         if (pool && currentTotal) {
-            const previewTokens = addLiquidityFormStore.hasValidInput()
-                ? poolStore.calcPoolTokensByRatio(
-                      pool,
-                      addLiquidityFormStore.joinRatio
-                  )
-                : bnum(0);
-
-            const futureTotal = currentTotal.plus(previewTokens);
-            const futureShare = previewTokens
-                .plus(userBalance)
-                .div(futureTotal);
-
             currentPoolShare = formatPercentage(existingShare, 2);
-            futurePoolShare = formatPercentage(futureShare, 2);
+            if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+                const previewTokens = addLiquidityFormStore.hasValidInput()
+                    ? poolStore.calcPoolTokensByRatio(
+                          pool,
+                          addLiquidityFormStore.joinRatio
+                      )
+                    : bnum(0);
+
+                const futureTotal = currentTotal.plus(previewTokens);
+                const futureShare = previewTokens
+                    .plus(userBalance)
+                    .div(futureTotal);
+
+                futurePoolShare = formatPercentage(futureShare, 2);
+            }
         }
 
         if (!account && !addLiquidityFormStore.activeInputKey) {
