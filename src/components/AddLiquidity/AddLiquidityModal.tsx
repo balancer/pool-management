@@ -9,9 +9,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
-import { EtherKey } from '../../stores/Token';
 import { bnum, formatPercentage } from '../../utils/helpers';
-import { calcPoolOutGivenSingleIn } from '../../utils/math';
 import { BigNumber } from '../../utils/bignumber';
 
 const Container = styled.div`
@@ -316,45 +314,20 @@ const AddLiquidityModal = observer((props: Props) => {
                 const tokenAmountIn = tokenStore
                     .denormalizeBalance(amount, tokenInAddress)
                     .integerValue(BigNumber.ROUND_UP);
-                const tokenIn = pool.tokens.find(
-                    token => token.address === tokenInAddress
-                );
-
-                const tokenBalanceIn = tokenStore.denormalizeBalance(
-                    tokenIn.balance,
-                    tokenInAddress
-                );
-                const tokenWeightIn = tokenIn.denormWeight;
-                const poolSupply = tokenStore.denormalizeBalance(
-                    pool.totalShares,
-                    EtherKey
-                );
-                const totalWeight = pool.totalWeight;
-                const swapFee = pool.swapFee;
-                const poolAmountOut = calcPoolOutGivenSingleIn(
-                    tokenBalanceIn,
-                    tokenWeightIn,
-                    poolSupply,
-                    totalWeight,
-                    tokenAmountIn,
-                    swapFee
-                );
-                const minPoolAmountOut = poolAmountOut
-                    .times(0.99)
-                    .integerValue(BigNumber.ROUND_DOWN);
+                const minPoolAmountOut = '0';
 
                 console.debug('joinswapExternAmountIn', {
                     tokenInAddress,
                     amount,
                     tokenAmountIn: tokenAmountIn.toString(),
-                    minPoolAmountOut: minPoolAmountOut.toString(),
+                    minPoolAmountOut,
                 });
 
                 await poolStore.joinswapExternAmountIn(
                     pool.address,
                     tokenInAddress,
                     tokenAmountIn.toString(),
-                    minPoolAmountOut.toString()
+                    minPoolAmountOut
                 );
             }
         }

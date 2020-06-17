@@ -5,8 +5,6 @@ import Button from '../Common/Button';
 import SingleMultiToggle from '../Common/SingleMultiToggle';
 import RemoveAssetTable from './RemoveAssetTable';
 import { DepositType } from '../../stores/RemoveLiquidityForm';
-import { EtherKey } from '../../stores/Token';
-import { calcSingleOutGivenPoolIn } from '../../utils/math';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 
@@ -156,35 +154,12 @@ const RemoveLiquidityModal = observer((props: Props) => {
             );
         } else {
             const tokenOutAddress = removeLiquidityFormStore.activeToken;
-            const tokenOut = pool.tokens.find(
-                token => token.address === tokenOutAddress
-            );
-
-            const tokenBalanceOut = tokenStore.denormalizeBalance(
-                tokenOut.balance,
-                tokenOutAddress
-            );
-            const tokenWeightOut = tokenOut.denormWeight;
-            const poolSupply = tokenStore.denormalizeBalance(
-                pool.totalShares,
-                EtherKey
-            );
-            const totalWeight = pool.totalWeight;
-            const swapFee = pool.swapFee;
-            const tokenAmountOut = calcSingleOutGivenPoolIn(
-                tokenBalanceOut,
-                tokenWeightOut,
-                poolSupply,
-                totalWeight,
-                poolTokens,
-                swapFee
-            );
-            const minTokenAmountOut = tokenAmountOut.times(0.99);
+            const minTokenAmountOut = '0';
             await poolStore.exitswapPoolAmountIn(
                 pool.address,
-                removeLiquidityFormStore.activeToken,
+                tokenOutAddress,
                 poolTokens.integerValue().toString(),
-                minTokenAmountOut.integerValue().toString()
+                minTokenAmountOut
             );
         }
     };
