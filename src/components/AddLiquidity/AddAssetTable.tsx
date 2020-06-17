@@ -341,7 +341,7 @@ const AddAssetTable = observer((props: Props) => {
                         hasMaxApproval = tokenStore.hasMaxApproval(
                             tokenAddress,
                             account,
-                            pool.address
+                            proxyAddress
                         );
                     }
 
