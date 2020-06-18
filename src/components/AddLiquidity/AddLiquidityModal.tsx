@@ -9,7 +9,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
+import { EtherKey } from '../../stores/Token';
 import { bnum, formatPercentage } from '../../utils/helpers';
+import { calcPoolOutGivenSingleIn } from '../../utils/math';
 import { BigNumber } from '../../utils/bignumber';
 
 const Container = styled.div`
@@ -427,6 +429,70 @@ const AddLiquidityModal = observer((props: Props) => {
         );
     };
 
+    const renderLiquidityWarning = () => {
+        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            return;
+        }
+        if (!addLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+        const slippageThreshold = 0.01;
+        const tokenInAddress = addLiquidityFormStore.activeToken;
+        const tokenIn = pool.tokens.find(
+            token => token.address === tokenInAddress
+        );
+        const amount = new BigNumber(
+            addLiquidityFormStore.getInput(tokenInAddress).value
+        );
+
+        const tokenBalanceIn = tokenStore.denormalizeBalance(
+            tokenIn.balance,
+            tokenInAddress
+        );
+        const tokenWeightIn = tokenIn.denormWeight;
+        const poolSupply = tokenStore.denormalizeBalance(
+            pool.totalShares,
+            EtherKey
+        );
+        const totalWeight = pool.totalWeight;
+        const tokenAmountIn = tokenStore
+            .denormalizeBalance(amount, tokenInAddress)
+            .integerValue(BigNumber.ROUND_UP);
+        const swapFee = pool.swapFee;
+
+        const poolAmountOut = calcPoolOutGivenSingleIn(
+            tokenBalanceIn,
+            tokenWeightIn,
+            poolSupply,
+            totalWeight,
+            tokenAmountIn,
+            swapFee
+        );
+        const expectedPoolAmountOut = tokenAmountIn
+            .times(tokenWeightIn)
+            .times(poolSupply)
+            .div(tokenBalanceIn)
+            .div(totalWeight);
+        const one = new BigNumber(1);
+        const slippage = one.minus(poolAmountOut.div(expectedPoolAmountOut));
+
+        if (slippage.isNaN()) {
+            return;
+        }
+        if (slippage.lt(slippageThreshold)) {
+            return;
+        }
+
+        return (
+            <Warning>
+                <WarningIcon src="WarningSign.svg" />
+                <Message>
+                    Join will incur {formatPercentage(slippage, 2)} of slippage
+                </Message>
+            </Warning>
+        );
+    };
+
     const renderNotification = () => {
         let currentPoolShare = '-';
         let futurePoolShare = '-';
@@ -558,6 +624,7 @@ const AddLiquidityModal = observer((props: Props) => {
                         <React.Fragment>
                             {renderWarning()}
                             {renderFrontrunningWarning()}
+                            {renderLiquidityWarning()}
                             {renderNotification()}
                             {renderActionButton()}
                         </React.Fragment>

@@ -5,9 +5,10 @@ import Button from '../Common/Button';
 import SingleMultiToggle from '../Common/SingleMultiToggle';
 import RemoveAssetTable from './RemoveAssetTable';
 import { DepositType } from '../../stores/RemoveLiquidityForm';
+import { EtherKey } from '../../stores/Token';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-
+import { calcSingleOutGivenPoolIn } from '../../utils/math';
 import { bnum, formatPercentage } from '../../utils/helpers';
 
 const Container = styled.div`
@@ -58,6 +59,34 @@ const ExitComponent = styled.div`
     transform: rotate(135deg);
     font-size: 22px;
     cursor: pointer;
+`;
+
+const Warning = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: var(--warning);
+    height: 67px;
+    border: 1px solid var(--warning);
+    border-radius: 4px;
+    padding-left: 20px;
+    margin-bottom: 30px;
+`;
+
+const Message = styled.div`
+    display: inline;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.2px;
+`;
+
+const WarningIcon = styled.img`
+    width: 22px;
+    height: 26px;
+    margin-right: 20px;
+    color: var(--warning);
 `;
 
 const RemoveLiquidityContent = styled.div`
@@ -162,6 +191,70 @@ const RemoveLiquidityModal = observer((props: Props) => {
                 minTokenAmountOut
             );
         }
+    };
+
+    const renderLiquidityWarning = () => {
+        if (removeLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            return;
+        }
+        if (!removeLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+        const slippageThreshold = 0.01;
+        const tokenOutAddress = removeLiquidityFormStore.activeToken;
+        const tokenOut = pool.tokens.find(
+            token => token.address === tokenOutAddress
+        );
+        const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
+        const amount = poolStore.getUserTokenPercentage(
+            pool.address,
+            account,
+            shareToWithdraw
+        );
+
+        const tokenBalanceOut = tokenStore.denormalizeBalance(
+            tokenOut.balance,
+            tokenOutAddress
+        );
+        const tokenWeightOut = tokenOut.denormWeight;
+        const poolSupply = tokenStore.denormalizeBalance(
+            pool.totalShares,
+            EtherKey
+        );
+        const totalWeight = pool.totalWeight;
+        const swapFee = pool.swapFee;
+
+        const tokenAmountOut = calcSingleOutGivenPoolIn(
+            tokenBalanceOut,
+            tokenWeightOut,
+            poolSupply,
+            totalWeight,
+            amount,
+            swapFee
+        );
+        const expectedTokenAmountOut = amount
+            .times(totalWeight)
+            .times(tokenBalanceOut)
+            .div(poolSupply)
+            .div(tokenWeightOut);
+        const one = bnum(1);
+        const slippage = one.minus(tokenAmountOut.div(expectedTokenAmountOut));
+
+        if (slippage.isNaN()) {
+            return;
+        }
+        if (slippage.lt(slippageThreshold)) {
+            return;
+        }
+
+        return (
+            <Warning>
+                <WarningIcon src="WarningSign.svg" />
+                <Message>
+                    Join will incur {formatPercentage(slippage, 2)} of slippage
+                </Message>
+            </Warning>
+        );
     };
 
     const renderNotification = () => {
@@ -270,6 +363,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
                         <div>Loading</div>
                     ) : (
                         <React.Fragment>
+                            {renderLiquidityWarning()}
                             {renderNotification()}
                             {renderActionButton()}
                         </React.Fragment>
