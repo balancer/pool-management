@@ -12,32 +12,44 @@ import { bnum, hasMaxApproval, MAX_UINT } from '../utils/helpers';
 import { validateTokenValue, ValidationStatus } from './actions/validators';
 import { BigNumber } from 'utils/bignumber';
 
+export enum DepositType {
+    MULTI_ASSET,
+    SINGLE_ASSET,
+}
+
 export default class AddLiquidityFormStore {
     @observable checkboxes: CheckboxMap;
     @observable checkboxesLoaded: boolean;
     @observable inputs: InputMap;
     @observable joinInputs: BigNumberMap;
     @observable activeInputKey: string | undefined;
+    @observable activeToken: string;
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable depositType: DepositType;
     @observable joinRatio: BigNumber;
-    @observable hasInputExceedUserBalance: boolean;
+    @observable validationStatus: ValidationStatus;
+
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.resetApprovalCheckboxStatusMap();
         this.resetJoinInputs();
+        this.validationStatus = ValidationStatus.EMPTY;
     }
 
     @action openModal(poolAddress, account, tokenAddresses: string[]) {
         this.modalOpen = true;
+        this.depositType = DepositType.MULTI_ASSET;
         this.resetApprovalCheckboxStatusMap();
+        this.activeToken = tokenAddresses[0];
         this.activePool = poolAddress;
         this.activeAccount = account;
         this.initializeCheckboxes(tokenAddresses);
         this.initializeInputs(tokenAddresses);
+        this.validationStatus = ValidationStatus.EMPTY;
     }
 
     @action closeModal() {
@@ -54,14 +66,6 @@ export default class AddLiquidityFormStore {
 
     @action resetJoinInputs() {
         this.joinInputs = {} as BigNumberMap;
-    }
-
-    isActivePool(poolAddress: string) {
-        return this.activePool === poolAddress;
-    }
-
-    isActiveAccount(account: string) {
-        return this.activeAccount === account;
     }
 
     // Assumes balances are loaded - don't execute without that condition already met
@@ -109,6 +113,9 @@ export default class AddLiquidityFormStore {
         this.inputs[tokenAddress].value = value;
         const status = validateTokenValue(value);
         this.setInputStatus(tokenAddress, status);
+        if (this.depositType === DepositType.SINGLE_ASSET) {
+            this.validate();
+        }
     }
 
     @action setActiveInputKey(tokenAddress: string) {
@@ -126,16 +133,7 @@ export default class AddLiquidityFormStore {
     }
 
     hasValidInput(): boolean {
-        if (this.activeInputKey) {
-            return (
-                this.inputs[this.activeInputKey].validation ===
-                    ValidationStatus.VALID ||
-                this.inputs[this.activeInputKey].validation ===
-                    ValidationStatus.INSUFFICIENT_BALANCE
-            );
-        } else {
-            return false;
-        }
+        return this.validationStatus === ValidationStatus.VALID;
     }
 
     getCheckbox(tokenAddress: string): Checkbox {
@@ -163,6 +161,11 @@ export default class AddLiquidityFormStore {
         }
     }
 
+    @action setActiveToken(assetAddress) {
+        this.activeToken = assetAddress;
+        this.validate();
+    }
+
     @action setActivePool(poolAddress) {
         this.activePool = poolAddress;
     }
@@ -176,6 +179,11 @@ export default class AddLiquidityFormStore {
             checked: false,
             touched: false,
         };
+    }
+
+    setDepositType(depositType: DepositType) {
+        this.depositType = depositType;
+        this.validate();
     }
 
     calcRatio(
@@ -195,7 +203,6 @@ export default class AddLiquidityFormStore {
     }
 
     @action refreshInputAmounts(pool: Pool, account: string, ratio: BigNumber) {
-        let hasInputExceedUserBalance = false;
         this.resetJoinInputs();
 
         pool.tokens.forEach(token => {
@@ -220,12 +227,6 @@ export default class AddLiquidityFormStore {
 
                 this.inputs[token.address].validation = validationStatus;
 
-                if (
-                    validationStatus === ValidationStatus.INSUFFICIENT_BALANCE
-                ) {
-                    hasInputExceedUserBalance = true;
-                }
-
                 this.setJoinInputParam(token.address, requiredBalance);
             }
 
@@ -249,10 +250,6 @@ export default class AddLiquidityFormStore {
 
                     this.inputs[token.address].validation = validation;
 
-                    if (validation === ValidationStatus.INSUFFICIENT_BALANCE) {
-                        hasInputExceedUserBalance = true;
-                    }
-
                     const valueForJoin = requiredBalance.gt(bnum(value))
                         ? requiredBalance
                         : bnum(value);
@@ -260,9 +257,40 @@ export default class AddLiquidityFormStore {
                     this.setJoinInputParam(token.address, valueForJoin);
                 }
             }
-
-            this.hasInputExceedUserBalance = hasInputExceedUserBalance;
         });
+
+        this.validate();
+    }
+
+    private validate() {
+        const { poolStore } = this.rootStore;
+        const pool = poolStore.getPool(this.activePool);
+
+        this.validationStatus = ValidationStatus.VALID;
+        // amount
+        if (this.depositType === DepositType.MULTI_ASSET) {
+            for (const token of pool.tokens) {
+                const amountInput = this.getInput(token.address);
+                if (amountInput.validation !== ValidationStatus.VALID) {
+                    this.validationStatus = amountInput.validation;
+                }
+            }
+        } else {
+            const amountInput = this.getInput(this.activeToken);
+            if (amountInput.validation !== ValidationStatus.VALID) {
+                this.validationStatus = amountInput.validation;
+            } else {
+                const maxInRatio = 0.5;
+                const amount = bnum(amountInput.value);
+                const tokenIn = pool.tokens.find(
+                    token => token.address === this.activeToken
+                );
+                if (amount.div(tokenIn.balance).gt(maxInRatio)) {
+                    this.validationStatus =
+                        ValidationStatus.INSUFFICIENT_LIQUIDITY;
+                }
+            }
+        }
     }
 
     setJoinInputParam(tokenAddress: string, amount: BigNumber) {

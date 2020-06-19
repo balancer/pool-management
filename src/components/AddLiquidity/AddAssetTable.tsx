@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
+import RadioButton from '../Common/RadioButton';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
 import { formatBalanceTruncated } from '../../utils/helpers';
 import { BigNumber } from '../../utils/bignumber';
+import { DepositType } from '../../stores/AddLiquidityForm';
 import { ValidationStatus } from '../../stores/actions/validators';
 
 const Wrapper = styled.div`
@@ -78,6 +80,10 @@ const MaxLink = styled.div`
     text-decoration-line: underline;
     color: var(--link-text);
     cursor: pointer;
+`;
+
+const RadioButtonWrapper = styled.div`
+    margin-right: 8px;
 `;
 
 const Toggle = styled.label`
@@ -246,14 +252,16 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
 
-        const ratio = addLiquidityFormStore.calcRatio(
-            pool,
-            tokenAddress,
-            maxValue
-        );
+        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            const ratio = addLiquidityFormStore.calcRatio(
+                pool,
+                tokenAddress,
+                maxValue
+            );
 
-        addLiquidityFormStore.setJoinRatio(ratio);
-        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
+            addLiquidityFormStore.setJoinRatio(ratio);
+            addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
+        }
     };
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
@@ -295,13 +303,16 @@ const AddAssetTable = observer((props: Props) => {
         const { value } = event.target;
         addLiquidityFormStore.setInputValue(tokenAddress, value);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
-        const ratio = addLiquidityFormStore.calcRatio(
-            pool,
-            tokenAddress,
-            value
-        );
-        addLiquidityFormStore.setJoinRatio(ratio);
-        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
+
+        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            const ratio = addLiquidityFormStore.calcRatio(
+                pool,
+                tokenAddress,
+                value
+            );
+            addLiquidityFormStore.setJoinRatio(ratio);
+            addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
+        }
     };
 
     const renderAssetTable = (
@@ -373,6 +384,24 @@ const AddAssetTable = observer((props: Props) => {
                     return (
                         <TableRow key={token.address}>
                             <TableCell>
+                                {addLiquidityFormStore.depositType ===
+                                DepositType.SINGLE_ASSET ? (
+                                    <RadioButtonWrapper>
+                                        <RadioButton
+                                            checked={
+                                                addLiquidityFormStore.activeToken ===
+                                                token.address
+                                            }
+                                            onChange={e =>
+                                                addLiquidityFormStore.setActiveToken(
+                                                    tokenAddress
+                                                )
+                                            }
+                                        />
+                                    </RadioButtonWrapper>
+                                ) : (
+                                    <div />
+                                )}
                                 <TokenIcon
                                     src={TokenIconAddress(
                                         tokenMetadata.iconAddress,
@@ -401,44 +430,51 @@ const AddAssetTable = observer((props: Props) => {
                                 {userBalanceToDisplay} {token.symbol}
                             </TableCell>
                             <TableCellRight>
-                                <DepositAmount>
-                                    <InputWrapper errorBorders={hasError}>
-                                        {userBalances &&
-                                        userBalances[tokenAddress] ? (
-                                            <MaxLink
-                                                onClick={() => {
-                                                    handleMaxLinkClick(
-                                                        tokenAddress,
-                                                        userBalances[
-                                                            tokenAddress
-                                                        ]
+                                {addLiquidityFormStore.depositType ===
+                                    DepositType.MULTI_ASSET ||
+                                addLiquidityFormStore.activeToken ===
+                                    tokenAddress ? (
+                                    <DepositAmount>
+                                        <InputWrapper errorBorders={hasError}>
+                                            {userBalances &&
+                                            userBalances[tokenAddress] ? (
+                                                <MaxLink
+                                                    onClick={() => {
+                                                        handleMaxLinkClick(
+                                                            tokenAddress,
+                                                            userBalances[
+                                                                tokenAddress
+                                                            ]
+                                                        );
+                                                    }}
+                                                >
+                                                    Max
+                                                </MaxLink>
+                                            ) : (
+                                                <div />
+                                            )}
+                                            <input
+                                                id={`input-${tokenAddress}`}
+                                                name={`input-name-${tokenAddress}`}
+                                                value={
+                                                    addLiquidityFormStore.getInput(
+                                                        tokenAddress
+                                                    ).value
+                                                }
+                                                onChange={e => {
+                                                    handleInputChange(
+                                                        e,
+                                                        tokenAddress
                                                     );
                                                 }}
-                                            >
-                                                Max
-                                            </MaxLink>
-                                        ) : (
-                                            <div />
-                                        )}
-                                        <input
-                                            id={`input-${tokenAddress}`}
-                                            name={`input-name-${tokenAddress}`}
-                                            value={
-                                                addLiquidityFormStore.getInput(
-                                                    tokenAddress
-                                                ).value
-                                            }
-                                            onChange={e => {
-                                                handleInputChange(
-                                                    e,
-                                                    tokenAddress
-                                                );
-                                            }}
-                                            // ref={textInput}
-                                            placeholder=""
-                                        />
-                                    </InputWrapper>
-                                </DepositAmount>
+                                                // ref={textInput}
+                                                placeholder=""
+                                            />
+                                        </InputWrapper>
+                                    </DepositAmount>
+                                ) : (
+                                    <div />
+                                )}
                             </TableCellRight>
                         </TableRow>
                     );
@@ -455,9 +491,7 @@ const AddAssetTable = observer((props: Props) => {
                 <TableCell>Wallet Balance</TableCell>
                 <TableCellRight>Deposit Amount</TableCellRight>
             </HeaderRow>
-            {pool &&
-            addLiquidityFormStore.isActivePool(poolAddress) &&
-            addLiquidityFormStore.isActiveAccount(account) ? (
+            {pool ? (
                 renderAssetTable(pool, userBalances)
             ) : (
                 <TableRow>Loading</TableRow>

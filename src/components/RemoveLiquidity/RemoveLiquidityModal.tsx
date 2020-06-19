@@ -2,10 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
+import SingleMultiToggle from '../Common/SingleMultiToggle';
 import RemoveAssetTable from './RemoveAssetTable';
+import { DepositType } from '../../stores/RemoveLiquidityForm';
+import { ValidationStatus } from '../../stores/actions/validators';
+import { EtherKey } from '../../stores/Token';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-
+import { calcSingleOutGivenPoolIn } from '../../utils/math';
 import { bnum, formatPercentage } from '../../utils/helpers';
 
 const Container = styled.div`
@@ -56,6 +60,50 @@ const ExitComponent = styled.div`
     transform: rotate(135deg);
     font-size: 22px;
     cursor: pointer;
+`;
+
+const Error = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: var(--panel-background);
+    color: var(--error-color);
+    margin-bottom: 30px;
+`;
+
+const Warning = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: var(--warning);
+    height: 67px;
+    border: 1px solid var(--warning);
+    border-radius: 4px;
+    padding-left: 20px;
+    margin-bottom: 30px;
+`;
+
+const Message = styled.div`
+    display: inline;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.2px;
+`;
+
+const WarningIcon = styled.img`
+    width: 22px;
+    height: 26px;
+    margin-right: 20px;
+    color: var(--warning);
+`;
+
+const Link = styled.a`
+    color: color: var(--warning);
 `;
 
 const RemoveLiquidityContent = styled.div`
@@ -116,6 +164,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
             poolStore,
             tokenStore,
             providerStore,
+            contractMetadataStore,
             removeLiquidityFormStore,
         },
     } = useStores();
@@ -123,6 +172,8 @@ const RemoveLiquidityModal = observer((props: Props) => {
     const account = providerStore.providerStatus.account;
 
     const pool = poolStore.getPool(poolAddress);
+
+    const validationStatus = removeLiquidityFormStore.validationStatus;
 
     let loading = true;
 
@@ -144,14 +195,148 @@ const RemoveLiquidityModal = observer((props: Props) => {
             account,
             shareToWithdraw
         );
-        await poolStore.exitPool(
+        if (removeLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            await poolStore.exitPool(
+                pool.address,
+                poolTokens.integerValue().toString(),
+                poolStore.formatZeroMinAmountsOut(pool.address)
+            );
+        } else {
+            const tokenOutAddress = removeLiquidityFormStore.activeToken;
+            const minTokenAmountOut = '0';
+            await poolStore.exitswapPoolAmountIn(
+                pool.address,
+                tokenOutAddress,
+                poolTokens.integerValue().toString(),
+                minTokenAmountOut
+            );
+        }
+    };
+
+    const renderError = () => {
+        if (removeLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+
+        function getText(status: ValidationStatus) {
+            if (status === ValidationStatus.EMPTY)
+                return "Values can't be empty ";
+            if (status === ValidationStatus.ZERO) return "Values can't be zero";
+            if (status === ValidationStatus.NOT_FLOAT)
+                return 'Values should be numbers';
+            if (status === ValidationStatus.NEGATIVE)
+                return 'Values should be positive numbers';
+            if (status === ValidationStatus.INSUFFICIENT_BALANCE)
+                return 'Insufficient balance';
+            if (status === ValidationStatus.INSUFFICIENT_LIQUIDITY)
+                return 'Insufficient liquidity';
+            return '';
+        }
+
+        const errorText = getText(validationStatus);
+        return <Error>{errorText}</Error>;
+    };
+
+    const renderTokenWarning = () => {
+        if (!removeLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+        let warning = false;
+        const tokenWarnings = contractMetadataStore.getTokenWarnings();
+
+        pool.tokens.forEach(token => {
+            if (tokenWarnings.includes(token.address)) warning = true;
+        });
+
+        if (warning) {
+            return (
+                <Warning>
+                    <WarningIcon src="WarningSign.svg" />
+                    <Message>
+                        This pool contains a non-standard token that may cause
+                        potential balance issues or unknown arbitrage
+                        opportunites.{' '}
+                        <Link
+                            href="https://docs.balancer.finance/protocol/limitations#erc20-tokens"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Learn more
+                        </Link>
+                    </Message>
+                </Warning>
+            );
+        }
+    };
+
+    const renderLiquidityWarning = () => {
+        if (!removeLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+        if (removeLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            return;
+        }
+        const slippageThreshold = 0.01;
+        const tokenOutAddress = removeLiquidityFormStore.activeToken;
+        const tokenOut = pool.tokens.find(
+            token => token.address === tokenOutAddress
+        );
+        const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
+        const amount = poolStore.getUserTokenPercentage(
             pool.address,
-            poolTokens.integerValue().toString(),
-            poolStore.formatZeroMinAmountsOut(pool.address)
+            account,
+            shareToWithdraw
+        );
+
+        const tokenBalanceOut = tokenStore.denormalizeBalance(
+            tokenOut.balance,
+            tokenOutAddress
+        );
+        const tokenWeightOut = tokenOut.denormWeight;
+        const poolSupply = tokenStore.denormalizeBalance(
+            pool.totalShares,
+            EtherKey
+        );
+        const totalWeight = pool.totalWeight;
+        const swapFee = pool.swapFee;
+
+        const tokenAmountOut = calcSingleOutGivenPoolIn(
+            tokenBalanceOut,
+            tokenWeightOut,
+            poolSupply,
+            totalWeight,
+            amount,
+            swapFee
+        );
+        const expectedTokenAmountOut = amount
+            .times(totalWeight)
+            .times(tokenBalanceOut)
+            .div(poolSupply)
+            .div(tokenWeightOut);
+        const one = bnum(1);
+        const slippage = one.minus(tokenAmountOut.div(expectedTokenAmountOut));
+
+        if (slippage.isNaN()) {
+            return;
+        }
+        if (slippage.lt(slippageThreshold)) {
+            return;
+        }
+
+        return (
+            <Warning>
+                <WarningIcon src="WarningSign.svg" />
+                <Message>
+                    Exit will incur {formatPercentage(slippage, 2)} of slippage
+                </Message>
+            </Warning>
         );
     };
 
     const renderNotification = () => {
+        if (!removeLiquidityFormStore.hasValidInput()) {
+            return;
+        }
         let currentPoolShare = '-';
         let futurePoolShare = '-';
 
@@ -176,9 +361,9 @@ const RemoveLiquidityModal = observer((props: Props) => {
                 : bnum(0);
 
             const futureTotal = currentTotal.minus(previewTokens);
-            const futureShare = userBalance
-                .minus(previewTokens)
-                .div(futureTotal);
+            const futureShare = futureTotal.isZero()
+                ? bnum(0)
+                : userBalance.minus(previewTokens).div(futureTotal);
 
             currentPoolShare = formatPercentage(existingShare, 2);
             futurePoolShare = formatPercentage(futureShare, 2);
@@ -211,13 +396,15 @@ const RemoveLiquidityModal = observer((props: Props) => {
     };
 
     const renderActionButton = () => {
-        const active = account && removeLiquidityFormStore.hasValidInput();
-        const dataLoaded = pool && tokenStore.getTotalSupply(pool.address);
-
         return (
             <Button
                 buttonText={`Remove Liquidity`}
-                active={active && dataLoaded}
+                active={
+                    account &&
+                    pool &&
+                    removeLiquidityFormStore.hasValidInput() &&
+                    tokenStore.getTotalSupply(pool.address)
+                }
                 onClick={e => handleRemoveLiquidity()}
             />
         );
@@ -241,6 +428,14 @@ const RemoveLiquidityModal = observer((props: Props) => {
                     </ExitComponent>
                 </RemoveLiquidityHeader>
                 <RemoveLiquidityBody>
+                    <SingleMultiToggle
+                        depositType={removeLiquidityFormStore.depositType}
+                        onSelect={depositType => {
+                            removeLiquidityFormStore.setDepositType(
+                                depositType
+                            );
+                        }}
+                    />
                     <RemoveLiquidityContent>
                         <PoolOverview poolAddress={poolAddress} />
                         <RemoveAssetTable poolAddress={poolAddress} />
@@ -249,6 +444,9 @@ const RemoveLiquidityModal = observer((props: Props) => {
                         <div>Loading</div>
                     ) : (
                         <React.Fragment>
+                            {renderError()}
+                            {renderTokenWarning()}
+                            {renderLiquidityWarning()}
                             {renderNotification()}
                             {renderActionButton()}
                         </React.Fragment>

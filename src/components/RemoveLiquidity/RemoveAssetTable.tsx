@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
+import RadioButton from '../Common/RadioButton';
+import { DepositType } from '../../stores/RemoveLiquidityForm';
+import { ValidationStatus } from '../../stores/actions/validators';
+import { EtherKey } from '../../stores/Token';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
+import { calcSingleOutGivenPoolIn } from '../../utils/math';
 import {
     formatNormalizedTokenValue,
     fromPercentage,
@@ -71,6 +76,10 @@ const MaxLink = styled.div`
     text-decoration-line: underline;
     color: var(--link-text);
     cursor: pointer;
+`;
+
+const RadioButtonWrapper = styled.div`
+    margin-right: 8px;
 `;
 
 const WithdrawAmount = styled.div`
@@ -177,6 +186,11 @@ const RemoveAssetsTable = observer((props: Props) => {
 
     const account = providerStore.providerStatus.account;
 
+    const input = removeLiquidityFormStore.shareToWithdraw;
+    const hasError =
+        input.validation !== ValidationStatus.VALID &&
+        input.validation !== ValidationStatus.EMPTY;
+
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
 
@@ -187,12 +201,12 @@ const RemoveAssetsTable = observer((props: Props) => {
     const handleShareToWithdrawChange = event => {
         const { value } = event.target;
         removeLiquidityFormStore.setShareToWithdraw(value);
-        if (account && removeLiquidityFormStore.hasValidInput()) {
-            removeLiquidityFormStore.validateUserShareInput(
-                pool.address,
-                account
-            );
-        }
+        // if (account && removeLiquidityFormStore.hasValidInput()) {
+        //     removeLiquidityFormStore.validateUserShareInput(
+        //         pool.address,
+        //         account
+        //     );
+        // }
     };
 
     const handleMaxLinkClick = async () => {
@@ -207,12 +221,12 @@ const RemoveAssetsTable = observer((props: Props) => {
         }
 
         removeLiquidityFormStore.setShareToWithdraw(maxValue);
-        if (removeLiquidityFormStore.hasValidInput()) {
-            removeLiquidityFormStore.validateUserShareInput(
-                pool.address,
-                account
-            );
-        }
+        // if (removeLiquidityFormStore.hasValidInput()) {
+        //     removeLiquidityFormStore.validateUserShareInput(
+        //         pool.address,
+        //         account
+        //     );
+        // }
     };
 
     const renderWithdrawInput = () => {
@@ -230,9 +244,7 @@ const RemoveAssetsTable = observer((props: Props) => {
             <WithdrawWrapper>
                 <WithdrawAmountWrapper>
                     Percent of my liquidity to withdraw
-                    <InputWrapper
-                        errorBorders={removeLiquidityFormStore.hasInputError()}
-                    >
+                    <InputWrapper errorBorders={hasError}>
                         {showMaxLink ? (
                             <MaxLink
                                 onClick={() => {
@@ -294,21 +306,85 @@ const RemoveAssetsTable = observer((props: Props) => {
                     );
 
                     if (removeLiquidityFormStore.hasValidInput()) {
-                        const tokensToWithdraw = userLiquidityContribution.times(
-                            fromPercentage(
-                                removeLiquidityFormStore.getShareToWithdraw()
-                            )
-                        );
+                        const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
+                        if (
+                            removeLiquidityFormStore.depositType ===
+                            DepositType.MULTI_ASSET
+                        ) {
+                            const tokensToWithdraw = userLiquidityContribution.times(
+                                fromPercentage(shareToWithdraw)
+                            );
 
-                        withdrawPreviewBalanceText = formatNormalizedTokenValue(
-                            tokensToWithdraw,
-                            precision
-                        );
+                            withdrawPreviewBalanceText = formatNormalizedTokenValue(
+                                tokensToWithdraw,
+                                precision
+                            );
+                        } else {
+                            const tokenOutAddress =
+                                removeLiquidityFormStore.activeToken;
+                            if (token.address === tokenOutAddress) {
+                                const tokenOut = pool.tokens.find(
+                                    token => token.address === tokenOutAddress
+                                );
+                                const amount = poolStore.getUserTokenPercentage(
+                                    pool.address,
+                                    account,
+                                    shareToWithdraw
+                                );
+
+                                const tokenBalanceOut = tokenStore.denormalizeBalance(
+                                    tokenOut.balance,
+                                    tokenOutAddress
+                                );
+                                const tokenWeightOut = tokenOut.denormWeight;
+                                const poolSupply = tokenStore.denormalizeBalance(
+                                    pool.totalShares,
+                                    EtherKey
+                                );
+                                const totalWeight = pool.totalWeight;
+                                const swapFee = pool.swapFee;
+
+                                const tokenAmountOut = calcSingleOutGivenPoolIn(
+                                    tokenBalanceOut,
+                                    tokenWeightOut,
+                                    poolSupply,
+                                    totalWeight,
+                                    amount,
+                                    swapFee
+                                );
+                                const tokenAmountNormalized = tokenStore.normalizeBalance(
+                                    tokenAmountOut,
+                                    tokenOutAddress
+                                );
+                                withdrawPreviewBalanceText = formatNormalizedTokenValue(
+                                    tokenAmountNormalized,
+                                    precision
+                                );
+                            }
+                        }
                     }
 
                     return (
                         <TableRow key={token.address}>
                             <TableCell>
+                                {removeLiquidityFormStore.depositType ===
+                                DepositType.SINGLE_ASSET ? (
+                                    <RadioButtonWrapper>
+                                        <RadioButton
+                                            checked={
+                                                removeLiquidityFormStore.activeToken ===
+                                                token.address
+                                            }
+                                            onChange={e => {
+                                                removeLiquidityFormStore.setActiveToken(
+                                                    token.address
+                                                );
+                                            }}
+                                        />
+                                    </RadioButtonWrapper>
+                                ) : (
+                                    <div />
+                                )}
                                 <TokenIcon
                                     src={TokenIconAddress(
                                         tokenMetadata.iconAddress,
@@ -342,9 +418,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                 <TableCell>My Pool Balance</TableCell>
                 <TableCellRight width="40%">Withdraw Amount</TableCellRight>
             </HeaderRow>
-            {pool &&
-            removeLiquidityFormStore.isActivePool(poolAddress) &&
-            removeLiquidityFormStore.isActiveAccount(account) ? (
+            {pool ? (
                 renderAssetTable(pool, userBalances)
             ) : (
                 <TableRow>Loading</TableRow>
