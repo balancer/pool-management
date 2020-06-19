@@ -363,7 +363,7 @@
             {
                 "symbol": "aUSDT",
                 "address": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
-                "decimals": 18,
+                "decimals": 6,
                 "ticker": "",
                 "iconAddress": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
                 "precision": 2,
