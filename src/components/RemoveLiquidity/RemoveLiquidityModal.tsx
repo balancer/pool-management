@@ -361,9 +361,9 @@ const RemoveLiquidityModal = observer((props: Props) => {
                 : bnum(0);
 
             const futureTotal = currentTotal.minus(previewTokens);
-            const futureShare = userBalance
-                .minus(previewTokens)
-                .div(futureTotal);
+            const futureShare = futureTotal.isZero()
+                ? bnum(0)
+                : userBalance.minus(previewTokens).div(futureTotal);
 
             currentPoolShare = formatPercentage(existingShare, 2);
             futurePoolShare = formatPercentage(futureShare, 2);
