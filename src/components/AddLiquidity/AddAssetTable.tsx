@@ -491,9 +491,7 @@ const AddAssetTable = observer((props: Props) => {
                 <TableCell>Wallet Balance</TableCell>
                 <TableCellRight>Deposit Amount</TableCellRight>
             </HeaderRow>
-            {pool &&
-            addLiquidityFormStore.isActivePool(poolAddress) &&
-            addLiquidityFormStore.isActiveAccount(account) ? (
+            {pool ? (
                 renderAssetTable(pool, userBalances)
             ) : (
                 <TableRow>Loading</TableRow>

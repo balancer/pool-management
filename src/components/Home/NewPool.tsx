@@ -98,7 +98,7 @@ const InputWrapper = styled.div`
     }
 `;
 
-const Notification = styled.div`
+const Error = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -247,7 +247,7 @@ const NewPool = observer(() => {
         );
     };
 
-    const renderNotification = () => {
+    const renderError = () => {
         function getText(status: ValidationStatus) {
             if (status === ValidationStatus.EMPTY)
                 return "Values can't be empty ";
@@ -267,8 +267,8 @@ const NewPool = observer(() => {
             return '';
         }
 
-        const notificationText = getText(validationStatus);
-        return <Notification>{notificationText}</Notification>;
+        const errorText = getText(validationStatus);
+        return <Error>{errorText}</Error>;
     };
 
     return (
@@ -295,7 +295,7 @@ const NewPool = observer(() => {
                 </SingleElement>
             </Section>
             {validationStatus !== ValidationStatus.VALID ? (
-                <Section>{renderNotification()}</Section>
+                <Section>{renderError()}</Section>
             ) : (
                 <div />
             )}

@@ -9,6 +9,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, PoolToken } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
+import { ValidationStatus } from '../../stores/actions/validators';
 import { EtherKey } from '../../stores/Token';
 import { bnum, formatPercentage } from '../../utils/helpers';
 import { calcPoolOutGivenSingleIn } from '../../utils/math';
@@ -62,6 +63,18 @@ const ExitComponent = styled.div`
     transform: rotate(135deg);
     font-size: 22px;
     cursor: pointer;
+`;
+
+const Error = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: var(--panel-background);
+    color: var(--error-color);
+    margin-bottom: 30px;
 `;
 
 const Warning = styled.div`
@@ -166,13 +179,27 @@ const AddLiquidityModal = observer((props: Props) => {
         pool: Pool,
         account: string
     ): PoolToken | undefined => {
-        return pool.tokens.find(token => {
-            return !tokenStore.hasMaxApproval(
-                token.address,
-                account,
-                proxyAddress
+        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+            return pool.tokens.find(token => {
+                return !tokenStore.hasMaxApproval(
+                    token.address,
+                    account,
+                    proxyAddress
+                );
+            });
+        } else {
+            const tokenAddress = addLiquidityFormStore.activeToken;
+            const token = pool.tokens.find(
+                token => token.address === tokenAddress
             );
-        });
+            if (
+                tokenStore.hasMaxApproval(tokenAddress, account, proxyAddress)
+            ) {
+                return;
+            } else {
+                return token;
+            }
+        }
     };
 
     const findFrontrunnableToken = (
@@ -228,6 +255,8 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const pool = poolStore.getPool(poolAddress);
     const proxyAddress = proxyStore.getInstanceAddress();
+
+    const validationStatus = addLiquidityFormStore.validationStatus;
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -363,7 +392,34 @@ const AddLiquidityModal = observer((props: Props) => {
         addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
-    const renderWarning = () => {
+    const renderError = () => {
+        if (addLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+
+        function getText(status: ValidationStatus) {
+            if (status === ValidationStatus.EMPTY)
+                return "Values can't be empty ";
+            if (status === ValidationStatus.ZERO) return "Values can't be zero";
+            if (status === ValidationStatus.NOT_FLOAT)
+                return 'Values should be numbers';
+            if (status === ValidationStatus.NEGATIVE)
+                return 'Values should be positive numbers';
+            if (status === ValidationStatus.INSUFFICIENT_BALANCE)
+                return 'Insufficient balance';
+            if (status === ValidationStatus.INSUFFICIENT_LIQUIDITY)
+                return 'Insufficient liquidity';
+            return '';
+        }
+
+        const errorText = getText(validationStatus);
+        return <Error>{errorText}</Error>;
+    };
+
+    const renderTokenWarning = () => {
+        if (!addLiquidityFormStore.hasValidInput()) {
+            return;
+        }
         let warning = false;
         const tokenWarnings = contractMetadataStore.getTokenWarnings();
 
@@ -393,6 +449,9 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderFrontrunningWarning = () => {
+        if (!addLiquidityFormStore.hasValidInput()) {
+            return;
+        }
         if (addLiquidityFormStore.depositType === DepositType.SINGLE_ASSET) {
             return;
         }
@@ -430,10 +489,10 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderLiquidityWarning = () => {
-        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
+        if (!addLiquidityFormStore.hasValidInput()) {
             return;
         }
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
             return;
         }
         const slippageThreshold = 0.01;
@@ -494,6 +553,9 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderNotification = () => {
+        if (!addLiquidityFormStore.hasValidInput()) {
+            return;
+        }
         let currentPoolShare = '-';
         let futurePoolShare = '-';
 
@@ -573,11 +635,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={
-                        account &&
-                        addLiquidityFormStore.hasValidInput() &&
-                        !addLiquidityFormStore.hasInputExceedUserBalance
-                    }
+                    active={account && addLiquidityFormStore.hasValidInput()}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }
@@ -622,7 +680,8 @@ const AddLiquidityModal = observer((props: Props) => {
                         <div>Loading</div>
                     ) : (
                         <React.Fragment>
-                            {renderWarning()}
+                            {renderError()}
+                            {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
                             {renderNotification()}

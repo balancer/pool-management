@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { TokenIconAddress } from '../Common/WalletBalances';
 import RadioButton from '../Common/RadioButton';
 import { DepositType } from '../../stores/RemoveLiquidityForm';
+import { ValidationStatus } from '../../stores/actions/validators';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
@@ -183,6 +184,11 @@ const RemoveAssetsTable = observer((props: Props) => {
 
     const account = providerStore.providerStatus.account;
 
+    const input = removeLiquidityFormStore.shareToWithdraw;
+    const hasError =
+        input.validation !== ValidationStatus.VALID &&
+        input.validation !== ValidationStatus.EMPTY;
+
     const pool = poolStore.getPool(poolAddress);
     let userBalances: undefined | BigNumberMap;
 
@@ -193,12 +199,12 @@ const RemoveAssetsTable = observer((props: Props) => {
     const handleShareToWithdrawChange = event => {
         const { value } = event.target;
         removeLiquidityFormStore.setShareToWithdraw(value);
-        if (account && removeLiquidityFormStore.hasValidInput()) {
-            removeLiquidityFormStore.validateUserShareInput(
-                pool.address,
-                account
-            );
-        }
+        // if (account && removeLiquidityFormStore.hasValidInput()) {
+        //     removeLiquidityFormStore.validateUserShareInput(
+        //         pool.address,
+        //         account
+        //     );
+        // }
     };
 
     const handleMaxLinkClick = async () => {
@@ -213,12 +219,12 @@ const RemoveAssetsTable = observer((props: Props) => {
         }
 
         removeLiquidityFormStore.setShareToWithdraw(maxValue);
-        if (removeLiquidityFormStore.hasValidInput()) {
-            removeLiquidityFormStore.validateUserShareInput(
-                pool.address,
-                account
-            );
-        }
+        // if (removeLiquidityFormStore.hasValidInput()) {
+        //     removeLiquidityFormStore.validateUserShareInput(
+        //         pool.address,
+        //         account
+        //     );
+        // }
     };
 
     const renderWithdrawInput = () => {
@@ -236,9 +242,7 @@ const RemoveAssetsTable = observer((props: Props) => {
             <WithdrawWrapper>
                 <WithdrawAmountWrapper>
                     Percent of my liquidity to withdraw
-                    <InputWrapper
-                        errorBorders={removeLiquidityFormStore.hasInputError()}
-                    >
+                    <InputWrapper errorBorders={hasError}>
                         {showMaxLink ? (
                             <MaxLink
                                 onClick={() => {
@@ -371,9 +375,7 @@ const RemoveAssetsTable = observer((props: Props) => {
                 <TableCell>My Pool Balance</TableCell>
                 <TableCellRight width="40%">Withdraw Amount</TableCellRight>
             </HeaderRow>
-            {pool &&
-            removeLiquidityFormStore.isActivePool(poolAddress) &&
-            removeLiquidityFormStore.isActiveAccount(account) ? (
+            {pool ? (
                 renderAssetTable(pool, userBalances)
             ) : (
                 <TableRow>Loading</TableRow>
