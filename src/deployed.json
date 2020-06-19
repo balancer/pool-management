@@ -31,7 +31,7 @@
         "chainId": 42,
         "defaultPrecision": 4,
         "bFactory": "0x8f7F78080219d4066A8036ccD30D588B416a40DB",
-        "bActions": "0x1266F7220cCc4f1957b3f1EA713F3F434Fc3BDc7",
+        "bActions": "0x02EFDB542B9390ae7C1620B29674e02F9c0d86CC",
         "dsProxyRegistry": "0x130767E0cf05469CF11Fa3fcf270dfC1f52b9072",
         "proxy": "0xdf6F5B1f49eFf8d1C45f2AADC045cB91C33e44b8",
         "weth": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
