@@ -568,24 +568,60 @@ const AddLiquidityModal = observer((props: Props) => {
         if (!existingShare) {
             existingShare = bnum(0);
         }
+        currentPoolShare = formatPercentage(existingShare, 2);
 
         if (pool && currentTotal) {
-            currentPoolShare = formatPercentage(existingShare, 2);
-            if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
-                const previewTokens = addLiquidityFormStore.hasValidInput()
-                    ? poolStore.calcPoolTokensByRatio(
-                          pool,
-                          addLiquidityFormStore.joinRatio
-                      )
-                    : bnum(0);
+            let previewTokens = bnum(0);
+            if (addLiquidityFormStore.hasValidInput()) {
+                if (
+                    addLiquidityFormStore.depositType ===
+                    DepositType.MULTI_ASSET
+                ) {
+                    previewTokens = poolStore.calcPoolTokensByRatio(
+                        pool,
+                        addLiquidityFormStore.joinRatio
+                    );
+                } else {
+                    const tokenInAddress = addLiquidityFormStore.activeToken;
+                    const tokenIn = pool.tokens.find(
+                        token => token.address === tokenInAddress
+                    );
+                    const amount = new BigNumber(
+                        addLiquidityFormStore.getInput(tokenInAddress).value
+                    );
 
-                const futureTotal = currentTotal.plus(previewTokens);
-                const futureShare = previewTokens
-                    .plus(userBalance)
-                    .div(futureTotal);
+                    const tokenBalanceIn = tokenStore.denormalizeBalance(
+                        tokenIn.balance,
+                        tokenInAddress
+                    );
+                    const tokenWeightIn = tokenIn.denormWeight;
+                    const poolSupply = tokenStore.denormalizeBalance(
+                        pool.totalShares,
+                        EtherKey
+                    );
+                    const totalWeight = pool.totalWeight;
+                    const tokenAmountIn = tokenStore
+                        .denormalizeBalance(amount, tokenInAddress)
+                        .integerValue(BigNumber.ROUND_UP);
+                    const swapFee = pool.swapFee;
 
-                futurePoolShare = formatPercentage(futureShare, 2);
+                    previewTokens = calcPoolOutGivenSingleIn(
+                        tokenBalanceIn,
+                        tokenWeightIn,
+                        poolSupply,
+                        totalWeight,
+                        tokenAmountIn,
+                        swapFee
+                    );
+                }
             }
+
+            const futureTotal = currentTotal.plus(previewTokens);
+            const futureShare = previewTokens
+                .plus(userBalance)
+                .div(futureTotal);
+
+            futurePoolShare = formatPercentage(futureShare, 2);
         }
 
         if (!account && !addLiquidityFormStore.activeInputKey) {
