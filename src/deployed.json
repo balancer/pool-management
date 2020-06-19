@@ -363,7 +363,7 @@
             {
                 "symbol": "aUSDT",
                 "address": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
-                "decimals": 18,
+                "decimals": 6,
                 "ticker": "",
                 "iconAddress": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
                 "precision": 2,
@@ -372,7 +372,7 @@
             {
                 "symbol": "aUSDC",
                 "address": "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E",
-                "decimals": 18,
+                "decimals": 6,
                 "ticker": "",
                 "iconAddress": "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E",
                 "precision": 2,
