@@ -4,9 +4,11 @@ import { TokenIconAddress } from '../Common/WalletBalances';
 import RadioButton from '../Common/RadioButton';
 import { DepositType } from '../../stores/RemoveLiquidityForm';
 import { ValidationStatus } from '../../stores/actions/validators';
+import { EtherKey } from '../../stores/Token';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
 import { BigNumberMap, Pool } from '../../types';
+import { calcSingleOutGivenPoolIn } from '../../utils/math';
 import {
     formatNormalizedTokenValue,
     fromPercentage,
@@ -304,20 +306,61 @@ const RemoveAssetsTable = observer((props: Props) => {
                     );
 
                     if (removeLiquidityFormStore.hasValidInput()) {
+                        const shareToWithdraw = removeLiquidityFormStore.getShareToWithdraw();
                         if (
                             removeLiquidityFormStore.depositType ===
                             DepositType.MULTI_ASSET
                         ) {
                             const tokensToWithdraw = userLiquidityContribution.times(
-                                fromPercentage(
-                                    removeLiquidityFormStore.getShareToWithdraw()
-                                )
+                                fromPercentage(shareToWithdraw)
                             );
 
                             withdrawPreviewBalanceText = formatNormalizedTokenValue(
                                 tokensToWithdraw,
                                 precision
                             );
+                        } else {
+                            const tokenOutAddress =
+                                removeLiquidityFormStore.activeToken;
+                            if (token.address === tokenOutAddress) {
+                                const tokenOut = pool.tokens.find(
+                                    token => token.address === tokenOutAddress
+                                );
+                                const amount = poolStore.getUserTokenPercentage(
+                                    pool.address,
+                                    account,
+                                    shareToWithdraw
+                                );
+
+                                const tokenBalanceOut = tokenStore.denormalizeBalance(
+                                    tokenOut.balance,
+                                    tokenOutAddress
+                                );
+                                const tokenWeightOut = tokenOut.denormWeight;
+                                const poolSupply = tokenStore.denormalizeBalance(
+                                    pool.totalShares,
+                                    EtherKey
+                                );
+                                const totalWeight = pool.totalWeight;
+                                const swapFee = pool.swapFee;
+
+                                const tokenAmountOut = calcSingleOutGivenPoolIn(
+                                    tokenBalanceOut,
+                                    tokenWeightOut,
+                                    poolSupply,
+                                    totalWeight,
+                                    amount,
+                                    swapFee
+                                );
+                                const tokenAmountNormalized = tokenStore.normalizeBalance(
+                                    tokenAmountOut,
+                                    tokenOutAddress
+                                );
+                                withdrawPreviewBalanceText = formatNormalizedTokenValue(
+                                    tokenAmountNormalized,
+                                    precision
+                                );
+                            }
                         }
                     }
 
