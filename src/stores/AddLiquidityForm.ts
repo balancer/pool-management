@@ -49,6 +49,7 @@ export default class AddLiquidityFormStore {
         this.activeAccount = account;
         this.initializeCheckboxes(tokenAddresses);
         this.initializeInputs(tokenAddresses);
+        this.validationStatus = ValidationStatus.EMPTY;
     }
 
     @action closeModal() {

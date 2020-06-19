@@ -34,6 +34,7 @@ export default class RemoveLiquidityFormStore {
         this.activePool = poolAddress;
         this.activeAccount = account;
         this.depositType = DepositType.MULTI_ASSET;
+        this.validationStatus = ValidationStatus.EMPTY;
     }
 
     setShareToWithdraw(value: string) {
