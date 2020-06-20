@@ -111,20 +111,11 @@ export default class AddLiquidityFormStore {
     @action setInputValue(tokenAddress: string, value: string) {
         this.requireValidAddress(tokenAddress);
         this.inputs[tokenAddress].value = value;
-        const status = validateTokenValue(value);
-        this.setInputStatus(tokenAddress, status);
-        if (this.depositType === DepositType.SINGLE_ASSET) {
-            this.validate();
-        }
+        this.inputs[tokenAddress].validation = validateTokenValue(value);
     }
 
     @action setActiveInputKey(tokenAddress: string) {
         this.activeInputKey = tokenAddress;
-    }
-
-    @action setInputStatus(tokenAddress: string, status: ValidationStatus) {
-        this.requireValidAddress(tokenAddress);
-        this.inputs[tokenAddress].validation = status;
     }
 
     @action setInputTouched(tokenAddress: string, touched: boolean) {
@@ -210,6 +201,11 @@ export default class AddLiquidityFormStore {
             const isActiveInputValid =
                 this.inputs[this.activeInputKey].validation ===
                 ValidationStatus.VALID;
+            const isMultiAsset = this.depositType === DepositType.MULTI_ASSET;
+
+            if (!isMultiAsset && !isTokenActive) {
+                return;
+            }
 
             /* Only calculate other token balances if
                 2. This token is not for the active input field
@@ -276,7 +272,9 @@ export default class AddLiquidityFormStore {
                 }
             }
         } else {
+            console.log('[validate] single asset');
             const amountInput = this.getInput(this.activeToken);
+            console.log('[validate] input validation', amountInput.validation);
             if (amountInput.validation !== ValidationStatus.VALID) {
                 this.validationStatus = amountInput.validation;
             } else {

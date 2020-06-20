@@ -252,16 +252,14 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setInputValue(tokenAddress, maxValue);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
 
-        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
-            const ratio = addLiquidityFormStore.calcRatio(
-                pool,
-                tokenAddress,
-                maxValue
-            );
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            tokenAddress,
+            maxValue
+        );
 
-            addLiquidityFormStore.setJoinRatio(ratio);
-            addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
-        }
+        addLiquidityFormStore.setJoinRatio(ratio);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const handleCheckboxChange = async (event, tokenAddress: string) => {
@@ -304,15 +302,13 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setInputValue(tokenAddress, value);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
 
-        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
-            const ratio = addLiquidityFormStore.calcRatio(
-                pool,
-                tokenAddress,
-                value
-            );
-            addLiquidityFormStore.setJoinRatio(ratio);
-            addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
-        }
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            tokenAddress,
+            value
+        );
+        addLiquidityFormStore.setJoinRatio(ratio);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const renderAssetTable = (
