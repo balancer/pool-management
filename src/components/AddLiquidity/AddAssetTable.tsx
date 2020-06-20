@@ -304,15 +304,13 @@ const AddAssetTable = observer((props: Props) => {
         addLiquidityFormStore.setInputValue(tokenAddress, value);
         addLiquidityFormStore.setActiveInputKey(tokenAddress);
 
-        if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
-            const ratio = addLiquidityFormStore.calcRatio(
-                pool,
-                tokenAddress,
-                value
-            );
-            addLiquidityFormStore.setJoinRatio(ratio);
-            addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
-        }
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            tokenAddress,
+            value
+        );
+        addLiquidityFormStore.setJoinRatio(ratio);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const renderAssetTable = (
