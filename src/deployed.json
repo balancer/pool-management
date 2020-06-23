@@ -217,6 +217,15 @@
                 "chartColor": "#557064"
             },
             {
+                "symbol": "USD++",
+                "address": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
+                "decimals": 18,
+                "ticker": "USD++",
+                "precision": 6,
+                "iconAddress": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
+                "chartColor": "#557064"
+            },
+            {
                 "symbol": "cUSDC",
                 "address": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
                 "decimals": 8,
