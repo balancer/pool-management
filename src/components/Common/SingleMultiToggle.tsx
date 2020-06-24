@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { DepositType } from '../../stores/AddLiquidityForm';
 
 const Wrapper = styled.div`
-    margin-top: 32px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
     font-size: 14px;

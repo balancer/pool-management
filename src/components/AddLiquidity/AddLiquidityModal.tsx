@@ -30,7 +30,7 @@ const Container = styled.div`
 
 const ModalContent = styled.div`
     position: relative;
-    margin: 150px auto 0;
+    margin: 60px auto 0;
     display: flex;
     flex-direction: column;
     max-width: 862px;
@@ -74,7 +74,7 @@ const Error = styled.div`
     border-radius: 4px;
     background: var(--panel-background);
     color: var(--error-color);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 `;
 
 const Warning = styled.div`
@@ -86,7 +86,7 @@ const Warning = styled.div`
     border: 1px solid var(--warning);
     border-radius: 4px;
     padding-left: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 `;
 
 const Message = styled.div`
@@ -130,8 +130,9 @@ const Notification = styled.div`
     height: 50px;
     width: 100%;
     border: 1px solid var(--panel-border);
+    border-radius: 4px;
     background: var(--panel-background);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 `;
 
 enum ButtonAction {

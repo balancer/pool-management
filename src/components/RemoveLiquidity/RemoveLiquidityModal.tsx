@@ -27,7 +27,7 @@ const Container = styled.div`
 
 const ModalContent = styled.div`
     position: relative;
-    margin: 150px auto 0;
+    margin: 60px auto 0;
     display: flex;
     flex-direction: column;
     max-width: 862px;

@@ -15,7 +15,7 @@ const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     background: var(--panel-background);
-    margin-top: 32px;
+    margin-top: 20px;
     margin-left: 20px;
 `;
 
