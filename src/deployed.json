@@ -647,7 +647,16 @@
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
-            }
+            },
+            {
+                "symbol": "STAKE",
+                "address": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
+                "decimals": 18,
+                "ticker": "STAKE",
+                "iconAddress": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
+                "precision": 2,
+                "chartColor": "#63A7A6"
+            }            
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
         "errors": [
