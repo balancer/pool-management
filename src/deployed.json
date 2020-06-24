@@ -647,6 +647,15 @@
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
+            },
+            {
+                "symbol": "RSR",
+                "address": "0x8762db106b2c2a0bccb3a80d1ed41273552616e8",
+                "decimals": 18,
+                "ticker": "",
+                "iconAddress": "0x8762db106b2c2a0bccb3a80d1ed41273552616e8",
+                "precision": 2,
+                "chartColor": "#fafafa"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
