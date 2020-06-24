@@ -20,7 +20,7 @@ const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     background: var(--panel-background);
-    margin-top: 32px;
+    margin-top: 20px;
     margin-left: 20px;
 `;
 
@@ -50,6 +50,7 @@ const TableRow = styled.div`
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
+    opacity: ${props => (props.inactive ? 0.6 : 1)};
 `;
 
 const TableCell = styled.div`
@@ -364,8 +365,13 @@ const RemoveAssetsTable = observer((props: Props) => {
                         }
                     }
 
+                    const inactiveToken =
+                        removeLiquidityFormStore.depositType ===
+                            DepositType.SINGLE_ASSET &&
+                        removeLiquidityFormStore.activeToken !== token.address;
+
                     return (
-                        <TableRow key={token.address}>
+                        <TableRow key={token.address} inactive={inactiveToken}>
                             <TableCell>
                                 {removeLiquidityFormStore.depositType ===
                                 DepositType.SINGLE_ASSET ? (
