@@ -272,9 +272,7 @@ export default class AddLiquidityFormStore {
                 }
             }
         } else {
-            console.log('[validate] single asset');
             const amountInput = this.getInput(this.activeToken);
-            console.log('[validate] input validation', amountInput.validation);
             if (amountInput.validation !== ValidationStatus.VALID) {
                 this.validationStatus = amountInput.validation;
             } else {
