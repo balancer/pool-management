@@ -327,7 +327,8 @@ const RemoveLiquidityModal = observer((props: Props) => {
             <Warning>
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
-                    Exit will incur {formatPercentage(slippage, 2)} of slippage
+                    Removing liquidity will incur{' '}
+                    {formatPercentage(slippage, 2)} of slippage
                 </Message>
             </Warning>
         );
@@ -378,8 +379,8 @@ const RemoveLiquidityModal = observer((props: Props) => {
         if (removeLiquidityFormStore.hasValidInput()) {
             const text = account ? (
                 <React.Fragment>
-                    Withdrawing {removeLiquidityFormStore.getShareToWithdraw()}%
-                    of your liquidity. Your pool share will go from{' '}
+                    Removing {removeLiquidityFormStore.getShareToWithdraw()}% of
+                    your liquidity. Your pool share will go from{' '}
                     {currentPoolShare} to {futurePoolShare}
                 </React.Fragment>
             ) : (

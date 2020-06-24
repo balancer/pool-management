@@ -546,7 +546,8 @@ const AddLiquidityModal = observer((props: Props) => {
             <Warning>
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
-                    Join will incur {formatPercentage(slippage, 2)} of slippage
+                    Adding liquidity will incur {formatPercentage(slippage, 2)}{' '}
+                    of slippage
                 </Message>
             </Warning>
         );
