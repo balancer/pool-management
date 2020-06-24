@@ -30,25 +30,6 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
               symbol
               denormWeight
             }
-            shares (first: 1000) {
-              id
-              poolId {
-                id
-              }
-              userAddress {
-                id
-              }
-              balance
-            }
-
-            swaps(first: 1000, where: {timestamp_gt: ${tsYesterday}}) {
-              tokenIn
-              tokenInSym
-              tokenAmountIn
-              tokenOut
-              tokenOutSym
-              tokenAmountOut
-            }
           }
         }
     `;
@@ -92,25 +73,27 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
                     symbol: token.symbol,
                 } as PoolToken;
             }),
-            shares: pool.shares.map(share => {
-                return {
-                    account: getAddress(share.userAddress.id),
-                    balance: bnum(share.balance),
-                    balanceProportion: bnum(share.balance).div(
-                        bnum(pool.totalShares)
-                    ),
-                } as PoolShare;
-            }),
-            swaps: pool.swaps.map(swap => {
-                return {
-                    tokenIn: getAddress(swap.tokenIn),
-                    tokenAmountIn: bnum(swap.tokenAmountIn),
-                    tokenInSym: swap.tokenInSym,
-                    tokenOut: getAddress(swap.tokenOut),
-                    tokenAmountOut: bnum(swap.tokenAmountOut),
-                    tokenOutSym: swap.tokenOutSym,
-                } as Swap;
-            }),
+            shares: [],
+            swaps: [],
+            // shares: pool.shares.map(share => {
+            //     return {
+            //         account: getAddress(share.userAddress.id),
+            //         balance: bnum(share.balance),
+            //         balanceProportion: bnum(share.balance).div(
+            //             bnum(pool.totalShares)
+            //         ),
+            //     } as PoolShare;
+            // }),
+            // swaps: pool.swaps.map(swap => {
+            //     return {
+            //         tokenIn: getAddress(swap.tokenIn),
+            //         tokenAmountIn: bnum(swap.tokenAmountIn),
+            //         tokenInSym: swap.tokenInSym,
+            //         tokenOut: getAddress(swap.tokenOut),
+            //         tokenAmountOut: bnum(swap.tokenAmountOut),
+            //         tokenOutSym: swap.tokenOutSym,
+            //     } as Swap;
+            // }),
         };
 
         return parsedPool;
