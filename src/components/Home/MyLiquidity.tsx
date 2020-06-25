@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { Pool } from '../../types';
+// import { Pool } from '../../types';
 
 const Wrapper = styled.div`
     padding-top: 8px;
