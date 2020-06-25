@@ -93,7 +93,7 @@ export default class BlockchainFetchStore {
                     const lastCheckedBlock = providerStore.getCurrentBlockNumber();
 
                     const doFetch =
-                        blockNumber !== lastCheckedBlock || forceFetch;
+                        blockNumber >= lastCheckedBlock + 20 || forceFetch;
 
                     if (doFetch) {
                         console.debug('[Fetch Loop] Fetch Blockchain Data', {

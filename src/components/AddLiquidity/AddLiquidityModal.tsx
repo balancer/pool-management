@@ -81,6 +81,14 @@ const Message = styled.div`
     letter-spacing: 0.2px;
 `;
 
+const LowerAmountLink = styled.span`
+    margin-left: 4px;
+    font-weight: 500;
+    text-decoration-line: underline;
+    color: var(--link-text);
+    cursor: pointer;
+`;
+
 const WarningIcon = styled.img`
     width: 22px;
     height: 26px;
@@ -118,6 +126,8 @@ enum ButtonAction {
 interface Props {
     poolAddress: string;
 }
+
+const BALANCE_BUFFER = 0.05;
 
 function useOnClickOutside(ref, handler) {
     useEffect(() => {
@@ -161,6 +171,33 @@ const AddLiquidityModal = observer((props: Props) => {
                 proxyAddress
             );
         });
+    };
+
+    const findFrontrunnableToken = (
+        pool: Pool,
+        account: string
+    ): PoolToken | undefined => {
+        if (!addLiquidityFormStore.hasValidInput()) {
+            return;
+        }
+        let maxAmountToBalanceRatio = bnum(0);
+        let maxRatioToken = undefined;
+        const balances = tokenStore.getAccountBalances(
+            pool.tokensList,
+            account
+        );
+        for (const token of pool.tokens) {
+            const address = token.address;
+            const amount = bnum(addLiquidityFormStore.getInput(address).value);
+            const denormAmount = tokenStore.denormalizeBalance(amount, address);
+            const balance = balances[address];
+            const amountToBalanceRatio = denormAmount.div(balance);
+            if (amountToBalanceRatio.gt(maxAmountToBalanceRatio)) {
+                maxAmountToBalanceRatio = amountToBalanceRatio;
+                maxRatioToken = token;
+            }
+        }
+        return maxRatioToken;
     };
 
     const { poolAddress } = props;
@@ -231,12 +268,22 @@ const AddLiquidityModal = observer((props: Props) => {
                 const token = pool.tokens.find(
                     token => token.address === tokenAddress
                 );
-                const tokenAmountIn = tokenStore
+
+                const inputAmountIn = tokenStore
                     .denormalizeBalance(
                         addLiquidityFormStore.joinRatio.times(token.balance),
                         token.address
                     )
+                    .div(1 - BALANCE_BUFFER)
                     .integerValue(BigNumber.ROUND_UP);
+                const balanceAmountIn = tokenStore.getBalance(
+                    token.address,
+                    account
+                );
+                const tokenAmountIn = BigNumber.min(
+                    inputAmountIn,
+                    balanceAmountIn
+                );
                 tokenAmountsIn.push(tokenAmountIn.toString());
             });
 
@@ -255,6 +302,34 @@ const AddLiquidityModal = observer((props: Props) => {
                 tokenAmountsIn
             );
         }
+    };
+
+    const handleLowerAmountButton = () => {
+        const frontrunningThreshold = 1 - BALANCE_BUFFER;
+        const token = findFrontrunnableToken(pool, account);
+        const address = token.address;
+
+        const balance = tokenStore.getBalance(address, account);
+        const safeAmount = balance.times(frontrunningThreshold);
+        const normalizedAmount = tokenStore.normalizeBalance(
+            safeAmount,
+            address
+        );
+
+        addLiquidityFormStore.setInputValue(
+            address,
+            normalizedAmount.toString()
+        );
+        addLiquidityFormStore.setActiveInputKey(address);
+
+        const ratio = addLiquidityFormStore.calcRatio(
+            pool,
+            address,
+            normalizedAmount.toString()
+        );
+
+        addLiquidityFormStore.setJoinRatio(ratio);
+        addLiquidityFormStore.refreshInputAmounts(pool, account, ratio);
     };
 
     const renderWarning = () => {
@@ -284,6 +359,40 @@ const AddLiquidityModal = observer((props: Props) => {
                 </Warning>
             );
         }
+    };
+
+    const renderFrontrunningWarning = () => {
+        const frontrunningThreshold = 1 - BALANCE_BUFFER;
+
+        const token = findFrontrunnableToken(pool, account);
+        if (!token) {
+            return;
+        }
+
+        const address = token.address;
+        const amount = bnum(addLiquidityFormStore.getInput(address).value);
+        const denormAmount = tokenStore.denormalizeBalance(amount, address);
+        const balance = tokenStore.getBalance(address, account);
+        const amountToBalanceRatio = denormAmount.div(balance);
+        if (
+            amountToBalanceRatio.lte(frontrunningThreshold) ||
+            amountToBalanceRatio.gt(1)
+        ) {
+            return;
+        }
+
+        return (
+            <Warning>
+                <WarningIcon src="WarningSign.svg" />
+                <Message>
+                    Join might fail due to frontrunning. Use high gas price or
+                    <LowerAmountLink onClick={e => handleLowerAmountButton()}>
+                        lower amounts
+                    </LowerAmountLink>
+                    .
+                </Message>
+            </Warning>
+        );
     };
 
     const renderNotification = () => {
@@ -404,6 +513,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     ) : (
                         <React.Fragment>
                             {renderWarning()}
+                            {renderFrontrunningWarning()}
                             {renderNotification()}
                             {renderActionButton()}
                         </React.Fragment>

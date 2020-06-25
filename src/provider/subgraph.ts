@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
-import { NumberMap, Pool, PoolShare, PoolToken, Swap } from '../types';
+import { NumberMap, Pool, PoolToken } from '../types';
 import { bnum } from '../utils/helpers';
 import { getSupportedChainId, SUBGRAPH_URLS } from './connectors';
 
@@ -9,8 +9,8 @@ const SUBGRAPH_URL = SUBGRAPH_URLS[chainId];
 
 export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
     // Returns all swaps for all pools in last 24hours
-    var ts = Math.round(new Date().getTime() / 1000);
-    var tsYesterday = ts - 24 * 3600;
+    // var ts = Math.round(new Date().getTime() / 1000);
+    // var tsYesterday = ts - 24 * 3600;
 
     const query = `
         {
@@ -29,25 +29,6 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
               decimals
               symbol
               denormWeight
-            }
-            shares {
-              id
-              poolId {
-                id
-              }
-              userAddress {
-                id
-              }
-              balance
-            }
-
-            swaps(where: {timestamp_gt: ${tsYesterday}}) {
-              tokenIn
-              tokenInSym
-              tokenAmountIn
-              tokenOut
-              tokenOutSym
-              tokenAmountOut
             }
           }
         }
@@ -92,25 +73,27 @@ export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
                     symbol: token.symbol,
                 } as PoolToken;
             }),
-            shares: pool.shares.map(share => {
-                return {
-                    account: getAddress(share.userAddress.id),
-                    balance: bnum(share.balance),
-                    balanceProportion: bnum(share.balance).div(
-                        bnum(pool.totalShares)
-                    ),
-                } as PoolShare;
-            }),
-            swaps: pool.swaps.map(swap => {
-                return {
-                    tokenIn: getAddress(swap.tokenIn),
-                    tokenAmountIn: bnum(swap.tokenAmountIn),
-                    tokenInSym: swap.tokenInSym,
-                    tokenOut: getAddress(swap.tokenOut),
-                    tokenAmountOut: bnum(swap.tokenAmountOut),
-                    tokenOutSym: swap.tokenOutSym,
-                } as Swap;
-            }),
+            shares: [],
+            swaps: [],
+            // shares: pool.shares.map(share => {
+            //     return {
+            //         account: getAddress(share.userAddress.id),
+            //         balance: bnum(share.balance),
+            //         balanceProportion: bnum(share.balance).div(
+            //             bnum(pool.totalShares)
+            //         ),
+            //     } as PoolShare;
+            // }),
+            // swaps: pool.swaps.map(swap => {
+            //     return {
+            //         tokenIn: getAddress(swap.tokenIn),
+            //         tokenAmountIn: bnum(swap.tokenAmountIn),
+            //         tokenInSym: swap.tokenInSym,
+            //         tokenOut: getAddress(swap.tokenOut),
+            //         tokenAmountOut: bnum(swap.tokenAmountOut),
+            //         tokenOutSym: swap.tokenOutSym,
+            //     } as Swap;
+            // }),
         };
 
         return parsedPool;

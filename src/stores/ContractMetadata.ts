@@ -1,6 +1,8 @@
 import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
+import { ContractTypes } from 'stores/Provider';
 import * as deployed from 'deployed.json';
+import { isAddress, toChecksum } from '../utils/helpers';
 import { NumberMap, StringMap } from '../types';
 import { getSupportedChainName } from '../provider/connectors';
 
@@ -13,6 +15,7 @@ export interface ContractMetadata {
     multicall: string;
     defaultPrecision: number;
     warnings: string[];
+    errors: string[];
     tokens: TokenMetadata[];
 }
 
@@ -79,6 +82,7 @@ export default class ContractMetadataStore {
             multicall: metadata.default[chainName].multicall,
             defaultPrecision: metadata.default[chainName].defaultPrecision,
             warnings: metadata.default[chainName].warnings,
+            errors: metadata.default[chainName].errors,
             tokens: [] as TokenMetadata[],
         };
 
@@ -105,6 +109,42 @@ export default class ContractMetadataStore {
         });
 
         this.contractMetadata = contractMetadata;
+    }
+
+    async fetchTokenMetadata(
+        address: string,
+        account: string
+    ): Promise<TokenMetadata | undefined> {
+        console.log(`[ContractMetadata] fetchTokenMetadata: ${address}`);
+
+        const { contractMetadataStore, providerStore } = this.rootStore;
+
+        try {
+            // symbol/decimal call will fail if not an actual token.
+            const tokenContract = providerStore.getContract(
+                ContractTypes.TestToken,
+                address
+            );
+
+            const defaultPrecision = contractMetadataStore.getDefaultPrecision();
+            const symbol = await tokenContract.symbol();
+            const decimals = await tokenContract.decimals();
+
+            const tokenMetadata = {
+                address,
+                symbol,
+                ticker: symbol,
+                decimals,
+                iconAddress: address,
+                precision: defaultPrecision,
+                chartColor: '#828384',
+                isSupported: true,
+            };
+
+            return tokenMetadata;
+        } catch (error) {
+            return;
+        }
     }
 
     getTokenColor(tokenAddress: string): string {
@@ -182,6 +222,16 @@ export default class ContractMetadataStore {
 
     getTokenWarnings(): string[] {
         const tokens = this.contractMetadata.warnings;
+        if (!tokens) {
+            throw new Error(
+                '[Invariant] Trying to get non-loaded static address'
+            );
+        }
+        return tokens;
+    }
+
+    getTokenErrors(): string[] {
+        const tokens = this.contractMetadata.errors;
         if (!tokens) {
             throw new Error(
                 '[Invariant] Trying to get non-loaded static address'
@@ -269,10 +319,11 @@ export default class ContractMetadataStore {
 
         let filteredMetadata: TokenMetadata[] = [];
 
-        if (filter.indexOf('0x') === 0) {
+        if (isAddress(filter)) {
+            const address = toChecksum(filter);
             //Search by address
             filteredMetadata = tokens.filter(value => {
-                return value.address === filter;
+                return value.address === address;
             });
         } else {
             //Search by symbol
