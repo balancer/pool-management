@@ -23,18 +23,15 @@ export async function fetchSharedPools(
     return pools;
 }
 
-export async function fetchPrivatePools(
-    pageIncrement: number,
-    skip: number
-): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.PRIVATE_POOLS, pageIncrement, skip);
+export async function fetchPrivatePools(): Promise<Pool[]> {
+    const query = getPoolQuery(QueryType.PRIVATE_POOLS, 100, 0);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
 }
 
 export async function fetchContributedPools(account: string): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.CONTRIBUTED_POOLS, 1000, 0, account);
+    const query = getPoolQuery(QueryType.CONTRIBUTED_POOLS, 100, 0, account);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;

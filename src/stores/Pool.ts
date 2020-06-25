@@ -1,6 +1,10 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { fetchSharedPools, fetchContributedPools } from 'provider/subgraph';
+import {
+    fetchSharedPools,
+    fetchPrivatePools,
+    fetchContributedPools,
+} from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
@@ -20,6 +24,7 @@ const SUBGRAPH_SKIP_STEP = 12;
 
 export default class PoolStore {
     @observable pools: PoolMap;
+    @observable privatePools: PoolMap;
     @observable contributedPools: PoolMap;
     @observable poolsLoaded: boolean;
     pageIncrement: number;
@@ -29,6 +34,7 @@ export default class PoolStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.pools = {} as PoolMap;
+        this.privatePools = {} as PoolMap;
         this.contributedPools = {} as PoolMap;
         this.graphSkip = 0;
     }
@@ -85,6 +91,22 @@ export default class PoolStore {
         console.debug('[fetchPools] Pools fetched & stored');
     }
 
+    @action async fetchPrivatePools() {
+        const { providerStore } = this.rootStore;
+        // The subgraph and local block could be out of sync
+        const currentBlock = providerStore.getCurrentBlockNumber();
+
+        console.debug('[fetchPrivatePools] Fetch pools');
+        const pools = await fetchPrivatePools();
+
+        pools.forEach(pool => {
+            this.processUnknownTokens(pool);
+        });
+        this.setPrivatePools(pools, currentBlock);
+
+        console.debug('[fetchPrivatePools] Pools fetched & stored');
+    }
+
     @action async fetchContributedPools() {
         // get account
         const { providerStore } = this.rootStore;
@@ -123,6 +145,16 @@ export default class PoolStore {
         this.pools = {};
         for (const pool of pools) {
             this.pools[pool.address] = {
+                blockLastFetched: blockFetched,
+                data: pool,
+            };
+        }
+    }
+
+    @action private setPrivatePools(pools: Pool[], blockFetched: number) {
+        this.privatePools = {};
+        for (const pool of pools) {
+            this.privatePools[pool.address] = {
                 blockLastFetched: blockFetched,
                 data: pool,
             };
@@ -251,9 +283,9 @@ export default class PoolStore {
 
     getPrivatePools(): Pool[] {
         const pools: Pool[] = [];
-        Object.keys(this.pools).forEach(key => {
-            if (!this.pools[key].data.finalized) {
-                pools.push(this.pools[key].data);
+        Object.keys(this.privatePools).forEach(key => {
+            if (!this.privatePools[key].data.finalized) {
+                pools.push(this.privatePools[key].data);
             }
         });
         return pools;
@@ -270,6 +302,9 @@ export default class PoolStore {
     getPool(poolAddress: string): Pool | undefined {
         if (this.pools[poolAddress]) {
             return this.pools[poolAddress].data;
+        }
+        if (this.privatePools[poolAddress]) {
+            return this.privatePools[poolAddress].data;
         }
         if (this.contributedPools[poolAddress]) {
             return this.contributedPools[poolAddress].data;

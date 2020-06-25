@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { Pool } from '../../types';
 
 const Wrapper = styled.div`
     padding-top: 8px;
@@ -30,7 +29,6 @@ const MyLiquidity = observer(() => {
             pool.address,
             account
         );
-        console.log('MY LIQ', pool, userShare);
         return userShare && userShare.gt(0);
     });
 
