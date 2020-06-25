@@ -26,7 +26,7 @@ export default class BlockchainFetchStore {
     @action fetchPoolTotalSupplies() {
         const { tokenStore, poolStore } = this.rootStore;
         const poolAddresses = poolStore
-            .getPublicPools()
+            .getContributedPools()
             .map(pool => pool.address);
         tokenStore.fetchTotalSupplies(poolAddresses);
     }
@@ -35,8 +35,9 @@ export default class BlockchainFetchStore {
         const { tokenStore, poolStore, providerStore } = this.rootStore;
         const account = providerStore.providerStatus.account;
         const poolAddresses = poolStore
-            .getPublicPools()
+            .getContributedPools()
             .map(pool => pool.address);
+        console.log('fetchPoolUserBalances', poolAddresses);
         tokenStore.fetchTokenBalances(account, poolAddresses);
     }
 
@@ -107,15 +108,21 @@ export default class BlockchainFetchStore {
                         // Get global blockchain data
                         poolStore.fetchPools().then(() => {
                             // Fetch user pool shares after pools loaded
-                            this.fetchPoolTotalSupplies();
+                            // this.fetchPoolTotalSupplies();
 
                             if (account) {
-                                this.fetchPoolUserBalances();
                                 this.fetchProxyData();
                             }
 
                             if (account && appSettingsStore.hasActivePool()) {
                                 this.fetchActivePoolAllowances();
+                            }
+                        });
+
+                        poolStore.fetchContributedPools().then(() => {
+                            if (account) {
+                                this.fetchPoolTotalSupplies();
+                                this.fetchPoolUserBalances();
                             }
                         });
 

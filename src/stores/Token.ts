@@ -297,6 +297,7 @@ export default class TokenStore {
         account: string,
         fetchBlock: number
     ) {
+        console.log('SET BALANCES', tokens, balances);
         const fetchedBalances: TokenBalanceMap = {};
 
         balances.forEach((balance, index) => {

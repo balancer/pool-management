@@ -160,7 +160,10 @@ async function fetchPools(query: string) {
     });
 
     const payload = await response.json();
-    return payload.data.pools;
+    const pools = payload.data.pools
+        ? payload.data.pools
+        : payload.data.poolShares.map(poolShare => poolShare.poolId);
+    return pools;
 }
 
 function processPools(rawPools): Pool[] {

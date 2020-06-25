@@ -240,7 +240,7 @@ export default class PoolStore {
     }
 
     getPublicPools(): Pool[] {
-        let pools: Pool[] = [];
+        const pools: Pool[] = [];
         Object.keys(this.pools).forEach(key => {
             if (this.pools[key].data.finalized) {
                 pools.push(this.pools[key].data);
@@ -250,7 +250,7 @@ export default class PoolStore {
     }
 
     getPrivatePools(): Pool[] {
-        let pools: Pool[] = [];
+        const pools: Pool[] = [];
         Object.keys(this.pools).forEach(key => {
             if (!this.pools[key].data.finalized) {
                 pools.push(this.pools[key].data);
@@ -259,9 +259,20 @@ export default class PoolStore {
         return pools;
     }
 
+    getContributedPools(): Pool[] {
+        const pools: Pool[] = [];
+        Object.keys(this.contributedPools).forEach(key => {
+            pools.push(this.contributedPools[key].data);
+        });
+        return pools;
+    }
+
     getPool(poolAddress: string): Pool | undefined {
         if (this.pools[poolAddress]) {
             return this.pools[poolAddress].data;
+        }
+        if (this.contributedPools[poolAddress]) {
+            return this.contributedPools[poolAddress].data;
         }
         return undefined;
     }
@@ -288,10 +299,11 @@ export default class PoolStore {
     }
 
     getPoolTokens(poolAddress: string): string[] {
-        if (!this.pools[poolAddress]) {
+        const pool = this.getPool(poolAddress);
+        if (!pool) {
             throw new Error(`Pool ${poolAddress} not loaded`);
         }
-        return this.pools[poolAddress].data.tokensList;
+        return pool.tokensList;
     }
 
     @action exitPool = async (
