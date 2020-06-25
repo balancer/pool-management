@@ -244,6 +244,42 @@
                 "chartColor": "#c28d75"
             },
             {
+                "symbol": "cBAT",
+                "address": "0x6c8c6b02e7b2be14d4fa6022dfd6d75921d90e4e",
+                "decimals": 8,
+                "ticker": "cBAT",
+                "iconAddress": "0x6c8c6b02e7b2be14d4fa6022dfd6d75921d90e4e",
+                "precision": 4,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "c0x",
+                "address": "0xb3319f5d18bc0d84dd1b4825dcde5d5f7266d407",
+                "decimals": 8,
+                "ticker": "c0x",
+                "iconAddress": "0xb3319f5d18bc0d84dd1b4825dcde5d5f7266d407",
+                "precision": 4,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "cWBTC",
+                "address": "0xc11b1268c1a384e55c48c2391d8d480264a3a7f4",
+                "decimals": 8,
+                "ticker": "cWBTC",
+                "iconAddress": "0xc11b1268c1a384e55c48c2391d8d480264a3a7f4",
+                "precision": 4,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "cREP",
+                "address": "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
+                "decimals": 8,
+                "ticker": "cREP",
+                "iconAddress": "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
+                "precision": 4,
+                "chartColor": "#c28d75"
+            },
+            {
                 "symbol": "REP",
                 "address": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
                 "decimals": 18,
