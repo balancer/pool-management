@@ -1,6 +1,6 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { fetchPools } from 'provider/subgraph';
+import { fetchSharedPools, fetchContributedPools } from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
@@ -16,8 +16,11 @@ interface PoolMap {
     [index: string]: PoolData;
 }
 
+const SUBGRAPH_SKIP_STEP = 12;
+
 export default class PoolStore {
     @observable pools: PoolMap;
+    @observable contributedPools: PoolMap;
     @observable poolsLoaded: boolean;
     pageIncrement: number;
     graphSkip: number;
@@ -26,7 +29,7 @@ export default class PoolStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.pools = {} as PoolMap;
-        this.pageIncrement = 12;
+        this.contributedPools = {} as PoolMap;
         this.graphSkip = 0;
     }
 
@@ -62,13 +65,16 @@ export default class PoolStore {
         });
     }
 
-    @action async fetchAllPools() {
-        const { providerStore, contractMetadataStore } = this.rootStore;
+    @action async fetchPools() {
+        const { providerStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        console.debug('[fetchAllPools] Fetch pools');
-        const pools = await fetchPools(this.pageIncrement, this.graphSkip);
+        console.debug('[fetchPools] Fetch pools');
+        const pools = await fetchSharedPools(
+            SUBGRAPH_SKIP_STEP,
+            this.graphSkip
+        );
 
         pools.forEach(pool => {
             this.processUnknownTokens(pool);
@@ -76,24 +82,61 @@ export default class PoolStore {
         this.setPools(pools, currentBlock);
         this.poolsLoaded = true;
 
-        console.debug('[fetchAllPools] Pools fetched & stored');
+        console.debug('[fetchPools] Pools fetched & stored');
     }
 
-    @action async pagePools() {
-        this.graphSkip += this.pageIncrement;
+    @action async fetchContributedPools() {
+        // get account
+        const { providerStore } = this.rootStore;
+        // The subgraph and local block could be out of sync
+        const currentBlock = providerStore.getCurrentBlockNumber();
+        const account = providerStore.providerStatus.account;
 
-        this.fetchAllPools();
+        if (!account) {
+            return;
+        }
+
+        console.debug('[fetchContributedPools] Fetch pools');
+        const pools = await fetchContributedPools(account);
+
+        pools.forEach(pool => {
+            this.processUnknownTokens(pool);
+        });
+        this.setContributedPools(pools, currentBlock);
+
+        console.debug('[fetchContributedPools] Pools fetched & stored');
+    }
+
+    @action async pagePools(next: boolean) {
+        if (next) {
+            this.graphSkip += SUBGRAPH_SKIP_STEP;
+        } else {
+            this.graphSkip -= SUBGRAPH_SKIP_STEP;
+            if (this.graphSkip < 0) {
+                this.graphSkip = 0;
+            }
+        }
+        this.fetchPools();
     }
 
     @action private setPools(pools: Pool[], blockFetched: number) {
-        const poolMap = {};
+        this.pools = {};
         for (const pool of pools) {
-            poolMap[pool.address] = {
+            this.pools[pool.address] = {
                 blockLastFetched: blockFetched,
                 data: pool,
             };
         }
-        this.pools = poolMap;
+    }
+
+    @action private setContributedPools(pools: Pool[], blockFetched: number) {
+        this.contributedPools = {};
+        for (const pool of pools) {
+            this.contributedPools[pool.address] = {
+                blockLastFetched: blockFetched,
+                data: pool,
+            };
+        }
     }
 
     getPoolToken(poolAddress: string, tokenAddress: string): PoolToken {

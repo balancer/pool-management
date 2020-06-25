@@ -105,7 +105,7 @@ export default class BlockchainFetchStore {
                         providerStore.setCurrentBlockNumber(blockNumber);
 
                         // Get global blockchain data
-                        poolStore.fetchAllPools().then(() => {
+                        poolStore.fetchPools().then(() => {
                             // Fetch user pool shares after pools loaded
                             this.fetchPoolTotalSupplies();
 
