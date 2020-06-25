@@ -647,7 +647,16 @@
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
-            }
+            },
+            {
+                "symbol": "KAI",
+                "address": "0xbd6467a31899590474ce1e84f70594c53d628e46",
+                "decimals": 18,
+                "ticker": "KAI",
+                "iconAddress": "0xbd6467a31899590474ce1e84f70594c53d628e46",
+                "precision": 2,
+                "chartColor": "#EF443F"
+            },
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
         "errors": [
