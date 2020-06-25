@@ -1,6 +1,7 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
 import {
+    fetchPool,
     fetchSharedPools,
     fetchPrivatePools,
     fetchContributedPools,
@@ -26,6 +27,7 @@ export default class PoolStore {
     @observable pools: PoolMap;
     @observable privatePools: PoolMap;
     @observable contributedPools: PoolMap;
+    @observable activePool: Pool;
     @observable poolsLoaded: boolean;
     pageIncrement: number;
     graphSkip: number;
@@ -108,7 +110,6 @@ export default class PoolStore {
     }
 
     @action async fetchContributedPools() {
-        // get account
         const { providerStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
@@ -127,6 +128,13 @@ export default class PoolStore {
         this.setContributedPools(pools, currentBlock);
 
         console.debug('[fetchContributedPools] Pools fetched & stored');
+    }
+
+    @action async fetchActivePool(poolAddress: string) {
+        console.debug('[fetchActivePool] Fetch pools');
+        const pool = await fetchPool(poolAddress);
+        this.processUnknownTokens(pool);
+        this.activePool = pool;
     }
 
     @action async pagePools(next: boolean) {
@@ -308,6 +316,9 @@ export default class PoolStore {
         }
         if (this.contributedPools[poolAddress]) {
             return this.contributedPools[poolAddress].data;
+        }
+        if (this.activePool && this.activePool.address === poolAddress) {
+            return this.activePool;
         }
         return undefined;
     }

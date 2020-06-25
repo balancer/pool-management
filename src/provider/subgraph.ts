@@ -11,6 +11,7 @@ enum QueryType {
     SHARED_POOLS,
     PRIVATE_POOLS,
     CONTRIBUTED_POOLS,
+    SINGLE_POOL,
 }
 
 export async function fetchSharedPools(
@@ -35,6 +36,44 @@ export async function fetchContributedPools(account: string): Promise<Pool[]> {
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
+}
+
+export async function fetchPool(address: string): Promise<Pool> {
+    const query = `
+        {
+            pool (id: '${address}') {
+                id
+                publicSwap
+                finalized
+                swapFee
+                totalWeight
+                totalShares
+                tokensList
+                tokens {
+                    id
+                    address
+                    balance
+                    decimals
+                    symbol
+                    denormWeight
+                }
+            }
+        }
+    `;
+    const response = await fetch(SUBGRAPH_URL, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            query,
+        }),
+    });
+
+    const payload = await response.json();
+    const pool = payload.data.pool;
+    return pool;
 }
 
 export async function fetchPoolSwaps(
