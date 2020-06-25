@@ -174,7 +174,7 @@ function getPoolQuery(
         return `
             {
                 poolShares(where: {
-                    userAddress: "0x72aa5ad78fb4f2e567a5df833dad12f60b52db63"
+                    userAddress: "${account.toLowerCase()}"
                 }) {
                     poolId {
                         ${poolFields}

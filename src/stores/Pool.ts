@@ -230,6 +230,7 @@ export default class PoolStore {
         account: string
     ): BigNumber | undefined {
         const { tokenStore } = this.rootStore;
+
         const userShare = tokenStore.getBalance(poolAddress, account);
         const totalShares = tokenStore.getTotalSupply(poolAddress);
 

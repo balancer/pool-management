@@ -29,6 +29,7 @@ const MyLiquidity = observer(() => {
             pool.address,
             account
         );
+
         return userShare && userShare.gt(0);
     });
 
