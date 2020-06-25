@@ -41,7 +41,7 @@ export async function fetchContributedPools(account: string): Promise<Pool[]> {
 export async function fetchPool(address: string): Promise<Pool> {
     const query = `
         {
-            pool (id: '${address}') {
+            pool(id: "${address.toLowerCase()}") {
                 id
                 publicSwap
                 finalized
@@ -72,7 +72,9 @@ export async function fetchPool(address: string): Promise<Pool> {
     });
 
     const payload = await response.json();
-    const pool = payload.data.pool;
+    const rawPool = payload.data.pool;
+    const pools = processPools([rawPool]);
+    const pool = pools[0];
     return pool;
 }
 

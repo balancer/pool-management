@@ -104,11 +104,6 @@ export default class BlockchainFetchStore {
                         // Set block number
                         providerStore.setCurrentBlockNumber(blockNumber);
 
-                        if (appSettingsStore.hasActivePool()) {
-                            const activePool = appSettingsStore.getActivePoolAddress();
-                            poolStore.fetchActivePool(activePool);
-                        }
-
                         // Fetch pools
                         poolStore.fetchPools().then(() => {
                             // Fetch user pool shares after pools loaded

@@ -131,7 +131,7 @@ export default class PoolStore {
     }
 
     @action async fetchActivePool(poolAddress: string) {
-        console.debug('[fetchActivePool] Fetch pools');
+        console.debug('[fetchActivePool] Fetch pool');
         const pool = await fetchPool(poolAddress);
         this.processUnknownTokens(pool);
         this.activePool = pool;
