@@ -64,6 +64,10 @@ const Pool = observer((props: RouteComponentProps) => {
         };
     }, [poolAddress, swapsTableStore]);
 
+    useEffect(() => {
+        poolStore.fetchActivePool(poolAddress);
+    }, [poolAddress, poolStore]);
+
     if (!isAddress(poolAddress)) {
         return (
             <PoolViewWrapper>

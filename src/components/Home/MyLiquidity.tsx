@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { Pool } from '../../types';
 
 const Wrapper = styled.div`
     padding-top: 8px;
@@ -24,28 +23,14 @@ const MyLiquidity = observer(() => {
     } = useStores();
     const account = providerStore.providerStatus.account;
 
-    let pools: Pool[] = [];
-
-    if (account) {
-        poolStore.getPublicPools().every(pool => {
-            const userShare = poolStore.getUserShareProportion(
-                pool.address,
-                account
-            );
-
-            // userShare in undefined if token balances or supplies haven't been loaded
-            if (!userShare) {
-                pools = undefined;
-                return false;
-            }
-
-            if (userShare.gt(0)) {
-                pools.push(pool);
-            }
-
-            return true;
-        });
-    }
+    const contributedPools = poolStore.getContributedPools();
+    const pools = contributedPools.filter(pool => {
+        const userShare = poolStore.getUserShareProportion(
+            pool.address,
+            account
+        );
+        return userShare && userShare.gt(0);
+    });
 
     return (
         <Wrapper>
