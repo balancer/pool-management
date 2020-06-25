@@ -1,6 +1,6 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { fetchAllPools } from 'provider/subgraph';
+import { fetchPools } from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
@@ -19,11 +19,15 @@ interface PoolMap {
 export default class PoolStore {
     @observable pools: PoolMap;
     @observable poolsLoaded: boolean;
+    pageIncrement: number;
+    graphSkip: number;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.pools = {} as PoolMap;
+        this.pageIncrement = 12;
+        this.graphSkip = 0;
     }
 
     @action processUnknownTokens(pool: Pool) {
@@ -64,7 +68,7 @@ export default class PoolStore {
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchAllPools] Fetch pools');
-        const pools = await fetchAllPools(contractMetadataStore.tokenIndex);
+        const pools = await fetchPools(this.pageIncrement, this.graphSkip);
 
         pools.forEach(pool => {
             this.processUnknownTokens(pool);
@@ -73,6 +77,12 @@ export default class PoolStore {
         this.poolsLoaded = true;
 
         console.debug('[fetchAllPools] Pools fetched & stored');
+    }
+
+    @action async pagePools() {
+        this.graphSkip += this.pageIncrement;
+
+        this.fetchAllPools();
     }
 
     @action private setPools(pools: Pool[], blockFetched: number) {

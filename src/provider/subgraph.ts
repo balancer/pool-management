@@ -7,14 +7,17 @@ import { getSupportedChainId, SUBGRAPH_URLS } from './connectors';
 const chainId = getSupportedChainId();
 const SUBGRAPH_URL = SUBGRAPH_URLS[chainId];
 
-export async function fetchAllPools(tokenIndex: NumberMap): Promise<Pool[]> {
+export async function fetchPools(
+    pageIncrement: number,
+    skip: number
+): Promise<Pool[]> {
     // Returns all swaps for all pools in last 24hours
     // var ts = Math.round(new Date().getTime() / 1000);
     // var tsYesterday = ts - 24 * 3600;
 
     const query = `
         {
-          pools (first: 1000) {
+          pools (first: ${pageIncrement} , skip: ${skip}, orderBy: liquidity, orderDirection: desc) {
             id
             publicSwap
             finalized

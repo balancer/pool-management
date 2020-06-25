@@ -25,6 +25,8 @@ const Header = styled.div`
     padding: 0px 0px 24px 0px;
 `;
 
+const LoadMore = styled.div``;
+
 const CreateLink = styled(Link)`
     text-decoration: none;
 `;
@@ -35,6 +37,10 @@ const SharedPools = observer(() => {
     } = useStores();
 
     const pools = poolStore.getPublicPools();
+
+    const pageGraph = () => {
+        poolStore.pagePools();
+    };
 
     const account = providerStore.providerStatus.account;
 
@@ -54,6 +60,7 @@ const SharedPools = observer(() => {
                 pools={pools}
                 dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
             />
+            <LoadMore onClick={e => pageGraph()}>Next Page</LoadMore>
         </Wrapper>
     );
 });
