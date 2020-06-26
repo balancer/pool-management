@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "RLC",
+                "address": "0x607F4C5BB672230e8672085532f7e901544a7375",
+                "decimals": 9,
+                "ticker": "REQ",
+                "iconAddress": "0x607F4C5BB672230e8672085532f7e901544a7375",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
                 "symbol": "REQ",
                 "address": "0x8f8221aFbB33998d8584A2B05749bA73c37a938a",
                 "decimals": 18,
