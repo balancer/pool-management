@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "HOT",
+                "address": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+                "decimals": 18,
+                "ticker": "HOT",
+                "iconAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
                 "symbol": "ANJ",
                 "address": "0xcD62b1C403fa761BAadFC74C525ce2B51780b184",
                 "decimals": 18,
