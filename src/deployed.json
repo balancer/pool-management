@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "STORJ",
+                "address": "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",
+                "decimals": 8,
+                "ticker": "STORJ",
+                "iconAddress": "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",
+                "precision": 2,
+                "chartColor": "#7e9e99"
+            },
+            {
                 "symbol": "MCX",
                 "address": "0xd15eCDCF5Ea68e3995b2D0527A0aE0a3258302F8",
                 "decimals": 18,
