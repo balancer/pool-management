@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "BLT",
+                "address": "0x107c4504cd79C5d2696Ea0030a8dD4e92601B82e",
+                "decimals": 18,
+                "ticker": "BLT",
+                "iconAddress": "0x107c4504cd79C5d2696Ea0030a8dD4e92601B82e",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
                 "symbol": "CVC",
                 "address": "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
                 "decimals": 8,
