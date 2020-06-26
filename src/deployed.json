@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "CVC",
+                "address": "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
+                "decimals": 8,
+                "ticker": "CVC",
+                "iconAddress": "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
                 "symbol": "MANA",
                 "address": "0x0F5D2fB29fb7d3CFeE444a200298f468908cC942",
                 "decimals": 18,
