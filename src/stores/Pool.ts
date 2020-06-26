@@ -242,8 +242,8 @@ export default class PoolStore {
     }
 
     formatZeroMinAmountsOut(poolAddress: string): string[] {
-        const pool = this.pools[poolAddress];
-        return pool.data.tokens.map(token => '0');
+        const pool = this.getPool(poolAddress);
+        return pool.tokens.map(token => '0');
     }
 
     calcUserLiquidity(
@@ -271,13 +271,6 @@ export default class PoolStore {
 
     getPoolBalances(poolAddress: string): BigNumber[] {
         return this.getPool(poolAddress).tokens.map(token => token.balance);
-    }
-
-    getPoolData(poolAddress: string): PoolData | undefined {
-        if (this.pools[poolAddress]) {
-            return this.pools[poolAddress];
-        }
-        return undefined;
     }
 
     getPublicPools(): Pool[] {
