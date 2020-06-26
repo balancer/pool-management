@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "POWR",
+                "address": "0x595832F8FC6BF59c85C527fEC3740A1b7a361269",
+                "decimals": 6,
+                "ticker": "POWR",
+                "iconAddress": "0x595832F8FC6BF59c85C527fEC3740A1b7a361269",
+                "precision": 2,
+                "chartColor": "#433455"
+            },
+            {
                 "symbol": "DNT",
                 "address": "0x0AbdAce70D3790235af448C88547603b945604ea",
                 "decimals": 18,
