@@ -145,6 +145,8 @@ interface Props {
     poolAddress: string;
 }
 
+const BALANCE_BUFFER = 0.05;
+
 function useOnClickOutside(ref, handler) {
     useEffect(() => {
         const handleClick = event => {
@@ -309,7 +311,7 @@ const AddLiquidityModal = observer((props: Props) => {
                             ),
                             token.address
                         )
-                        .div(0.99)
+                        .div(1 - BALANCE_BUFFER)
                         .integerValue(BigNumber.ROUND_UP);
                     const balanceAmountIn = tokenStore.getBalance(
                         token.address,
@@ -366,7 +368,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const handleLowerAmountButton = () => {
-        const frontrunningThreshold = 0.99;
+        const frontrunningThreshold = 1 - BALANCE_BUFFER;
         const token = findFrontrunnableToken(pool, account);
         const address = token.address;
 
@@ -456,7 +458,8 @@ const AddLiquidityModal = observer((props: Props) => {
         if (addLiquidityFormStore.depositType === DepositType.SINGLE_ASSET) {
             return;
         }
-        const frontrunningThreshold = 0.99;
+
+        const frontrunningThreshold = 1 - BALANCE_BUFFER;
 
         const token = findFrontrunnableToken(pool, account);
         if (!token) {

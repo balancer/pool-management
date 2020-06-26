@@ -1,6 +1,11 @@
 import RootStore from 'stores/Root';
 import { action, observable } from 'mobx';
-import { fetchAllPools } from 'provider/subgraph';
+import {
+    fetchPool,
+    fetchSharedPools,
+    fetchPrivatePools,
+    fetchContributedPools,
+} from 'provider/subgraph';
 import { Pool, PoolToken } from 'types';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, fromPercentage, tinyAddress } from '../utils/helpers';
@@ -16,14 +21,24 @@ interface PoolMap {
     [index: string]: PoolData;
 }
 
+const SUBGRAPH_SKIP_STEP = 12;
+
 export default class PoolStore {
     @observable pools: PoolMap;
+    @observable privatePools: PoolMap;
+    @observable contributedPools: PoolMap;
+    @observable activePool: Pool;
     @observable poolsLoaded: boolean;
+    pageIncrement: number;
+    graphSkip: number;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
         this.pools = {} as PoolMap;
+        this.privatePools = {} as PoolMap;
+        this.contributedPools = {} as PoolMap;
+        this.graphSkip = 0;
     }
 
     @action processUnknownTokens(pools: Pool[]) {
@@ -65,30 +80,108 @@ export default class PoolStore {
         tokenStore.fetchTokenBalances(account, Object.keys(tokensToFetch));
     }
 
-    @action async fetchAllPools() {
-        const { providerStore, contractMetadataStore } = this.rootStore;
+    @action async fetchPools() {
+        const { providerStore } = this.rootStore;
         // The subgraph and local block could be out of sync
         const currentBlock = providerStore.getCurrentBlockNumber();
 
-        console.debug('[fetchAllPools] Fetch pools');
-        const pools = await fetchAllPools(contractMetadataStore.tokenIndex);
+        console.debug('[fetchPools] Fetch pools');
+        const pools = await fetchSharedPools(
+            SUBGRAPH_SKIP_STEP,
+            this.graphSkip
+        );
 
         this.processUnknownTokens(pools);
         this.setPools(pools, currentBlock);
         this.poolsLoaded = true;
 
-        console.debug('[fetchAllPools] Pools fetched & stored');
+        console.debug('[fetchPools] Pools fetched & stored');
+    }
+
+    @action async fetchPrivatePools() {
+        const { providerStore } = this.rootStore;
+        // The subgraph and local block could be out of sync
+        const currentBlock = providerStore.getCurrentBlockNumber();
+
+        console.debug('[fetchPrivatePools] Fetch pools');
+        const pools = await fetchPrivatePools();
+
+        pools.forEach(pool => {
+            this.processUnknownTokens(pool);
+        });
+        this.setPrivatePools(pools, currentBlock);
+
+        console.debug('[fetchPrivatePools] Pools fetched & stored');
+    }
+
+    @action async fetchContributedPools() {
+        const { providerStore } = this.rootStore;
+        // The subgraph and local block could be out of sync
+        const currentBlock = providerStore.getCurrentBlockNumber();
+        const account = providerStore.providerStatus.account;
+
+        if (!account) {
+            return;
+        }
+
+        console.debug('[fetchContributedPools] Fetch pools');
+        const pools = await fetchContributedPools(account);
+
+        pools.forEach(pool => {
+            this.processUnknownTokens(pool);
+        });
+        this.setContributedPools(pools, currentBlock);
+
+        console.debug('[fetchContributedPools] Pools fetched & stored');
+    }
+
+    @action async fetchActivePool(poolAddress: string) {
+        console.debug('[fetchActivePool] Fetch pool');
+        const pool = await fetchPool(poolAddress);
+        this.processUnknownTokens(pool);
+        this.activePool = pool;
+    }
+
+    @action async pagePools(next: boolean) {
+        if (next) {
+            this.graphSkip += SUBGRAPH_SKIP_STEP;
+        } else {
+            this.graphSkip -= SUBGRAPH_SKIP_STEP;
+            if (this.graphSkip < 0) {
+                this.graphSkip = 0;
+            }
+        }
+        this.fetchPools();
     }
 
     @action private setPools(pools: Pool[], blockFetched: number) {
-        const poolMap = {};
+        this.pools = {};
         for (const pool of pools) {
-            poolMap[pool.address] = {
+            this.pools[pool.address] = {
                 blockLastFetched: blockFetched,
                 data: pool,
             };
         }
-        this.pools = poolMap;
+    }
+
+    @action private setPrivatePools(pools: Pool[], blockFetched: number) {
+        this.privatePools = {};
+        for (const pool of pools) {
+            this.privatePools[pool.address] = {
+                blockLastFetched: blockFetched,
+                data: pool,
+            };
+        }
+    }
+
+    @action private setContributedPools(pools: Pool[], blockFetched: number) {
+        this.contributedPools = {};
+        for (const pool of pools) {
+            this.contributedPools[pool.address] = {
+                blockLastFetched: blockFetched,
+                data: pool,
+            };
+        }
     }
 
     getPoolToken(poolAddress: string, tokenAddress: string): PoolToken {
@@ -142,6 +235,7 @@ export default class PoolStore {
         account: string
     ): BigNumber | undefined {
         const { tokenStore } = this.rootStore;
+
         const userShare = tokenStore.getBalance(poolAddress, account);
         const totalShares = tokenStore.getTotalSupply(poolAddress);
 
@@ -153,8 +247,8 @@ export default class PoolStore {
     }
 
     formatZeroMinAmountsOut(poolAddress: string): string[] {
-        const pool = this.pools[poolAddress];
-        return pool.data.tokens.map(token => '0');
+        const pool = this.getPool(poolAddress);
+        return pool.tokens.map(token => '0');
     }
 
     calcUserLiquidity(
@@ -184,15 +278,8 @@ export default class PoolStore {
         return this.getPool(poolAddress).tokens.map(token => token.balance);
     }
 
-    getPoolData(poolAddress: string): PoolData | undefined {
-        if (this.pools[poolAddress]) {
-            return this.pools[poolAddress];
-        }
-        return undefined;
-    }
-
     getPublicPools(): Pool[] {
-        let pools: Pool[] = [];
+        const pools: Pool[] = [];
         Object.keys(this.pools).forEach(key => {
             if (this.pools[key].data.finalized) {
                 pools.push(this.pools[key].data);
@@ -202,11 +289,19 @@ export default class PoolStore {
     }
 
     getPrivatePools(): Pool[] {
-        let pools: Pool[] = [];
-        Object.keys(this.pools).forEach(key => {
-            if (!this.pools[key].data.finalized) {
-                pools.push(this.pools[key].data);
+        const pools: Pool[] = [];
+        Object.keys(this.privatePools).forEach(key => {
+            if (!this.privatePools[key].data.finalized) {
+                pools.push(this.privatePools[key].data);
             }
+        });
+        return pools;
+    }
+
+    getContributedPools(): Pool[] {
+        const pools: Pool[] = [];
+        Object.keys(this.contributedPools).forEach(key => {
+            pools.push(this.contributedPools[key].data);
         });
         return pools;
     }
@@ -214,6 +309,15 @@ export default class PoolStore {
     getPool(poolAddress: string): Pool | undefined {
         if (this.pools[poolAddress]) {
             return this.pools[poolAddress].data;
+        }
+        if (this.privatePools[poolAddress]) {
+            return this.privatePools[poolAddress].data;
+        }
+        if (this.contributedPools[poolAddress]) {
+            return this.contributedPools[poolAddress].data;
+        }
+        if (this.activePool && this.activePool.address === poolAddress) {
+            return this.activePool;
         }
         return undefined;
     }
@@ -240,10 +344,11 @@ export default class PoolStore {
     }
 
     getPoolTokens(poolAddress: string): string[] {
-        if (!this.pools[poolAddress]) {
+        const pool = this.getPool(poolAddress);
+        if (!pool) {
             throw new Error(`Pool ${poolAddress} not loaded`);
         }
-        return this.pools[poolAddress].data.tokensList;
+        return pool.tokensList;
     }
 
     @action exitPool = async (
