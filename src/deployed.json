@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "TRAC",
+                "address": "0xaA7a9CA87d3694B5755f213B5D04094b8d0F0A6F",
+                "decimals": 18,
+                "ticker": "TRAC",
+                "iconAddress": "0xaA7a9CA87d3694B5755f213B5D04094b8d0F0A6F",
+                "precision": 2,
+                "chartColor": "#9d9f7f"
+            },
+            {
                 "symbol": "TFD",
                 "address": "0xE5F166c0D8872B68790061317BB6CcA04582C912",
                 "decimals": 18,
