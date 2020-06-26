@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "ANJ",
+                "address": "0xcD62b1C403fa761BAadFC74C525ce2B51780b184",
+                "decimals": 18,
+                "ticker": "ANJ",
+                "iconAddress": "0xcD62b1C403fa761BAadFC74C525ce2B51780b184",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
                 "symbol": "UBT",
                 "address": "0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e",
                 "decimals": 8,
