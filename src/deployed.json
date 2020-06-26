@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "cBAT",
+                "address": "0x6C8c6b02E7b2BE14d4fA6022Dfd6d75921D90E4E",
+                "decimals": 8,
+                "ticker": "cBAT",
+                "iconAddress": "0x6C8c6b02E7b2BE14d4fA6022Dfd6d75921D90E4E",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
                 "symbol": "STAKE",
                 "address": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
                 "decimals": 18,
