@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "CHZ",
+                "address": "0x3506424F91fD33084466F402d5D97f05F8e3b4AF",
+                "decimals": 18,
+                "ticker": "CHZ",
+                "iconAddress": "0x3506424F91fD33084466F402d5D97f05F8e3b4AF",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
                 "symbol": "MLN",
                 "address": "0xec67005c4E498Ec7f55E092bd1d35cbC47C91892",
                 "decimals": 18,
