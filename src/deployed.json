@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "UBT",
+                "address": "0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e",
+                "decimals": 8,
+                "ticker": "UBT",
+                "iconAddress": "0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e",
+                "precision": 2,
+                "chartColor": "#433455"
+            },
+            {
                 "symbol": "FUN",
                 "address": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
                 "decimals": 8,
