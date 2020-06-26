@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "BNT",
+                "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
+                "decimals": 18,
+                "ticker": "BNT",
+                "iconAddress": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
                 "symbol": "PRO",
                 "address": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
                 "decimals": 18,
