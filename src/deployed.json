@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "USD++",
+                "address": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
+                "decimals": 18,
+                "ticker": "USD++",
+                "iconAddress": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
+                "precision": 2,
+                "chartColor": "#387080"
+            },
+            {
                 "symbol": "AUC",
                 "address": "0xc12d099be31567add4e4e4d0D45691C3F58f5663",
                 "decimals": 18,
