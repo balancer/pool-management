@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "DATA",
+                "address": "0x0Cf0Ee63788A0849fE5297F3407f701E122cC023",
+                "decimals": 18,
+                "ticker": "DATA",
+                "iconAddress": "0x0Cf0Ee63788A0849fE5297F3407f701E122cC023",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
                 "symbol": "POWR",
                 "address": "0x595832F8FC6BF59c85C527fEC3740A1b7a361269",
                 "decimals": 6,
