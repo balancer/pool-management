@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "SNT",
+                "address": "0x744d70FDBE2Ba4CF95131626614a1763DF805B9E",
+                "decimals": 18,
+                "ticker": "SNT",
+                "iconAddress": "0x744d70FDBE2Ba4CF95131626614a1763DF805B9E",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
                 "symbol": "CHZ",
                 "address": "0x3506424F91fD33084466F402d5D97f05F8e3b4AF",
                 "decimals": 18,
