@@ -647,6 +647,15 @@
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
+            },
+            {
+                "symbol": "mUSD",
+                "address": "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
+                "decimals": 18,
+                "ticker": "mUSD",
+                "iconAddress": "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
+                "precision": 2,
+                "chartColor": "#000000"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
