@@ -647,6 +647,15 @@
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
+            },
+            {
+                "symbol": "AKRO",
+                "address": "0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7",
+                "decimals": 18,
+                "ticker": "",
+                "iconAddress": "0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7",
+                "precision": 2,
+                "chartColor": "#E46BFE"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
