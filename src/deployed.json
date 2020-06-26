@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "MLN",
+                "address": "0xec67005c4E498Ec7f55E092bd1d35cbC47C91892",
+                "decimals": 18,
+                "ticker": "MLN",
+                "iconAddress": "0xec67005c4E498Ec7f55E092bd1d35cbC47C91892",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
                 "symbol": "RSR",
                 "address": "0x8762db106B2c2A0bccB3A80d1Ed41273552616E8",
                 "decimals": 18,
