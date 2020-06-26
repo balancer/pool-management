@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "BUIDL",
+                "address": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "decimals": 18,
+                "ticker": "BUIDL",
+                "iconAddress": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
                 "symbol": "CEL",
                 "address": "0xaaAEBE6Fe48E54f431b0C390CfaF0b017d09D42d",
                 "decimals": 4,
