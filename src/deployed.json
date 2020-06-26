@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "TFD",
+                "address": "0xE5F166c0D8872B68790061317BB6CcA04582C912",
+                "decimals": 18,
+                "ticker": "TFD",
+                "iconAddress": "0xE5F166c0D8872B68790061317BB6CcA04582C912",
+                "precision": 2,
+                "chartColor": "#557064"
+            },
+            {
                 "symbol": "BLZ",
                 "address": "0x5732046A883704404F284Ce41FfADd5b007FD668",
                 "decimals": 18,
