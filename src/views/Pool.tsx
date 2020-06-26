@@ -70,7 +70,9 @@ const Pool = observer((props: RouteComponentProps) => {
     useEffect(() => {
         poolStore.fetchActivePool(poolAddress);
         tokenStore.fetchTotalSupplies([poolAddress]);
-        tokenStore.fetchTokenBalances(account, [poolAddress]);
+        if (account) {
+            tokenStore.fetchTokenBalances(account, [poolAddress]);
+        }
     }, [account, poolAddress, poolStore, tokenStore]);
 
     if (!isAddress(poolAddress)) {
