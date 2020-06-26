@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "OWL",
+                "address": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
+                "decimals": 18,
+                "ticker": "OWL",
+                "iconAddress": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
                 "symbol": "AGI",
                 "address": "0x8eB24319393716668D768dCEC29356ae9CfFe285",
                 "decimals": 8,
