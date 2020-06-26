@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "AMPL",
+                "address": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+                "decimals": 9,
+                "ticker": "AMPL",
+                "iconAddress": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
                 "symbol": "DGX",
                 "address": "0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF",
                 "decimals": 9,
