@@ -126,36 +126,6 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "address[]",
-                    "name": "tokens",
-                    "type": "address[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "balances",
-                    "type": "uint256[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "denorms",
-                    "type": "uint256[]"
-                }
-            ],
-            "name": "rebind",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "contract BPool",
-                    "name": "pool",
-                    "type": "address"
-                },
-                {
                     "internalType": "address",
                     "name": "newController",
                     "type": "address"
@@ -202,6 +172,36 @@
                 }
             ],
             "name": "setSwapFee",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "internalType": "contract BPool",
+                    "name": "pool",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address[]",
+                    "name": "tokens",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "balances",
+                    "type": "uint256[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "denorms",
+                    "type": "uint256[]"
+                }
+            ],
+            "name": "setTokens",
             "outputs": [],
             "payable": false,
             "stateMutability": "nonpayable",
