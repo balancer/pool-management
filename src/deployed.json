@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "PAXG",
+                "address": "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
+                "decimals": 18,
+                "ticker": "PAXG",
+                "iconAddress": "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
+                "precision": 4,
+                "chartColor": "#a593a5"
+            },
+            {
                 "symbol": "DEXT",
                 "address": "0x26CE25148832C04f3d7F26F32478a9fe55197166",
                 "decimals": 18,
