@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "BLZ",
+                "address": "0x5732046A883704404F284Ce41FfADd5b007FD668",
+                "decimals": 18,
+                "ticker": "BLZ",
+                "iconAddress": "0x5732046A883704404F284Ce41FfADd5b007FD668",
+                "precision": 2,
+                "chartColor": "#6eaa78"
+            },
+            {
                 "symbol": "MATIC",
                 "address": "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
                 "decimals": 18,
