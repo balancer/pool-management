@@ -22,7 +22,7 @@ const Wrapper = styled.div`
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
-    margin-top: 32px;
+    margin-top: 20px;
     padding: 20px;
 `;
 
