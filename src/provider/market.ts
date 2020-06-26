@@ -6,7 +6,7 @@ const pricesBackup = require('./pricesBackup.json');
 const listBackup = require('./listBackup.json');
 
 const MARKET_API_URL =
-    process.env.MARKET_API_URL || 'https://api.coingecko.com/api/v3';
+    process.env.REACT_APP_MARKET_API_URL || 'https://api.coingecko.com/api/v3';
 
 export async function fetchAssetPrices(
     symbolsToFetch: string[],
