@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "REQ",
+                "address": "0x8f8221aFbB33998d8584A2B05749bA73c37a938a",
+                "decimals": 18,
+                "ticker": "REQ",
+                "iconAddress": "0x8f8221aFbB33998d8584A2B05749bA73c37a938a",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
                 "symbol": "BNT",
                 "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
                 "decimals": 18,
