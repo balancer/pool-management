@@ -694,15 +694,6 @@
                 "chartColor": "#a593a5"
             },
             {
-                "symbol": "DEXT",
-                "address": "0x26CE25148832C04f3d7F26F32478a9fe55197166",
-                "decimals": 18,
-                "ticker": "DEXT",
-                "iconAddress": "0x26CE25148832C04f3d7F26F32478a9fe55197166",
-                "precision": 2,
-                "chartColor": "#c38890"
-            },
-            {
                 "symbol": "BLT",
                 "address": "0x107c4504cd79C5d2696Ea0030a8dD4e92601B82e",
                 "decimals": 18,
