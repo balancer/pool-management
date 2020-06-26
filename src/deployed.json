@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "DNT",
+                "address": "0x0AbdAce70D3790235af448C88547603b945604ea",
+                "decimals": 18,
+                "ticker": "DNT",
+                "iconAddress": "0x0AbdAce70D3790235af448C88547603b945604ea",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
                 "symbol": "SHIP",
                 "address": "0xe25b0BBA01Dc5630312B6A21927E578061A13f55",
                 "decimals": 18,
