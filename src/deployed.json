@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "EDO",
+                "address": "0xCeD4E93198734dDaFf8492d525Bd258D49eb388E",
+                "decimals": 18,
+                "ticker": "EDO",
+                "iconAddress": "0xCeD4E93198734dDaFf8492d525Bd258D49eb388E",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
                 "symbol": "PAX",
                 "address": "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
                 "decimals": 18,
