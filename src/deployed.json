@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "STAKE",
+                "address": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
+                "decimals": 18,
+                "ticker": "STAKE",
+                "iconAddress": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
                 "symbol": "RLC",
                 "address": "0x607F4C5BB672230e8672085532f7e901544a7375",
                 "decimals": 9,
