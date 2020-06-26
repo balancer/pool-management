@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "RSR",
+                "address": "0x8762db106B2c2A0bccB3A80d1Ed41273552616E8",
+                "decimals": 18,
+                "ticker": "RSR",
+                "iconAddress": "0x8762db106B2c2A0bccB3A80d1Ed41273552616E8",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
                 "symbol": "HOT",
                 "address": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
                 "decimals": 18,
