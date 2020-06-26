@@ -58,6 +58,9 @@ const Pool = observer((props: RouteComponentProps) => {
         },
     } = useStores();
 
+    const pool = poolStore.getPool(poolAddress);
+    const account = providerStore.providerStatus.account;
+
     useEffect(() => {
         return function cleanup() {
             swapsTableStore.clearPoolSwaps();
@@ -67,7 +70,8 @@ const Pool = observer((props: RouteComponentProps) => {
     useEffect(() => {
         poolStore.fetchActivePool(poolAddress);
         tokenStore.fetchTotalSupplies([poolAddress]);
-    }, [poolAddress, poolStore, tokenStore]);
+        tokenStore.fetchTokenBalances(account, [poolAddress]);
+    }, [account, poolAddress, poolStore, tokenStore]);
 
     if (!isAddress(poolAddress)) {
         return (
@@ -76,9 +80,6 @@ const Pool = observer((props: RouteComponentProps) => {
             </PoolViewWrapper>
         );
     }
-
-    const pool = poolStore.getPool(poolAddress);
-    const account = providerStore.providerStatus.account;
 
     if (poolStore.poolsLoaded && !pool) {
         return (
