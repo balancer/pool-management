@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "LPT",
+                "address": "0x58b6A8A3302369DAEc383334672404Ee733aB239",
+                "decimals": 18,
+                "ticker": "LPT",
+                "iconAddress": "0x58b6A8A3302369DAEc383334672404Ee733aB239",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
                 "symbol": "TUSD",
                 "address": "0x0000000000085d4780B73119b644AE5ecd22b376",
                 "decimals": 18,
