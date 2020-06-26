@@ -41,7 +41,7 @@ export default class PoolStore {
         this.graphSkip = 0;
     }
 
-    @action processUnknownTokens(pools: Pool[]) {
+    @action processUnknownTokens(pool: Pool) {
         const {
             contractMetadataStore,
             tokenStore,
@@ -50,34 +50,27 @@ export default class PoolStore {
         const account = providerStore.providerStatus.account;
         const defaultPrecision = contractMetadataStore.getDefaultPrecision();
 
-        const tokensToFetch = {};
-        pools.forEach(pool => {
-            pool.tokens.forEach((token, index) => {
-                if (!contractMetadataStore.hasTokenMetadata(token.address)) {
-                    pool.tokens[token.symbol] = tinyAddress(token.address, 3);
+        pool.tokens.forEach((token, index) => {
+            if (!contractMetadataStore.hasTokenMetadata(token.address)) {
+                pool.tokens[token.symbol] = tinyAddress(token.address, 3);
 
-                    // We just discovered a new token, so should do an initial fetch for it outside of loop
-                    if (
-                        account &&
-                        !tokenStore.getBalance(token.address, account)
-                    ) {
-                        tokensToFetch[token.address] = true;
-                    }
-
-                    contractMetadataStore.addTokenMetadata(token.address, {
-                        address: token.address,
-                        precision: defaultPrecision,
-                        chartColor: getNextTokenColor(),
-                        decimals: token.decimals,
-                        symbol: tinyAddress(token.address, 3),
-                        ticker: '',
-                        iconAddress: token.address,
-                        isSupported: false,
-                    });
+                // We just discovered a new token, so should do an initial fetch for it outside of loop
+                if (account && !tokenStore.getBalance(token.address, account)) {
+                    tokenStore.fetchTokenBalances(account, [token.address]);
                 }
-            });
+
+                contractMetadataStore.addTokenMetadata(token.address, {
+                    address: token.address,
+                    precision: defaultPrecision,
+                    chartColor: getNextTokenColor(),
+                    decimals: token.decimals,
+                    symbol: tinyAddress(token.address, 3),
+                    ticker: '',
+                    iconAddress: token.address,
+                    isSupported: false,
+                });
+            }
         });
-        tokenStore.fetchTokenBalances(account, Object.keys(tokensToFetch));
     }
 
     @action async fetchPools() {
@@ -91,7 +84,9 @@ export default class PoolStore {
             this.graphSkip
         );
 
-        this.processUnknownTokens(pools);
+        pools.forEach(pool => {
+            this.processUnknownTokens(pool);
+        });
         this.setPools(pools, currentBlock);
         this.poolsLoaded = true;
 
