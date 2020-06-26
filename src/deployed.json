@@ -469,15 +469,6 @@
                 "chartColor": "#6e6962"
             },
             {
-                "symbol": "STA",
-                "address": "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
-                "decimals": 18,
-                "ticker": "STA",
-                "iconAddress": "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
-                "precision": 2,
-                "chartColor": "#6e6962"
-            },
-            {
                 "symbol": "REN",
                 "address": "0x408e41876cCCDC0F92210600ef50372656052a38",
                 "decimals": 18,
