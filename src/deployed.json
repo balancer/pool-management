@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "IDEX",
+                "address": "0xB705268213D593B8FD88d3FDEFF93AFF5CbDcfAE",
+                "decimals": 18,
+                "ticker": "IDEX",
+                "iconAddress": "0xB705268213D593B8FD88d3FDEFF93AFF5CbDcfAE",
+                "precision": 2,
+                "chartColor": "#93a167"
+            },
+            {
                 "symbol": "mUSD",
                 "address": "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
                 "decimals": 18,
