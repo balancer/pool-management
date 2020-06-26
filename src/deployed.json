@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "AUC",
+                "address": "0xc12d099be31567add4e4e4d0D45691C3F58f5663",
+                "decimals": 18,
+                "ticker": "AUC",
+                "iconAddress": "0xc12d099be31567add4e4e4d0D45691C3F58f5663",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
                 "symbol": "OWL",
                 "address": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
                 "decimals": 18,
