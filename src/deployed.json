@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "AGI",
+                "address": "0x8eB24319393716668D768dCEC29356ae9CfFe285",
+                "decimals": 8,
+                "ticker": "AGI",
+                "iconAddress": "0x8eB24319393716668D768dCEC29356ae9CfFe285",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
                 "symbol": "LPT",
                 "address": "0x58b6A8A3302369DAEc383334672404Ee733aB239",
                 "decimals": 18,
