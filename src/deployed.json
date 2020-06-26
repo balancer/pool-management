@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "MCX",
+                "address": "0xd15eCDCF5Ea68e3995b2D0527A0aE0a3258302F8",
+                "decimals": 18,
+                "ticker": "MCX",
+                "iconAddress": "0xd15eCDCF5Ea68e3995b2D0527A0aE0a3258302F8",
+                "precision": 2,
+                "chartColor": "#9d9f7f"
+            },
+            {
                 "symbol": "BCDT",
                 "address": "0xAcfa209Fb73bF3Dd5bBfb1101B9Bc999C49062a5",
                 "decimals": 18,
