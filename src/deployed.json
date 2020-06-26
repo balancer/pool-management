@@ -649,6 +649,15 @@
                 "chartColor": "#220730"
             },
             {
+                "symbol": "FUN",
+                "address": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
+                "decimals": 8,
+                "ticker": "FUN",
+                "iconAddress": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
                 "symbol": "STORJ",
                 "address": "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",
                 "decimals": 8,
