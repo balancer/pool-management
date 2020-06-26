@@ -847,15 +847,6 @@
                 "chartColor": "#7ca1c0"
             },
             {
-                "symbol": "SHUF",
-                "address": "0x3A9FfF453d50D4Ac52A6890647b823379ba36B9E",
-                "decimals": 18,
-                "ticker": "SHUF",
-                "iconAddress": "0x3A9FfF453d50D4Ac52A6890647b823379ba36B9E",
-                "precision": 2,
-                "chartColor": "#c28d75"
-            },
-            {
                 "symbol": "TRB",
                 "address": "0x0Ba45A8b5d5575935B8158a88C631E9F9C95a2e5",
                 "decimals": 18,
