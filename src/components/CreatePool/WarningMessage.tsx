@@ -32,10 +32,6 @@ const WarningIcon = styled.img`
     color: var(--warning);
 `;
 
-const Link = styled.a`
-    color: var(--warning);
-`;
-
 const WarningMessage = () => {
     return (
         <Wrapper>
@@ -43,16 +39,9 @@ const WarningMessage = () => {
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
                     This feature is in beta. Currently, only creating shared
-                    pools is supported. Use carefully and with small amounts.
-                    You can add more liquidity later, after pool creation. Make
-                    sure tokens are ERC20-compliant otherwise{' '}
-                    <Link
-                        href="https://medium.com/coinmonks/missing-return-value-bug-at-least-130-tokens-affected-d67bf08521ca"
-                        target="_blank"
-                    >
-                        funds will be stuck forever
-                    </Link>
-                    .
+                    pools is supported. Make sure tokens are ERC20-compliant
+                    otherwise funds can get stuck. The default list in the asset
+                    selector has been vetted .
                 </Message>
             </Warning>
         </Wrapper>

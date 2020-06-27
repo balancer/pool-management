@@ -92,8 +92,12 @@ export default class BlockchainFetchStore {
                 .then(blockNumber => {
                     const lastCheckedBlock = providerStore.getCurrentBlockNumber();
 
+                    if (account) {
+                        this.fetchProxyData();
+                    }
+
                     const doFetch =
-                        blockNumber >= lastCheckedBlock + 20 || forceFetch;
+                        blockNumber >= lastCheckedBlock + 10 || forceFetch;
 
                     if (doFetch) {
                         console.debug('[Fetch Loop] Fetch Blockchain Data', {
@@ -108,10 +112,6 @@ export default class BlockchainFetchStore {
                         poolStore.fetchPools().then(() => {
                             // Fetch user pool shares after pools loaded
                             // this.fetchPoolTotalSupplies();
-
-                            if (account) {
-                                this.fetchProxyData();
-                            }
 
                             if (account && appSettingsStore.hasActivePool()) {
                                 this.fetchActivePoolAllowances();
