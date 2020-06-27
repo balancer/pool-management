@@ -184,7 +184,7 @@ const AddLiquidityModal = observer((props: Props) => {
     ): PoolToken | undefined => {
         if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
             return pool.tokens.find(token => {
-                return !tokenStore.hasMaxApproval(
+                return !tokenStore.hasApproval(
                     token.address,
                     account,
                     proxyAddress
@@ -195,9 +195,7 @@ const AddLiquidityModal = observer((props: Props) => {
             const token = pool.tokens.find(
                 token => token.address === tokenAddress
             );
-            if (
-                tokenStore.hasMaxApproval(tokenAddress, account, proxyAddress)
-            ) {
+            if (tokenStore.hasApproval(tokenAddress, account, proxyAddress)) {
                 return;
             } else {
                 return token;
