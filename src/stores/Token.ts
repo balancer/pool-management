@@ -634,6 +634,16 @@ export default class TokenStore {
         );
     }
 
+    hasApproval = (tokenAddress, account, spender): boolean => {
+        const allowance = this.getAllowance(tokenAddress, account, spender);
+        if (!allowance) {
+            throw new Error(
+                `Allowance not loaded for ${tokenAddress} ${account} ${spender}`
+            );
+        }
+        return helpers.hasApproval(allowance);
+    };
+
     hasMaxApproval = (tokenAddress, account, spender): boolean => {
         const allowance = this.getAllowance(tokenAddress, account, spender);
         if (!allowance) {
