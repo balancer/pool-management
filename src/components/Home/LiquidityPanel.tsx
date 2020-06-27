@@ -213,16 +213,12 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPoolsChart = () => {
         if (marketStore.assetPricesLoaded) {
-            let poolsShown = pools
-                .sort((a, b) => {
-                    return (
-                        Number(marketStore.getPortfolioValue(b)) -
-                        Number(marketStore.getPortfolioValue(a))
-                    );
-                })
-                .filter(
-                    pool => Number(marketStore.getPortfolioValue(pool)) > 0
+            let poolsShown = pools.sort((a, b) => {
+                return (
+                    Number(marketStore.getPortfolioValue(b)) -
+                    Number(marketStore.getPortfolioValue(a))
                 );
+            });
 
             return (
                 <React.Fragment>
