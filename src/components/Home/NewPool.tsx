@@ -259,7 +259,7 @@ const NewPool = observer(() => {
             if (status === ValidationStatus.INSUFFICIENT_BALANCE)
                 return 'Insufficient balance';
             if (status === ValidationStatus.MINIMUM_BALANCE)
-                return 'Values should have at least 6 decimals';
+                return 'Token balance in wei form needs to be at least 10^6. For example WBTC has 8 decimals so the min is 0.01 WBTC';
             if (status === ValidationStatus.BAD_WEIGHT)
                 return 'Weights should be numbers from 2 to 98. Total weight should not exceed 100.';
             if (status === ValidationStatus.BAD_FEE)
