@@ -60,7 +60,7 @@ export function setPropertyToZeroIfEmpty(value?): string {
 }
 
 export function hasApproval(amount: BigNumber): boolean {
-    return amount.gte(bnum('0'));
+    return amount.gt(bnum('0'));
 }
 
 export function hasMaxApproval(amount: BigNumber): boolean {
