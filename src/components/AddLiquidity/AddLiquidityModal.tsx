@@ -207,7 +207,7 @@ const AddLiquidityModal = observer((props: Props) => {
         pool: Pool,
         account: string
     ): PoolToken | undefined => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput) {
             return;
         }
         let maxAmountToBalanceRatio = bnum(0);
@@ -258,6 +258,12 @@ const AddLiquidityModal = observer((props: Props) => {
     const proxyAddress = proxyStore.getInstanceAddress();
 
     const validationStatus = addLiquidityFormStore.validationStatus;
+    const hasValidInput = addLiquidityFormStore.hasValidInput();
+
+    const tokenErrors = contractMetadataStore.getTokenErrors();
+    const hasTokenError = pool.tokens.some(token => {
+        return tokenErrors.transferFee.includes(token.address);
+    });
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -394,7 +400,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderError = () => {
-        if (addLiquidityFormStore.hasValidInput()) {
+        if (hasValidInput || hasTokenError) {
             return;
         }
 
@@ -417,21 +423,8 @@ const AddLiquidityModal = observer((props: Props) => {
         return <Error>{errorText}</Error>;
     };
 
-    const renderTokenWarning = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
-            return;
-        }
-        const tokenErrors = contractMetadataStore.getTokenErrors();
-        const tokenWarnings = contractMetadataStore.getTokenWarnings();
-
-        const error = pool.tokens.some(token => {
-            return tokenErrors.transferFee.includes(token.address);
-        });
-        const warning = pool.tokens.some(token => {
-            return tokenWarnings.includes(token.address);
-        });
-
-        if (error) {
+    const renderTokenError = () => {
+        if (hasTokenError) {
             return (
                 <Error>
                     <Message>
@@ -448,6 +441,18 @@ const AddLiquidityModal = observer((props: Props) => {
                 </Error>
             );
         }
+    };
+
+    const renderTokenWarning = () => {
+        if (!hasValidInput || hasTokenError) {
+            return;
+        }
+        const tokenWarnings = contractMetadataStore.getTokenWarnings();
+
+        const warning = pool.tokens.some(token => {
+            return tokenWarnings.includes(token.address);
+        });
+
         if (warning) {
             return (
                 <Warning>
@@ -470,7 +475,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderFrontrunningWarning = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
         if (addLiquidityFormStore.depositType === DepositType.SINGLE_ASSET) {
@@ -513,7 +518,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderLiquidityWarning = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
         if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
@@ -578,7 +583,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderNotification = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
         let currentPoolShare = '-';
@@ -597,7 +602,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
         if (pool && currentTotal) {
             let previewTokens = bnum(0);
-            if (addLiquidityFormStore.hasValidInput()) {
+            if (hasValidInput) {
                 if (
                     addLiquidityFormStore.depositType ===
                     DepositType.MULTI_ASSET
@@ -696,7 +701,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={account && addLiquidityFormStore.hasValidInput()}
+                    active={account && hasValidInput && !hasTokenError}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }
@@ -742,10 +747,12 @@ const AddLiquidityModal = observer((props: Props) => {
                     ) : (
                         <React.Fragment>
                             {renderError()}
+                            {renderTokenError()}
                             {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
                             {renderNotification()}
+
                             {renderActionButton()}
                         </React.Fragment>
                     )}
