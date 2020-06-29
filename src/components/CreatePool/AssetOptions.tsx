@@ -135,7 +135,9 @@ const AssetOptions = observer(() => {
 
     const isInvalidToken = (address): boolean => {
         const errors = contractMetadataStore.getTokenErrors();
-        return errors.includes(address);
+        const noBool = errors.noBool.includes(address);
+        const transferFee = errors.transferFee.includes(address);
+        return noBool || transferFee;
     };
 
     const getAssetOptions = (filter, account): Asset[] => {
