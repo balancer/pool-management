@@ -511,15 +511,6 @@
                 "chartColor": "#a593a5"
             },
             {
-                "symbol": "VETH",
-                "address": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
-                "decimals": 18,
-                "ticker": "VETH",
-                "iconAddress": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
-                "precision": 2,
-                "chartColor": "#baa55c"
-            },
-            {
                 "symbol": "GHOST",
                 "address": "0x4c327471C44B2dacD6E90525f9D629bd2e4f662C",
                 "decimals": 18,
@@ -1158,8 +1149,18 @@
                 "0xfAE4Ee59CDd86e3Be9e8b90b53AA866327D7c090"
             ],
             "transferFee": [
+                "0x1C95b093d6C236d3EF7c796fE33f9CC6b8606714",
+                "0x3A9FfF453d50D4Ac52A6890647b823379ba36B9E",
+                "0x3B7f247f21BF3A07088C2D3423F64233d4B069F7",
+                "0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF",
+                "0x75572098dc462F976127f59F8c97dFa291f81d8b",
+                "0x82622209cEf6EBf4b8BDB353a8FC7e0b8655D0b0",
+                "0x85eBa557C06c348395fD49e35d860F58a4F7c95a",
                 "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
-                "0xb60Fde5D798236fBF1e2697B2A0645380921FccF"
+                "0xb60Fde5D798236fBF1e2697B2A0645380921FccF",
+                "0xc58c0Fca06908E66540102356f2E91edCaEB8D81",
+                "0xDB7Eab9bA6be88B869F738f6DEeBa96d49Fe13fd",
+                "0xF0FAC7104aAC544e4a7CE1A55ADF2B5a25c65bD1"
             ]
         }
     }
