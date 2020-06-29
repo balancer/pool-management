@@ -88,6 +88,11 @@ export interface Swap {
     tokenAmountOut;
 }
 
+export interface TokenErrors {
+    noBool: string[];
+    transferFee: string[];
+}
+
 export class Web3 {
     currentProvider;
     setProvider;
