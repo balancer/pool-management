@@ -145,7 +145,7 @@ interface Props {
     poolAddress: string;
 }
 
-const BALANCE_BUFFER = 0.05;
+const BALANCE_BUFFER = 0.01;
 
 function useOnClickOutside(ref, handler) {
     useEffect(() => {
@@ -207,7 +207,7 @@ const AddLiquidityModal = observer((props: Props) => {
         pool: Pool,
         account: string
     ): PoolToken | undefined => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput) {
             return;
         }
         let maxAmountToBalanceRatio = bnum(0);
@@ -258,6 +258,12 @@ const AddLiquidityModal = observer((props: Props) => {
     const proxyAddress = proxyStore.getInstanceAddress();
 
     const validationStatus = addLiquidityFormStore.validationStatus;
+    const hasValidInput = addLiquidityFormStore.hasValidInput();
+
+    const tokenErrors = contractMetadataStore.getTokenErrors();
+    const hasTokenError = pool.tokens.some(token => {
+        return tokenErrors.transferFee.includes(token.address);
+    });
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -394,7 +400,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderError = () => {
-        if (addLiquidityFormStore.hasValidInput()) {
+        if (hasValidInput || hasTokenError) {
             return;
         }
 
@@ -417,15 +423,34 @@ const AddLiquidityModal = observer((props: Props) => {
         return <Error>{errorText}</Error>;
     };
 
+    const renderTokenError = () => {
+        if (hasTokenError) {
+            return (
+                <Error>
+                    <Message>
+                        This pool contains a deflationary token that is likely
+                        to cause loss of funds. Do not deposit.{' '}
+                        <Link
+                            href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Learn more
+                        </Link>
+                    </Message>
+                </Error>
+            );
+        }
+    };
+
     const renderTokenWarning = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
-        let warning = false;
         const tokenWarnings = contractMetadataStore.getTokenWarnings();
 
-        pool.tokens.forEach(token => {
-            if (tokenWarnings.includes(token.address)) warning = true;
+        const warning = pool.tokens.some(token => {
+            return tokenWarnings.includes(token.address);
         });
 
         if (warning) {
@@ -450,7 +475,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderFrontrunningWarning = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
         if (addLiquidityFormStore.depositType === DepositType.SINGLE_ASSET) {
@@ -480,7 +505,9 @@ const AddLiquidityModal = observer((props: Props) => {
             <Warning>
                 <WarningIcon src="WarningSign.svg" />
                 <Message>
-                    Join might fail due to frontrunning. Use high gas price or
+                    Add liquidity might fail due to using max balance and a
+                    trade occuring before join tx is mined. Use high gas price
+                    or
                     <LowerAmountLink onClick={e => handleLowerAmountButton()}>
                         lower amounts
                     </LowerAmountLink>
@@ -491,7 +518,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderLiquidityWarning = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
         if (addLiquidityFormStore.depositType === DepositType.MULTI_ASSET) {
@@ -556,7 +583,7 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderNotification = () => {
-        if (!addLiquidityFormStore.hasValidInput()) {
+        if (!hasValidInput || hasTokenError) {
             return;
         }
         let currentPoolShare = '-';
@@ -575,7 +602,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
         if (pool && currentTotal) {
             let previewTokens = bnum(0);
-            if (addLiquidityFormStore.hasValidInput()) {
+            if (hasValidInput) {
                 if (
                     addLiquidityFormStore.depositType ===
                     DepositType.MULTI_ASSET
@@ -674,7 +701,7 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={account && addLiquidityFormStore.hasValidInput()}
+                    active={account && hasValidInput && !hasTokenError}
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }
@@ -720,10 +747,12 @@ const AddLiquidityModal = observer((props: Props) => {
                     ) : (
                         <React.Fragment>
                             {renderError()}
+                            {renderTokenError()}
                             {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
                             {renderNotification()}
+
                             {renderActionButton()}
                         </React.Fragment>
                     )}
