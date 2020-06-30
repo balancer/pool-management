@@ -122,9 +122,7 @@ const Pool = observer((props: RouteComponentProps) => {
             : '-';
 
     let volumeText = '-';
-    if (marketStore.assetPricesLoaded && pool) {
-        const volume = marketStore.getPoolVolume(pool);
-
+    if (pool) {
         volumeText = formatCurrency(pool.lastSwapVolume);
     }
 
