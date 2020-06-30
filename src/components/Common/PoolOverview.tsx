@@ -8,9 +8,9 @@ import {
     shortenAddress,
 } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
-import { Pool } from '../../types';
-import { formatPoolAssetChartData } from '../../utils/chartFormatter';
+import { Pool, UserShare } from '../../types';
 import { BigNumber } from '../../utils/bignumber';
+import { formatPoolAssetChartData } from '../../utils/chartFormatter';
 
 const Wrapper = styled.div`
     display: flex;
@@ -91,50 +91,18 @@ const AssetDot = styled.div`
 
 interface Props {
     poolAddress: string;
+    userShare: UserShare;
 }
 
-export const getUserShareText = (
-    pool: Pool,
-    account: string,
-    totalPoolTokens: BigNumber | undefined,
-    userPoolTokens: BigNumber | undefined
-): string => {
-    let shareText = '-';
-
-    if (account && userPoolTokens && totalPoolTokens) {
-        const userShare = userPoolTokens.div(totalPoolTokens);
-        if (userShare) {
-            shareText = formatPercentage(userShare, 2);
-        } else {
-            shareText = '0%';
-        }
-    }
-
-    return shareText;
-};
-
 const PoolOverview = observer((props: Props) => {
-    const { poolAddress } = props;
+    const { poolAddress, userShare } = props;
     const {
-        root: { poolStore, providerStore, contractMetadataStore, tokenStore },
+        root: { poolStore, contractMetadataStore },
     } = useStores();
     const pool = poolStore.getPool(poolAddress);
-    const account = providerStore.providerStatus.account;
 
-    let userPoolTokens = undefined;
-    const totalPoolTokens = tokenStore.getTotalSupply(poolAddress);
-
-    if (account) {
-        userPoolTokens = tokenStore.getBalance(poolAddress, account);
-    }
-
+    const shareText = getUserShareText(userShare);
     const feeText = pool ? formatFee(pool.swapFee) : '-';
-    const shareText = getUserShareText(
-        pool,
-        account,
-        totalPoolTokens,
-        userPoolTokens
-    );
 
     const options = {
         maintainAspectRatio: false,
@@ -180,8 +148,8 @@ const PoolOverview = observer((props: Props) => {
         <Wrapper>
             <Header>Pool Overview</Header>
             <Address>{shortenAddress(poolAddress)}</Address>
-            <PoolInfo>My Pool Share: {shareText}</PoolInfo>
-            <PoolInfo>Pool Swap Fee: {feeText}</PoolInfo>
+            <PoolInfo>My share: {shareText}</PoolInfo>
+            <PoolInfo>Swap fee: {feeText}</PoolInfo>
             <ChartAndBreakdownWrapper>
                 <PieChartWrapper>
                     {pool ? (
@@ -201,5 +169,25 @@ const PoolOverview = observer((props: Props) => {
         </Wrapper>
     );
 });
+
+const getUserShareText = (userShare: UserShare): string => {
+    const formatUserShare = (share: BigNumber): string => {
+        if (share.gt(0.1)) {
+            return formatPercentage(share, 0);
+        } else {
+            return formatPercentage(share, 1);
+        }
+    };
+    const { current, future } = userShare;
+    if (!current || current.isNaN()) {
+        return '-';
+    }
+    if (!future || future.isNaN()) {
+        return formatUserShare(current);
+    }
+    const currentShare = formatUserShare(current);
+    const futureShare = formatUserShare(future);
+    return `${currentShare} → ${futureShare}`;
+};
 
 export default PoolOverview;

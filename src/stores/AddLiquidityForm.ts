@@ -22,6 +22,7 @@ export default class AddLiquidityFormStore {
     @observable checkboxesLoaded: boolean;
     @observable inputs: InputMap;
     @observable joinInputs: BigNumberMap;
+    @observable confirmation: Checkbox;
     @observable activeInputKey: string | undefined;
     @observable activeToken: string;
     @observable activePool: string;
@@ -37,6 +38,10 @@ export default class AddLiquidityFormStore {
         this.rootStore = rootStore;
         this.resetApprovalCheckboxStatusMap();
         this.resetJoinInputs();
+        this.confirmation = {
+            checked: false,
+            touched: false,
+        };
         this.validationStatus = ValidationStatus.EMPTY;
     }
 
@@ -346,6 +351,14 @@ export default class AddLiquidityFormStore {
         });
 
         this.checkboxesLoaded = true;
+    }
+
+    @action toggleConfirmation() {
+        const checked = !this.confirmation.checked;
+        this.confirmation = {
+            checked,
+            touched: true,
+        };
     }
 
     @action initializeCheckboxes(tokenAddresses: string[]) {
