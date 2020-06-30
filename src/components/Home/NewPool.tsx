@@ -11,6 +11,7 @@ import CreatePoolTable from '../CreatePool/CreatePoolTable';
 import SelectAssetModal from '../CreatePool/SelectAssetModal';
 import WarningMessage from '../CreatePool/WarningMessage';
 import Button from '../Common/Button';
+import Checkbox from '../Common/Checkbox';
 import { BigNumber } from 'utils/bignumber';
 
 const Wrapper = styled.div`
@@ -98,6 +99,24 @@ const InputWrapper = styled.div`
     }
 `;
 
+const CheckboxPanel = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    padding: 16px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: var(--panel-background);
+    font-size: 14px;
+    color: var(--body-text);
+    box-sizing: border-box;
+`;
+
+const CheckboxMessage = styled.div`
+    margin-left: 16px;
+`;
+
 const Error = styled.div`
     display: flex;
     justify-content: center;
@@ -137,6 +156,9 @@ const NewPool = observer(() => {
 
     const feeInput = createPoolFormStore.fee;
     const hasFeeError = feeInput.validation === ValidationStatus.BAD_FEE;
+    const hasValidInput = createPoolFormStore.hasValidInput();
+    const confirmationCheckbox = createPoolFormStore.confirmation;
+    const hasConfirmed = confirmationCheckbox.checked;
 
     const validationStatus = createPoolFormStore.validationStatus;
 
@@ -230,7 +252,7 @@ const NewPool = observer(() => {
         return (
             <Button
                 buttonText={`Create`}
-                active={account && createPoolFormStore.hasValidInput()}
+                active={account && hasValidInput && hasConfirmed}
                 onClick={e => handleCreateButtonClick()}
             />
         );
@@ -248,6 +270,10 @@ const NewPool = observer(() => {
     };
 
     const renderError = () => {
+        if (hasValidInput) {
+            return;
+        }
+
         function getText(status: ValidationStatus) {
             if (status === ValidationStatus.EMPTY)
                 return "Values can't be empty ";
@@ -269,6 +295,27 @@ const NewPool = observer(() => {
 
         const errorText = getText(validationStatus);
         return <Error>{errorText}</Error>;
+    };
+
+    const renderConfirmation = () => {
+        if (!hasValidInput) {
+            return;
+        }
+        return (
+            <CheckboxPanel>
+                <Checkbox
+                    checked={hasConfirmed}
+                    onChange={e => {
+                        createPoolFormStore.toggleConfirmation();
+                    }}
+                />
+                <CheckboxMessage>
+                    I understand that creating a pool in Balancer protocol has
+                    smart contract risk and that I should do my own due
+                    diligence about the tokens present in the pool I’m creating.
+                </CheckboxMessage>
+            </CheckboxPanel>
+        );
     };
 
     return (
@@ -294,11 +341,10 @@ const NewPool = observer(() => {
                     </InputWrapper>
                 </SingleElement>
             </Section>
-            {validationStatus !== ValidationStatus.VALID ? (
-                <Section>{renderError()}</Section>
-            ) : (
-                <div />
-            )}
+            <Section>
+                {renderError()}
+                {renderConfirmation()}
+            </Section>
             <Section>
                 <SingleElement>
                     {lockedToken ? renderUnlockButton() : renderCreateButton()}

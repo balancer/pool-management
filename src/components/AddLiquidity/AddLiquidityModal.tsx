@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
+import Checkbox from '../Common/Checkbox';
 import SingleMultiToggle from '../Common/SingleMultiToggle';
 import AddAssetTable from './AddAssetTable';
 import { observer } from 'mobx-react';
@@ -135,6 +136,24 @@ const Notification = styled.div`
     margin-bottom: 20px;
 `;
 
+const CheckboxPanel = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: var(--panel-background);
+    font-size: 14px;
+    color: var(--body-text);
+    box-sizing: border-box;
+    margin-bottom: 20px;
+`;
+
+const CheckboxMessage = styled.div`
+    margin-left: 16px;
+`;
+
 enum ButtonAction {
     UNLOCK,
     ADD_LIQUIDITY,
@@ -259,6 +278,9 @@ const AddLiquidityModal = observer((props: Props) => {
 
     const validationStatus = addLiquidityFormStore.validationStatus;
     const hasValidInput = addLiquidityFormStore.hasValidInput();
+
+    const confirmationCheckbox = addLiquidityFormStore.confirmation;
+    const hasConfirmed = confirmationCheckbox.checked;
 
     const tokenErrors = contractMetadataStore.getTokenErrors();
     const hasTokenError = pool.tokens.some(token => {
@@ -686,6 +708,28 @@ const AddLiquidityModal = observer((props: Props) => {
         }
     };
 
+    const renderConfirmation = () => {
+        if (!hasValidInput || hasTokenError) {
+            return;
+        }
+        return (
+            <CheckboxPanel>
+                <Checkbox
+                    checked={hasConfirmed}
+                    onChange={e => {
+                        addLiquidityFormStore.toggleConfirmation();
+                    }}
+                />
+                <CheckboxMessage>
+                    I understand that adding liquidity to Balancer protocol has
+                    smart contract risk and that I should do my own due
+                    diligence about the tokens present in the pool I’m adding
+                    liquidity to.
+                </CheckboxMessage>
+            </CheckboxPanel>
+        );
+    };
+
     const renderActionButton = () => {
         if (lockedToken) {
             return (
@@ -701,7 +745,12 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={account && hasValidInput && !hasTokenError}
+                    active={
+                        account &&
+                        hasValidInput &&
+                        !hasTokenError &&
+                        hasConfirmed
+                    }
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }
@@ -752,6 +801,7 @@ const AddLiquidityModal = observer((props: Props) => {
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
                             {renderNotification()}
+                            {renderConfirmation()}
 
                             {renderActionButton()}
                         </React.Fragment>
