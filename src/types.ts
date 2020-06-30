@@ -19,11 +19,13 @@ export interface Pool {
     finalized: boolean;
     totalWeight: BigNumber;
     totalShares: BigNumber;
+    totalSwapVolume: BigNumber;
     swapFee: BigNumber;
     tokens: PoolToken[];
     tokensList: string[];
     shares: PoolShare[];
     swaps: Swap[];
+    lastSwapVolume?: BigNumber;
 }
 
 export interface PoolToken {
@@ -86,6 +88,7 @@ export interface Swap {
     tokenOut;
     tokenOutSym;
     tokenAmountOut;
+    poolTotalSwapVolume;
 }
 
 export interface TokenErrors {

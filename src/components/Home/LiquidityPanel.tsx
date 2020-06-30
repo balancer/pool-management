@@ -225,7 +225,7 @@ const LiquidityPanel = observer((props: Props) => {
                     {poolsShown.map(pool => {
                         let liquidityText = '-';
                         let userLiquidityText = '-';
-                        // let volumeText = '-';
+                        let volumeText = '-';
 
                         const poolLiquidity = marketStore.getPortfolioValue(
                             pool
@@ -247,7 +247,7 @@ const LiquidityPanel = observer((props: Props) => {
 
                         // const volume = marketStore.getPoolVolume(pool);
 
-                        // volumeText = formatCurrency(volume);
+                        volumeText = formatCurrency(pool.lastSwapVolume);
 
                         return (
                             <PoolLink
@@ -280,7 +280,7 @@ const LiquidityPanel = observer((props: Props) => {
                                     </TableCellHideMobile>
                                     <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
                                     <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
-                                    {/* <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>*/}
+                                    <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
                                 </PoolRow>
                             </PoolLink>
                         );
@@ -342,9 +342,9 @@ const LiquidityPanel = observer((props: Props) => {
                 <TableCellRightHideMobile>
                     My Liquidity
                 </TableCellRightHideMobile>
-                {/*<TableCellRightHideMobile>
-                    Trade Volume (24h)
-                </TableCellRightHideMobile>*/}
+                <TableCellRightHideMobile>
+                    Trade Vol. (24h)
+                </TableCellRightHideMobile>
             </HeaderRow>
             {renderPools()}
         </Wrapper>
