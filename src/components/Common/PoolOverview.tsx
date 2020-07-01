@@ -172,10 +172,10 @@ const PoolOverview = observer((props: Props) => {
 
 const getUserShareText = (userShare: UserShare): string => {
     const formatUserShare = (share: BigNumber): string => {
-        if (share.gt(0.1)) {
+        if (share.gte(0.1)) {
             return formatPercentage(share, 0);
         } else {
-            return formatPercentage(share, 1);
+            return formatPercentage(share, 2);
         }
     };
     const { current, future } = userShare;
