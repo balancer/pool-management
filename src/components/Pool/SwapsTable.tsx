@@ -246,25 +246,24 @@ const SwapsTable = observer((props: Props) => {
         return (
             <React.Fragment>
                 {swaps.map((swap, index) => {
+                    const tokenInMetadata = contractMetadataStore.getTokenMetadata(
+                        getAddress(swap.tokenIn)
+                    );
+                    const tokenOutMetadata = contractMetadataStore.getTokenMetadata(
+                        getAddress(swap.tokenOut)
+                    );
+
                     let tokenInIcon,
                         tokenOutIcon = '';
                     try {
-                        let tokenMetadata = contractMetadataStore.getTokenMetadata(
-                            getAddress(swap.tokenIn)
-                        );
-
                         tokenInIcon = TokenIconAddress(
-                            tokenMetadata.iconAddress,
-                            tokenMetadata.isSupported
-                        );
-
-                        tokenMetadata = contractMetadataStore.getTokenMetadata(
-                            getAddress(swap.tokenOut)
+                            tokenInMetadata.iconAddress,
+                            tokenInMetadata.isSupported
                         );
 
                         tokenOutIcon = TokenIconAddress(
-                            tokenMetadata.iconAddress,
-                            tokenMetadata.isSupported
+                            tokenOutMetadata.iconAddress,
+                            tokenOutMetadata.isSupported
                         );
                     } catch (err) {
                         console.log(`[SwapsTable] Error Loading Token Icon.`);
@@ -273,9 +272,12 @@ const SwapsTable = observer((props: Props) => {
                     const tx = swap.id.split('-')[0];
                     const amountOut = padToDecimalPlaces(
                         swap.tokenAmountOut,
-                        18
+                        tokenOutMetadata.decimals
                     );
-                    const amountIn = padToDecimalPlaces(swap.tokenAmountIn, 18);
+                    const amountIn = padToDecimalPlaces(
+                        swap.tokenAmountIn,
+                        tokenInMetadata.decimals
+                    );
 
                     return (
                         <TableRow key={index}>
