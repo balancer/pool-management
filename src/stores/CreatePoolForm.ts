@@ -12,6 +12,7 @@ export default class CreatePoolFormStore {
     @observable weights: InputMap;
     @observable amounts: InputMap;
     @observable fee: Input;
+    @observable confirmation: Checkbox;
     @observable assetModal = {
         open: false,
         inputValue: '',
@@ -31,6 +32,10 @@ export default class CreatePoolFormStore {
             value: '',
             touched: false,
             validation: ValidationStatus.EMPTY,
+        };
+        this.confirmation = {
+            checked: false,
+            touched: false,
         };
         this.validationStatus = ValidationStatus.EMPTY;
         this.setDefaults();
@@ -76,6 +81,14 @@ export default class CreatePoolFormStore {
                 : ValidationStatus.BAD_FEE;
         this.fee.validation = validationStatus;
         this.validate();
+    }
+
+    @action toggleConfirmation() {
+        const checked = !this.confirmation.checked;
+        this.confirmation = {
+            checked,
+            touched: true,
+        };
     }
 
     @action setActiveInputKey(tokenAddress: string) {

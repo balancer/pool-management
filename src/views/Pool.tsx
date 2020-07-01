@@ -9,11 +9,13 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import {
     formatFee,
+    formatPercentage,
     isAddress,
     toChecksum,
     formatCurrency,
 } from '../utils/helpers';
-import { getUserShareText } from '../components/Common/PoolOverview';
+import { BigNumber } from '../utils/bignumber';
+import { Pool } from '../types';
 import { RouteComponentProps, withRouter } from 'react-router';
 import PoolTabs from '../components/Pool/PoolTabs';
 
@@ -42,7 +44,27 @@ const InfoPanelWrapper = styled.div`
     justify-content: flex-start;
 `;
 
-const Pool = observer((props: RouteComponentProps) => {
+const PoolView = observer((props: RouteComponentProps) => {
+    const getUserShareText = (
+        pool: Pool,
+        account: string,
+        totalPoolTokens: BigNumber | undefined,
+        userPoolTokens: BigNumber | undefined
+    ): string => {
+        let shareText = '-';
+
+        if (account && userPoolTokens && totalPoolTokens) {
+            const userShare = userPoolTokens.div(totalPoolTokens);
+            if (userShare) {
+                shareText = formatPercentage(userShare, 2);
+            } else {
+                shareText = '0%';
+            }
+        }
+
+        return shareText;
+    };
+
     const poolAddress = toChecksum(props.match.params.poolAddress);
     const {
         root: {
@@ -122,10 +144,8 @@ const Pool = observer((props: RouteComponentProps) => {
             : '-';
 
     let volumeText = '-';
-    if (marketStore.assetPricesLoaded && pool) {
-        const volume = marketStore.getPoolVolume(pool);
-
-        volumeText = formatCurrency(volume);
+    if (pool) {
+        volumeText = formatCurrency(pool.lastSwapVolume);
     }
 
     return (
@@ -156,4 +176,4 @@ const Pool = observer((props: RouteComponentProps) => {
     );
 });
 
-export default withRouter(Pool);
+export default withRouter(PoolView);

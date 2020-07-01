@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { getAddress } from 'ethers/utils';
-import { Pool, PoolToken } from '../types';
+import { Pool, PoolToken, Swap } from '../types';
 import { bnum } from '../utils/helpers';
 import { getSupportedChainId, SUBGRAPH_URLS } from './connectors';
 
@@ -39,6 +39,8 @@ export async function fetchContributedPools(account: string): Promise<Pool[]> {
 }
 
 export async function fetchPool(address: string): Promise<Pool> {
+    const ts = Math.round(new Date().getTime() / 1000);
+    const tsYesterday = ts - 24 * 3600;
     const query = `
         {
             pool(id: "${address.toLowerCase()}") {
@@ -48,6 +50,7 @@ export async function fetchPool(address: string): Promise<Pool> {
                 swapFee
                 totalWeight
                 totalShares
+                totalSwapVolume
                 tokensList
                 tokens {
                     id
@@ -56,6 +59,22 @@ export async function fetchPool(address: string): Promise<Pool> {
                     decimals
                     symbol
                     denormWeight
+                }
+                swaps (
+                    first: 1,
+                    orderBy: timestamp,
+                    orderDirection: desc,
+                    where: {
+                        timestamp_lt: ${tsYesterday}
+                    }
+                ) {
+                    tokenIn
+                    tokenInSym
+                    tokenAmountIn
+                    tokenOut
+                    tokenOutSym
+                    tokenAmountOut
+                    poolTotalSwapVolume
                 }
             }
         }
@@ -119,6 +138,8 @@ function getPoolQuery(
     skip: number,
     account?: string
 ): string {
+    const ts = Math.round(new Date().getTime() / 1000);
+    const tsYesterday = ts - 24 * 3600;
     const poolFields = `
         id
         publicSwap
@@ -126,6 +147,7 @@ function getPoolQuery(
         swapFee
         totalWeight
         totalShares
+        totalSwapVolume
         tokensList
         tokens {
             id
@@ -134,6 +156,22 @@ function getPoolQuery(
             decimals
             symbol
             denormWeight
+        }
+        swaps (
+            first: 1,
+            orderBy: timestamp,
+            orderDirection: desc,
+            where: {
+                timestamp_lt: ${tsYesterday}
+            }
+        ) {
+            tokenIn
+            tokenInSym
+            tokenAmountIn
+            tokenOut
+            tokenOutSym
+            tokenAmountOut
+            poolTotalSwapVolume
         }
     `;
     if (type === QueryType.SHARED_POOLS) {
@@ -218,6 +256,7 @@ function processPools(rawPools): Pool[] {
             swapFee: bnum(pool.swapFee),
             totalWeight: bnum(pool.totalWeight),
             totalShares: bnum(pool.totalShares),
+            totalSwapVolume: bnum(pool.totalSwapVolume),
             tokensList,
             tokens: pool.tokens.map(token => {
                 return {
@@ -232,7 +271,6 @@ function processPools(rawPools): Pool[] {
                 } as PoolToken;
             }),
             shares: [],
-            swaps: [],
             // shares: pool.shares.map(share => {
             //     return {
             //         account: getAddress(share.userAddress.id),
@@ -242,17 +280,24 @@ function processPools(rawPools): Pool[] {
             //         ),
             //     } as PoolShare;
             // }),
-            // swaps: pool.swaps.map(swap => {
-            //     return {
-            //         tokenIn: getAddress(swap.tokenIn),
-            //         tokenAmountIn: bnum(swap.tokenAmountIn),
-            //         tokenInSym: swap.tokenInSym,
-            //         tokenOut: getAddress(swap.tokenOut),
-            //         tokenAmountOut: bnum(swap.tokenAmountOut),
-            //         tokenOutSym: swap.tokenOutSym,
-            //     } as Swap;
-            // }),
+            swaps: pool.swaps.map(swap => {
+                return {
+                    tokenIn: getAddress(swap.tokenIn),
+                    tokenAmountIn: bnum(swap.tokenAmountIn),
+                    tokenInSym: swap.tokenInSym,
+                    tokenOut: getAddress(swap.tokenOut),
+                    tokenAmountOut: bnum(swap.tokenAmountOut),
+                    tokenOutSym: swap.tokenOutSym,
+                    poolTotalSwapVolume: bnum(swap.poolTotalSwapVolume),
+                } as Swap;
+            }),
         };
+
+        processedPool.lastSwapVolume = processedPool.swaps[0]
+            ? processedPool.totalSwapVolume.minus(
+                  processedPool.swaps[0].poolTotalSwapVolume
+              )
+            : bnum(0);
 
         return processedPool;
     });
