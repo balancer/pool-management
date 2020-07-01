@@ -171,22 +171,15 @@ const PoolOverview = observer((props: Props) => {
 });
 
 const getUserShareText = (userShare: UserShare): string => {
-    const formatUserShare = (share: BigNumber): string => {
-        if (share.gt(0.1)) {
-            return formatPercentage(share, 0);
-        } else {
-            return formatPercentage(share, 1);
-        }
-    };
     const { current, future } = userShare;
     if (!current || current.isNaN()) {
         return '-';
     }
     if (!future || future.isNaN()) {
-        return formatUserShare(current);
+        return formatPercentage(current, 2);
     }
-    const currentShare = formatUserShare(current);
-    const futureShare = formatUserShare(future);
+    const currentShare = formatPercentage(current, 2);
+    const futureShare = formatPercentage(future, 2);
     return `${currentShare} → ${futureShare}`;
 };
 
