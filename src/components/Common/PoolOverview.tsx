@@ -9,7 +9,6 @@ import {
 } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { Pool, UserShare } from '../../types';
-import { BigNumber } from '../../utils/bignumber';
 import { formatPoolAssetChartData } from '../../utils/chartFormatter';
 
 const Wrapper = styled.div`
