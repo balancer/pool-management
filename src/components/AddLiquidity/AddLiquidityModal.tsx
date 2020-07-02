@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import PoolOverview from '../Common/PoolOverview';
 import Button from '../Common/Button';
+import Checkbox from '../Common/Checkbox';
 import SingleMultiToggle from '../Common/SingleMultiToggle';
 import AddAssetTable from './AddAssetTable';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import { Pool, PoolToken } from '../../types';
+import { Pool, PoolToken, UserShare } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
 import { ValidationStatus } from '../../stores/actions/validators';
 import { EtherKey } from '../../stores/Token';
@@ -135,6 +136,24 @@ const Notification = styled.div`
     margin-bottom: 20px;
 `;
 
+const CheckboxPanel = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: var(--panel-background);
+    font-size: 14px;
+    color: var(--body-text);
+    box-sizing: border-box;
+    margin-bottom: 20px;
+`;
+
+const CheckboxMessage = styled.div`
+    margin-left: 16px;
+`;
+
 enum ButtonAction {
     UNLOCK,
     ADD_LIQUIDITY,
@@ -230,6 +249,80 @@ const AddLiquidityModal = observer((props: Props) => {
         return maxRatioToken;
     };
 
+    const calculateUserShare = (
+        pool: Pool,
+        account: string,
+        hasValidInput: boolean
+    ): UserShare => {
+        const currentTotal = tokenStore.getTotalSupply(pool.address);
+        const userBalance = tokenStore.getBalance(pool.address, account);
+
+        let currentShare;
+        let futureShare;
+
+        if (account) {
+            currentShare = poolStore.getUserShareProportion(
+                pool.address,
+                account
+            );
+        }
+
+        if (pool && currentTotal) {
+            let addedTokens = bnum(0);
+            if (hasValidInput) {
+                if (
+                    addLiquidityFormStore.depositType ===
+                    DepositType.MULTI_ASSET
+                ) {
+                    addedTokens = poolStore.calcPoolTokensByRatio(
+                        pool,
+                        addLiquidityFormStore.joinRatio
+                    );
+                } else {
+                    const tokenInAddress = addLiquidityFormStore.activeToken;
+                    const tokenIn = pool.tokens.find(
+                        token => token.address === tokenInAddress
+                    );
+                    const amount = new BigNumber(
+                        addLiquidityFormStore.getInput(tokenInAddress).value
+                    );
+
+                    const tokenBalanceIn = tokenStore.denormalizeBalance(
+                        tokenIn.balance,
+                        tokenInAddress
+                    );
+                    const tokenWeightIn = tokenIn.denormWeight;
+                    const poolSupply = tokenStore.denormalizeBalance(
+                        pool.totalShares,
+                        EtherKey
+                    );
+                    const totalWeight = pool.totalWeight;
+                    const tokenAmountIn = tokenStore
+                        .denormalizeBalance(amount, tokenInAddress)
+                        .integerValue(BigNumber.ROUND_UP);
+                    const swapFee = pool.swapFee;
+
+                    addedTokens = calcPoolOutGivenSingleIn(
+                        tokenBalanceIn,
+                        tokenWeightIn,
+                        poolSupply,
+                        totalWeight,
+                        tokenAmountIn,
+                        swapFee
+                    );
+                }
+            }
+
+            const futureTotal = currentTotal.plus(addedTokens);
+            futureShare = addedTokens.plus(userBalance).div(futureTotal);
+        }
+
+        return {
+            current: currentShare,
+            future: futureShare,
+        };
+    };
+
     const { poolAddress } = props;
     const {
         root: {
@@ -260,10 +353,15 @@ const AddLiquidityModal = observer((props: Props) => {
     const validationStatus = addLiquidityFormStore.validationStatus;
     const hasValidInput = addLiquidityFormStore.hasValidInput();
 
+    const confirmationCheckbox = addLiquidityFormStore.confirmation;
+    const hasConfirmed = confirmationCheckbox.checked;
+
     const tokenErrors = contractMetadataStore.getTokenErrors();
     const hasTokenError = pool.tokens.some(token => {
         return tokenErrors.transferFee.includes(token.address);
     });
+
+    const userShare = calculateUserShare(pool, account, hasValidInput);
 
     let loading = true;
     let lockedToken: PoolToken | undefined = undefined;
@@ -583,107 +681,31 @@ const AddLiquidityModal = observer((props: Props) => {
     };
 
     const renderNotification = () => {
+        if (!account) {
+            return <Notification>Connect wallet to add liquidity</Notification>;
+        }
+    };
+
+    const renderConfirmation = () => {
         if (!hasValidInput || hasTokenError) {
             return;
         }
-        let currentPoolShare = '-';
-        let futurePoolShare = '-';
-
-        const currentTotal = tokenStore.getTotalSupply(pool.address);
-        const userBalance = tokenStore.getBalance(pool.address, account);
-        let existingShare = account
-            ? poolStore.getUserShareProportion(pool.address, account)
-            : bnum(0);
-
-        if (!existingShare) {
-            existingShare = bnum(0);
-        }
-        currentPoolShare = formatPercentage(existingShare, 2);
-
-        if (pool && currentTotal) {
-            let previewTokens = bnum(0);
-            if (hasValidInput) {
-                if (
-                    addLiquidityFormStore.depositType ===
-                    DepositType.MULTI_ASSET
-                ) {
-                    previewTokens = poolStore.calcPoolTokensByRatio(
-                        pool,
-                        addLiquidityFormStore.joinRatio
-                    );
-                } else {
-                    const tokenInAddress = addLiquidityFormStore.activeToken;
-                    const tokenIn = pool.tokens.find(
-                        token => token.address === tokenInAddress
-                    );
-                    const amount = new BigNumber(
-                        addLiquidityFormStore.getInput(tokenInAddress).value
-                    );
-
-                    const tokenBalanceIn = tokenStore.denormalizeBalance(
-                        tokenIn.balance,
-                        tokenInAddress
-                    );
-                    const tokenWeightIn = tokenIn.denormWeight;
-                    const poolSupply = tokenStore.denormalizeBalance(
-                        pool.totalShares,
-                        EtherKey
-                    );
-                    const totalWeight = pool.totalWeight;
-                    const tokenAmountIn = tokenStore
-                        .denormalizeBalance(amount, tokenInAddress)
-                        .integerValue(BigNumber.ROUND_UP);
-                    const swapFee = pool.swapFee;
-
-                    previewTokens = calcPoolOutGivenSingleIn(
-                        tokenBalanceIn,
-                        tokenWeightIn,
-                        poolSupply,
-                        totalWeight,
-                        tokenAmountIn,
-                        swapFee
-                    );
-                }
-            }
-
-            const futureTotal = currentTotal.plus(previewTokens);
-            const futureShare = previewTokens
-                .plus(userBalance)
-                .div(futureTotal);
-
-            futurePoolShare = formatPercentage(futureShare, 2);
-        }
-
-        if (!account && !addLiquidityFormStore.activeInputKey) {
-            return <Notification>Connect wallet to add liquidity</Notification>;
-        }
-
-        if (lockedToken) {
-            return (
-                <Notification>
-                    Please unlock {lockedToken.symbol} to continue
-                </Notification>
-            );
-        }
-        if (addLiquidityFormStore.activeInputKey) {
-            const text = account ? (
-                <React.Fragment>
-                    Your pool share will go from {currentPoolShare} to{' '}
-                    {futurePoolShare}
-                </React.Fragment>
-            ) : (
-                <React.Fragment>
-                    Your pool share would increase by {futurePoolShare}
-                </React.Fragment>
-            );
-            return <Notification>{text}</Notification>;
-        } else {
-            return (
-                <Notification>
-                    Please enter desired liquidity to continue
-                </Notification>
-            );
-        }
+        return (
+            <CheckboxPanel>
+                <Checkbox
+                    checked={hasConfirmed}
+                    onChange={e => {
+                        addLiquidityFormStore.toggleConfirmation();
+                    }}
+                />
+                <CheckboxMessage>
+                    I understand that adding liquidity to Balancer protocol has
+                    smart contract risk and that I should do my own due
+                    diligence about the tokens present in the pool I’m adding
+                    liquidity to.
+                </CheckboxMessage>
+            </CheckboxPanel>
+        );
     };
 
     const renderActionButton = () => {
@@ -701,7 +723,12 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <Button
                     buttonText={`Add Liquidity`}
-                    active={account && hasValidInput && !hasTokenError}
+                    active={
+                        account &&
+                        hasValidInput &&
+                        !hasTokenError &&
+                        hasConfirmed
+                    }
                     onClick={e =>
                         actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                     }
@@ -739,7 +766,10 @@ const AddLiquidityModal = observer((props: Props) => {
                         }}
                     />
                     <AddLiquidityContent>
-                        <PoolOverview poolAddress={poolAddress} />
+                        <PoolOverview
+                            poolAddress={poolAddress}
+                            userShare={userShare}
+                        />
                         <AddAssetTable poolAddress={poolAddress} />
                     </AddLiquidityContent>
                     {loading ? (
@@ -752,6 +782,7 @@ const AddLiquidityModal = observer((props: Props) => {
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
                             {renderNotification()}
+                            {renderConfirmation()}
 
                             {renderActionButton()}
                         </React.Fragment>

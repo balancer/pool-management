@@ -91,6 +91,11 @@ export interface Swap {
     poolTotalSwapVolume;
 }
 
+export interface UserShare {
+    current?: BigNumber;
+    future?: BigNumber;
+}
+
 export interface TokenErrors {
     noBool: string[];
     transferFee: string[];
