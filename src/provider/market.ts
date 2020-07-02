@@ -5,7 +5,7 @@ import { bnum } from '../utils/helpers';
 const pricesBackup = require('./pricesBackup.json');
 const listBackup = require('./listBackup.json');
 
-const conflictSymbols = ['master-usd'];
+const conflictSymbols = ['master-usd', 'compound-coin'];
 
 const MARKET_API_URL =
     process.env.REACT_APP_MARKET_API_URL || 'https://api.coingecko.com/api/v3';
@@ -90,7 +90,9 @@ export async function fetchAssetList(
     const result: MarketAssetMap = {};
     symbolsToFetch.forEach(assetSymbol => {
         const match = assets.find(
-            value => value.symbol.toUpperCase() === assetSymbol.toUpperCase() && !conflictSymbols.includes(value.id)
+            value =>
+                value.symbol.toUpperCase() === assetSymbol.toUpperCase() &&
+                !conflictSymbols.includes(value.id)
         );
         if (match) {
             result[assetSymbol] = formatAsset(match);
