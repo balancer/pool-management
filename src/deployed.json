@@ -613,7 +613,7 @@
                 "symbol": "COMP",
                 "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "COMP",
                 "iconAddress": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "precision": 2,
                 "chartColor": "#387080"
