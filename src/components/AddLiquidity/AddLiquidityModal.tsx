@@ -12,7 +12,7 @@ import { Pool, PoolToken, UserShare } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
 import { ValidationStatus } from '../../stores/actions/validators';
 import { EtherKey } from '../../stores/Token';
-import { bnum, formatPercentage } from '../../utils/helpers';
+import { bnum, formatPercentage, isTxReverted } from '../../utils/helpers';
 import { calcPoolOutGivenSingleIn } from '../../utils/math';
 import { BigNumber } from '../../utils/bignumber';
 
@@ -116,6 +116,7 @@ const WarningIcon = styled.img`
 
 const Link = styled.a`
     color: color: var(--warning);
+    margin: 0 4px;
 `;
 
 const AddLiquidityContent = styled.div`
@@ -356,6 +357,8 @@ const AddLiquidityModal = observer((props: Props) => {
     const confirmationCheckbox = addLiquidityFormStore.confirmation;
     const hasConfirmed = confirmationCheckbox.checked;
 
+    const hasTransactionError = addLiquidityFormStore.hasTransactionError;
+
     const tokenErrors = contractMetadataStore.getTokenErrors();
     const hasTokenError = pool.tokens.some(token => {
         return tokenErrors.transferFee.includes(token.address);
@@ -437,11 +440,15 @@ const AddLiquidityModal = observer((props: Props) => {
                     tokenAmountsIn,
                 });
 
-                await poolStore.joinPool(
+                const response = await poolStore.joinPool(
                     pool.address,
                     poolTokens.toString(),
                     tokenAmountsIn
                 );
+
+                if (isTxReverted(response)) {
+                    addLiquidityFormStore.setTransactionError();
+                }
             } else {
                 const tokenInAddress = addLiquidityFormStore.activeToken;
                 const amount = new BigNumber(
@@ -459,12 +466,16 @@ const AddLiquidityModal = observer((props: Props) => {
                     minPoolAmountOut,
                 });
 
-                await poolStore.joinswapExternAmountIn(
+                const response = await poolStore.joinswapExternAmountIn(
                     pool.address,
                     tokenInAddress,
                     tokenAmountIn.toString(),
                     minPoolAmountOut
                 );
+
+                if (isTxReverted(response)) {
+                    addLiquidityFormStore.setTransactionError();
+                }
             }
         }
     };
@@ -521,13 +532,34 @@ const AddLiquidityModal = observer((props: Props) => {
         return <Error>{errorText}</Error>;
     };
 
+    const renderTransferError = () => {
+        if (!hasTransactionError) {
+            return;
+        }
+
+        return (
+            <Error>
+                Adding liquidity failed as one of the underlying tokens blocked
+                the transfer. Reach out to our
+                <Link
+                    href="https://discord.gg/ARJWaeF"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Discord
+                </Link>
+                for help.
+            </Error>
+        );
+    };
+
     const renderTokenError = () => {
         if (hasTokenError) {
             return (
                 <Error>
                     <Message>
                         This pool contains a deflationary token that is likely
-                        to cause loss of funds. Do not deposit.{' '}
+                        to cause loss of funds. Do not deposit.
                         <Link
                             href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
                             target="_blank"
@@ -726,6 +758,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     active={
                         account &&
                         hasValidInput &&
+                        !hasTransactionError &&
                         !hasTokenError &&
                         hasConfirmed
                     }
@@ -777,10 +810,13 @@ const AddLiquidityModal = observer((props: Props) => {
                     ) : (
                         <React.Fragment>
                             {renderError()}
+                            {renderTransferError()}
                             {renderTokenError()}
+
                             {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
+
                             {renderNotification()}
                             {renderConfirmation()}
 
