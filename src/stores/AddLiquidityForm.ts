@@ -28,6 +28,7 @@ export default class AddLiquidityFormStore {
     @observable activePool: string;
     @observable activeAccount: string | undefined = undefined;
     @observable modalOpen: boolean;
+    @observable hasTransactionError: boolean;
     @observable depositType: DepositType;
     @observable joinRatio: BigNumber;
     @observable validationStatus: ValidationStatus;
@@ -52,6 +53,7 @@ export default class AddLiquidityFormStore {
         this.activeToken = tokenAddresses[0];
         this.activePool = poolAddress;
         this.activeAccount = account;
+        this.hasTransactionError = false;
         this.initializeCheckboxes(tokenAddresses);
         this.initializeInputs(tokenAddresses);
         this.validationStatus = ValidationStatus.EMPTY;
@@ -180,6 +182,10 @@ export default class AddLiquidityFormStore {
     setDepositType(depositType: DepositType) {
         this.depositType = depositType;
         this.validate();
+    }
+
+    @action setTransactionError() {
+        this.hasTransactionError = true;
     }
 
     calcRatio(

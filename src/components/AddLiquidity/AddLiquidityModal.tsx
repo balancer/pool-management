@@ -356,6 +356,8 @@ const AddLiquidityModal = observer((props: Props) => {
     const confirmationCheckbox = addLiquidityFormStore.confirmation;
     const hasConfirmed = confirmationCheckbox.checked;
 
+    const hasTransactionError = addLiquidityFormStore.hasTransactionError;
+
     const tokenErrors = contractMetadataStore.getTokenErrors();
     const hasTokenError = pool.tokens.some(token => {
         return tokenErrors.transferFee.includes(token.address);
@@ -437,11 +439,15 @@ const AddLiquidityModal = observer((props: Props) => {
                     tokenAmountsIn,
                 });
 
-                await poolStore.joinPool(
+                const response = await poolStore.joinPool(
                     pool.address,
                     poolTokens.toString(),
                     tokenAmountsIn
                 );
+
+                if (response.error) {
+                    addLiquidityFormStore.setTransactionError();
+                }
             } else {
                 const tokenInAddress = addLiquidityFormStore.activeToken;
                 const amount = new BigNumber(
@@ -519,6 +525,14 @@ const AddLiquidityModal = observer((props: Props) => {
 
         const errorText = getText(validationStatus);
         return <Error>{errorText}</Error>;
+    };
+
+    const renderTransferError = () => {
+        if (!hasTransactionError) {
+            return;
+        }
+
+        return <Error>Some of the tokens blocks the transfer of assets.</Error>;
     };
 
     const renderTokenError = () => {
@@ -726,6 +740,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     active={
                         account &&
                         hasValidInput &&
+                        !hasTransactionError &&
                         !hasTokenError &&
                         hasConfirmed
                     }
@@ -777,10 +792,13 @@ const AddLiquidityModal = observer((props: Props) => {
                     ) : (
                         <React.Fragment>
                             {renderError()}
+                            {renderTransferError()}
                             {renderTokenError()}
+
                             {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
+
                             {renderNotification()}
                             {renderConfirmation()}
 

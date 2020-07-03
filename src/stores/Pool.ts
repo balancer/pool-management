@@ -409,7 +409,7 @@ export default class PoolStore {
             'joinPool',
             [poolAddress, poolAmountOut.toString(), maxAmountsIn]
         );
-        await providerStore.sendTransaction(
+        return await providerStore.sendTransaction(
             ContractTypes.DSProxy,
             dsProxyAddress,
             'execute',
