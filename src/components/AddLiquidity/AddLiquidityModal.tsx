@@ -12,7 +12,7 @@ import { Pool, PoolToken, UserShare } from '../../types';
 import { DepositType } from '../../stores/AddLiquidityForm';
 import { ValidationStatus } from '../../stores/actions/validators';
 import { EtherKey } from '../../stores/Token';
-import { bnum, formatPercentage } from '../../utils/helpers';
+import { bnum, formatPercentage, isTxReverted } from '../../utils/helpers';
 import { calcPoolOutGivenSingleIn } from '../../utils/math';
 import { BigNumber } from '../../utils/bignumber';
 
@@ -446,7 +446,7 @@ const AddLiquidityModal = observer((props: Props) => {
                     tokenAmountsIn
                 );
 
-                if (response.error) {
+                if (isTxReverted(response)) {
                     addLiquidityFormStore.setTransactionError();
                 }
             } else {
@@ -466,12 +466,16 @@ const AddLiquidityModal = observer((props: Props) => {
                     minPoolAmountOut,
                 });
 
-                await poolStore.joinswapExternAmountIn(
+                const response = await poolStore.joinswapExternAmountIn(
                     pool.address,
                     tokenInAddress,
                     tokenAmountIn.toString(),
                     minPoolAmountOut
                 );
+
+                if (isTxReverted(response)) {
+                    addLiquidityFormStore.setTransactionError();
+                }
             }
         }
     };
@@ -544,7 +548,7 @@ const AddLiquidityModal = observer((props: Props) => {
                 >
                     Discord
                 </Link>
-                for support.
+                for help.
             </Error>
         );
     };

@@ -331,6 +331,14 @@ export const padToDecimalPlaces = (
     return value;
 };
 
+export const isTxReverted = response => {
+    const { error } = response;
+    if (!error) {
+        return false;
+    }
+    return error.code === -32016;
+};
+
 export const getGasPriceFromETHGasStation = () => {
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
