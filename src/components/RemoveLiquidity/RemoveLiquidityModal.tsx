@@ -73,7 +73,6 @@ const Message = styled.div`
     margin-top: 16px;
     padding: 16px;
     display: flex;
-    justify-content: center;
     align-items: center;
     border: 1px solid var(--error);
     border-radius: 4px;
