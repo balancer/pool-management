@@ -16,7 +16,7 @@ const WarningIcon = styled.img`
     width: 22px;
     height: 26px;
     margin-right: 0px;
-    color: var(--error-color);
+    color: var(--error);
 `;
 
 const rotate = keyframes`
@@ -61,7 +61,7 @@ const WalletButton = styled.button`
 
 const Error = styled.button`
     background-color: var(--panel);
-    border: 1px solid var(--error-color);
+    border: 1px solid var(--error);
     display: flex;
     flex-flow: row nowrap;
     width: 100%;
@@ -80,7 +80,7 @@ const Error = styled.button`
 `;
 
 const ErrorMessage = styled.span`
-    color: var(--error-color);
+    color: var(--error);
     margin: 0 0.5rem 0 0.25rem;
     font-size: 0.83rem;
 `;

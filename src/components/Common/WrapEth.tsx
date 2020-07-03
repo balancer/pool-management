@@ -110,15 +110,14 @@ const EthInputWrapper = styled.div`
             outline: none;
         }
     }
-    border: ${props =>
-        props.errorBorders ? '1px solid var(--error-color)' : ''};
+    border: ${props => (props.errorBorders ? '1px solid var(--error)' : '')};
     margin-left: ${props => (props.errorBorders ? '-1px' : '0px')}
     margin-right: ${props => (props.errorBorders ? '-1px' : '0px')}
     :hover {
         background-color: var(--input-hover-background);
         border: ${props =>
             props.errorBorders
-                ? '1px solid var(--error-color)'
+                ? '1px solid var(--error)'
                 : '1px solid var(--input-hover-border);'};
         input {
             background-color: var(--input-hover-background);
