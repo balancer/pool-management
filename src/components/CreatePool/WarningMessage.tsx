@@ -41,7 +41,7 @@ const WarningMessage = () => {
                     This feature is in beta. Currently, only creating shared
                     pools is supported. Make sure tokens are ERC20-compliant
                     otherwise funds can get stuck. The default list in the asset
-                    selector has been vetted .
+                    selector has been vetted.
                 </Message>
             </Warning>
         </Wrapper>
