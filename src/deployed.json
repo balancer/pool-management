@@ -1094,6 +1094,15 @@
                 "iconAddress": "0x8A9C67fee641579dEbA04928c4BC45F66e26343A",
                 "precision": 2,
                 "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "cWBTC",
+                "address": "0xC11b1268C1A384e55C48c2391d8d480264A3A7F4",
+                "decimals": 8,
+                "ticker": "cWBTC",
+                "iconAddress": "0xC11b1268C1A384e55C48c2391d8d480264A3A7F4",
+                "precision": 4,
+                "chartColor": "#be955c"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
