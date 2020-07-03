@@ -116,6 +116,7 @@ const WarningIcon = styled.img`
 
 const Link = styled.a`
     color: color: var(--warning);
+    margin: 0 4px;
 `;
 
 const AddLiquidityContent = styled.div`
@@ -532,7 +533,20 @@ const AddLiquidityModal = observer((props: Props) => {
             return;
         }
 
-        return <Error>Some of the tokens blocks the transfer of assets.</Error>;
+        return (
+            <Error>
+                Adding liquidity failed as one of the underlying tokens blocked
+                the transfer. Reach out to our
+                <Link
+                    href="https://discord.gg/ARJWaeF"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Discord
+                </Link>
+                for support.
+            </Error>
+        );
     };
 
     const renderTokenError = () => {
@@ -541,7 +555,7 @@ const AddLiquidityModal = observer((props: Props) => {
                 <Error>
                     <Message>
                         This pool contains a deflationary token that is likely
-                        to cause loss of funds. Do not deposit.{' '}
+                        to cause loss of funds. Do not deposit.
                         <Link
                             href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
                             target="_blank"
