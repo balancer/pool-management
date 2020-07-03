@@ -181,7 +181,7 @@
                 "symbol": "BAL",
                 "address": "0xba100000625a3754423978a60c9317c58a424e3D",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "BAL",
                 "iconAddress": "0xba100000625a3754423978a60c9317c58a424e3D",
                 "precision": 4,
                 "chartColor": "#fafafa"
@@ -379,7 +379,7 @@
                 "symbol": "aUSDT",
                 "address": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
                 "decimals": 6,
-                "ticker": "",
+                "ticker": "aUSDT",
                 "iconAddress": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
                 "precision": 2,
                 "chartColor": "#8b5580"
@@ -388,7 +388,7 @@
                 "symbol": "aUSDC",
                 "address": "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E",
                 "decimals": 6,
-                "ticker": "",
+                "ticker": "aUSDC",
                 "iconAddress": "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E",
                 "precision": 2,
                 "chartColor": "#c5ccb8"
@@ -397,7 +397,7 @@
                 "symbol": "aSUSD",
                 "address": "0x625aE63000f46200499120B906716420bd059240",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "aSUSD",
                 "iconAddress": "0x625aE63000f46200499120B906716420bd059240",
                 "precision": 2,
                 "chartColor": "#9a9a97"
@@ -406,7 +406,7 @@
                 "symbol": "aTUSD",
                 "address": "0x4DA9b813057D04BAef4e5800E36083717b4a0341",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "aTUSD",
                 "iconAddress": "0x4DA9b813057D04BAef4e5800E36083717b4a0341",
                 "precision": 2,
                 "chartColor": "#6f6776"
@@ -415,7 +415,7 @@
                 "symbol": "aBUSD",
                 "address": "0x6Ee0f7BB50a54AB5253dA0667B0Dc2ee526C30a8",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "aBUSD",
                 "iconAddress": "0x6Ee0f7BB50a54AB5253dA0667B0Dc2ee526C30a8",
                 "precision": 2,
                 "chartColor": "#93a167"
@@ -613,7 +613,7 @@
                 "symbol": "COMP",
                 "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "COMP",
                 "iconAddress": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "precision": 2,
                 "chartColor": "#387080"
@@ -631,7 +631,7 @@
                 "symbol": "cUSDT",
                 "address": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "decimals": 8,
-                "ticker": "",
+                "ticker": "cUSDT",
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
@@ -1090,7 +1090,7 @@
                 "symbol": "PRO",
                 "address": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
                 "decimals": 18,
-                "ticker": "PRO",
+                "ticker": "PRA",
                 "iconAddress": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
                 "precision": 2,
                 "chartColor": "#9a9a97"
