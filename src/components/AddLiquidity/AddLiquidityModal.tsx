@@ -66,38 +66,44 @@ const ExitComponent = styled.div`
     cursor: pointer;
 `;
 
-const Error = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    background: var(--panel-background);
-    color: var(--error-color);
-    margin-bottom: 20px;
-`;
-
-const Warning = styled.div`
+const AddLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: center;
-    color: var(--warning);
-    height: 67px;
-    border: 1px solid var(--warning);
-    border-radius: 4px;
-    padding-left: 20px;
     margin-bottom: 20px;
 `;
 
 const Message = styled.div`
-    display: inline;
-    font-style: normal;
-    font-weight: normal;
+    margin-top: 16px;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--error);
+    border-radius: 4px;
     font-size: 14px;
-    line-height: 16px;
-    letter-spacing: 0.2px;
 `;
+
+const Error = styled(Message)`
+    border-color: var(--error);
+    color: var(--error);
+`;
+
+const Warning = styled(Message)`
+    border-color: var(--warning);
+    color: var(--warning);
+`;
+
+const Notification = styled(Message)`
+    border-color: var(--panel-border);
+`;
+
+const Icon = styled.img`
+    width: 26px;
+    height: 24px;
+    margin-right: 20px;
+`;
+
+const Content = styled.div``;
 
 const LowerAmountLink = styled.span`
     margin-left: 4px;
@@ -107,52 +113,30 @@ const LowerAmountLink = styled.span`
     cursor: pointer;
 `;
 
-const WarningIcon = styled.img`
-    width: 22px;
-    height: 26px;
-    margin-right: 20px;
-    color: var(--warning);
-`;
-
 const Link = styled.a`
     color: color: var(--warning);
     margin: 0 4px;
 `;
 
-const AddLiquidityContent = styled.div`
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 20px;
-`;
-
-const Notification = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    width: 100%;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    background: var(--panel-background);
-    margin-bottom: 20px;
-`;
-
 const CheckboxPanel = styled.div`
+    margin-top: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 16px;
     border: 1px solid var(--panel-border);
     border-radius: 4px;
-    background: var(--panel-background);
     font-size: 14px;
     color: var(--body-text);
     box-sizing: border-box;
-    margin-bottom: 20px;
 `;
 
-const CheckboxMessage = styled.div`
-    margin-left: 16px;
+const CheckboxWrapper = styled.div`
+    margin-right: 16px;
+`;
+
+const ButtonWrapper = styled.div`
+    margin-top: 16px;
 `;
 
 enum ButtonAction {
@@ -529,7 +513,12 @@ const AddLiquidityModal = observer((props: Props) => {
         }
 
         const errorText = getText(validationStatus);
-        return <Error>{errorText}</Error>;
+        return (
+            <Error>
+                <Icon src="ErrorSign.svg" />
+                <Content>{errorText}</Content>
+            </Error>
+        );
     };
 
     const renderTransferError = () => {
@@ -539,38 +528,44 @@ const AddLiquidityModal = observer((props: Props) => {
 
         return (
             <Error>
-                Adding liquidity failed as one of the underlying tokens blocked
-                the transfer. Reach out to our
-                <Link
-                    href="https://discord.gg/ARJWaeF"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Discord
-                </Link>
-                for help.
+                <Icon src="ErrorSign.svg" />
+                <Content>
+                    Adding liquidity failed as one of the underlying tokens
+                    blocked the transfer. Reach out to our
+                    <Link
+                        href="https://discord.gg/ARJWaeF"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Discord
+                    </Link>
+                    for help.
+                </Content>
             </Error>
         );
     };
 
     const renderTokenError = () => {
-        if (hasTokenError) {
-            return (
-                <Error>
-                    <Message>
-                        This pool contains a deflationary token that is likely
-                        to cause loss of funds. Do not deposit.
-                        <Link
-                            href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Learn more
-                        </Link>
-                    </Message>
-                </Error>
-            );
+        if (!hasTokenError) {
+            return;
         }
+
+        return (
+            <Error>
+                <Icon src="ErrorSign.svg" />
+                <Content>
+                    This pool contains a deflationary token that is likely to
+                    cause loss of funds. Do not deposit.
+                    <Link
+                        href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Learn more
+                    </Link>
+                </Content>
+            </Error>
+        );
     };
 
     const renderTokenWarning = () => {
@@ -582,26 +577,26 @@ const AddLiquidityModal = observer((props: Props) => {
         const warning = pool.tokens.some(token => {
             return tokenWarnings.includes(token.address);
         });
-
-        if (warning) {
-            return (
-                <Warning>
-                    <WarningIcon src="WarningSign.svg" />
-                    <Message>
-                        This pool contains a non-standard token that may cause
-                        potential balance issues or unknown arbitrage
-                        opportunites.{' '}
-                        <Link
-                            href="https://docs.balancer.finance/protocol/limitations#erc20-tokens"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Learn more
-                        </Link>
-                    </Message>
-                </Warning>
-            );
+        if (!warning) {
+            return;
         }
+
+        return (
+            <Warning>
+                <Icon src="WarningSign.svg" />
+                <Content>
+                    This pool contains a non-standard token that may cause
+                    potential balance issues or unknown arbitrage opportunites.{' '}
+                    <Link
+                        href="https://docs.balancer.finance/protocol/limitations#erc20-tokens"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Learn more
+                    </Link>
+                </Content>
+            </Warning>
+        );
     };
 
     const renderFrontrunningWarning = () => {
@@ -633,8 +628,8 @@ const AddLiquidityModal = observer((props: Props) => {
 
         return (
             <Warning>
-                <WarningIcon src="WarningSign.svg" />
-                <Message>
+                <Icon src="WarningSign.svg" />
+                <Content>
                     Add liquidity might fail due to using max balance and a
                     trade occuring before join tx is mined. Use high gas price
                     or
@@ -642,7 +637,7 @@ const AddLiquidityModal = observer((props: Props) => {
                         lower amounts
                     </LowerAmountLink>
                     .
-                </Message>
+                </Content>
             </Warning>
         );
     };
@@ -703,11 +698,11 @@ const AddLiquidityModal = observer((props: Props) => {
 
         return (
             <Warning>
-                <WarningIcon src="WarningSign.svg" />
-                <Message>
+                <Icon src="ErrorSign.svg" />
+                <Content>
                     Adding liquidity will incur {formatPercentage(slippage, 2)}{' '}
                     of slippage
-                </Message>
+                </Content>
             </Warning>
         );
     };
@@ -724,18 +719,17 @@ const AddLiquidityModal = observer((props: Props) => {
         }
         return (
             <CheckboxPanel>
-                <Checkbox
-                    checked={hasConfirmed}
-                    onChange={e => {
-                        addLiquidityFormStore.toggleConfirmation();
-                    }}
-                />
-                <CheckboxMessage>
-                    I understand that adding liquidity to Balancer protocol has
-                    smart contract risk and that I should do my own due
-                    diligence about the tokens present in the pool I’m adding
-                    liquidity to.
-                </CheckboxMessage>
+                <CheckboxWrapper>
+                    <Checkbox
+                        checked={hasConfirmed}
+                        onChange={e => {
+                            addLiquidityFormStore.toggleConfirmation();
+                        }}
+                    />
+                </CheckboxWrapper>
+                I understand that adding liquidity to Balancer protocol has
+                smart contract risk and that I should do my own due diligence
+                about the tokens present in the pool I’m adding liquidity to.
             </CheckboxPanel>
         );
     };
@@ -743,29 +737,36 @@ const AddLiquidityModal = observer((props: Props) => {
     const renderActionButton = () => {
         if (lockedToken) {
             return (
-                <Button
-                    buttonText={`Unlock ${lockedToken.symbol}`}
-                    active={!!account}
-                    onClick={e =>
-                        actionButtonHandler(ButtonAction.UNLOCK, lockedToken)
-                    }
-                />
+                <ButtonWrapper>
+                    <Button
+                        buttonText={`Unlock ${lockedToken.symbol}`}
+                        active={!!account}
+                        onClick={e =>
+                            actionButtonHandler(
+                                ButtonAction.UNLOCK,
+                                lockedToken
+                            )
+                        }
+                    />
+                </ButtonWrapper>
             );
         } else {
             return (
-                <Button
-                    buttonText={`Add Liquidity`}
-                    active={
-                        account &&
-                        hasValidInput &&
-                        !hasTransactionError &&
-                        !hasTokenError &&
-                        hasConfirmed
-                    }
-                    onClick={e =>
-                        actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
-                    }
-                />
+                <ButtonWrapper>
+                    <Button
+                        buttonText={`Add Liquidity`}
+                        active={
+                            account &&
+                            hasValidInput &&
+                            !hasTransactionError &&
+                            !hasTokenError &&
+                            hasConfirmed
+                        }
+                        onClick={e =>
+                            actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
+                        }
+                    />
+                </ButtonWrapper>
             );
         }
     };

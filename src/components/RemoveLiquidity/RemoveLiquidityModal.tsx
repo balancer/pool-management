@@ -63,65 +63,51 @@ const ExitComponent = styled.div`
     cursor: pointer;
 `;
 
-const Error = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    background: var(--panel-background);
-    color: var(--error-color);
-    margin-bottom: 30px;
-`;
-
-const Warning = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    color: var(--warning);
-    height: 67px;
-    border: 1px solid var(--warning);
-    border-radius: 4px;
-    padding-left: 20px;
-    margin-bottom: 30px;
-`;
-
-const Message = styled.div`
-    display: inline;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 16px;
-    letter-spacing: 0.2px;
-`;
-
-const WarningIcon = styled.img`
-    width: 22px;
-    height: 26px;
-    margin-right: 20px;
-    color: var(--warning);
-`;
-
-const Link = styled.a`
-    color: color: var(--warning);
-`;
-
 const RemoveLiquidityContent = styled.div`
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
 `;
 
-const Notification = styled.div`
+const Message = styled.div`
+    margin-top: 16px;
+    padding: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 50px;
-    width: 100%;
-    border: 1px solid var(--panel-border);
-    background: var(--panel-background);
-    margin-bottom: 30px;
+    border: 1px solid var(--error);
+    border-radius: 4px;
+    font-size: 14px;
+`;
+
+const Error = styled(Message)`
+    border-color: var(--error);
+    color: var(--error);
+`;
+
+const Warning = styled(Message)`
+    border-color: var(--warning);
+    color: var(--warning);
+`;
+
+const Notification = styled(Message)`
+    border-color: var(--panel-border);
+`;
+
+const Icon = styled.img`
+    width: 26px;
+    height: 24px;
+    margin-right: 20px;
+`;
+
+const Content = styled.div``;
+
+const Link = styled.a`
+    color: color: var(--warning);
+`;
+
+const ButtonWrapper = styled.div`
+    margin-top: 16px;
 `;
 
 interface Props {
@@ -277,7 +263,12 @@ const RemoveLiquidityModal = observer((props: Props) => {
         }
 
         const errorText = getText(validationStatus);
-        return <Error>{errorText}</Error>;
+        return (
+            <Error>
+                <Icon src="ErrorSign.svg" />
+                <Content>{errorText}</Content>
+            </Error>
+        );
     };
 
     const renderTokenWarning = () => {
@@ -294,8 +285,8 @@ const RemoveLiquidityModal = observer((props: Props) => {
         if (warning) {
             return (
                 <Warning>
-                    <WarningIcon src="WarningSign.svg" />
-                    <Message>
+                    <Icon src="WarningSign.svg" />
+                    <Content>
                         This pool contains a non-standard token that may cause
                         potential balance issues or unknown arbitrage
                         opportunites.{' '}
@@ -306,7 +297,7 @@ const RemoveLiquidityModal = observer((props: Props) => {
                         >
                             Learn more
                         </Link>
-                    </Message>
+                    </Content>
                 </Warning>
             );
         }
@@ -368,11 +359,11 @@ const RemoveLiquidityModal = observer((props: Props) => {
 
         return (
             <Warning>
-                <WarningIcon src="WarningSign.svg" />
-                <Message>
+                <Icon src="WarningSign.svg" />
+                <Content>
                     Removing liquidity will incur{' '}
                     {formatPercentage(slippage, 2)} of slippage
-                </Message>
+                </Content>
             </Warning>
         );
     };
@@ -388,11 +379,13 @@ const RemoveLiquidityModal = observer((props: Props) => {
     const renderActionButton = () => {
         const hasSupply = !!tokenStore.getTotalSupply(pool.address);
         return (
-            <Button
-                buttonText={`Remove Liquidity`}
-                active={account && pool && hasValidInput && hasSupply}
-                onClick={e => handleRemoveLiquidity()}
-            />
+            <ButtonWrapper>
+                <Button
+                    buttonText={`Remove Liquidity`}
+                    active={account && pool && hasValidInput && hasSupply}
+                    onClick={e => handleRemoveLiquidity()}
+                />
+            </ButtonWrapper>
         );
     };
 
@@ -434,9 +427,12 @@ const RemoveLiquidityModal = observer((props: Props) => {
                     ) : (
                         <React.Fragment>
                             {renderError()}
+
                             {renderTokenWarning()}
                             {renderLiquidityWarning()}
+
                             {renderNotification()}
+
                             {renderActionButton()}
                         </React.Fragment>
                     )}

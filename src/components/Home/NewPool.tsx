@@ -9,7 +9,6 @@ import { ValidationStatus } from '../../stores/actions/validators';
 import { useStores } from '../../contexts/storesContext';
 import CreatePoolTable from '../CreatePool/CreatePoolTable';
 import SelectAssetModal from '../CreatePool/SelectAssetModal';
-import WarningMessage from '../CreatePool/WarningMessage';
 import Button from '../Common/Button';
 import Checkbox from '../Common/Checkbox';
 import { BigNumber } from 'utils/bignumber';
@@ -75,15 +74,14 @@ const InputWrapper = styled.div`
             outline: none;
         }
     }
-    border: ${props =>
-        props.errorBorders ? '1px solid var(--error-color)' : ''};
+    border: ${props => (props.errorBorders ? '1px solid var(--error)' : '')};
     margin-left: ${props => (props.errorBorders ? '-1px' : '0px')}
     margin-right: ${props => (props.errorBorders ? '-1px' : '0px')}
     :hover {
         background-color: var(--input-hover-background);
         border: ${props =>
             props.errorBorders
-                ? '1px solid var(--error-color)'
+                ? '1px solid var(--error)'
                 : '1px solid var(--input-hover-border);'};
         margin-left: -1px;
         margin-right: -1px;
@@ -107,7 +105,6 @@ const CheckboxPanel = styled.div`
     padding: 16px;
     border: 1px solid var(--panel-border);
     border-radius: 4px;
-    background: var(--panel-background);
     font-size: 14px;
     color: var(--body-text);
     box-sizing: border-box;
@@ -117,17 +114,35 @@ const CheckboxMessage = styled.div`
     margin-left: 16px;
 `;
 
-const Error = styled.div`
+const Message = styled.div`
+    width: 87%;
+    padding: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 50px;
-    width: 90%;
-    border: 1px solid var(--panel-border);
+    border: 1px solid var(--error);
     border-radius: 4px;
-    background: var(--panel-background);
-    color: var(--error-color);
+    font-size: 14px;
 `;
+
+const Error = styled(Message)`
+    border-color: var(--error);
+    color: var(--error);
+`;
+
+const Warning = styled(Message)`
+    border-color: var(--warning);
+    color: var(--warning);
+    margin-bottom: 16px;
+`;
+
+const Icon = styled.img`
+    width: 26px;
+    height: 24px;
+    margin-right: 20px;
+`;
+
+const Content = styled.div``;
 
 const NewPool = observer(() => {
     const findLockedToken = (
@@ -294,7 +309,12 @@ const NewPool = observer(() => {
         }
 
         const errorText = getText(validationStatus);
-        return <Error>{errorText}</Error>;
+        return (
+            <Error>
+                <Icon src="ErrorSign.svg" />
+                <Content>{errorText}</Content>
+            </Error>
+        );
     };
 
     const renderConfirmation = () => {
@@ -320,12 +340,22 @@ const NewPool = observer(() => {
 
     return (
         <Wrapper>
-            <WarningMessage />
+            <Warning>
+                <Icon src="WarningSign.svg" />
+                <Content>
+                    This feature is in beta. Currently, only creating shared
+                    pools is supported. Make sure tokens are ERC20-compliant
+                    otherwise funds can get stuck. The default list in the asset
+                    selector has been vetted.
+                </Content>
+            </Warning>
+
             <Header>Tokens</Header>
             <CreatePoolTable />
             <Section>
                 <SingleElement>{renderAddButton()}</SingleElement>
             </Section>
+
             <Section>
                 <Header>Swap fee</Header>
                 <SingleElement>
@@ -341,10 +371,12 @@ const NewPool = observer(() => {
                     </InputWrapper>
                 </SingleElement>
             </Section>
+
             <Section>
                 {renderError()}
                 {renderConfirmation()}
             </Section>
+
             <Section>
                 <SingleElement>
                     {lockedToken ? renderUnlockButton() : renderCreateButton()}

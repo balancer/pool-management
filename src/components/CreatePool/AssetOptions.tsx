@@ -72,7 +72,7 @@ const TokenBalance = styled.div`
 
 const ErrorLabel = styled.div`
     margin-left: 4px;
-    color: var(--error-color);
+    color: var(--error);
 `;
 
 interface Asset {
