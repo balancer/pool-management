@@ -213,16 +213,12 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPoolsChart = () => {
         if (marketStore.assetPricesLoaded) {
-            let poolsShown = pools
-                .sort((a, b) => {
-                    return (
-                        Number(marketStore.getPortfolioValue(b)) -
-                        Number(marketStore.getPortfolioValue(a))
-                    );
-                })
-                .filter(
-                    pool => Number(marketStore.getPortfolioValue(pool)) > 0
+            let poolsShown = pools.sort((a, b) => {
+                return (
+                    Number(marketStore.getPortfolioValue(b)) -
+                    Number(marketStore.getPortfolioValue(a))
                 );
+            });
 
             return (
                 <React.Fragment>
@@ -249,9 +245,9 @@ const LiquidityPanel = observer((props: Props) => {
                             }
                         }
 
-                        const volume = marketStore.getPoolVolume(pool);
+                        // const volume = marketStore.getPoolVolume(pool);
 
-                        volumeText = formatCurrency(volume);
+                        volumeText = formatCurrency(pool.lastSwapVolume);
 
                         return (
                             <PoolLink
@@ -347,7 +343,7 @@ const LiquidityPanel = observer((props: Props) => {
                     My Liquidity
                 </TableCellRightHideMobile>
                 <TableCellRightHideMobile>
-                    Trade Volume (24h)
+                    Trade Vol. (24h)
                 </TableCellRightHideMobile>
             </HeaderRow>
             {renderPools()}

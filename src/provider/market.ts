@@ -2,9 +2,13 @@ import fetch from 'isomorphic-fetch';
 import { MarketAsset, MarketAssetPriceMap, StringMap } from '../types';
 import { MarketAssetMap } from '../stores/Market';
 import { bnum } from '../utils/helpers';
+const pricesBackup = require('./pricesBackup.json');
+const listBackup = require('./listBackup.json');
+
+const conflictSymbols = ['master-usd', 'compound-coin'];
 
 const MARKET_API_URL =
-    process.env.MARKET_API_URL || 'https://api.coingecko.com/api/v3';
+    process.env.REACT_APP_MARKET_API_URL || 'https://api.coingecko.com/api/v3';
 
 export async function fetchAssetPrices(
     symbolsToFetch: string[],
@@ -23,17 +27,22 @@ export async function fetchAssetPrices(
     });
 
     const query = `simple/price?ids=${idQueryString}&vs_currencies=usd&include_market_cap=false&include_last_updated_at=false`;
+    let priceMap: MarketAssetPriceMap = {};
+    let prices = {};
+    try {
+        const response = await fetch(`${MARKET_API_URL}/${query}`, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        });
 
-    const response = await fetch(`${MARKET_API_URL}/${query}`, {
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-    });
+        prices = await response.json();
+    } catch (err) {
+        console.log(`Coingecko call error. Using backup prices.`);
+        prices = pricesBackup;
+    }
 
-    const prices = await response.json();
-
-    const priceMap: MarketAssetPriceMap = {};
     Object.keys(prices).forEach(key => {
         const price = prices[key].usd;
         const symbol = idToSymbolMap[key];
@@ -42,6 +51,7 @@ export async function fetchAssetPrices(
             currency: 'usd',
         };
     });
+
     return priceMap;
 }
 
@@ -50,12 +60,21 @@ export async function fetchAssetList(
 ): Promise<MarketAssetMap> {
     const query = `coins/list`;
 
-    const response = await fetch(`${MARKET_API_URL}/${query}`, {
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-    });
+    let assets = [];
+
+    try {
+        const response = await fetch(`${MARKET_API_URL}/${query}`, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        });
+
+        assets = await response.json();
+    } catch (err) {
+        console.log(`Coingecko call error. Using backup prices.`);
+        assets = listBackup;
+    }
 
     const formatAsset = (asset): MarketAsset => {
         return {
@@ -67,11 +86,13 @@ export async function fetchAssetList(
 
     // Only store assets that map to deployed.json approved assets
     // toUpperCase symbol, compare to symbols in list, store if match
-    const assets = await response.json();
+
     const result: MarketAssetMap = {};
     symbolsToFetch.forEach(assetSymbol => {
         const match = assets.find(
-            value => value.symbol.toUpperCase() === assetSymbol.toUpperCase()
+            value =>
+                value.symbol.toUpperCase() === assetSymbol.toUpperCase() &&
+                !conflictSymbols.includes(value.id)
         );
         if (match) {
             result[assetSymbol] = formatAsset(match);

@@ -59,6 +59,10 @@ export function setPropertyToZeroIfEmpty(value?): string {
     return value;
 }
 
+export function hasApproval(amount: BigNumber): boolean {
+    return amount.gt(bnum('0'));
+}
+
 export function hasMaxApproval(amount: BigNumber): boolean {
     return amount.gte(bnum('79228162514264337593543950335')); // uint96(-1)
 }

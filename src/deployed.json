@@ -25,13 +25,16 @@
             }
         ],
         "warnings": [],
-        "errors": []
+        "errors": {
+            "noBool": [],
+            "transferFee": []
+        }
     },
     "kovan": {
         "chainId": 42,
         "defaultPrecision": 4,
         "bFactory": "0x8f7F78080219d4066A8036ccD30D588B416a40DB",
-        "bActions": "0x1266F7220cCc4f1957b3f1EA713F3F434Fc3BDc7",
+        "bActions": "0x02EFDB542B9390ae7C1620B29674e02F9c0d86CC",
         "dsProxyRegistry": "0x130767E0cf05469CF11Fa3fcf270dfC1f52b9072",
         "proxy": "0xdf6F5B1f49eFf8d1C45f2AADC045cB91C33e44b8",
         "weth": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
@@ -138,16 +141,19 @@
             }
         ],
         "warnings": [],
-        "errors": [
-            "0xEC4b4fFfb58B6c85D41025b07d93167B8192062E",
-            "0xe7d8E7742ca6906a14F7e46770Fdfe6B7014e62D"
-        ]
+        "errors": {
+            "noBool": [
+                "0xEC4b4fFfb58B6c85D41025b07d93167B8192062E",
+                "0xe7d8E7742ca6906a14F7e46770Fdfe6B7014e62D"
+            ],
+            "transferFee": ["0xbef02f140BFb37a75Ed6510e8D85C9E9e7e0ff1e"]
+        }
     },
     "mainnet": {
         "chainId": 1,
         "defaultPrecision": 4,
         "bFactory": "0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd",
-        "bActions": "0x54b28bB7930976839C61f142746cADDBE819A742",
+        "bActions": "0xde4A25A0b9589689945d842c5ba0CF4f0D4eB3ac",
         "dsProxyRegistry": "0x4678f0a6958e4D2Bc4F1BAF7Bc52E8F3564f3fE4",
         "proxy": "0x6317C5e82A06E1d8bf200d21F4510Ac2c038AC81",
         "weth": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -175,7 +181,7 @@
                 "symbol": "BAL",
                 "address": "0xba100000625a3754423978a60c9317c58a424e3D",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "BAL",
                 "iconAddress": "0xba100000625a3754423978a60c9317c58a424e3D",
                 "precision": 4,
                 "chartColor": "#fafafa"
@@ -382,7 +388,7 @@
                 "symbol": "aUSDT",
                 "address": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
                 "decimals": 6,
-                "ticker": "",
+                "ticker": "aUSDT",
                 "iconAddress": "0x71fc860F7D3A592A4a98740e39dB31d25db65ae8",
                 "precision": 2,
                 "chartColor": "#8b5580"
@@ -391,7 +397,7 @@
                 "symbol": "aUSDC",
                 "address": "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E",
                 "decimals": 6,
-                "ticker": "",
+                "ticker": "aUSDC",
                 "iconAddress": "0x9bA00D6856a4eDF4665BcA2C2309936572473B7E",
                 "precision": 2,
                 "chartColor": "#c5ccb8"
@@ -400,7 +406,7 @@
                 "symbol": "aSUSD",
                 "address": "0x625aE63000f46200499120B906716420bd059240",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "aSUSD",
                 "iconAddress": "0x625aE63000f46200499120B906716420bd059240",
                 "precision": 2,
                 "chartColor": "#9a9a97"
@@ -409,7 +415,7 @@
                 "symbol": "aTUSD",
                 "address": "0x4DA9b813057D04BAef4e5800E36083717b4a0341",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "aTUSD",
                 "iconAddress": "0x4DA9b813057D04BAef4e5800E36083717b4a0341",
                 "precision": 2,
                 "chartColor": "#6f6776"
@@ -418,7 +424,7 @@
                 "symbol": "aBUSD",
                 "address": "0x6Ee0f7BB50a54AB5253dA0667B0Dc2ee526C30a8",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "aBUSD",
                 "iconAddress": "0x6Ee0f7BB50a54AB5253dA0667B0Dc2ee526C30a8",
                 "precision": 2,
                 "chartColor": "#93a167"
@@ -487,15 +493,6 @@
                 "chartColor": "#6e6962"
             },
             {
-                "symbol": "STA",
-                "address": "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
-                "decimals": 18,
-                "ticker": "STA",
-                "iconAddress": "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
-                "precision": 2,
-                "chartColor": "#6e6962"
-            },
-            {
                 "symbol": "REN",
                 "address": "0x408e41876cCCDC0F92210600ef50372656052a38",
                 "decimals": 18,
@@ -521,15 +518,6 @@
                 "iconAddress": "0xB4EFd85c19999D84251304bDA99E90B92300Bd93",
                 "precision": 2,
                 "chartColor": "#a593a5"
-            },
-            {
-                "symbol": "VETH",
-                "address": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
-                "decimals": 18,
-                "ticker": "VETH",
-                "iconAddress": "0x31Bb711de2e457066c6281f231fb473FC5c2afd3",
-                "precision": 2,
-                "chartColor": "#baa55c"
             },
             {
                 "symbol": "GHOST",
@@ -634,7 +622,7 @@
                 "symbol": "COMP",
                 "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "decimals": 18,
-                "ticker": "",
+                "ticker": "COMP",
                 "iconAddress": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
                 "precision": 2,
                 "chartColor": "#387080"
@@ -652,53 +640,537 @@
                 "symbol": "cUSDT",
                 "address": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "decimals": 8,
-                "ticker": "",
+                "ticker": "cUSDT",
                 "iconAddress": "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9",
                 "precision": 2,
                 "chartColor": "#557064"
+            },
+            {
+                "symbol": "OCEAN",
+                "address": "0x985dd3D42De1e256d09e1c10F112bCCB8015AD41",
+                "decimals": 18,
+                "ticker": "OCEAN",
+                "iconAddress": "0x985dd3D42De1e256d09e1c10F112bCCB8015AD41",
+                "precision": 2,
+                "chartColor": "#220730"
+            },
+            {
+                "symbol": "cREP",
+                "address": "0x158079Ee67Fce2f58472A96584A73C7Ab9AC95c1",
+                "decimals": 8,
+                "ticker": "cREP",
+                "iconAddress": "0x158079Ee67Fce2f58472A96584A73C7Ab9AC95c1",
+                "precision": 2,
+                "chartColor": "#220730"
+            },
+            {
+                "symbol": "EDO",
+                "address": "0xCeD4E93198734dDaFf8492d525Bd258D49eb388E",
+                "decimals": 18,
+                "ticker": "EDO",
+                "iconAddress": "0xCeD4E93198734dDaFf8492d525Bd258D49eb388E",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "PAX",
+                "address": "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
+                "decimals": 18,
+                "ticker": "PAX",
+                "iconAddress": "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "BLT",
+                "address": "0x107c4504cd79C5d2696Ea0030a8dD4e92601B82e",
+                "decimals": 18,
+                "ticker": "BLT",
+                "iconAddress": "0x107c4504cd79C5d2696Ea0030a8dD4e92601B82e",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "CVC",
+                "address": "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
+                "decimals": 8,
+                "ticker": "CVC",
+                "iconAddress": "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "MANA",
+                "address": "0x0F5D2fB29fb7d3CFeE444a200298f468908cC942",
+                "decimals": 18,
+                "ticker": "MANA",
+                "iconAddress": "0x0F5D2fB29fb7d3CFeE444a200298f468908cC942",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "DATA",
+                "address": "0x0Cf0Ee63788A0849fE5297F3407f701E122cC023",
+                "decimals": 18,
+                "ticker": "DATA",
+                "iconAddress": "0x0Cf0Ee63788A0849fE5297F3407f701E122cC023",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "POWR",
+                "address": "0x595832F8FC6BF59c85C527fEC3740A1b7a361269",
+                "decimals": 6,
+                "ticker": "POWR",
+                "iconAddress": "0x595832F8FC6BF59c85C527fEC3740A1b7a361269",
+                "precision": 2,
+                "chartColor": "#433455"
+            },
+            {
+                "symbol": "DNT",
+                "address": "0x0AbdAce70D3790235af448C88547603b945604ea",
+                "decimals": 18,
+                "ticker": "DNT",
+                "iconAddress": "0x0AbdAce70D3790235af448C88547603b945604ea",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
+                "symbol": "SHIP",
+                "address": "0xe25b0BBA01Dc5630312B6A21927E578061A13f55",
+                "decimals": 18,
+                "ticker": "SHIP",
+                "iconAddress": "0xe25b0BBA01Dc5630312B6A21927E578061A13f55",
+                "precision": 2,
+                "chartColor": "#7e9e99"
+            },
+            {
+                "symbol": "TRAC",
+                "address": "0xaA7a9CA87d3694B5755f213B5D04094b8d0F0A6F",
+                "decimals": 18,
+                "ticker": "TRAC",
+                "iconAddress": "0xaA7a9CA87d3694B5755f213B5D04094b8d0F0A6F",
+                "precision": 2,
+                "chartColor": "#9d9f7f"
+            },
+            {
+                "symbol": "TFD",
+                "address": "0xE5F166c0D8872B68790061317BB6CcA04582C912",
+                "decimals": 18,
+                "ticker": "TFD",
+                "iconAddress": "0xE5F166c0D8872B68790061317BB6CcA04582C912",
+                "precision": 2,
+                "chartColor": "#557064"
+            },
+            {
+                "symbol": "BLZ",
+                "address": "0x5732046A883704404F284Ce41FfADd5b007FD668",
+                "decimals": 18,
+                "ticker": "BLZ",
+                "iconAddress": "0x5732046A883704404F284Ce41FfADd5b007FD668",
+                "precision": 2,
+                "chartColor": "#6eaa78"
+            },
+            {
+                "symbol": "MATIC",
+                "address": "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+                "decimals": 18,
+                "ticker": "MATIC",
+                "iconAddress": "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+                "precision": 2,
+                "chartColor": "#93a167"
+            },
+            {
+                "symbol": "FOAM",
+                "address": "0x4946Fcea7C692606e8908002e55A582af44AC121",
+                "decimals": 18,
+                "ticker": "FOAM",
+                "iconAddress": "0x4946Fcea7C692606e8908002e55A582af44AC121",
+                "precision": 2,
+                "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "DIP",
+                "address": "0xc719d010B63E5bbF2C0551872CD5316ED26AcD83",
+                "decimals": 18,
+                "ticker": "DIP",
+                "iconAddress": "0xc719d010B63E5bbF2C0551872CD5316ED26AcD83",
+                "precision": 2,
+                "chartColor": "#387080"
+            },
+            {
+                "symbol": "AMPL",
+                "address": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+                "decimals": 9,
+                "ticker": "AMPL",
+                "iconAddress": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
+                "symbol": "DGX",
+                "address": "0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF",
+                "decimals": 9,
+                "ticker": "DGX",
+                "iconAddress": "0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
+                "symbol": "LEV",
+                "address": "0x0F4CA92660Efad97a9a70CB0fe969c755439772C",
+                "decimals": 9,
+                "ticker": "LEV",
+                "iconAddress": "0x0F4CA92660Efad97a9a70CB0fe969c755439772C",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "BUIDL",
+                "address": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "decimals": 18,
+                "ticker": "BUIDL",
+                "iconAddress": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "CEL",
+                "address": "0xaaAEBE6Fe48E54f431b0C390CfaF0b017d09D42d",
+                "decimals": 4,
+                "ticker": "CEL",
+                "iconAddress": "0xaaAEBE6Fe48E54f431b0C390CfaF0b017d09D42d",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "TRB",
+                "address": "0x0Ba45A8b5d5575935B8158a88C631E9F9C95a2e5",
+                "decimals": 18,
+                "ticker": "TRB",
+                "iconAddress": "0x0Ba45A8b5d5575935B8158a88C631E9F9C95a2e5",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "QNT",
+                "address": "0x4a220E6096B25EADb88358cb44068A3248254675",
+                "decimals": 18,
+                "ticker": "QNT",
+                "iconAddress": "0x4a220E6096B25EADb88358cb44068A3248254675",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "SNT",
+                "address": "0x744d70FDBE2Ba4CF95131626614a1763DF805B9E",
+                "decimals": 18,
+                "ticker": "SNT",
+                "iconAddress": "0x744d70FDBE2Ba4CF95131626614a1763DF805B9E",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "CHZ",
+                "address": "0x3506424F91fD33084466F402d5D97f05F8e3b4AF",
+                "decimals": 18,
+                "ticker": "CHZ",
+                "iconAddress": "0x3506424F91fD33084466F402d5D97f05F8e3b4AF",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "MLN",
+                "address": "0xec67005c4E498Ec7f55E092bd1d35cbC47C91892",
+                "decimals": 18,
+                "ticker": "MLN",
+                "iconAddress": "0xec67005c4E498Ec7f55E092bd1d35cbC47C91892",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "RSR",
+                "address": "0x8762db106B2c2A0bccB3A80d1Ed41273552616E8",
+                "decimals": 18,
+                "ticker": "RSR",
+                "iconAddress": "0x8762db106B2c2A0bccB3A80d1Ed41273552616E8",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "HOT",
+                "address": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+                "decimals": 18,
+                "ticker": "HOT",
+                "iconAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "ANJ",
+                "address": "0xcD62b1C403fa761BAadFC74C525ce2B51780b184",
+                "decimals": 18,
+                "ticker": "ANJ",
+                "iconAddress": "0xcD62b1C403fa761BAadFC74C525ce2B51780b184",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "UBT",
+                "address": "0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e",
+                "decimals": 8,
+                "ticker": "UBT",
+                "iconAddress": "0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e",
+                "precision": 2,
+                "chartColor": "#433455"
+            },
+            {
+                "symbol": "FUN",
+                "address": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
+                "decimals": 8,
+                "ticker": "FUN",
+                "iconAddress": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
+                "symbol": "STORJ",
+                "address": "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",
+                "decimals": 8,
+                "ticker": "STORJ",
+                "iconAddress": "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",
+                "precision": 2,
+                "chartColor": "#7e9e99"
+            },
+            {
+                "symbol": "MCX",
+                "address": "0xd15eCDCF5Ea68e3995b2D0527A0aE0a3258302F8",
+                "decimals": 18,
+                "ticker": "MCX",
+                "iconAddress": "0xd15eCDCF5Ea68e3995b2D0527A0aE0a3258302F8",
+                "precision": 2,
+                "chartColor": "#9d9f7f"
+            },
+            {
+                "symbol": "BCDT",
+                "address": "0xAcfa209Fb73bF3Dd5bBfb1101B9Bc999C49062a5",
+                "decimals": 18,
+                "ticker": "BCDT",
+                "iconAddress": "0xAcfa209Fb73bF3Dd5bBfb1101B9Bc999C49062a5",
+                "precision": 2,
+                "chartColor": "#6eaa78"
+            },
+            {
+                "symbol": "IDEX",
+                "address": "0xB705268213D593B8FD88d3FDEFF93AFF5CbDcfAE",
+                "decimals": 18,
+                "ticker": "IDEX",
+                "iconAddress": "0xB705268213D593B8FD88d3FDEFF93AFF5CbDcfAE",
+                "precision": 2,
+                "chartColor": "#93a167"
+            },
+            {
+                "symbol": "mUSD",
+                "address": "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
+                "decimals": 18,
+                "ticker": "mUSD",
+                "iconAddress": "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
+                "precision": 2,
+                "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "USD++",
+                "address": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
+                "decimals": 18,
+                "ticker": "USD++",
+                "iconAddress": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
+                "precision": 2,
+                "chartColor": "#387080"
+            },
+            {
+                "symbol": "AUC",
+                "address": "0xc12d099be31567add4e4e4d0D45691C3F58f5663",
+                "decimals": 18,
+                "ticker": "AUC",
+                "iconAddress": "0xc12d099be31567add4e4e4d0D45691C3F58f5663",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
+                "symbol": "OWL",
+                "address": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
+                "decimals": 18,
+                "ticker": "OWL",
+                "iconAddress": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
+                "symbol": "AGI",
+                "address": "0x8eB24319393716668D768dCEC29356ae9CfFe285",
+                "decimals": 8,
+                "ticker": "AGI",
+                "iconAddress": "0x8eB24319393716668D768dCEC29356ae9CfFe285",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "LPT",
+                "address": "0x58b6A8A3302369DAEc383334672404Ee733aB239",
+                "decimals": 18,
+                "ticker": "LPT",
+                "iconAddress": "0x58b6A8A3302369DAEc383334672404Ee733aB239",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "TUSD",
+                "address": "0x0000000000085d4780B73119b644AE5ecd22b376",
+                "decimals": 18,
+                "ticker": "TUSD",
+                "iconAddress": "0x0000000000085d4780B73119b644AE5ecd22b376",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "DMG",
+                "address": "0xEd91879919B71bB6905f23af0A68d231EcF87b14",
+                "decimals": 18,
+                "ticker": "DMG",
+                "iconAddress": "0xEd91879919B71bB6905f23af0A68d231EcF87b14",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "cZRX",
+                "address": "0xB3319f5D18Bc0D84dD1b4825Dcde5d5f7266d407",
+                "decimals": 8,
+                "ticker": "cZRX",
+                "iconAddress": "0xB3319f5D18Bc0D84dD1b4825Dcde5d5f7266d407",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "cBAT",
+                "address": "0x6C8c6b02E7b2BE14d4fA6022Dfd6d75921D90E4E",
+                "decimals": 8,
+                "ticker": "cBAT",
+                "iconAddress": "0x6C8c6b02E7b2BE14d4fA6022Dfd6d75921D90E4E",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "STAKE",
+                "address": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
+                "decimals": 18,
+                "ticker": "STAKE",
+                "iconAddress": "0x0Ae055097C6d159879521C384F1D2123D1f195e6",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "RLC",
+                "address": "0x607F4C5BB672230e8672085532f7e901544a7375",
+                "decimals": 9,
+                "ticker": "RLC",
+                "iconAddress": "0x607F4C5BB672230e8672085532f7e901544a7375",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "REQ",
+                "address": "0x8f8221aFbB33998d8584A2B05749bA73c37a938a",
+                "decimals": 18,
+                "ticker": "REQ",
+                "iconAddress": "0x8f8221aFbB33998d8584A2B05749bA73c37a938a",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "BNT",
+                "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
+                "decimals": 18,
+                "ticker": "BNT",
+                "iconAddress": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "PRO",
+                "address": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
+                "decimals": 18,
+                "ticker": "PRA",
+                "iconAddress": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "JRT",
+                "address": "0x8A9C67fee641579dEbA04928c4BC45F66e26343A",
+                "decimals": 18,
+                "ticker": "JRT",
+                "iconAddress": "0x8A9C67fee641579dEbA04928c4BC45F66e26343A",
+                "precision": 2,
+                "chartColor": "#6f6776"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
-        "errors": [
-            "0x0b76544F6C413a555F309Bf76260d1E02377c02A",
-            "0x0bb217E40F8a5Cb79Adf04E1aAb60E5abd0dfC1e",
-            "0x13f25cd52b21650caa8225C9942337d914C9B030",
-            "0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af",
-            "0x1844b21593262668B7248d0f57a220CaaBA46ab9",
-            "0x26CE25148832C04f3d7F26F32478a9fe55197166",
-            "0x28c8d01FF633eA9Cd8fc6a451D7457889E698de6",
-            "0x2bDC0D42996017fCe214b21607a515DA41A9E0C5",
-            "0x2d0E95bd4795D7aCe0da3C0Ff7b706a5970eb9D3",
-            "0x2f85E502a988AF76f7ee6D83b7db8d6c0A823bf9",
-            "0x3543638eD4a9006E4840B105944271Bcea15605D",
-            "0x37E1160184F7dD29f00b78C050Bf13224780b0B0",
-            "0x3893b9422Cd5D70a81eDeFfe3d5A1c6A978310BB",
-            "0x38c6A68304cdEfb9BEc48BbFaABA5C5B47818bb2",
-            "0x4270bb238f6DD8B1c3ca01f96CA65b2647c06D3C",
-            "0x4470BB87d77b963A013DB939BE332f927f2b992e",
-            "0x4689a4e169eB39cC9078C0940e21ff1Aa8A39B9C",
-            "0x56ba2Ee7890461f463F7be02aAC3099f6d5811A8",
-            "0x5E6b6d9aBAd9093fdc861Ea1600eBa1b355Cd940",
-            "0x622dFfCc4e83C64ba959530A5a5580687a57581b",
-            "0x6Ba460AB75Cd2c56343b3517ffeBA60748654D26",
-            "0x7703C35CfFdC5CDa8D27aa3df2F9ba6964544b6e",
-            "0x78B7FADA55A64dD895D8c8c35779DD8b67fA8a05",
-            "0x81c9151de0C8bafCd325a57E3dB5a5dF1CEBf79c",
-            "0x8E766F57F7d16Ca50B4A0b90b88f6468A09b0439",
-            "0x95dAaaB98046846bF4B2853e23cba236fa394A31",
-            "0xa44E5137293E855B1b7bC7E2C6f8cD796fFCB037",
-            "0xB8c77482e45F1F44dE1745F52C74426C631bDD52",
-            "0xB97048628DB6B661D4C2aA833e95Dbe1A905B280",
-            "0xBA5F11b16B155792Cf3B2E6880E8706859A8AEB6",
-            "0xbbFF862d906E348E9946Bfb2132ecB157Da3D4b4",
-            "0xc9859fccC876e6b4B3C749C5D29EA04F48aCb74F",
-            "0xCc34366E3842cA1BD36c1f324d15257960fCC801",
-            "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
-            "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-            "0xDc5864eDe28BD4405aa04d93E05A0531797D9D59",
-            "0xe3818504c1B32bF1557b16C238B2E01Fd3149C17",
-            "0xF433089366899D83a9f26A773D59ec7eCF30355e",
-            "0xfAE4Ee59CDd86e3Be9e8b90b53AA866327D7c090"
-        ]
+        "errors": {
+            "noBool": [
+                "0x0b76544F6C413a555F309Bf76260d1E02377c02A",
+                "0x0bb217E40F8a5Cb79Adf04E1aAb60E5abd0dfC1e",
+                "0x13f25cd52b21650caa8225C9942337d914C9B030",
+                "0x177d39AC676ED1C67A2b268AD7F1E58826E5B0af",
+                "0x1844b21593262668B7248d0f57a220CaaBA46ab9",
+                "0x26CE25148832C04f3d7F26F32478a9fe55197166",
+                "0x28c8d01FF633eA9Cd8fc6a451D7457889E698de6",
+                "0x2bDC0D42996017fCe214b21607a515DA41A9E0C5",
+                "0x2d0E95bd4795D7aCe0da3C0Ff7b706a5970eb9D3",
+                "0x2f85E502a988AF76f7ee6D83b7db8d6c0A823bf9",
+                "0x3543638eD4a9006E4840B105944271Bcea15605D",
+                "0x37E1160184F7dD29f00b78C050Bf13224780b0B0",
+                "0x3893b9422Cd5D70a81eDeFfe3d5A1c6A978310BB",
+                "0x38c6A68304cdEfb9BEc48BbFaABA5C5B47818bb2",
+                "0x4270bb238f6DD8B1c3ca01f96CA65b2647c06D3C",
+                "0x4470BB87d77b963A013DB939BE332f927f2b992e",
+                "0x4689a4e169eB39cC9078C0940e21ff1Aa8A39B9C",
+                "0x56ba2Ee7890461f463F7be02aAC3099f6d5811A8",
+                "0x5E6b6d9aBAd9093fdc861Ea1600eBa1b355Cd940",
+                "0x622dFfCc4e83C64ba959530A5a5580687a57581b",
+                "0x6Ba460AB75Cd2c56343b3517ffeBA60748654D26",
+                "0x7703C35CfFdC5CDa8D27aa3df2F9ba6964544b6e",
+                "0x78B7FADA55A64dD895D8c8c35779DD8b67fA8a05",
+                "0x81c9151de0C8bafCd325a57E3dB5a5dF1CEBf79c",
+                "0x8E766F57F7d16Ca50B4A0b90b88f6468A09b0439",
+                "0x95dAaaB98046846bF4B2853e23cba236fa394A31",
+                "0xa44E5137293E855B1b7bC7E2C6f8cD796fFCB037",
+                "0xB8c77482e45F1F44dE1745F52C74426C631bDD52",
+                "0xB97048628DB6B661D4C2aA833e95Dbe1A905B280",
+                "0xBA5F11b16B155792Cf3B2E6880E8706859A8AEB6",
+                "0xbbFF862d906E348E9946Bfb2132ecB157Da3D4b4",
+                "0xc9859fccC876e6b4B3C749C5D29EA04F48aCb74F",
+                "0xCc34366E3842cA1BD36c1f324d15257960fCC801",
+                "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
+                "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+                "0xDc5864eDe28BD4405aa04d93E05A0531797D9D59",
+                "0xe3818504c1B32bF1557b16C238B2E01Fd3149C17",
+                "0xF433089366899D83a9f26A773D59ec7eCF30355e",
+                "0xfAE4Ee59CDd86e3Be9e8b90b53AA866327D7c090"
+            ],
+            "transferFee": [
+                "0x1C95b093d6C236d3EF7c796fE33f9CC6b8606714",
+                "0x3A9FfF453d50D4Ac52A6890647b823379ba36B9E",
+                "0x3B7f247f21BF3A07088C2D3423F64233d4B069F7",
+                "0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF",
+                "0x75572098dc462F976127f59F8c97dFa291f81d8b",
+                "0x82622209cEf6EBf4b8BDB353a8FC7e0b8655D0b0",
+                "0x85eBa557C06c348395fD49e35d860F58a4F7c95a",
+                "0xa7DE087329BFcda5639247F96140f9DAbe3DeED1",
+                "0xb60Fde5D798236fBF1e2697B2A0645380921FccF",
+                "0xc58c0Fca06908E66540102356f2E91edCaEB8D81",
+                "0xDB7Eab9bA6be88B869F738f6DEeBa96d49Fe13fd",
+                "0xF0FAC7104aAC544e4a7CE1A55ADF2B5a25c65bD1"
+            ]
+        }
     }
 }

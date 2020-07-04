@@ -3,7 +3,7 @@ import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as deployed from 'deployed.json';
 import { isAddress, toChecksum } from '../utils/helpers';
-import { NumberMap, StringMap } from '../types';
+import { NumberMap, StringMap, TokenErrors } from '../types';
 import { getSupportedChainName } from '../provider/connectors';
 
 export interface ContractMetadata {
@@ -15,7 +15,7 @@ export interface ContractMetadata {
     multicall: string;
     defaultPrecision: number;
     warnings: string[];
-    errors: string[];
+    errors: TokenErrors;
     tokens: TokenMetadata[];
 }
 
@@ -230,7 +230,7 @@ export default class ContractMetadataStore {
         return tokens;
     }
 
-    getTokenErrors(): string[] {
+    getTokenErrors(): TokenErrors {
         const tokens = this.contractMetadata.errors;
         if (!tokens) {
             throw new Error(
