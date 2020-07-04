@@ -1130,6 +1130,15 @@
                 "iconAddress": "0x261EfCdD24CeA98652B9700800a13DfBca4103fF",
                 "precision": 4,
                 "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "TRYb",
+                "address": "0x2C537E5624e4af88A7ae4060C022609376C8D0EB",
+                "decimals": 6,
+                "ticker": "TRYb",
+                "iconAddress": "0x2C537E5624e4af88A7ae4060C022609376C8D0EB",
+                "precision": 2,
+                "chartColor": "#93a167"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
