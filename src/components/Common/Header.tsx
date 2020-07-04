@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Wallet from '../Wallet';
+import TVL from '../TVL';
 import { Link } from 'react-router-dom';
 
 const HeaderFrame = styled.div`
@@ -56,6 +57,7 @@ const Header = () => {
                 </StyledLink>
             </HeaderElement>
             <HeaderElement>
+                <TVL />
                 <Wallet />
             </HeaderElement>
         </HeaderFrame>
