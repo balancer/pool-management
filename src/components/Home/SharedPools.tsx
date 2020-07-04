@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
-import Button from '../Common/Button';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
 import { useStores } from '../../contexts/storesContext';
@@ -23,10 +22,6 @@ const Header = styled.div`
     line-height: 19px;
     color: var(--header-text);
     padding: 0px 0px 24px 0px;
-`;
-
-const CreateLink = styled(Link)`
-    text-decoration: none;
 `;
 
 const Pagination = styled.div`
@@ -61,8 +56,6 @@ const SharedPools = observer(() => {
     const queryNextPage = () => {
         poolStore.pagePools(true);
     };
-
-    const account = providerStore.providerStatus.account;
 
     return (
         <Wrapper>
