@@ -1121,6 +1121,15 @@
                 "iconAddress": "0x8Ab7404063Ec4DBcfd4598215992DC3F8EC853d7",
                 "precision": 2,
                 "chartColor": "#387080"
+            },
+            {
+                "symbol": "sXAU",
+                "address": "0x261EfCdD24CeA98652B9700800a13DfBca4103fF",
+                "decimals": 18,
+                "ticker": "sXAU",
+                "iconAddress": "0x261EfCdD24CeA98652B9700800a13DfBca4103fF",
+                "precision": 4,
+                "chartColor": "#6e6962"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
