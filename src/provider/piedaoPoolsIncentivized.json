@@ -1,0 +1,18 @@
+[
+    {
+        "address": "0xd4dbf96db2fdf8ed40296d8d104b371adf7dee12",
+        "pair": "BTC++/ETH"
+    },
+    {
+        "address": "0x302abcedf32b8534970a70c21eb848fc9af19f31",
+        "pair": "Comp/USD++/cUSDT"
+    },
+    {
+        "address": "0x7d2f4bcb767eb190aed0f10713fe4d9c07079ee8",
+        "pair": "USD++/BTC++"
+    },
+    {
+        "address": "0x92c366872c71d2751068690939d0c972e8241377",
+        "pair": "BAL/BTC++"
+    }
+]

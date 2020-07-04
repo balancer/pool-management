@@ -4,6 +4,9 @@ import { Pool, PoolToken, Swap } from '../types';
 import { bnum } from '../utils/helpers';
 import { getSupportedChainId, SUBGRAPH_URLS } from './connectors';
 
+const piedaoPools = require('./piedaoPoolsIncentivized.json');
+const PIEs = require('./PIEs.json');
+
 const chainId = getSupportedChainId();
 const SUBGRAPH_URL = SUBGRAPH_URLS[chainId];
 
@@ -12,27 +15,34 @@ enum QueryType {
     PRIVATE_POOLS,
     CONTRIBUTED_POOLS,
     SINGLE_POOL,
+    PIEDAO_INCETIVIZED,
+    PIEDAO_CONTRIBUTED,
+    PIEDAO_PIES,
 }
 
 export async function fetchSharedPools(
     pageIncrement: number,
     skip: number
 ): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.SHARED_POOLS, pageIncrement, skip);
+    const query = getPoolQuery(
+        QueryType.PIEDAO_INCETIVIZED,
+        pageIncrement,
+        skip
+    );
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
 }
 
 export async function fetchPrivatePools(): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.PRIVATE_POOLS, 100, 0);
+    const query = getPoolQuery(QueryType.PIEDAO_PIES, 100, 0);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
 }
 
 export async function fetchContributedPools(account: string): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.CONTRIBUTED_POOLS, 100, 0, account);
+    const query = getPoolQuery(QueryType.PIEDAO_CONTRIBUTED, 100, 0, account);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
@@ -191,6 +201,50 @@ function getPoolQuery(
             }
         `;
     }
+
+    if (type === QueryType.PIEDAO_INCETIVIZED) {
+        return `
+            {
+                pools (
+                    first: ${pageIncrement},
+                    skip: ${skip},
+                    where: {
+                        finalized: true,
+                        id_in: ${JSON.stringify(
+                            piedaoPools.map(p => p.address)
+                        )},
+                    },
+                    orderBy: liquidity,
+                    orderDirection: desc,
+                ) {
+                    ${poolFields}
+                }
+            }
+        `;
+    }
+
+    if (type === QueryType.PIEDAO_PIES) {
+        console.log('PIEs', PIEs, JSON.stringify(PIEs.map(p => p.address)));
+        return `
+            {
+                pools (
+                    first: ${pageIncrement},
+                    skip: ${skip},
+                    where: {
+                        finalized: false,
+                        id_in: ${JSON.stringify(
+                            PIEs.map(p => p.address.toLowerCase())
+                        )},
+                    },
+                    orderBy: liquidity,
+                    orderDirection: desc,
+                ) {
+                    ${poolFields}
+                }
+            }
+        `;
+    }
+
     if (type === QueryType.PRIVATE_POOLS) {
         return `
             {
@@ -208,6 +262,24 @@ function getPoolQuery(
             }
         `;
     }
+
+    if (type === QueryType.PIEDAO_CONTRIBUTED) {
+        return `
+            {
+                poolShares(where: {
+                    userAddress: "${account.toLowerCase()}"
+                    poolId_in: ${JSON.stringify(
+                        piedaoPools.map(p => p.address)
+                    )},
+                }) {
+                    poolId {
+                        ${poolFields}
+                    }
+                }
+            }
+        `;
+    }
+
     if (type === QueryType.CONTRIBUTED_POOLS) {
         return `
             {
