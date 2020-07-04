@@ -38,10 +38,10 @@ const LeftNav = () => {
         <Wrapper>
             <NavContainer>
                 <StyledLink exact activeClassName="selected" to={`/`}>
-                    Shared Pools
-                </StyledLink>
-                <StyledLink activeClassName="selected" to={`/private`}>
                     PIEs
+                </StyledLink>
+                <StyledLink activeClassName="selected" to={`/balancer`}>
+                    Balancer Shared Pools
                 </StyledLink>
             </NavContainer>
         </Wrapper>

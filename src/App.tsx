@@ -6,6 +6,7 @@ import Web3Manager from 'components/Web3Manager';
 import Header from 'components/Common/Header';
 import Home from 'views/Home';
 import Private from 'views/Private';
+import Balancer from 'views/Balancer';
 import Pool from 'views/Pool';
 import Setup from 'views/Setup';
 import LeftNav from 'components/Common/LeftNav';
@@ -33,6 +34,7 @@ const App = () => {
                 <Switch>
                     <Route path="/pool/:poolAddress" component={Pool} />
                     <Route path="/private" component={Private} />
+                    <Route path="/balancer" component={Balancer} />
                     <Route path="/setup" component={Setup} />
                     <Redirect from="/list" to="/" />
                     <Route path="/" component={Home} />

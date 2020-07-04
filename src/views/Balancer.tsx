@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import MyLiquidity from '../components/Home/MyLiquidity';
-import PrivatePools from '../components/Home/PrivatePools';
+import SharedPools from '../components/Home/SharedPools';
 
 const HomeWrapper = styled.div`
     position: relative;
@@ -12,13 +12,13 @@ const HomeWrapper = styled.div`
     }
 `;
 
-const Home = () => {
+const Balancer = () => {
     return (
         <HomeWrapper>
             <MyLiquidity />
-            <PrivatePools />
+            <SharedPools />
         </HomeWrapper>
     );
 };
 
-export default Home;
+export default Balancer;
