@@ -32,7 +32,6 @@ const App = () => {
         return (
             <div className="app-shell">
                 <Switch>
-                    <Route path="/pool/new" component={New} />
                     <Route path="/pool/:poolAddress" component={Pool} />
                     <Route path="/private" component={Private} />
                     <Route path="/setup" component={Setup} />

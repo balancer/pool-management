@@ -37,6 +37,7 @@ const MyLiquidity = observer(() => {
         <Wrapper>
             <Header>My Liquidity</Header>
             <LiquidityPanel
+                privatePage={false}
                 pools={pools}
                 dataSource={LiquidityPanelDataSource.ACCOUNT_PUBLIC}
             />

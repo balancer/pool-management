@@ -4,6 +4,7 @@ import Identicon from '../Common/Identicon';
 import Button from '../Common/Button';
 import { getEtherscanLink, shortenAddress } from 'utils/helpers';
 import { useStores } from '../../contexts/storesContext';
+const PIEs = require('../../provider/PIEs.json');
 
 const Wrapper = styled.div`
     display: flex;
@@ -83,6 +84,7 @@ const AddRemovePanel = (props: Props) => {
     const pool = poolStore.getPool(poolAddress);
     let userProportion = undefined;
     let isFinalized = false;
+    let pie: any = {};
 
     if (pool) {
         userProportion = poolStore.getUserShareProportion(
@@ -90,6 +92,9 @@ const AddRemovePanel = (props: Props) => {
             account
         );
         isFinalized = pool.finalized;
+        pie = PIEs.find(
+            p => p.address.toLowerCase() === pool.address.toLowerCase()
+        );
     }
 
     return (
@@ -142,7 +147,15 @@ const AddRemovePanel = (props: Props) => {
                     />
                 </RightColumn>
             ) : (
-                <div />
+                <RightColumn>
+                    <Button
+                        buttonText={'Mint @ PieDAO'}
+                        active={!!pool}
+                        onClick={() => {
+                            window.open(pie.mintUrl, '_blank');
+                        }}
+                    />
+                </RightColumn>
             )}
         </Wrapper>
     );

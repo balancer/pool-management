@@ -41,7 +41,7 @@ const LeftNav = () => {
                     Shared Pools
                 </StyledLink>
                 <StyledLink activeClassName="selected" to={`/private`}>
-                    Private Pools
+                    PIEs
                 </StyledLink>
             </NavContainer>
         </Wrapper>

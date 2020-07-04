@@ -28,6 +28,7 @@ const PrivatePools = observer(() => {
         <Wrapper>
             <Header>PieDAO PIEs</Header>
             <LiquidityPanel
+                privatePage={true}
                 pools={pools}
                 dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
             />

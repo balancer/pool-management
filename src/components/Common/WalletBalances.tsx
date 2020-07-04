@@ -61,6 +61,11 @@ export const TokenIconAddress = (address, isSupported) => {
     if (!isSupported) {
         return NotSupported;
     }
+
+    if (address === '0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e') {
+        return `https://github.com/pie-dao/brand/blob/master/PIE%20Tokens/Cash++.png?raw=true`;
+    }
+
     if (address === 'ether') {
         return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png`;
     } else {

@@ -143,6 +143,7 @@ const AssetDot = styled.div`
 interface Props {
     pools: Pool[];
     dataSource: LiquidityPanelDataSource;
+    privatePage: boolean;
 }
 
 export enum LiquidityPanelDataSource {
@@ -160,7 +161,7 @@ const LiquidityPanel = observer((props: Props) => {
     const {
         root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
-    const { pools, dataSource } = props;
+    const { pools, dataSource, privatePage } = props;
     const account = providerStore.providerStatus.account;
 
     const options = {
@@ -335,7 +336,9 @@ const LiquidityPanel = observer((props: Props) => {
     return (
         <Wrapper>
             <HeaderRow>
-                <TableCellHideMobile>Pool Address</TableCellHideMobile>
+                <TableCellHideMobile>
+                    {privatePage ? 'Pie' : 'Pool Address'}
+                </TableCellHideMobile>
                 <AssetCell>Assets</AssetCell>
                 <TableCellHideMobile>Swap Fee</TableCellHideMobile>
                 <TableCellRight>Liquidity</TableCellRight>

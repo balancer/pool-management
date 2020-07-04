@@ -30,9 +30,9 @@ const ActiveButton = styled(ButtonBase)`
 `;
 
 const InactiveButton = styled(ButtonBase)`
-    background: var(--selector-background);
+    background: var(--button-background);
     border: 1px solid var(--inactive-button-border);
-    color: var(--inactive-button-text);
+    color: var(--button-text);
 `;
 
 const Button = ({ buttonText, active, onClick }) => {

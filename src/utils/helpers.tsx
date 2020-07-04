@@ -4,6 +4,7 @@ import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
 import { BigNumber } from 'utils/bignumber';
 import { Pool } from '../types';
+const PIEs = require('../provider/PIEs.json');
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
@@ -100,6 +101,12 @@ export function tinyAddress(address, digits = 4) {
 }
 
 export function shortenAddress(address, digits = 4) {
+    const pie = PIEs.find(
+        p => p.address.toLowerCase() === address.toLowerCase()
+    );
+
+    if (pie) return pie.name;
+
     if (!isAddress(address)) {
         throw Error(`Invalid 'address' parameter '${address}'.`);
     }

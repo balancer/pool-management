@@ -7,7 +7,6 @@ import { useStores } from 'contexts/storesContext';
 import TransactionPanel from './TransactionPanel';
 
 const StyledLink = styled.a`
-    color: #ffffff;
     cursor: pointer;
 `;
 

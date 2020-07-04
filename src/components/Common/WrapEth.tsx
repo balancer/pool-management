@@ -33,9 +33,9 @@ const EthButton = styled.div`
     align-items: center;
     text-align: center;
     cursor: pointer;
-    background: var(--selector-background);
+    color: var(--button-text);
+    background: var(--button-background);
     border: 1px solid var(--inactive-button-border);
-    color: var(--inactive-button-text);
 
     &:hover {
         background: var(--button-background);
@@ -115,18 +115,15 @@ const EthInputWrapper = styled.div`
     margin-left: ${props => (props.errorBorders ? '-1px' : '0px')}
     margin-right: ${props => (props.errorBorders ? '-1px' : '0px')}
     :hover {
-        background-color: var(--input-hover-background);
+        
         border: ${props =>
             props.errorBorders
                 ? '1px solid var(--error-color)'
                 : '1px solid var(--input-hover-border);'};
         input {
-            background-color: var(--input-hover-background);
-            box-shadow: inset 0 0 0 1px var(--input-hover-background),
-                inset 0 0 0 70px var(--input-hover-background);
             ::placeholder {
                 color: var(--input-hover-placeholder-text);
-                background-color: var(--input-hover-background);
+                
             }
         }
     }

@@ -1,41 +1,41 @@
 :root {
     /* General Styles */
-    --background: #21222c;
-    --body-text: #90a4ae;
+    --background: #fff;
+    --body-text: #000;
     --exit-modal-color: #dfe3e9;
     --error-color: #ff8a80;
     --header-text: #ffffff;
-    --app-header-text: #fafafa;
+    --app-header-text: #000;
     --link-text: #82b1ff;
-    --token-balance-text: #90a4ae;
+    --token-balance-text: #000;
     --warning: #ffc780;
-    --address-color: #82b1ff;
+    --address-color: #fc02a7;
 
     /* Input Fields */
-    --input-text: #fafafa;
-    --input-placeholder-text: #575860;
+    --input-text: #000;
+    --input-placeholder-text: #000;
     --input-hover-background: #31313b;
     --input-hover-placeholder-text: #818187;
     --input-hover-border: #4c5480;
 
     /* Button Styles */
-    --button-text: #fafafa;
-    --button-background: #536dfe;
-    --button-border: #3d5afe;
+    --button-text: #fff;
+    --button-background: linear-gradient(-60deg, #cb1a8f, #fc02a7);
+    --button-border: #cb1a8f;
     --inactive-button-border: rgba(140, 158, 255, 0.2);
-    --inactive-button-text: rgba(255, 255, 255, 0.6);
+    --inactive-button-text: #000;
 
     /* Panel Styles */
-    --panel-border: #41476b;
-    --panel-background: #282932;
-    --panel-header-background: #282932;
-    --panel-row-text: #fafafa;
+    --panel-border: rgb(111, 81, 253);
+    --panel-background: #f4f4f4;
+    --panel-header-background: #f4f4f4;
+    --panel-row-text: #000;
 
     /* Selector Styles */
     --slider-main: #8c9eff;
-    --highlighted-selector-background: #41476b;
-    --highlighted-selector-border: #7785d5;
-    --highlighted-selector-text: #ffffff;
+    --highlighted-selector-background: #fc02a7;
+    --highlighted-selector-border: #fc02a7;
+    --highlighted-selector-text: #000;
     --selector-background: #2e2f39;
 }
 

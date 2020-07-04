@@ -75,7 +75,6 @@ const Error = styled.button`
     :focus {
         outline: none;
     }
-    color: #ffffff;
     font-weight: 500;
 `;
 

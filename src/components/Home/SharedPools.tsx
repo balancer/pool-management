@@ -40,6 +40,7 @@ const PaginationButton = styled.div`
     border: 1px solid var(--panel-border);
     border-radius: 4px;
     color: var(--button-text);
+    background: var(--button-background);
     text-align: center;
     font-size: 14px;
     margin-right: 8px;
@@ -67,15 +68,9 @@ const SharedPools = observer(() => {
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <CreateLink to={'/pool/new'}>
-                    <Button
-                        buttonText={'Create Pool'}
-                        active={!!account}
-                        onClick={e => {}}
-                    />
-                </CreateLink>
             </HeaderWrapper>
             <LiquidityPanel
+                privatePage={false}
                 pools={pools}
                 dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
             />

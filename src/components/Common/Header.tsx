@@ -39,8 +39,7 @@ const StyledLink = styled(Link)`
     img {
         font-size: 15px;
         font-weight: 500;
-        height: 32px;
-        width: 32px;
+        height: 42px;
     }
 `;
 
@@ -49,8 +48,11 @@ const Header = () => {
         <HeaderFrame>
             <HeaderElement>
                 <StyledLink to={`/`}>
-                    <img alt="pebbles" src="pebbles-pad.svg" />
-                    <AppName>Balancer</AppName>
+                    <img
+                        alt="PieDAO logo"
+                        src="https://piedao.org/assets/logo.png"
+                    />
+                    <AppName>pools management fork</AppName>
                 </StyledLink>
             </HeaderElement>
             <HeaderElement>

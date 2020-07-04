@@ -224,7 +224,6 @@ function getPoolQuery(
     }
 
     if (type === QueryType.PIEDAO_PIES) {
-        console.log('PIEs', PIEs, JSON.stringify(PIEs.map(p => p.address)));
         return `
             {
                 pools (
