@@ -1328,6 +1328,519 @@
                 "iconAddress": "0x6Fb0855c404E09c47C3fBCA25f08d4E41f9F062f",
                 "precision": 2,
                 "chartColor": "#7e9e99"
+            },
+            {
+                "symbol": "100W",
+                "address": "0xC7D79021CD127A2f35b1E26fe3c4aAD67f5c28b8",
+                "decimals": 18,
+                "ticker": "100W",
+                "iconAddress": "0xC7D79021CD127A2f35b1E26fe3c4aAD67f5c28b8",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
+                "symbol": "100WETH",
+                "address": "0x54355Ae0485F9420e6cE4c00C10172dc8E5728A3",
+                "decimals": 18,
+                "ticker": "100WETH",
+                "iconAddress": "0x54355Ae0485F9420e6cE4c00C10172dc8E5728A3",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "100WRATIO",
+                "address": "0x07509c281B55A1675D3f71F1c4ab67829eb731d3",
+                "decimals": 18,
+                "ticker": "100WRATIO",
+                "iconAddress": "0x07509c281B55A1675D3f71F1c4ab67829eb731d3",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "ASETH",
+                "address": "0x0BF54992649C19bd8Db4080078a32383827352f3",
+                "decimals": 18,
+                "ticker": "ASETH",
+                "iconAddress": "0x0BF54992649C19bd8Db4080078a32383827352f3",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "BBB",
+                "address": "0x58723C7Afcd33A2Db6Ae06C37521725D65F0cC15",
+                "decimals": 18,
+                "ticker": "BBB",
+                "iconAddress": "0x58723C7Afcd33A2Db6Ae06C37521725D65F0cC15",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "BBE",
+                "address": "0xF43B2f981eFC5a611a97951Ce4fd7d3Bd87f4902",
+                "decimals": 18,
+                "ticker": "BBE",
+                "iconAddress": "0xF43B2f981eFC5a611a97951Ce4fd7d3Bd87f4902",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "BHY",
+                "address": "0x48ac44f4E29e602f851B84C271c22B85B9447251",
+                "decimals": 18,
+                "ticker": "BHY",
+                "iconAddress": "0x48ac44f4E29e602f851B84C271c22B85B9447251",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "BLL",
+                "address": "0xc7088fAc73c55bfaE5c2A963C3029B072c7dfF25",
+                "decimals": 18,
+                "ticker": "BLL",
+                "iconAddress": "0xc7088fAc73c55bfaE5c2A963C3029B072c7dfF25",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "BLOAP",
+                "address": "0xe6404a4472E5222b440F8faFb795553046000841",
+                "decimals": 18,
+                "ticker": "BLOAP",
+                "iconAddress": "0xe6404a4472E5222b440F8faFb795553046000841",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "BOCBP",
+                "address": "0xc39835d32428728cbDe6903f84c76750976C0323",
+                "decimals": 18,
+                "ticker": "BOCBP",
+                "iconAddress": "0xc39835d32428728cbDe6903f84c76750976C0323",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "BRRR",
+                "address": "0x8abf3a95862619A55fA00CB3e4eeDBe113ff468C",
+                "decimals": 18,
+                "ticker": "BRRR",
+                "iconAddress": "0x8abf3a95862619A55fA00CB3e4eeDBe113ff468C",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "BTCFUND",
+                "address": "0x2409D6059e2A8130c099e49F3cb418fd6C3d9AFf",
+                "decimals": 18,
+                "ticker": "BTCFUND",
+                "iconAddress": "0x2409D6059e2A8130c099e49F3cb418fd6C3d9AFf",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "BTCTA",
+                "address": "0xd218D75BA0fC45858a4E9EF57A257Ed9977dB5f4",
+                "decimals": 18,
+                "ticker": "BTCTA",
+                "iconAddress": "0xd218D75BA0fC45858a4E9EF57A257Ed9977dB5f4",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "BYTE",
+                "address": "0xAC8Ea871e2d5F4Be618905F36f73c760f8cFDC8E",
+                "decimals": 18,
+                "ticker": "BYTE",
+                "iconAddress": "0xAC8Ea871e2d5F4Be618905F36f73c760f8cFDC8E",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
+                "symbol": "CHADLINK",
+                "address": "0x19F4a2f8E21915376F1429C26a3A9B9b1db5FF5A",
+                "decimals": 18,
+                "ticker": "CHADLINK",
+                "iconAddress": "0x19F4a2f8E21915376F1429C26a3A9B9b1db5FF5A",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
+                "symbol": "COINBTC",
+                "address": "0xBddD682E63dd9f9fA3b97aEa88772E77cf3e5013",
+                "decimals": 18,
+                "ticker": "COINBTC",
+                "iconAddress": "0xBddD682E63dd9f9fA3b97aEa88772E77cf3e5013",
+                "precision": 2,
+                "chartColor": "#387080"
+            },
+            {
+                "symbol": "EBLOAP",
+                "address": "0x253444bd9ECf11E5516d6D00974e91c9F0857CCB",
+                "decimals": 18,
+                "ticker": "EBLOAP",
+                "iconAddress": "0x253444bd9ECf11E5516d6D00974e91c9F0857CCB",
+                "precision": 2,
+                "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "EHY",
+                "address": "0x78481fB80CAabb252909218164266Ac83F815000",
+                "decimals": 18,
+                "ticker": "EHY",
+                "iconAddress": "0x78481fB80CAabb252909218164266Ac83F815000",
+                "precision": 2,
+                "chartColor": "#93a167"
+            },
+            {
+                "symbol": "ELL",
+                "address": "0x7E4d1Cd8927Ce41bcbfa4f32cADa1a6998cb5a51",
+                "decimals": 18,
+                "ticker": "ELL",
+                "iconAddress": "0x7E4d1Cd8927Ce41bcbfa4f32cADa1a6998cb5a51",
+                "precision": 2,
+                "chartColor": "#6eaa78"
+            },
+            {
+                "symbol": "ELOAP",
+                "address": "0xC19216eea17b2f4DD677f1024CdA59C7D142F189",
+                "decimals": 18,
+                "ticker": "ELOAP",
+                "iconAddress": "0xC19216eea17b2f4DD677f1024CdA59C7D142F189",
+                "precision": 2,
+                "chartColor": "#557064"
+            },
+            {
+                "symbol": "ETA",
+                "address": "0x1003eC54F51565fF86Ac611184Ea23d6310CaE71",
+                "decimals": 18,
+                "ticker": "ETA",
+                "iconAddress": "0x1003eC54F51565fF86Ac611184Ea23d6310CaE71",
+                "precision": 2,
+                "chartColor": "#9d9f7f"
+            },
+            {
+                "symbol": "ETAS",
+                "address": "0x856c4388C56c2a613c60507a4701af627157Fed6",
+                "decimals": 18,
+                "ticker": "ETAS",
+                "iconAddress": "0x856c4388C56c2a613c60507a4701af627157Fed6",
+                "precision": 2,
+                "chartColor": "#7e9e99"
+            },
+            {
+                "symbol": "ETH10K",
+                "address": "0xAbC754aC2161B557D28062F41DcC0fc18440ac7E",
+                "decimals": 18,
+                "ticker": "ETH10K",
+                "iconAddress": "0xAbC754aC2161B557D28062F41DcC0fc18440ac7E",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
+                "symbol": "ETH12EMACO",
+                "address": "0x2c5a9980B41861D91D30d0E0271d1c093452DcA5",
+                "decimals": 18,
+                "ticker": "ETH12EMACO",
+                "iconAddress": "0x2c5a9980B41861D91D30d0E0271d1c093452DcA5",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "ETH20SMACO",
+                "address": "0x9ea463Ec4cE9E9E5bc9cFd0187C4Ac3a70DD951D",
+                "decimals": 18,
+                "ticker": "ETH20SMACO",
+                "iconAddress": "0x9ea463Ec4cE9E9E5bc9cFd0187C4Ac3a70DD951D",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "ETH26EMACO",
+                "address": "0x614857C755739354d68AE0abD53849cf45d6A41D",
+                "decimals": 18,
+                "ticker": "ETH26EMACO",
+                "iconAddress": "0x614857C755739354d68AE0abD53849cf45d6A41D",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "ETH50SMACO",
+                "address": "0xa360F2aF3F957906468c0FD7526391AeD08aE3DB",
+                "decimals": 18,
+                "ticker": "ETH50SMACO",
+                "iconAddress": "0xa360F2aF3F957906468c0FD7526391AeD08aE3DB",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "ETHBTC26EMACO",
+                "address": "0xB9FfE0b8Ee2d1Af94202FFED366520300748A4d8",
+                "decimals": 18,
+                "ticker": "ETHBTC26EMACO",
+                "iconAddress": "0xB9FfE0b8Ee2d1Af94202FFED366520300748A4d8",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "ETHBTCPA",
+                "address": "0x1bcCA39aE82e53dede8eC5500c3BCd76Cd1e0072",
+                "decimals": 18,
+                "ticker": "ETHBTCPA",
+                "iconAddress": "0x1bcCA39aE82e53dede8eC5500c3BCd76Cd1e0072",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "ETHDAIS",
+                "address": "0xa12a696B9B11788076A6cb384CAc6986b82545E1",
+                "decimals": 18,
+                "ticker": "ETHDAIS",
+                "iconAddress": "0xa12a696B9B11788076A6cb384CAc6986b82545E1",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "ETHEMAAPY",
+                "address": "0x54e8371C1EC43e58fB53D4ef4eD463C17Ba8a6bE",
+                "decimals": 18,
+                "ticker": "ETHEMAAPY",
+                "iconAddress": "0x54e8371C1EC43e58fB53D4ef4eD463C17Ba8a6bE",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "ETHMACOAPY",
+                "address": "0xB647a1D7633c6C4d434e22eE9756b36F2b219525",
+                "decimals": 18,
+                "ticker": "ETHMACOAPY",
+                "iconAddress": "0xB647a1D7633c6C4d434e22eE9756b36F2b219525",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "ETHMO",
+                "address": "0x98A25bA4c3793B9029652cBc1a8875cBe223dF13",
+                "decimals": 18,
+                "ticker": "ETHMO",
+                "iconAddress": "0x98A25bA4c3793B9029652cBc1a8875cBe223dF13",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "ETHMOONX",
+                "address": "0xB1CA7E6714263a64659A3a89E1C313af30fD660A",
+                "decimals": 18,
+                "ticker": "ETHMOONX",
+                "iconAddress": "0xB1CA7E6714263a64659A3a89E1C313af30fD660A",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "ETHMOONX2",
+                "address": "0x2Bf417FdA6E73B8Ea605DF0F33aD029F8d4b795A",
+                "decimals": 18,
+                "ticker": "ETHMOONX2",
+                "iconAddress": "0x2Bf417FdA6E73B8Ea605DF0F33aD029F8d4b795A",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "ETHPA",
+                "address": "0x09E4BDFb273245063eF5E800D891eFF7d04f9B83",
+                "decimals": 18,
+                "ticker": "ETHPA",
+                "iconAddress": "0x09E4BDFb273245063eF5E800D891eFF7d04f9B83",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
+                "symbol": "ETHRSI6040",
+                "address": "0x93E01899c10532d76C0E864537a1D26433dBbDdB",
+                "decimals": 18,
+                "ticker": "ETHRSI6040",
+                "iconAddress": "0x93E01899c10532d76C0E864537a1D26433dBbDdB",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
+                "symbol": "ETHTA",
+                "address": "0x1Ce9200C98b6D9999B60bFf53860475A993a8b68",
+                "decimals": 18,
+                "ticker": "ETHTA",
+                "iconAddress": "0x1Ce9200C98b6D9999B60bFf53860475A993a8b68",
+                "precision": 2,
+                "chartColor": "#387080"
+            },
+            {
+                "symbol": "ETHUSDADL4",
+                "address": "0xB8243B4eeca27A4191e879760b88fE2270561796",
+                "decimals": 18,
+                "ticker": "ETHUSDADL4",
+                "iconAddress": "0xB8243B4eeca27A4191e879760b88fE2270561796",
+                "precision": 2,
+                "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "FART",
+                "address": "0xffEE21B4Bb7084a9416205544101Ae9f472c7159",
+                "decimals": 18,
+                "ticker": "FART",
+                "iconAddress": "0xffEE21B4Bb7084a9416205544101Ae9f472c7159",
+                "precision": 2,
+                "chartColor": "#93a167"
+            },
+            {
+                "symbol": "FLEXBTC",
+                "address": "0xCAE169AFDE69f297c7817ed5F4A6816C0E38137D",
+                "decimals": 18,
+                "ticker": "FLEXBTC",
+                "iconAddress": "0xCAE169AFDE69f297c7817ed5F4A6816C0E38137D",
+                "precision": 2,
+                "chartColor": "#6eaa78"
+            },
+            {
+                "symbol": "FLEXETH",
+                "address": "0x654424F4b3ed6DE828C9CA30484dc1A626bb5fBA",
+                "decimals": 18,
+                "ticker": "FLEXETH",
+                "iconAddress": "0x654424F4b3ed6DE828C9CA30484dc1A626bb5fBA",
+                "precision": 2,
+                "chartColor": "#557064"
+            },
+            {
+                "symbol": "FLEXETHBTC",
+                "address": "0xdBf5c7D8ac5007667617a15DB2c1B1D616c9D302",
+                "decimals": 18,
+                "ticker": "FLEXETHBTC",
+                "iconAddress": "0xdBf5c7D8ac5007667617a15DB2c1B1D616c9D302",
+                "precision": 2,
+                "chartColor": "#9d9f7f"
+            },
+            {
+                "symbol": "GATOR",
+                "address": "0xF5c0E24ACA5217BcBAe662871caE1A86873F02db",
+                "decimals": 18,
+                "ticker": "GATOR",
+                "iconAddress": "0xF5c0E24ACA5217BcBAe662871caE1A86873F02db",
+                "precision": 2,
+                "chartColor": "#7e9e99"
+            },
+            {
+                "symbol": "GREED",
+                "address": "0x15822A64c8Cb27D7828C45E0aAFC3e6C5DeCd172",
+                "decimals": 18,
+                "ticker": "GREED",
+                "iconAddress": "0x15822A64c8Cb27D7828C45E0aAFC3e6C5DeCd172",
+                "precision": 2,
+                "chartColor": "#5d6872"
+            },
+            {
+                "symbol": "iETH20SMACO",
+                "address": "0x5cD487CE4dB7091292F2E914F7B31445Bd4A5E1b",
+                "decimals": 18,
+                "ticker": "iETH20SMACO",
+                "iconAddress": "0x5cD487CE4dB7091292F2E914F7B31445Bd4A5E1b",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "iETH50SMACO",
+                "address": "0xAC1565e473F69FAdA09661A6B4103FBbF801CeEE",
+                "decimals": 18,
+                "ticker": "iETH50SMACO",
+                "iconAddress": "0xAC1565e473F69FAdA09661A6B4103FBbF801CeEE",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "INTBTC",
+                "address": "0xB32c960c46f28059C2B5F1C3eCC2b9DD77aB0aA0",
+                "decimals": 18,
+                "ticker": "INTBTC",
+                "iconAddress": "0xB32c960c46f28059C2B5F1C3eCC2b9DD77aB0aA0",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "INTETH",
+                "address": "0x89C0b027bD7cc2D17854B06F8322e29451192CE3",
+                "decimals": 18,
+                "ticker": "INTETH",
+                "iconAddress": "0x89C0b027bD7cc2D17854B06F8322e29451192CE3",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "INTRATIO",
+                "address": "0xBA8Ea15b647F54D9ff849670FcaAcF35Df21A457",
+                "decimals": 18,
+                "ticker": "INTRATIO",
+                "iconAddress": "0xBA8Ea15b647F54D9ff849670FcaAcF35Df21A457",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "LEGA",
+                "address": "0xC166F976ce9926A3205b145Af104eB0E4b38b5C0",
+                "decimals": 18,
+                "ticker": "LEGA",
+                "iconAddress": "0xC166F976ce9926A3205b145Af104eB0E4b38b5C0",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "LELOAP",
+                "address": "0x8a63bE90F095F6777be3Ed25D9fC7CD2a63DDb30",
+                "decimals": 18,
+                "ticker": "LELOAP",
+                "iconAddress": "0x8a63bE90F095F6777be3Ed25D9fC7CD2a63DDb30",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "LINKETHPA",
+                "address": "0x542156d51D10Db5acCB99f9Db7e7C91B74E80a2c",
+                "decimals": 18,
+                "ticker": "LINKETHPA",
+                "iconAddress": "0x542156d51D10Db5acCB99f9Db7e7C91B74E80a2c",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "LINKETHRSI",
+                "address": "0x8933ea1Ce67B946BdF2436cE860fFBb53Ce814d2",
+                "decimals": 18,
+                "ticker": "LINKETHRSI",
+                "iconAddress": "0x8933ea1Ce67B946BdF2436cE860fFBb53Ce814d2",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "LINKPT",
+                "address": "0x78E29d35573beA6265aEDfCb9F45481B717EBFdE",
+                "decimals": 18,
+                "ticker": "LINKPT",
+                "iconAddress": "0x78E29d35573beA6265aEDfCb9F45481B717EBFdE",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "LINKRSICO",
+                "address": "0x0329d23fC7B1b1e6Cca57aFA3F0090F1189069e8",
+                "decimals": 18,
+                "ticker": "LINKRSICO",
+                "iconAddress": "0x0329d23fC7B1b1e6Cca57aFA3F0090F1189069e8",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "MAVC",
+                "address": "0x621E3b71D07b51242bcca167928e184235A4bb87",
+                "decimals": 18,
+                "ticker": "MAVC",
+                "iconAddress": "0x621E3b71D07b51242bcca167928e184235A4bb87",
+                "precision": 2,
+                "chartColor": "#8d6268"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
