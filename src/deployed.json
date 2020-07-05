@@ -1220,6 +1220,15 @@
                 "iconAddress": "0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a",
                 "precision": 2,
                 "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "VGX",
+                "address": "0x5Af2Be193a6ABCa9c8817001F45744777Db30756",
+                "decimals": 8,
+                "ticker": "VGX",
+                "iconAddress": "0x5Af2Be193a6ABCa9c8817001F45744777Db30756",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
