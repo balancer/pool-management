@@ -1211,6 +1211,15 @@
                 "iconAddress": "0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24",
                 "precision": 2,
                 "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "TKN",
+                "address": "0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a",
+                "decimals": 8,
+                "ticker": "TKN",
+                "iconAddress": "0xaAAf91D9b90dF800Df4F55c205fd6989c977E73a",
+                "precision": 2,
+                "chartColor": "#c28d75"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
