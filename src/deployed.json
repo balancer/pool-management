@@ -1157,6 +1157,15 @@
                 "iconAddress": "0x4a57E687b9126435a9B19E4A802113e266AdeBde",
                 "precision": 2,
                 "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "IHF",
+                "address": "0xaF1250fa68D7DECD34fD75dE8742Bc03B29BD58e",
+                "decimals": 18,
+                "ticker": "IHF",
+                "iconAddress": "0xaF1250fa68D7DECD34fD75dE8742Bc03B29BD58e",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
