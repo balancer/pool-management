@@ -13,6 +13,7 @@ import AddLiquidityFormStore from './AddLiquidityForm';
 import RemoveLiquidityFormStore from './RemoveLiquidityForm';
 import CreatePoolFormStore from './CreatePoolForm';
 import SwapsTableStore from './SwapsTable';
+import DashboardStore from './Dashboard';
 
 export default class RootStore {
     providerStore: ProviderStore;
@@ -29,6 +30,7 @@ export default class RootStore {
     removeLiquidityFormStore: RemoveLiquidityFormStore;
     createPoolFormStore: CreatePoolFormStore;
     swapsTableStore: SwapsTableStore;
+    dashboardStore: DashboardStore;
 
     constructor() {
         this.providerStore = new ProviderStore(this);
@@ -45,6 +47,7 @@ export default class RootStore {
         this.removeLiquidityFormStore = new RemoveLiquidityFormStore(this);
         this.createPoolFormStore = new CreatePoolFormStore(this);
         this.swapsTableStore = new SwapsTableStore(this);
+        this.dashboardStore = new DashboardStore(this);
 
         this.asyncSetup().catch(e => {
             //TODO: Add retry on these fetches

@@ -43,6 +43,9 @@ const LeftNav = () => {
                 <StyledLink activeClassName="selected" to={`/balancer`}>
                     Balancer Shared Pools
                 </StyledLink>
+                <StyledLink activeClassName="selected" to={`/dashboard`}>
+                    Dashboard (beta)
+                </StyledLink>
             </NavContainer>
         </Wrapper>
     );

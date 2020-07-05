@@ -2,12 +2,14 @@
     {
         "address": "0x1Ee383389c621C37Ee5Aa476F88413A815083c5D",
         "name": "USD++",
+        "coingeckoId": "piedao-usd",
         "mintUrl": "https://usd.piedao.org/#/liquidity",
         "icon": "https://github.com/pie-dao/brand/blob/master/PIE%20Tokens/Cash++.png?raw=true"
     },
     {
         "address": "0x9891832633a83634765952b051bc7feF36714A46",
         "name": "BTC++",
+        "coingeckoId": "piedao-btc",
         "mintUrl": "https://btc.piedao.org/#/liquidity",
         "icon": "https://raw.githubusercontent.com/pie-dao/brand/master/PIE%20Tokens/BTC%2B%2B.png"
     }

@@ -11,6 +11,7 @@ import Pool from 'views/Pool';
 import Setup from 'views/Setup';
 import LeftNav from 'components/Common/LeftNav';
 import WalletBalances from 'components/Common/WalletBalances';
+import Dashboard from 'views/Dashboard';
 
 const Container = styled.div`
     display: flex;
@@ -33,6 +34,7 @@ const App = () => {
             <div className="app-shell">
                 <Switch>
                     <Route path="/pool/:poolAddress" component={Pool} />
+                    <Route path="/dashboard" component={Dashboard} />
                     <Route path="/private" component={Private} />
                     <Route path="/balancer" component={Balancer} />
                     <Route path="/setup" component={Setup} />
