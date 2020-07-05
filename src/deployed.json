@@ -1193,6 +1193,15 @@
                 "iconAddress": "0x8207c1FfC5B6804F6024322CcF34F29c3541Ae26",
                 "precision": 2,
                 "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "POLY",
+                "address": "0x9992eC3cF6A55b00978cdDF2b27BC6882d88D1eC",
+                "decimals": 18,
+                "ticker": "POLY",
+                "iconAddress": "0x9992eC3cF6A55b00978cdDF2b27BC6882d88D1eC",
+                "precision": 2,
+                "chartColor": "#666092"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
