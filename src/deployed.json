@@ -1229,6 +1229,105 @@
                 "iconAddress": "0x5Af2Be193a6ABCa9c8817001F45744777Db30756",
                 "precision": 2,
                 "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "aBAT",
+                "address": "0xE1BA0FB44CCb0D11b80F92f4f8Ed94CA3fF51D00",
+                "decimals": 18,
+                "ticker": "aBAT",
+                "iconAddress": "0xE1BA0FB44CCb0D11b80F92f4f8Ed94CA3fF51D00",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "aETH",
+                "address": "0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04",
+                "decimals": 18,
+                "ticker": "aETH",
+                "iconAddress": "0x3a3A65aAb0dd2A17E3F1947bA16138cd37d08c04",
+                "precision": 4,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "aKNC",
+                "address": "0x9D91BE44C06d373a8a226E1f3b146956083803eB",
+                "decimals": 18,
+                "ticker": "aKNC",
+                "iconAddress": "0x9D91BE44C06d373a8a226E1f3b146956083803eB",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
+                "symbol": "aLEND",
+                "address": "0x7D2D3688Df45Ce7C552E19c27e007673da9204B8",
+                "decimals": 18,
+                "ticker": "aLEND",
+                "iconAddress": "0x7D2D3688Df45Ce7C552E19c27e007673da9204B8",
+                "precision": 2,
+                "chartColor": "#68aca9"
+            },
+            {
+                "symbol": "aLINK",
+                "address": "0xA64BD6C70Cb9051F6A9ba1F163Fdc07E0DfB5F84",
+                "decimals": 18,
+                "ticker": "aLINK",
+                "iconAddress": "0xA64BD6C70Cb9051F6A9ba1F163Fdc07E0DfB5F84",
+                "precision": 2,
+                "chartColor": "#387080"
+            },
+            {
+                "symbol": "aMANA",
+                "address": "0x6FCE4A401B6B80ACe52baAefE4421Bd188e76F6f",
+                "decimals": 18,
+                "ticker": "aMANA",
+                "iconAddress": "0x6FCE4A401B6B80ACe52baAefE4421Bd188e76F6f",
+                "precision": 2,
+                "chartColor": "#6e6962"
+            },
+            {
+                "symbol": "aMKR",
+                "address": "0x7deB5e830be29F91E298ba5FF1356BB7f8146998",
+                "decimals": 18,
+                "ticker": "aMKR",
+                "iconAddress": "0x7deB5e830be29F91E298ba5FF1356BB7f8146998",
+                "precision": 4,
+                "chartColor": "#93a167"
+            },
+            {
+                "symbol": "aREP",
+                "address": "0x71010A9D003445aC60C4e6A7017c1E89A477B438",
+                "decimals": 18,
+                "ticker": "aREP",
+                "iconAddress": "0x71010A9D003445aC60C4e6A7017c1E89A477B438",
+                "precision": 4,
+                "chartColor": "#6eaa78"
+            },
+            {
+                "symbol": "aSNX",
+                "address": "0x328C4c80BC7aCa0834Db37e6600A6c49E12Da4DE",
+                "decimals": 18,
+                "ticker": "aSNX",
+                "iconAddress": "0x328C4c80BC7aCa0834Db37e6600A6c49E12Da4DE",
+                "precision": 2,
+                "chartColor": "#557064"
+            },
+            {
+                "symbol": "aWBTC",
+                "address": "0xFC4B8ED459e00e5400be803A9BB3954234FD50e3",
+                "decimals": 8,
+                "ticker": "aWBTC",
+                "iconAddress": "0xFC4B8ED459e00e5400be803A9BB3954234FD50e3",
+                "precision": 4,
+                "chartColor": "#9d9f7f"
+            },
+            {
+                "symbol": "aZRX",
+                "address": "0x6Fb0855c404E09c47C3fBCA25f08d4E41f9F062f",
+                "decimals": 18,
+                "ticker": "aZRX",
+                "iconAddress": "0x6Fb0855c404E09c47C3fBCA25f08d4E41f9F062f",
+                "precision": 2,
+                "chartColor": "#7e9e99"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
