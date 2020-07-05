@@ -1175,6 +1175,15 @@
                 "iconAddress": "0x85Eee30c52B0b379b046Fb0F85F4f3Dc3009aFEC",
                 "precision": 2,
                 "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "MFT",
+                "address": "0xDF2C7238198Ad8B389666574f2d8bc411A4b7428",
+                "decimals": 18,
+                "ticker": "MFT",
+                "iconAddress": "0xDF2C7238198Ad8B389666574f2d8bc411A4b7428",
+                "precision": 2,
+                "chartColor": "#c38890"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
