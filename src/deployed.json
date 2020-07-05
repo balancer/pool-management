@@ -1166,6 +1166,15 @@
                 "iconAddress": "0xaF1250fa68D7DECD34fD75dE8742Bc03B29BD58e",
                 "precision": 2,
                 "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "KEEP",
+                "address": "0x85Eee30c52B0b379b046Fb0F85F4f3Dc3009aFEC",
+                "decimals": 18,
+                "ticker": "KEEP",
+                "iconAddress": "0x85Eee30c52B0b379b046Fb0F85F4f3Dc3009aFEC",
+                "precision": 2,
+                "chartColor": "#8b5580"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
