@@ -1202,6 +1202,15 @@
                 "iconAddress": "0x9992eC3cF6A55b00978cdDF2b27BC6882d88D1eC",
                 "precision": 2,
                 "chartColor": "#666092"
+            },
+            {
+                "symbol": "RNDR",
+                "address": "0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24",
+                "decimals": 18,
+                "ticker": "RNDR",
+                "iconAddress": "0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24",
+                "precision": 2,
+                "chartColor": "#9a4f50"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
