@@ -697,7 +697,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
         return (
             <Warning>
-                <Icon src="ErrorSign.svg" />
+                <Icon src="WarningSign.svg" />
                 <Content>
                     Adding liquidity will incur {formatPercentage(slippage, 2)}{' '}
                     of slippage
