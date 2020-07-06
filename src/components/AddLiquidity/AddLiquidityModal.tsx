@@ -629,9 +629,9 @@ const AddLiquidityModal = observer((props: Props) => {
             <Warning>
                 <Icon src="WarningSign.svg" />
                 <Content>
-                    Add liquidity might fail due to using max balance and a
-                    trade occuring before join tx is mined. Use high gas price
-                    or
+                    Adding liquidity might fail due to using max balance and a
+                    trade occuring before transaction is mined. Use high gas
+                    price or
                     <LowerAmountLink onClick={e => handleLowerAmountButton()}>
                         lower amounts
                     </LowerAmountLink>
