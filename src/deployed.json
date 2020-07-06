@@ -253,7 +253,7 @@
                 "symbol": "REP",
                 "address": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
                 "decimals": 18,
-                "ticker": "REP",
+                "ticker": "REPV1",
                 "iconAddress": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
                 "precision": 4,
                 "chartColor": "#6e6962"
@@ -1441,7 +1441,7 @@
                 "symbol": "BTCTA",
                 "address": "0xd218D75BA0fC45858a4E9EF57A257Ed9977dB5f4",
                 "decimals": 18,
-                "ticker": "BTCTA",
+                "ticker": "BTCUSDCTA",
                 "iconAddress": "0xd218D75BA0fC45858a4E9EF57A257Ed9977dB5f4",
                 "precision": 2,
                 "chartColor": "#8d6268"
@@ -1576,7 +1576,7 @@
                 "symbol": "ETHBTC26EMACO",
                 "address": "0xB9FfE0b8Ee2d1Af94202FFED366520300748A4d8",
                 "decimals": 18,
-                "ticker": "ETHBTC26EMACO",
+                "ticker": "ETHBTCEMACO",
                 "iconAddress": "0xB9FfE0b8Ee2d1Af94202FFED366520300748A4d8",
                 "precision": 2,
                 "chartColor": "#c38890"
@@ -1666,7 +1666,7 @@
                 "symbol": "ETHTA",
                 "address": "0x1Ce9200C98b6D9999B60bFf53860475A993a8b68",
                 "decimals": 18,
-                "ticker": "ETHTA",
+                "ticker": "ETHUSDCTA",
                 "iconAddress": "0x1Ce9200C98b6D9999B60bFf53860475A993a8b68",
                 "precision": 2,
                 "chartColor": "#387080"
@@ -1684,7 +1684,7 @@
                 "symbol": "FART",
                 "address": "0xffEE21B4Bb7084a9416205544101Ae9f472c7159",
                 "decimals": 18,
-                "ticker": "FART",
+                "ticker": "",
                 "iconAddress": "0xffEE21B4Bb7084a9416205544101Ae9f472c7159",
                 "precision": 2,
                 "chartColor": "#93a167"
