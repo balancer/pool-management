@@ -94,8 +94,9 @@ const Setup = observer(() => {
                     </Explainer>
                     <ButtonWrapper>
                         <Button
-                            buttonText={isInstanceReady() ? 'Next' : 'Setup'}
-                            active={!isDeploying}
+                            isActive={!isDeploying}
+                            isPrimary={true}
+                            text={isInstanceReady() ? 'Next' : 'Setup'}
                             onClick={e => handleButtonClick()}
                         />
                     </ButtonWrapper>

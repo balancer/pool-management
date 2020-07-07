@@ -18,7 +18,6 @@ const StyledLink = styled(NavLink)`
     align-items: center;
     height: 40px;
     padding-left: 30px;
-    color: var(--inactive-button-text);
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
