@@ -64,6 +64,7 @@ const SharedPools = observer(() => {
                     <Button
                         text={'Create Pool'}
                         isActive={!!account}
+                        isPrimary={true}
                         onClick={e => {}}
                     />
                 </CreateLink>
