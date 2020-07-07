@@ -8,10 +8,23 @@ const Container = styled.div`
     justify-content: center;
 `;
 
-const ButtonBase = styled.div`
-    border-radius: 4px;
-    width: 155px;
+const Button = styled.button`
+    width: ${props => (props.small ? '80px' : '155px')};
     height: 38px;
+    background: ${props =>
+        props.primary
+            ? 'var(--primary-button-background)'
+            : 'var(--secondary-button-background)'};
+    border: 1px solid;
+    border-color: ${props =>
+        props.primary
+            ? 'var(--primary-button-border)'
+            : 'var(--secondary-button-border)'};
+    border-radius: 4px;
+    color: ${props =>
+        props.primary
+            ? 'var(--primary-button-text)'
+            : 'var(--secondary-button-text)'};
     font-style: normal;
     font-weight: 500;
     font-size: 14px;
@@ -21,34 +34,41 @@ const ButtonBase = styled.div`
     align-items: center;
     text-align: center;
     cursor: pointer;
+
+    &:hover {
+        background: ${props =>
+            props.primary
+                ? 'var(--primary-button-background-hover)'
+                : 'var(--secondary-button-background-hover)'};
+    }
+
+    &:disabled {
+        background: var(--disabled-button);
+        border: 1px solid var(--disabled-button);
+        color: var(--disabled-button-text);
+        cursor: not-allowed;
+    }
 `;
 
-const ActiveButton = styled(ButtonBase)`
-    background: var(--button-background);
-    border: 1px solid var(--button-border);
-    color: var(--button-text);
-`;
-
-const InactiveButton = styled(ButtonBase)`
-    background: var(--selector-background);
-    border: 1px solid var(--inactive-button-border);
-    color: var(--inactive-button-text);
-`;
-
-const Button = ({ buttonText, active, onClick }) => {
-    const ButtonDisplay = ({ activeButton, children }) => {
-        if (activeButton) {
-            return <ActiveButton onClick={onClick}>{children}</ActiveButton>;
-        } else {
-            return <InactiveButton>{children}</InactiveButton>;
-        }
-    };
-
+const ButtonComponent = ({
+    isActive = true,
+    isPrimary = false,
+    isSmall = false,
+    onClick,
+    text,
+}) => {
     return (
         <Container>
-            <ButtonDisplay activeButton={active}>{buttonText}</ButtonDisplay>
+            <Button
+                onClick={onClick}
+                disabled={!isActive}
+                primary={isPrimary}
+                small={isSmall}
+            >
+                {text}
+            </Button>
         </Container>
     );
 };
 
-export default Button;
+export default ButtonComponent;

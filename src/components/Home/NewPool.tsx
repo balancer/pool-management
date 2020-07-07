@@ -255,8 +255,8 @@ const NewPool = observer(() => {
     const renderAddButton = () => {
         return (
             <Button
-                buttonText={`Add Token`}
-                active={account && createPoolFormStore.tokens.length !== 8}
+                text={`Add Token`}
+                isActive={account && createPoolFormStore.tokens.length !== 8}
                 onClick={e => handleAddButtonClick()}
             />
         );
@@ -265,8 +265,9 @@ const NewPool = observer(() => {
     const renderCreateButton = () => {
         return (
             <Button
-                buttonText={`Create`}
-                active={account && hasValidInput && hasConfirmed}
+                text={`Create`}
+                isActive={account && hasValidInput && hasConfirmed}
+                isPrimary={true}
                 onClick={e => handleCreateButtonClick()}
             />
         );
@@ -276,8 +277,9 @@ const NewPool = observer(() => {
         const token = contractMetadataStore.getTokenMetadata(lockedToken);
         return (
             <Button
-                buttonText={`Unlock ${token.symbol}`}
-                active={account && lockedToken}
+                text={`Unlock ${token.symbol}`}
+                isActive={account && lockedToken}
+                isPrimary={true}
                 onClick={e => handleUnlockButtonClick()}
             />
         );

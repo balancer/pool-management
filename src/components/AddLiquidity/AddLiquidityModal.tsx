@@ -738,8 +738,9 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <ButtonWrapper>
                     <Button
-                        buttonText={`Unlock ${lockedToken.symbol}`}
-                        active={!!account}
+                        text={`Unlock ${lockedToken.symbol}`}
+                        isActive={!!account}
+                        isPrimary={true}
                         onClick={e =>
                             actionButtonHandler(
                                 ButtonAction.UNLOCK,
@@ -753,14 +754,15 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <ButtonWrapper>
                     <Button
-                        buttonText={`Add Liquidity`}
-                        active={
+                        text={`Add Liquidity`}
+                        isActive={
                             account &&
                             hasValidInput &&
                             !hasTransactionError &&
                             !hasTokenError &&
                             hasConfirmed
                         }
+                        isPrimary={true}
                         onClick={e =>
                             actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                         }

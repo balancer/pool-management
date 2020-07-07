@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useStores } from '../../contexts/storesContext';
 import { toWei, formatBalance } from '../../utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
+import Button from './Button';
 import { ethers } from 'ethers';
 
 const Container = styled.div`
@@ -18,34 +19,6 @@ const ButtonContainer = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-`;
-
-const EthButton = styled.div`
-    border-radius: 4px;
-    width: 70px;
-    height: 38px;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-    background: var(--selector-background);
-    border: 1px solid var(--inactive-button-border);
-    color: var(--inactive-button-text);
-
-    &:hover {
-        background: var(--button-background);
-        border: 1px solid var(--button-border);
-        color: var(--button-text);
-    }
-`;
-
-const WethButton = styled(EthButton)`
-    width: 70px;
 `;
 
 const WrapHeader = styled.div`
@@ -66,20 +39,21 @@ const Advice = styled.div`
     font-weight: 500;
     font-size: 10px;
     line-height: 18px;
-    padding-left: 30px;
+    padding-left: 16px;
     padding-top: 5px;
     color: var(--token-balance-text);
 `;
 
 // padding and width
 const EthInputWrapper = styled.div`
+    width: 120px;
     height: 38px;
-    padding: 0px 17px;
+    padding: 0px 5px;
     font-style: normal;
     font-weight: 500;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     border: 1px solid var(--panel-border);
     border-radius: 4px;
@@ -132,7 +106,7 @@ const EthInputWrapper = styled.div`
 `;
 
 const WethInputWrapper = styled(EthInputWrapper)`
-    padding: 0px 5px;
+    justify-content: space-between;
 `;
 
 const WrapElement = styled.div`
@@ -140,7 +114,7 @@ const WrapElement = styled.div`
     flex-direction: row;
     justify-content: space-between;
     color: var(--highlighted-selector-text);
-    padding: 0px 30px 0px 30px;
+    padding: 0px 16px;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
@@ -227,13 +201,11 @@ const WrapEth = () => {
                 </EthInputWrapper>
 
                 <ButtonContainer>
-                    <EthButton
-                        buttonText={`WRAP`}
-                        active={false}
+                    <Button
+                        text={'Wrap'}
+                        isSmall={true}
                         onClick={e => actionButtonHandler(ButtonAction.WRAP)}
-                    >
-                        WRAP
-                    </EthButton>
+                    />
                 </ButtonContainer>
             </WrapElement>
             <Advice>Keep some ETH unwrapped for transaction fees</Advice>
@@ -258,13 +230,11 @@ const WrapEth = () => {
                     />
                 </WethInputWrapper>
                 <ButtonContainer>
-                    <WethButton
-                        buttonText={`UNWRAP`}
-                        active={false}
+                    <Button
+                        text={'Unwrap'}
+                        isSmall={true}
                         onClick={e => actionButtonHandler(ButtonAction.UNWRAP)}
-                    >
-                        UNWRAP
-                    </WethButton>
+                    />
                 </ButtonContainer>
             </WrapElement>
         </Container>

@@ -161,9 +161,9 @@ const Wallet = observer(() => {
         } else {
             return (
                 <Button
+                    text="Connect Wallet"
                     onClick={toggleWalletDropdown}
-                    buttonText="Connect Wallet"
-                    active={true}
+                    isPrimary={true}
                 />
             );
         }

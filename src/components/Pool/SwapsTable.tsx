@@ -176,7 +176,6 @@ const TableCellTxDetails = styled.div`
 `;
 
 const StyledLink = styled.a`
-    color: var(--inactive-button-text);
     font-style: normal;
     font-weight: normal;
     font-size: 14px;

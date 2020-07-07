@@ -25,7 +25,7 @@ const STab = styled(Tab)`
     list-style: none;
     padding: 10px 15px;
     cursor: pointer;
-    color: var(--inactive-button-text);
+    color: var(--body-text);
     &.react-tabs__tab--selected {
         background: var(--highlighted-selector-background);
         border-color: var(--panel-border);

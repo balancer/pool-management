@@ -34,16 +34,8 @@ const Pagination = styled.div`
     margin-top: 16px;
 `;
 
-const PaginationButton = styled.div`
-    width: 128px;
-    padding: 8px;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    color: var(--button-text);
-    text-align: center;
-    font-size: 14px;
-    margin-right: 8px;
-    cursor: pointer;
+const ButtonWrapper = styled.div`
+    margin-right: 16px;
 `;
 
 const SharedPools = observer(() => {
@@ -62,6 +54,7 @@ const SharedPools = observer(() => {
     };
 
     const account = providerStore.providerStatus.account;
+    const { graphSkip } = poolStore;
 
     return (
         <Wrapper>
@@ -69,8 +62,8 @@ const SharedPools = observer(() => {
                 <Header>Shared Pools</Header>
                 <CreateLink to={'/pool/new'}>
                     <Button
-                        buttonText={'Create Pool'}
-                        active={!!account}
+                        text={'Create Pool'}
+                        isActive={!!account}
                         onClick={e => {}}
                     />
                 </CreateLink>
@@ -80,12 +73,16 @@ const SharedPools = observer(() => {
                 dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
             />
             <Pagination>
-                <PaginationButton onClick={e => queryPreviousPage()}>
-                    Previous Page
-                </PaginationButton>
-                <PaginationButton onClick={e => queryNextPage()}>
-                    Next Page
-                </PaginationButton>
+                <ButtonWrapper>
+                    <Button
+                        text={'Previous Page'}
+                        isActive={graphSkip !== 0}
+                        onClick={e => queryPreviousPage()}
+                    />
+                </ButtonWrapper>
+                <ButtonWrapper>
+                    <Button text={'Next Page'} onClick={e => queryNextPage()} />
+                </ButtonWrapper>
             </Pagination>
         </Wrapper>
     );
