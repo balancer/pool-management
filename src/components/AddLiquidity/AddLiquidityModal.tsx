@@ -96,6 +96,8 @@ const Notification = styled(Message)`
     border-color: var(--panel-border);
 `;
 
+const Check = styled(Error)``;
+
 const Icon = styled.img`
     width: 26px;
     height: 24px;
@@ -115,19 +117,6 @@ const LowerAmountLink = styled.span`
 const Link = styled.a`
     color: color: var(--warning);
     margin: 0 4px;
-`;
-
-const CheckboxPanel = styled.div`
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    font-size: 14px;
-    color: var(--body-text);
-    box-sizing: border-box;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -759,8 +748,28 @@ const AddLiquidityModal = observer((props: Props) => {
         if (!hasValidInput || hasTokenError) {
             return;
         }
+
+        const safePool = pool.tokensList.every(tokenAddress => {
+            const hasMetadata = contractMetadataStore.hasTokenMetadata(
+                tokenAddress
+            );
+            if (!hasMetadata) {
+                return false;
+            }
+            const metadata = contractMetadataStore.getTokenMetadata(
+                tokenAddress
+            );
+            return metadata.isSupported;
+        });
+        if (safePool) {
+            if (!hasConfirmed) {
+                addLiquidityFormStore.toggleConfirmation();
+            }
+            return;
+        }
+
         return (
-            <CheckboxPanel>
+            <Check>
                 <CheckboxWrapper>
                     <Checkbox
                         checked={hasConfirmed}
@@ -769,10 +778,20 @@ const AddLiquidityModal = observer((props: Props) => {
                         }}
                     />
                 </CheckboxWrapper>
-                I understand that adding liquidity to Balancer protocol has
-                smart contract risk and that I should do my own due diligence
-                about the tokens present in the pool I’m adding liquidity to.
-            </CheckboxPanel>
+                <div>
+                    <div>
+                        • Do not add <b>deflationary tokens</b> or tokens with
+                        transfer fees.
+                    </div>
+                    <div>
+                        • Do not add tokens with <b>no bool return values</b>.
+                    </div>
+                    <div>
+                        • Any other <b>non-compliance from ERC20</b> may cause
+                        issues. DYOR!
+                    </div>
+                </div>
+            </Check>
         );
     };
 

@@ -97,23 +97,6 @@ const InputWrapper = styled.div`
     }
 `;
 
-const CheckboxPanel = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 90%;
-    padding: 16px;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    font-size: 14px;
-    color: var(--body-text);
-    box-sizing: border-box;
-`;
-
-const CheckboxMessage = styled.div`
-    margin-left: 16px;
-`;
-
 const Message = styled.div`
     width: 87%;
     padding: 16px;
@@ -135,10 +118,16 @@ const Warning = styled(Message)`
     margin-bottom: 16px;
 `;
 
+const Check = styled(Error)``;
+
 const Icon = styled.img`
     width: 26px;
     height: 24px;
     margin-right: 20px;
+`;
+
+const CheckboxWrapper = styled.div`
+    margin-right: 16px;
 `;
 
 const Content = styled.div``;
@@ -322,20 +311,50 @@ const NewPool = observer(() => {
         if (!hasValidInput) {
             return;
         }
+
+        const safePool = tokens.every(tokenAddress => {
+            const hasMetadata = contractMetadataStore.hasTokenMetadata(
+                tokenAddress
+            );
+            if (!hasMetadata) {
+                return false;
+            }
+            const metadata = contractMetadataStore.getTokenMetadata(
+                tokenAddress
+            );
+            return metadata.isSupported;
+        });
+        if (safePool) {
+            if (!hasConfirmed) {
+                createPoolFormStore.toggleConfirmation();
+            }
+            return;
+        }
+
         return (
-            <CheckboxPanel>
-                <Checkbox
-                    checked={hasConfirmed}
-                    onChange={e => {
-                        createPoolFormStore.toggleConfirmation();
-                    }}
-                />
-                <CheckboxMessage>
-                    I understand that creating a pool in Balancer protocol has
-                    smart contract risk and that I should do my own due
-                    diligence about the tokens present in the pool I’m creating.
-                </CheckboxMessage>
-            </CheckboxPanel>
+            <Check>
+                <CheckboxWrapper>
+                    <Checkbox
+                        checked={hasConfirmed}
+                        onChange={e => {
+                            createPoolFormStore.toggleConfirmation();
+                        }}
+                    />
+                </CheckboxWrapper>
+                <div>
+                    <div>
+                        • Do not add <b>deflationary tokens</b> or tokens with
+                        transfer fees.
+                    </div>
+                    <div>
+                        • Do not add tokens with <b>no bool return values</b>.
+                    </div>
+                    <div>
+                        • Any other <b>non-compliance from ERC20</b> may cause
+                        issues. DYOR!
+                    </div>
+                </div>
+            </Check>
         );
     };
 
