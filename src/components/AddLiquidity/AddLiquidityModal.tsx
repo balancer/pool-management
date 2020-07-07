@@ -307,6 +307,34 @@ const AddLiquidityModal = observer((props: Props) => {
         };
     };
 
+    const hasSnx = (pool: Pool): boolean => {
+        return hasToken(pool, 'SNX');
+    };
+
+    const hasSynth = (pool: Pool): boolean => {
+        const synths = ['sUSD', 'sBTC', 'sETH', 'sXAU'];
+        return synths.some(synth => hasToken(pool, synth));
+    };
+
+    const hasCToken = (pool: Pool): boolean => {
+        const cTokens = [
+            'cUSDC',
+            'cDAI',
+            'cETH',
+            'cUSDT',
+            'cREP',
+            'cZRX',
+            'cBAT',
+            'cWBTC',
+        ];
+        return cTokens.some(cToken => hasToken(pool, cToken));
+    };
+
+    const hasToken = (pool: Pool, symbol: string): boolean => {
+        const tokenAddress = contractMetadataStore.symbolToAddressMap[symbol];
+        return pool.tokensList.includes(tokenAddress);
+    };
+
     const { poolAddress } = props;
     const {
         root: {
@@ -498,7 +526,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
         function getText(status: ValidationStatus) {
             if (status === ValidationStatus.EMPTY)
-                return "Values can't be empty ";
+                return "Values can't be empty";
             if (status === ValidationStatus.ZERO) return "Values can't be zero";
             if (status === ValidationStatus.NOT_FLOAT)
                 return 'Values should be numbers';
@@ -525,12 +553,27 @@ const AddLiquidityModal = observer((props: Props) => {
             return;
         }
 
+        let message =
+            'Adding liquidity failed as one of the underlying tokens blocked the transfer. ';
+        if (hasSnx(pool)) {
+            message =
+                'Adding liquidity failed as your SNX is locked in staking. ';
+        }
+        if (hasSynth(pool)) {
+            message =
+                'Adding liquidity failed as your Synthetix position might go underwater. ';
+        }
+        if (hasCToken(pool)) {
+            message =
+                'Adding liquidity failed as your Compound position might go underwater. ';
+        }
+
         return (
             <Error>
                 <Icon src="ErrorSign.svg" />
                 <Content>
-                    Adding liquidity failed as one of the underlying tokens
-                    blocked the transfer. Reach out to our
+                    {message}
+                    Reach out to our
                     <Link
                         href="https://discord.gg/ARJWaeF"
                         target="_blank"
