@@ -39,10 +39,6 @@ export default class AddLiquidityFormStore {
         this.rootStore = rootStore;
         this.resetApprovalCheckboxStatusMap();
         this.resetJoinInputs();
-        this.confirmation = {
-            checked: false,
-            touched: false,
-        };
         this.validationStatus = ValidationStatus.EMPTY;
     }
 
@@ -50,6 +46,10 @@ export default class AddLiquidityFormStore {
         this.modalOpen = true;
         this.depositType = DepositType.MULTI_ASSET;
         this.resetApprovalCheckboxStatusMap();
+        this.confirmation = {
+            checked: false,
+            touched: false,
+        };
         this.activeToken = tokenAddresses[0];
         this.activePool = poolAddress;
         this.activeAccount = account;
