@@ -599,6 +599,57 @@ const AddLiquidityModal = observer((props: Props) => {
         );
     };
 
+    const renderConfirmation = () => {
+        if (!hasValidInput || hasTokenError) {
+            return;
+        }
+
+        const safePool = pool.tokensList.every(tokenAddress => {
+            const hasMetadata = contractMetadataStore.hasTokenMetadata(
+                tokenAddress
+            );
+            if (!hasMetadata) {
+                return false;
+            }
+            const metadata = contractMetadataStore.getTokenMetadata(
+                tokenAddress
+            );
+            return metadata.isSupported;
+        });
+        if (safePool) {
+            if (!hasConfirmed) {
+                addLiquidityFormStore.toggleConfirmation();
+            }
+            return;
+        }
+
+        return (
+            <Check>
+                <CheckboxWrapper>
+                    <Checkbox
+                        checked={hasConfirmed}
+                        onChange={e => {
+                            addLiquidityFormStore.toggleConfirmation();
+                        }}
+                    />
+                </CheckboxWrapper>
+                <div>
+                    <div>
+                        • Do not add <b>deflationary tokens</b> or tokens with
+                        transfer fees.
+                    </div>
+                    <div>
+                        • Do not add tokens with <b>no bool return values</b>.
+                    </div>
+                    <div>
+                        • Any other <b>non-compliance from ERC20</b> may cause
+                        issues. DYOR!
+                    </div>
+                </div>
+            </Check>
+        );
+    };
+
     const renderTokenWarning = () => {
         if (!hasValidInput || hasTokenError) {
             return;
@@ -744,57 +795,6 @@ const AddLiquidityModal = observer((props: Props) => {
         }
     };
 
-    const renderConfirmation = () => {
-        if (!hasValidInput || hasTokenError) {
-            return;
-        }
-
-        const safePool = pool.tokensList.every(tokenAddress => {
-            const hasMetadata = contractMetadataStore.hasTokenMetadata(
-                tokenAddress
-            );
-            if (!hasMetadata) {
-                return false;
-            }
-            const metadata = contractMetadataStore.getTokenMetadata(
-                tokenAddress
-            );
-            return metadata.isSupported;
-        });
-        if (safePool) {
-            if (!hasConfirmed) {
-                addLiquidityFormStore.toggleConfirmation();
-            }
-            return;
-        }
-
-        return (
-            <Check>
-                <CheckboxWrapper>
-                    <Checkbox
-                        checked={hasConfirmed}
-                        onChange={e => {
-                            addLiquidityFormStore.toggleConfirmation();
-                        }}
-                    />
-                </CheckboxWrapper>
-                <div>
-                    <div>
-                        • Do not add <b>deflationary tokens</b> or tokens with
-                        transfer fees.
-                    </div>
-                    <div>
-                        • Do not add tokens with <b>no bool return values</b>.
-                    </div>
-                    <div>
-                        • Any other <b>non-compliance from ERC20</b> may cause
-                        issues. DYOR!
-                    </div>
-                </div>
-            </Check>
-        );
-    };
-
     const renderActionButton = () => {
         if (lockedToken) {
             return (
@@ -876,14 +876,13 @@ const AddLiquidityModal = observer((props: Props) => {
                             {renderError()}
                             {renderTransferError()}
                             {renderTokenError()}
+                            {renderConfirmation()}
 
                             {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
 
                             {renderNotification()}
-                            {renderConfirmation()}
-
                             {renderActionButton()}
                         </React.Fragment>
                     )}
