@@ -305,6 +305,29 @@ const AddLiquidityModal = observer((props: Props) => {
         return synths.some(synth => hasToken(pool, synth));
     };
 
+    const hasAToken = (pool: Pool): boolean => {
+        const aTokens = [
+            'aDAI',
+            'aUSDT',
+            'aUSDC',
+            'aSUSD',
+            'aTUSD',
+            'aBUSD',
+            'aBAT',
+            'aETH',
+            'aKNC',
+            'aLEND',
+            'aLINK',
+            'aMANA',
+            'aMKR',
+            'aREP',
+            'aSNX',
+            'aWBTC',
+            'aZRX',
+        ];
+        return aTokens.some(aToken => hasToken(pool, aToken));
+    };
+
     const hasCToken = (pool: Pool): boolean => {
         const cTokens = [
             'cUSDC',
@@ -551,6 +574,10 @@ const AddLiquidityModal = observer((props: Props) => {
         if (hasSynth(pool)) {
             message =
                 'Adding liquidity failed as your Synthetix position might go underwater. ';
+        }
+        if (hasAToken(pool)) {
+            message =
+                'Adding liquidity failed as your Aave position might go underwater. ';
         }
         if (hasCToken(pool)) {
             message =
