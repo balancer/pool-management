@@ -96,6 +96,8 @@ const Notification = styled(Message)`
     border-color: var(--panel-border);
 `;
 
+const Check = styled(Error)``;
+
 const Icon = styled.img`
     width: 26px;
     height: 24px;
@@ -115,19 +117,6 @@ const LowerAmountLink = styled.span`
 const Link = styled.a`
     color: color: var(--warning);
     margin: 0 4px;
-`;
-
-const CheckboxPanel = styled.div`
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-    border: 1px solid var(--panel-border);
-    border-radius: 4px;
-    font-size: 14px;
-    color: var(--body-text);
-    box-sizing: border-box;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -305,6 +294,34 @@ const AddLiquidityModal = observer((props: Props) => {
             current: currentShare,
             future: futureShare,
         };
+    };
+
+    const hasSnx = (pool: Pool): boolean => {
+        return hasToken(pool, 'SNX');
+    };
+
+    const hasSynth = (pool: Pool): boolean => {
+        const synths = ['sUSD', 'sBTC', 'sETH', 'sXAU'];
+        return synths.some(synth => hasToken(pool, synth));
+    };
+
+    const hasCToken = (pool: Pool): boolean => {
+        const cTokens = [
+            'cUSDC',
+            'cDAI',
+            'cETH',
+            'cUSDT',
+            'cREP',
+            'cZRX',
+            'cBAT',
+            'cWBTC',
+        ];
+        return cTokens.some(cToken => hasToken(pool, cToken));
+    };
+
+    const hasToken = (pool: Pool, symbol: string): boolean => {
+        const tokenAddress = contractMetadataStore.symbolToAddressMap[symbol];
+        return pool.tokensList.includes(tokenAddress);
     };
 
     const { poolAddress } = props;
@@ -498,7 +515,7 @@ const AddLiquidityModal = observer((props: Props) => {
 
         function getText(status: ValidationStatus) {
             if (status === ValidationStatus.EMPTY)
-                return "Values can't be empty ";
+                return "Values can't be empty";
             if (status === ValidationStatus.ZERO) return "Values can't be zero";
             if (status === ValidationStatus.NOT_FLOAT)
                 return 'Values should be numbers';
@@ -525,12 +542,27 @@ const AddLiquidityModal = observer((props: Props) => {
             return;
         }
 
+        let message =
+            'Adding liquidity failed as one of the underlying tokens blocked the transfer. ';
+        if (hasSnx(pool)) {
+            message =
+                'Adding liquidity failed as your SNX is locked in staking. ';
+        }
+        if (hasSynth(pool)) {
+            message =
+                'Adding liquidity failed as your Synthetix position might go underwater. ';
+        }
+        if (hasCToken(pool)) {
+            message =
+                'Adding liquidity failed as your Compound position might go underwater. ';
+        }
+
         return (
             <Error>
                 <Icon src="ErrorSign.svg" />
                 <Content>
-                    Adding liquidity failed as one of the underlying tokens
-                    blocked the transfer. Reach out to our
+                    {message}
+                    Reach out to our
                     <Link
                         href="https://discord.gg/ARJWaeF"
                         target="_blank"
@@ -564,6 +596,57 @@ const AddLiquidityModal = observer((props: Props) => {
                     </Link>
                 </Content>
             </Error>
+        );
+    };
+
+    const renderConfirmation = () => {
+        if (!hasValidInput || hasTokenError) {
+            return;
+        }
+
+        const safePool = pool.tokensList.every(tokenAddress => {
+            const hasMetadata = contractMetadataStore.hasTokenMetadata(
+                tokenAddress
+            );
+            if (!hasMetadata) {
+                return false;
+            }
+            const metadata = contractMetadataStore.getTokenMetadata(
+                tokenAddress
+            );
+            return metadata.isSupported;
+        });
+        if (safePool) {
+            if (!hasConfirmed) {
+                addLiquidityFormStore.toggleConfirmation();
+            }
+            return;
+        }
+
+        return (
+            <Check>
+                <CheckboxWrapper>
+                    <Checkbox
+                        checked={hasConfirmed}
+                        onChange={e => {
+                            addLiquidityFormStore.toggleConfirmation();
+                        }}
+                    />
+                </CheckboxWrapper>
+                <div>
+                    <div>
+                        • Do not add <b>deflationary tokens</b> or tokens with
+                        transfer fees.
+                    </div>
+                    <div>
+                        • Do not add tokens with <b>no bool return values</b>.
+                    </div>
+                    <div>
+                        • Any other <b>non-compliance from ERC20</b> may cause
+                        issues. DYOR!
+                    </div>
+                </div>
+            </Check>
         );
     };
 
@@ -712,34 +795,14 @@ const AddLiquidityModal = observer((props: Props) => {
         }
     };
 
-    const renderConfirmation = () => {
-        if (!hasValidInput || hasTokenError) {
-            return;
-        }
-        return (
-            <CheckboxPanel>
-                <CheckboxWrapper>
-                    <Checkbox
-                        checked={hasConfirmed}
-                        onChange={e => {
-                            addLiquidityFormStore.toggleConfirmation();
-                        }}
-                    />
-                </CheckboxWrapper>
-                I understand that adding liquidity to Balancer protocol has
-                smart contract risk and that I should do my own due diligence
-                about the tokens present in the pool I’m adding liquidity to.
-            </CheckboxPanel>
-        );
-    };
-
     const renderActionButton = () => {
         if (lockedToken) {
             return (
                 <ButtonWrapper>
                     <Button
-                        buttonText={`Unlock ${lockedToken.symbol}`}
-                        active={!!account}
+                        text={`Unlock ${lockedToken.symbol}`}
+                        isActive={!!account}
+                        isPrimary={true}
                         onClick={e =>
                             actionButtonHandler(
                                 ButtonAction.UNLOCK,
@@ -753,14 +816,15 @@ const AddLiquidityModal = observer((props: Props) => {
             return (
                 <ButtonWrapper>
                     <Button
-                        buttonText={`Add Liquidity`}
-                        active={
+                        text={`Add Liquidity`}
+                        isActive={
                             account &&
                             hasValidInput &&
                             !hasTransactionError &&
                             !hasTokenError &&
                             hasConfirmed
                         }
+                        isPrimary={true}
                         onClick={e =>
                             actionButtonHandler(ButtonAction.ADD_LIQUIDITY)
                         }
@@ -812,14 +876,13 @@ const AddLiquidityModal = observer((props: Props) => {
                             {renderError()}
                             {renderTransferError()}
                             {renderTokenError()}
+                            {renderConfirmation()}
 
                             {renderTokenWarning()}
                             {renderFrontrunningWarning()}
                             {renderLiquidityWarning()}
 
                             {renderNotification()}
-                            {renderConfirmation()}
-
                             {renderActionButton()}
                         </React.Fragment>
                     )}

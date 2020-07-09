@@ -380,8 +380,9 @@ const RemoveLiquidityModal = observer((props: Props) => {
         return (
             <ButtonWrapper>
                 <Button
-                    buttonText={`Remove Liquidity`}
-                    active={account && pool && hasValidInput && hasSupply}
+                    text={`Remove Liquidity`}
+                    isActive={account && pool && hasValidInput && hasSupply}
+                    isPrimary={true}
                     onClick={e => handleRemoveLiquidity()}
                 />
             </ButtonWrapper>

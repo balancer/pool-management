@@ -19,11 +19,16 @@
     --input-hover-border: #4c5480;
 
     /* Button Styles */
-    --button-text: #fafafa;
-    --button-background: #536dfe;
-    --button-border: #3d5afe;
-    --inactive-button-border: rgba(140, 158, 255, 0.2);
-    --inactive-button-text: rgba(255, 255, 255, 0.6);
+    --primary-button-background: #536dfe;
+    --primary-button-background-hover: #455ff5;
+    --primary-button-border: #3d5afe;
+    --primary-button-text: #ffffff;
+    --secondary-button-background: #2e2f39;
+    --secondary-button-background-hover: #31313b;
+    --secondary-button-border: #41476b;
+    --secondary-button-text: #ffffff;
+    --disabled-button: #414249;
+    --disabled-button-text: #c5c5c5;
 
     /* Panel Styles */
     --panel-border: #41476b;

@@ -83,6 +83,7 @@ const AddRemovePanel = (props: Props) => {
     const pool = poolStore.getPool(poolAddress);
     let userProportion = undefined;
     let isFinalized = false;
+    let isEmpty = false;
 
     if (pool) {
         userProportion = poolStore.getUserShareProportion(
@@ -90,6 +91,7 @@ const AddRemovePanel = (props: Props) => {
             account
         );
         isFinalized = pool.finalized;
+        isEmpty = pool.totalShares.isZero();
     }
 
     return (
@@ -109,8 +111,9 @@ const AddRemovePanel = (props: Props) => {
             {isFinalized ? (
                 <RightColumn>
                     <Button
-                        buttonText={'Add Liquidity'}
-                        active={!!pool}
+                        text={'Add Liquidity'}
+                        isActive={!!pool && !isEmpty}
+                        isPrimary={true}
                         onClick={() => {
                             if (pool) {
                                 addLiquidityFormStore.openModal(
@@ -123,8 +126,8 @@ const AddRemovePanel = (props: Props) => {
                     />
                     <Spacer />
                     <Button
-                        buttonText={'Remove Liquidity'}
-                        active={
+                        text={'Remove Liquidity'}
+                        isActive={
                             !!pool &&
                             account &&
                             userProportion &&
