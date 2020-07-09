@@ -1,3 +1,4 @@
+// @ts-ignore
 interface Web3Window extends Window {
     readonly web3?: any;
     readonly ethereum?: any;
