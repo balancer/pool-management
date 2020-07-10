@@ -184,7 +184,10 @@ export default class ProviderStore {
             account
         );
 
-        const gasLimitNumber = await contract.estimate[action](...params);
+        const gasLimitNumber = await contract.estimate[action](
+            ...params,
+            overrides
+        );
         const gasLimit = gasLimitNumber.toNumber();
         const safeGasLimit = Math.floor(gasLimit * (1 + GAS_LIMIT_BUFFER));
         overrides.gasLimit = safeGasLimit;
