@@ -40,7 +40,7 @@ const SharedPools = observer(() => {
         root: { poolStore },
     } = useStores();
 
-    let pools = poolStore.getPublicPools();
+    const pools = poolStore.getPublicPools();
 
     const queryPreviousPage = () => {
         poolStore.pagePools(false);
