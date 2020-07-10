@@ -155,7 +155,6 @@ export default class PoolStore {
         if (selectedTokens !== this.selectedTokens) {
             this.selectedTokens = selectedTokens;
             this.pools = {};
-            // this.poolsLoaded = false;
             this.fetchPools();
         }
     }
