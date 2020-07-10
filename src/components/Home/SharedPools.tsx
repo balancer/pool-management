@@ -50,17 +50,13 @@ const SharedPools = observer(() => {
         poolStore.pagePools(true);
     };
 
-    const handleFiltersChange = selectedTokens => {
-        poolStore.setSelectedTokens(selectedTokens);
-    };
-
     const { graphSkip } = poolStore;
 
     return (
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <Filters onChange={handleFiltersChange} />
+                <Filters />
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}

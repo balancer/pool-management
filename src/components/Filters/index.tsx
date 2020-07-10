@@ -50,12 +50,14 @@ const TopicDelete = styled.a`
     }
 `;
 
-const Filters = observer((props: RouteComponentProps) => {
+const Filters = observer(() => {
     const {
-        root: { contractMetadataStore },
+        root: { contractMetadataStore, poolStore },
     } = useStores();
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedAssets, setSelectedAssets] = useState([]);
+    const [selectedAssets, setSelectedAssets] = useState(
+        poolStore.selectedAssets || []
+    );
 
     const handleAddTokenClick = () => {
         setModalOpen(true);
@@ -65,7 +67,7 @@ const Filters = observer((props: RouteComponentProps) => {
         if (!selectedAssets.includes(asset)) {
             const assets = [...selectedAssets, asset];
             setSelectedAssets(assets);
-            props.onChange(assets);
+            poolStore.setSelectedAssets(assets);
         }
         setModalOpen(false);
     };
@@ -79,7 +81,7 @@ const Filters = observer((props: RouteComponentProps) => {
         delete assets[i];
         assets = assets.filter(String);
         setSelectedAssets(assets);
-        props.onChange(assets);
+        poolStore.setSelectedAssets(assets);
     };
 
     const getAssetName = asset => {
@@ -91,7 +93,7 @@ const Filters = observer((props: RouteComponentProps) => {
 
     return (
         <div>
-            Filter token(s) {}
+            Filter token(s)
             {selectedAssets.map((asset, i) => (
                 <TopicAction key={asset}>
                     {getAssetName(asset)}

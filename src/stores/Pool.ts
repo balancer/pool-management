@@ -31,7 +31,7 @@ export default class PoolStore {
     @observable poolsLoaded: boolean;
     pageIncrement: number;
     graphSkip: number;
-    selectedTokens: string[];
+    selectedAssets: string[];
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -83,7 +83,7 @@ export default class PoolStore {
         const pools = await fetchSharedPools(
             SUBGRAPH_SKIP_STEP,
             this.graphSkip,
-            this.selectedTokens
+            this.selectedAssets
         );
 
         pools.forEach(pool => {
@@ -151,9 +151,12 @@ export default class PoolStore {
         this.fetchPools();
     }
 
-    @action async setSelectedTokens(selectedTokens: string[]) {
-        if (selectedTokens !== this.selectedTokens) {
-            this.selectedTokens = selectedTokens;
+    @action async setSelectedAssets(selectedAssets: string[]) {
+        if (
+            JSON.stringify(selectedAssets) !==
+            JSON.stringify(this.selectedAssets)
+        ) {
+            this.selectedAssets = selectedAssets;
             this.pools = {};
             this.fetchPools();
         }

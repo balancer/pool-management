@@ -3,7 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
 import AssetOptions from './AssetOptions';
 import { observer } from 'mobx-react';
-import { useStores } from '../../contexts/storesContext';
 
 const Container = styled.div`
     display: block;
