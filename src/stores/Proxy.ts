@@ -1,5 +1,5 @@
 import { action, observable } from 'mobx';
-import { Interface } from 'ethers/utils';
+import { Interface } from '@ethersproject/abi';
 import RootStore from './Root';
 import { ContractTypes, schema } from './Provider';
 import { FetchCode } from './Transaction';
@@ -60,7 +60,7 @@ export default class Proxy {
     ): string {
         const abi = schema[contractType];
         const iface = new Interface(abi);
-        const data = iface.functions[action].encode(params);
+        const data = iface.encodeFunctionData(action, params);
         return data;
     }
 }

@@ -1,7 +1,7 @@
 import { action, observable, ObservableMap } from 'mobx';
 import RootStore from 'stores/Root';
-import { ethers } from 'ethers';
-import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
+import { Contract } from '@ethersproject/contracts'
+import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 import { ActionResponse, sendAction } from './actions/actions';
 import { web3Window as window } from 'provider/Web3Window';
 import { backupUrls, supportedChainId, web3Modal } from 'provider/connectors';
@@ -132,7 +132,7 @@ export default class ProviderStore {
         });
 
         return account
-            ? new UncheckedJsonRpcSigner(library.getSigner(account))
+            ? library.getSigner(account).connectUnchecked()
             : library;
     }
 
@@ -140,11 +140,11 @@ export default class ProviderStore {
         type: ContractTypes,
         address: string,
         signerAccount?: string
-    ): ethers.Contract {
+    ): Contract {
         const library = this.providerStatus.library;
 
         if (signerAccount) {
-            return new ethers.Contract(
+            return new Contract(
                 address,
                 schema[type],
                 this.getProviderOrSigner(
@@ -154,7 +154,7 @@ export default class ProviderStore {
             );
         }
 
-        return new ethers.Contract(address, schema[type], library);
+        return new Contract(address, schema[type], library);
     }
 
     @action sendTransaction = async (
@@ -286,7 +286,7 @@ export default class ProviderStore {
                 await this.providerStatus.library.close();
             }
 
-            let web3 = new ethers.providers.Web3Provider(provider);
+            let web3 = new Web3Provider(provider);
 
             if ((provider as any).isMetaMask) {
                 console.log(`[Provider] MetaMask Auto Refresh Off`);
@@ -348,7 +348,7 @@ export default class ProviderStore {
                 this.providerStatus
             );
             try {
-                let web3 = new ethers.providers.JsonRpcProvider(
+                let web3 = new JsonRpcProvider(
                     backupUrls[supportedChainId]
                 );
                 let network = await web3.getNetwork();

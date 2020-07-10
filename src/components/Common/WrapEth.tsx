@@ -4,7 +4,7 @@ import { useStores } from '../../contexts/storesContext';
 import { toWei, formatBalance } from '../../utils/helpers';
 import { ContractTypes } from '../../stores/Provider';
 import Button from './Button';
-import { ethers } from 'ethers';
+import { parseEther } from '@ethersproject/units';
 
 const Container = styled.div`
     display: flex;
@@ -164,7 +164,7 @@ const WrapEth = () => {
     const actionButtonHandler = async (action: ButtonAction) => {
         if (action === ButtonAction.WRAP) {
             let overrides = {
-                value: ethers.utils.parseEther(ethAmount),
+                value: parseEther(ethAmount),
             };
 
             await providerStore.sendTransaction(
