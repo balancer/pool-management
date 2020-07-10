@@ -76,7 +76,7 @@ const SharedPools = observer(() => {
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}
-                dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
+                dataSource={LiquidityPanelDataSource.ALL}
             />
             <Pagination>
                 <Button

@@ -38,7 +38,7 @@ const MyLiquidity = observer(() => {
             <Header>My Liquidity</Header>
             <LiquidityPanel
                 pools={pools}
-                dataSource={LiquidityPanelDataSource.ACCOUNT_PUBLIC}
+                dataSource={LiquidityPanelDataSource.ACCOUNT}
             />
         </Wrapper>
     );
