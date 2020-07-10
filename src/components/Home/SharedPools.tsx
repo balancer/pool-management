@@ -4,7 +4,7 @@ import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import Button from '../Common/Button';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
-import FiltersDropdown from '../FiltersDropdown';
+import Filters from '../Filters';
 
 const Wrapper = styled.div`
     padding: 8px 0;
@@ -40,7 +40,7 @@ const SharedPools = observer(() => {
         root: { poolStore },
     } = useStores();
 
-    const pools = poolStore.getPublicPools();
+    let pools = poolStore.getPublicPools();
 
     const queryPreviousPage = () => {
         poolStore.pagePools(false);
@@ -50,13 +50,17 @@ const SharedPools = observer(() => {
         poolStore.pagePools(true);
     };
 
+    const handleFiltersChange = selectedTokens => {
+        poolStore.setSelectedTokens(selectedTokens);
+    };
+
     const { graphSkip } = poolStore;
 
     return (
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <FiltersDropdown />
+                <Filters onChange={handleFiltersChange} />
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}

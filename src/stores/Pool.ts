@@ -31,6 +31,7 @@ export default class PoolStore {
     @observable poolsLoaded: boolean;
     pageIncrement: number;
     graphSkip: number;
+    selectedTokens: string[];
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -81,7 +82,8 @@ export default class PoolStore {
         console.debug('[fetchPools] Fetch pools');
         const pools = await fetchSharedPools(
             SUBGRAPH_SKIP_STEP,
-            this.graphSkip
+            this.graphSkip,
+            this.selectedTokens
         );
 
         pools.forEach(pool => {
@@ -147,6 +149,15 @@ export default class PoolStore {
             }
         }
         this.fetchPools();
+    }
+
+    @action async setSelectedTokens(selectedTokens: string[]) {
+        if (selectedTokens !== this.selectedTokens) {
+            this.selectedTokens = selectedTokens;
+            this.pools = {};
+            // this.poolsLoaded = false;
+            this.fetchPools();
+        }
     }
 
     @action private setPools(pools: Pool[], blockFetched: number) {

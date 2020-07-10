@@ -16,9 +16,16 @@ enum QueryType {
 
 export async function fetchSharedPools(
     pageIncrement: number,
-    skip: number
+    skip: number,
+    tokens?: string[]
 ): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.SHARED_POOLS, pageIncrement, skip);
+    const query = getPoolQuery(
+        QueryType.SHARED_POOLS,
+        pageIncrement,
+        skip,
+        null,
+        tokens
+    );
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
@@ -136,10 +143,16 @@ function getPoolQuery(
     type: QueryType,
     pageIncrement: number,
     skip: number,
-    account?: string
+    account?: string,
+    tokens?: string[]
 ): string {
     const ts = Math.round(new Date().getTime() / 1000);
     const tsYesterday = ts - 24 * 3600;
+    const tokenStr = tokens
+        ? `, tokensList_contains: ${JSON.stringify(
+              tokens.map(token => token.toLowerCase())
+          )}`
+        : '';
     const poolFields = `
         id
         publicSwap
@@ -182,6 +195,8 @@ function getPoolQuery(
                     skip: ${skip},
                     where: {
                         finalized: true,
+                        tokensList_not: []
+                        ${tokenStr}
                     },
                     orderBy: liquidity,
                     orderDirection: desc,
@@ -199,6 +214,7 @@ function getPoolQuery(
                     skip: ${skip},
                     where: {
                         finalized: false,
+                        tokensList_not: []
                     },
                     orderBy: liquidity,
                     orderDirection: desc,
