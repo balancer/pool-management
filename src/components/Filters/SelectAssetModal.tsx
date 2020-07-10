@@ -143,6 +143,7 @@ const SelectAssetModal = observer((props: RouteComponentProps) => {
                 </AssetSelectorHeader>
                 <InputContainer>
                     <input
+                        ref={input => input && input.focus()}
                         value={search}
                         onChange={e => onChange(e)}
                         placeholder="Search Token Name, Symbol, or Address"
