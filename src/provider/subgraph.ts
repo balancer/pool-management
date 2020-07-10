@@ -224,21 +224,32 @@ function getPoolQuery(
 }
 
 async function fetchPools(query: string) {
-    const response = await fetch(SUBGRAPH_URL, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            query,
-        }),
-    });
+    const EXPONENTIAL_BACKOFF_FACTOR = 2;
+    let delay = 1000;
 
-    const payload = await response.json();
-    const pools = payload.data.pools
-        ? payload.data.pools
-        : payload.data.poolShares.map(poolShare => poolShare.poolId);
+    let pools;
+    while (!pools) {
+        const response = await fetch(SUBGRAPH_URL, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query,
+            }),
+        });
+
+        const payload = await response.json();
+        if (payload.errors) {
+            await sleep(delay);
+            delay *= EXPONENTIAL_BACKOFF_FACTOR;
+            continue;
+        }
+        pools = payload.data.pools
+            ? payload.data.pools
+            : payload.data.poolShares.map(poolShare => poolShare.poolId);
+    }
     return pools;
 }
 
@@ -301,4 +312,8 @@ function processPools(rawPools): Pool[] {
 
         return processedPool;
     });
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
