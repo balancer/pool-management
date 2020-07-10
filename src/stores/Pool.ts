@@ -158,6 +158,7 @@ export default class PoolStore {
         ) {
             this.selectedAssets = selectedAssets;
             this.pools = {};
+            this.poolsLoaded = false;
             this.fetchPools();
         }
     }
