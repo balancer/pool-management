@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
 import AssetOptions from './AssetOptions';
@@ -114,24 +114,23 @@ function useOnClickOutside(ref, handler) {
 }
 
 const SelectAssetModal = observer((props: RouteComponentProps) => {
-    const {
-        root: { createPoolFormStore },
-    } = useStores();
-
     const ref = useRef();
+    const [search, setSearch] = useState('');
 
-    useOnClickOutside(ref, () => props.onClose());
-
-    const { assetModal } = createPoolFormStore;
+    useOnClickOutside(ref, () => {
+        props.onClose();
+        setSearch('');
+    });
 
     const onChange = async event => {
         const { value } = event.target;
-        createPoolFormStore.setModalInputValue(value);
+        setSearch(value);
     };
 
     const selectAsset = async asset => {
         props.onSelectAsset(asset);
         props.onClose();
+        setSearch('');
     };
 
     return (
@@ -145,12 +144,16 @@ const SelectAssetModal = observer((props: RouteComponentProps) => {
                 </AssetSelectorHeader>
                 <InputContainer>
                     <input
-                        value={assetModal.inputValue}
+                        value={search}
                         onChange={e => onChange(e)}
                         placeholder="Search Token Name, Symbol, or Address"
                     />
                 </InputContainer>
-                <AssetOptions onSelectAsset={selectAsset} />
+                <AssetOptions
+                    onSelectAsset={selectAsset}
+                    selectedAssets={props.selectedAssets}
+                    search={search}
+                />
             </ModalContent>
         </Container>
     );

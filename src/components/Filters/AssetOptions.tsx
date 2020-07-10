@@ -86,20 +86,14 @@ interface Asset {
 
 const AssetOptions = observer((props: RouteComponentProps) => {
     const {
-        root: {
-            providerStore,
-            proxyStore,
-            contractMetadataStore,
-            createPoolFormStore,
-            tokenStore,
-        },
+        root: { providerStore, proxyStore, contractMetadataStore, tokenStore },
     } = useStores();
 
     const account = providerStore.providerStatus.account;
     const chainId = providerStore.providerStatus.activeChainId;
 
-    const tokens = createPoolFormStore.tokens;
-    const assetModalInput = createPoolFormStore.assetModal.inputValue;
+    const tokens = props.selectedAssets;
+    const assetModalInput = props.search;
     const proxyAddress = proxyStore.getInstanceAddress();
 
     useEffect(() => {

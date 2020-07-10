@@ -103,6 +103,7 @@ const Filters = observer((props: RouteComponentProps) => {
                 open={modalOpen}
                 onSelectAsset={handleSelectAsset}
                 onClose={handleCloseModal}
+                selectedAssets={selectedAssets}
             />
         </div>
     );
