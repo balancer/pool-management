@@ -21,7 +21,7 @@ interface PoolMap {
     [index: string]: PoolData;
 }
 
-const SUBGRAPH_SKIP_STEP = 12;
+export const SUBGRAPH_SKIP_STEP = 12;
 
 export default class PoolStore {
     @observable pools: PoolMap;
@@ -29,7 +29,6 @@ export default class PoolStore {
     @observable contributedPools: PoolMap;
     @observable activePool: Pool;
     @observable poolsLoaded: boolean;
-    pageIncrement: number;
     graphSkip: number;
     rootStore: RootStore;
 
