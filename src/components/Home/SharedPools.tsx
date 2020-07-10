@@ -48,7 +48,7 @@ const SharedPools = observer(() => {
     } = useStores();
 
     const pools = poolStore.getPublicPools();
-    const { graphSkip } = poolStore;
+    const { graphSkip, pageLoading } = poolStore;
     const page = graphSkip / SUBGRAPH_SKIP_STEP + 1;
 
     const account = providerStore.providerStatus.account;
@@ -81,11 +81,15 @@ const SharedPools = observer(() => {
             <Pagination>
                 <Button
                     text={'Previous Page'}
-                    isActive={graphSkip !== 0}
+                    isActive={!pageLoading && graphSkip !== 0}
                     onClick={e => queryPreviousPage()}
                 />
                 <Page>Page {page}</Page>
-                <Button text={'Next Page'} onClick={e => queryNextPage()} />
+                <Button
+                    text={'Next Page'}
+                    isActive={!pageLoading}
+                    onClick={e => queryNextPage()}
+                />
             </Pagination>
         </Wrapper>
     );

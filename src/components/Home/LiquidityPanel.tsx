@@ -296,14 +296,9 @@ const LiquidityPanel = observer((props: Props) => {
             return <PoolRow>Loading</PoolRow>;
         }
 
-        // Has pool data to display and data has loaded
-        else if (poolStore.poolsLoaded && pools.length > 0) {
+        // Has pool data to display
+        else if (pools.length > 0) {
             return renderPoolsChart();
-        }
-
-        // Has pool data to display and data has NOT loaded
-        else if (!poolStore.poolsLoaded && pools.length >= 0) {
-            return <PoolRow>Loading</PoolRow>;
         }
 
         // Has no account to display pools for

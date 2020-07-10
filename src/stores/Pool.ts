@@ -28,7 +28,7 @@ export default class PoolStore {
     @observable privatePools: PoolMap;
     @observable contributedPools: PoolMap;
     @observable activePool: Pool;
-    @observable poolsLoaded: boolean;
+    @observable pageLoading: boolean;
     graphSkip: number;
     rootStore: RootStore;
 
@@ -78,6 +78,7 @@ export default class PoolStore {
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPools] Fetch pools');
+        this.pageLoading = true;
         const pools = await fetchSharedPools(
             SUBGRAPH_SKIP_STEP,
             this.graphSkip
@@ -87,7 +88,7 @@ export default class PoolStore {
             this.processUnknownTokens(pool);
         });
         this.setPools(pools, currentBlock);
-        this.poolsLoaded = true;
+        this.pageLoading = false;
 
         console.debug('[fetchPools] Pools fetched & stored');
     }
