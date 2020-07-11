@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import Button from '../Common/Button';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
 import { useStores } from '../../contexts/storesContext';
+import Filters from '../Filters';
 
 const Wrapper = styled.div`
     padding: 8px 0;
@@ -13,6 +13,7 @@ const Wrapper = styled.div`
 const HeaderWrapper = styled.div`
     display: flex;
     justify-content: space-between;
+    color: var(--header-text);
     align-items: baseline;
 `;
 
@@ -23,10 +24,6 @@ const Header = styled.div`
     line-height: 19px;
     color: var(--header-text);
     padding: 0px 0px 24px 0px;
-`;
-
-const CreateLink = styled(Link)`
-    text-decoration: none;
 `;
 
 const Pagination = styled.div`
@@ -40,7 +37,7 @@ const ButtonWrapper = styled.div`
 
 const SharedPools = observer(() => {
     const {
-        root: { poolStore, providerStore },
+        root: { poolStore },
     } = useStores();
 
     const pools = poolStore.getPublicPools();
@@ -53,21 +50,13 @@ const SharedPools = observer(() => {
         poolStore.pagePools(true);
     };
 
-    const account = providerStore.providerStatus.account;
     const { graphSkip } = poolStore;
 
     return (
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <CreateLink to={'/pool/new'}>
-                    <Button
-                        text={'Create Pool'}
-                        isActive={!!account}
-                        isPrimary={true}
-                        onClick={e => {}}
-                    />
-                </CreateLink>
+                <Filters />
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}
