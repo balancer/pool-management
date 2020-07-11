@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
 import SelectAssetModal from './SelectAssetModal';
 import { useStores } from '../../contexts/storesContext';
