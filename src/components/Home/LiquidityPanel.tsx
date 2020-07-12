@@ -146,14 +146,13 @@ interface Props {
 }
 
 export enum LiquidityPanelDataSource {
-    ACCOUNT_PUBLIC,
-    ALL_PUBLIC,
+    ACCOUNT,
+    ALL,
 }
 
 enum Messages {
     noAccount = 'Connect wallet to see your liquidity',
-    accountButNoPools = 'This account has no public liquidity contributions',
-    noPublicPools = 'No public pools found',
+    noAccountPools = 'This account has no public liquidity contributions',
 }
 
 const LiquidityPanel = observer((props: Props) => {
@@ -292,44 +291,16 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPools = () => {
         // Has all token data been loaded
-        if (!pools) {
-            return <PoolRow>Loading</PoolRow>;
-        }
-
-        // Has pool data to display and data has loaded
-        else if (poolStore.poolsLoaded && pools.length > 0) {
+        if (pools.length > 0) {
             return renderPoolsChart();
         }
-
-        // Has pool data to display and data has NOT loaded
-        else if (!poolStore.poolsLoaded && pools.length >= 0) {
+        if (dataSource === LiquidityPanelDataSource.ALL) {
             return <PoolRow>Loading</PoolRow>;
         }
-
-        // Has no account to display pools for
-        else if (
-            !account &&
-            dataSource === LiquidityPanelDataSource.ACCOUNT_PUBLIC
-        ) {
+        if (!account) {
             return <PoolRow>{Messages.noAccount}</PoolRow>;
         }
-
-        // Has no pool data to display for an account
-        else if (
-            account &&
-            pools.length === 0 &&
-            dataSource === LiquidityPanelDataSource.ACCOUNT_PUBLIC
-        ) {
-            return <PoolRow>{Messages.accountButNoPools}</PoolRow>;
-        }
-
-        // Has no public pools to display
-        else if (
-            pools.length === 0 &&
-            dataSource === LiquidityPanelDataSource.ALL_PUBLIC
-        ) {
-            return <PoolRow>{Messages.noPublicPools}</PoolRow>;
-        }
+        return <PoolRow>{Messages.noAccountPools}</PoolRow>;
     };
 
     return (

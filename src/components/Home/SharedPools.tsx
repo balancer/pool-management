@@ -4,6 +4,7 @@ import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import Button from '../Common/Button';
 import { observer } from 'mobx-react';
 import { useStores } from '../../contexts/storesContext';
+import { SUBGRAPH_SKIP_STEP } from '../../stores/Pool';
 import Filters from '../Filters';
 
 const Wrapper = styled.div`
@@ -27,12 +28,15 @@ const Header = styled.div`
 `;
 
 const Pagination = styled.div`
-    display: flex;
     margin-top: 16px;
+    display: flex;
+    align-items: center;
 `;
 
-const ButtonWrapper = styled.div`
-    margin-right: 16px;
+const Page = styled.div`
+    padding: 0 16px;
+    color: var(--highlighted-selector-text);
+    font-size: 14px;
 `;
 
 const SharedPools = observer(() => {
@@ -41,6 +45,8 @@ const SharedPools = observer(() => {
     } = useStores();
 
     const pools = poolStore.getPublicPools();
+    const { graphSkip, pageLoading } = poolStore;
+    const page = graphSkip / SUBGRAPH_SKIP_STEP + 1;
 
     const queryPreviousPage = () => {
         poolStore.pagePools(false);
@@ -50,8 +56,6 @@ const SharedPools = observer(() => {
         poolStore.pagePools(true);
     };
 
-    const { graphSkip } = poolStore;
-
     return (
         <Wrapper>
             <HeaderWrapper>
@@ -60,19 +64,20 @@ const SharedPools = observer(() => {
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}
-                dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
+                dataSource={LiquidityPanelDataSource.ALL}
             />
             <Pagination>
-                <ButtonWrapper>
-                    <Button
-                        text={'Previous Page'}
-                        isActive={graphSkip !== 0}
-                        onClick={e => queryPreviousPage()}
-                    />
-                </ButtonWrapper>
-                <ButtonWrapper>
-                    <Button text={'Next Page'} onClick={e => queryNextPage()} />
-                </ButtonWrapper>
+                <Button
+                    text={'Previous Page'}
+                    isActive={!pageLoading && graphSkip !== 0}
+                    onClick={e => queryPreviousPage()}
+                />
+                <Page>Page {page}</Page>
+                <Button
+                    text={'Next Page'}
+                    isActive={!pageLoading}
+                    onClick={e => queryNextPage()}
+                />
             </Pagination>
         </Wrapper>
     );

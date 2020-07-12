@@ -29,7 +29,7 @@ const PrivatePools = observer(() => {
             <Header>Private Pools</Header>
             <LiquidityPanel
                 pools={pools}
-                dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
+                dataSource={LiquidityPanelDataSource.ALL}
             />
         </Wrapper>
     );
