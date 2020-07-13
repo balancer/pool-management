@@ -62,6 +62,8 @@ export interface ProviderStatus {
     activeProvider: any;
 }
 
+const GAS_LIMIT_BUFFER = 0.1;
+
 export default class ProviderStore {
     @observable chainData: ChainData;
     @observable providerStatus: ProviderStatus;
@@ -181,6 +183,14 @@ export default class ProviderStore {
             contractAddress,
             account
         );
+
+        const gasLimitNumber = await contract.estimate[action](
+            ...params,
+            overrides
+        );
+        const gasLimit = gasLimitNumber.toNumber();
+        const safeGasLimit = Math.floor(gasLimit * (1 + GAS_LIMIT_BUFFER));
+        overrides.gasLimit = safeGasLimit;
 
         const response = await sendAction({
             contract,

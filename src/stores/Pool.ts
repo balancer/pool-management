@@ -21,16 +21,16 @@ interface PoolMap {
     [index: string]: PoolData;
 }
 
-const SUBGRAPH_SKIP_STEP = 12;
+export const SUBGRAPH_SKIP_STEP = 12;
 
 export default class PoolStore {
     @observable pools: PoolMap;
     @observable privatePools: PoolMap;
     @observable contributedPools: PoolMap;
     @observable activePool: Pool;
-    @observable poolsLoaded: boolean;
-    pageIncrement: number;
+    @observable pageLoading: boolean;
     graphSkip: number;
+    selectedAssets: string[];
     rootStore: RootStore;
 
     constructor(rootStore) {
@@ -79,16 +79,18 @@ export default class PoolStore {
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         console.debug('[fetchPools] Fetch pools');
+        this.pageLoading = true;
         const pools = await fetchSharedPools(
             SUBGRAPH_SKIP_STEP,
-            this.graphSkip
+            this.graphSkip,
+            this.selectedAssets
         );
 
         pools.forEach(pool => {
             this.processUnknownTokens(pool);
         });
         this.setPools(pools, currentBlock);
-        this.poolsLoaded = true;
+        this.pageLoading = false;
 
         console.debug('[fetchPools] Pools fetched & stored');
     }
@@ -147,6 +149,17 @@ export default class PoolStore {
             }
         }
         this.fetchPools();
+    }
+
+    @action async setSelectedAssets(selectedAssets: string[]) {
+        if (
+            JSON.stringify(selectedAssets) !==
+            JSON.stringify(this.selectedAssets)
+        ) {
+            this.selectedAssets = selectedAssets;
+            this.pools = {};
+            this.fetchPools();
+        }
     }
 
     @action private setPools(pools: Pool[], blockFetched: number) {

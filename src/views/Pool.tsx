@@ -105,7 +105,7 @@ const PoolView = observer((props: RouteComponentProps) => {
         );
     }
 
-    if (poolStore.poolsLoaded && !pool) {
+    if (!pool) {
         return (
             <PoolViewWrapper>
                 <ErrorMessage>

@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import LiquidityPanel, { LiquidityPanelDataSource } from './LiquidityPanel';
 import Button from '../Common/Button';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
 import { useStores } from '../../contexts/storesContext';
+import { SUBGRAPH_SKIP_STEP } from '../../stores/Pool';
+import Filters from '../Filters';
 
 const Wrapper = styled.div`
     padding: 8px 0;
@@ -13,6 +14,7 @@ const Wrapper = styled.div`
 const HeaderWrapper = styled.div`
     display: flex;
     justify-content: space-between;
+    color: var(--header-text);
     align-items: baseline;
 `;
 
@@ -25,25 +27,26 @@ const Header = styled.div`
     padding: 0px 0px 24px 0px;
 `;
 
-const CreateLink = styled(Link)`
-    text-decoration: none;
-`;
-
 const Pagination = styled.div`
-    display: flex;
     margin-top: 16px;
+    display: flex;
+    align-items: center;
 `;
 
-const ButtonWrapper = styled.div`
-    margin-right: 16px;
+const Page = styled.div`
+    padding: 0 16px;
+    color: var(--highlighted-selector-text);
+    font-size: 14px;
 `;
 
 const SharedPools = observer(() => {
     const {
-        root: { poolStore, providerStore },
+        root: { poolStore },
     } = useStores();
 
     const pools = poolStore.getPublicPools();
+    const { graphSkip, pageLoading } = poolStore;
+    const page = graphSkip / SUBGRAPH_SKIP_STEP + 1;
 
     const queryPreviousPage = () => {
         poolStore.pagePools(false);
@@ -53,37 +56,28 @@ const SharedPools = observer(() => {
         poolStore.pagePools(true);
     };
 
-    const account = providerStore.providerStatus.account;
-    const { graphSkip } = poolStore;
-
     return (
         <Wrapper>
             <HeaderWrapper>
                 <Header>Shared Pools</Header>
-                <CreateLink to={'/pool/new'}>
-                    <Button
-                        text={'Create Pool'}
-                        isActive={!!account}
-                        isPrimary={true}
-                        onClick={e => {}}
-                    />
-                </CreateLink>
+                <Filters />
             </HeaderWrapper>
             <LiquidityPanel
                 pools={pools}
-                dataSource={LiquidityPanelDataSource.ALL_PUBLIC}
+                dataSource={LiquidityPanelDataSource.ALL}
             />
             <Pagination>
-                <ButtonWrapper>
-                    <Button
-                        text={'Previous Page'}
-                        isActive={graphSkip !== 0}
-                        onClick={e => queryPreviousPage()}
-                    />
-                </ButtonWrapper>
-                <ButtonWrapper>
-                    <Button text={'Next Page'} onClick={e => queryNextPage()} />
-                </ButtonWrapper>
+                <Button
+                    text={'Previous Page'}
+                    isActive={!pageLoading && graphSkip !== 0}
+                    onClick={e => queryPreviousPage()}
+                />
+                <Page>Page {page}</Page>
+                <Button
+                    text={'Next Page'}
+                    isActive={!pageLoading}
+                    onClick={e => queryNextPage()}
+                />
             </Pagination>
         </Wrapper>
     );
