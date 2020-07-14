@@ -1931,6 +1931,15 @@
                 "iconAddress": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
                 "precision": 2,
                 "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "RDN",
+                "address": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
+                "decimals": 18,
+                "ticker": "RDN",
+                "iconAddress": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
+                "precision": 2,
+                "chartColor": "#416aa3"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
