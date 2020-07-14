@@ -1895,6 +1895,15 @@
                 "iconAddress": "0x8DDF05C42C698329053c4F39B5bb05A350fd8132",
                 "precision": 2,
                 "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "STMX",
+                "address": "0xbE9375C6a420D2eEB258962efB95551A5b722803",
+                "decimals": 18,
+                "ticker": "STMX",
+                "iconAddress": "0xbE9375C6a420D2eEB258962efB95551A5b722803",
+                "precision": 2,
+                "chartColor": "#666092"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
