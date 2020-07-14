@@ -17,7 +17,7 @@ export async function fetchAssetPrices(
 ): Promise<MarketAssetPriceMap> {
     let idQueryString = '';
     symbolsToFetch.forEach((symbol, index) => {
-        if (symbol !== '') {
+        if (symbol !== '' && assetData[symbol] !== undefined) {
             if (index === symbolsToFetch.length - 1) {
                 idQueryString += `${assetData[symbol].id}`;
             } else {
