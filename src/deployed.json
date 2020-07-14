@@ -1922,6 +1922,15 @@
                 "iconAddress": "0x0C6f5F7D555E7518f6841a79436BD2b1Eef03381",
                 "precision": 2,
                 "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "DOS",
+                "address": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
+                "decimals": 18,
+                "ticker": "DOS",
+                "iconAddress": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
