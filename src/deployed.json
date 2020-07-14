@@ -1940,6 +1940,15 @@
                 "iconAddress": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
                 "precision": 2,
                 "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "MATH",
+                "address": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
+                "decimals": 18,
+                "ticker": "MATH",
+                "iconAddress": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
+                "precision": 2,
+                "chartColor": "#8d6268"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
