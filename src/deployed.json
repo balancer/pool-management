@@ -1841,6 +1841,114 @@
                 "iconAddress": "0x621E3b71D07b51242bcca167928e184235A4bb87",
                 "precision": 2,
                 "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "CTS",
+                "address": "0x57e83505827788c9F92bCfd398A51A7b0C83DD8e",
+                "decimals": 18,
+                "ticker": "CTS",
+                "iconAddress": "0x57e83505827788c9F92bCfd398A51A7b0C83DD8e",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "BTCRSIAPY",
+                "address": "0x924E26fEe8E10c20726006CC2Bd307A538B0eBE5",
+                "decimals": 18,
+                "ticker": "BTCRSIAPY",
+                "iconAddress": "0x924E26fEe8E10c20726006CC2Bd307A538B0eBE5",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "MQSS",
+                "address": "0x77b1465b0e01ba085e515324e30fEe6555C623EA",
+                "decimals": 18,
+                "ticker": "MQSS",
+                "iconAddress": "0x77b1465b0e01ba085e515324e30fEe6555C623EA",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "TCapBTCUSDC",
+                "address": "0x7510D6fac98A6eCa2DB7c9357619715a7f5049d4",
+                "decimals": 18,
+                "ticker": "TCapBTCUSDC",
+                "iconAddress": "0x7510D6fac98A6eCa2DB7c9357619715a7f5049d4",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "TCapETHDAI",
+                "address": "0x8e4dBF540Bf814c044785218B58C930B20a56BE1",
+                "decimals": 18,
+                "ticker": "TCapETHDAI",
+                "iconAddress": "0x8e4dBF540Bf814c044785218B58C930B20a56BE1",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "ETHSB",
+                "address": "0x8DDF05C42C698329053c4F39B5bb05A350fd8132",
+                "decimals": 18,
+                "ticker": "ETHSB",
+                "iconAddress": "0x8DDF05C42C698329053c4F39B5bb05A350fd8132",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "STMX",
+                "address": "0xbE9375C6a420D2eEB258962efB95551A5b722803",
+                "decimals": 18,
+                "ticker": "STMX",
+                "iconAddress": "0xbE9375C6a420D2eEB258962efB95551A5b722803",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "SWM",
+                "address": "0x3505F494c3f0fed0B594E01Fa41Dd3967645ca39",
+                "decimals": 18,
+                "ticker": "SWM",
+                "iconAddress": "0x3505F494c3f0fed0B594E01Fa41Dd3967645ca39",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "COCOS",
+                "address": "0x0C6f5F7D555E7518f6841a79436BD2b1Eef03381",
+                "decimals": 18,
+                "ticker": "COCOS",
+                "iconAddress": "0x0C6f5F7D555E7518f6841a79436BD2b1Eef03381",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "DOS",
+                "address": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
+                "decimals": 18,
+                "ticker": "DOS",
+                "iconAddress": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "RDN",
+                "address": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
+                "decimals": 18,
+                "ticker": "RDN",
+                "iconAddress": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "MATH",
+                "address": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
+                "decimals": 18,
+                "ticker": "MATH",
+                "iconAddress": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
+                "precision": 2,
+                "chartColor": "#8d6268"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
