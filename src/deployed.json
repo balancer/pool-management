@@ -1841,6 +1841,15 @@
                 "iconAddress": "0x621E3b71D07b51242bcca167928e184235A4bb87",
                 "precision": 2,
                 "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "wNXM",
+                "address": "0x0d438f3b5175bebc262bf23753c1e53d03432bde",
+                "decimals": 18,
+                "ticker": "wNXM",
+                "iconAddress": "0x621E3b71D07b51242bcca167928e184235A4bb87",
+                "precision": 2,
+                "chartColor": "#8d6268"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
