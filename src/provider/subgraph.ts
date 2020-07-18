@@ -135,9 +135,9 @@ function getPoolQuery(type: QueryType, params: QueryParams): string {
         swaps (
             first: 1,
             orderBy: timestamp,
-            orderDirection: desc,
+            orderDirection: asc,
             where: {
-                timestamp_lt: ${tsYesterday}
+                timestamp_gt: ${tsYesterday}
             }
         ) {
             tokenIn
