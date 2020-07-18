@@ -295,7 +295,7 @@ function processPools(rawPools): Pool[] {
                 ? bnum(pool.totalSwapVolume).minus(
                       pool.swaps[0].poolTotalSwapVolume
                   )
-                : bnum(0),
+                : bnum(pool.totalSwapVolume),
         };
 
         return processedPool;
