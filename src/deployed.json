@@ -1985,6 +1985,15 @@
                 "iconAddress": "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
                 "precision": 2,
                 "chartColor": "#c38890"
+            },
+            {
+                "symbol": "MYST",
+                "address": "0xa645264C5603E96c3b0B078cdab68733794B0A71",
+                "decimals": 8,
+                "ticker": "MYST",
+                "iconAddress": "0xa645264C5603E96c3b0B078cdab68733794B0A71",
+                "precision": 2,
+                "chartColor": "#a593a5"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
