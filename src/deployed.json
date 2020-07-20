@@ -1958,6 +1958,15 @@
                 "iconAddress": "0x940a2dB1B7008B6C776d4faaCa729d6d4A4AA551",
                 "precision": 2,
                 "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "GRG",
+                "address": "0x4FbB350052Bca5417566f188eB2EBCE5b19BC964",
+                "decimals": 18,
+                "ticker": "GRG",
+                "iconAddress": "0x4FbB350052Bca5417566f188eB2EBCE5b19BC964",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
