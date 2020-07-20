@@ -1994,6 +1994,15 @@
                 "iconAddress": "0xa645264C5603E96c3b0B078cdab68733794B0A71",
                 "precision": 2,
                 "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "ONG",
+                "address": "0xd341d1680Eeee3255b8C4c75bCCE7EB57f144dAe",
+                "decimals": 18,
+                "ticker": "ONG",
+                "iconAddress": "0xd341d1680Eeee3255b8C4c75bCCE7EB57f144dAe",
+                "precision": 2,
+                "chartColor": "#666092"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
