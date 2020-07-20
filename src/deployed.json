@@ -2012,6 +2012,15 @@
                 "iconAddress": "0xFca59Cd816aB1eaD66534D82bc21E7515cE441CF",
                 "precision": 2,
                 "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "SWAP",
+                "address": "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe",
+                "decimals": 18,
+                "ticker": "SWAP",
+                "iconAddress": "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe",
+                "precision": 2,
+                "chartColor": "#c28d75"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
