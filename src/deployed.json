@@ -1967,6 +1967,15 @@
                 "iconAddress": "0x4FbB350052Bca5417566f188eB2EBCE5b19BC964",
                 "precision": 2,
                 "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "MCB",
+                "address": "0x4e352cF164E64ADCBad318C3a1e222E9EBa4Ce42",
+                "decimals": 18,
+                "ticker": "MCB",
+                "iconAddress": "0x4e352cF164E64ADCBad318C3a1e222E9EBa4Ce42",
+                "precision": 2,
+                "chartColor": "#8b5580"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
