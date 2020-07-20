@@ -2030,6 +2030,15 @@
                 "iconAddress": "0x70a72833d6bF7F508C8224CE59ea1Ef3d0Ea3A38",
                 "precision": 2,
                 "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "YFI",
+                "address": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+                "decimals": 18,
+                "ticker": "YFI",
+                "iconAddress": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+                "precision": 2,
+                "chartColor": "#416aa3"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
