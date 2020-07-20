@@ -2003,6 +2003,15 @@
                 "iconAddress": "0xd341d1680Eeee3255b8C4c75bCCE7EB57f144dAe",
                 "precision": 2,
                 "chartColor": "#666092"
+            },
+            {
+                "symbol": "RARI",
+                "address": "0xFca59Cd816aB1eaD66534D82bc21E7515cE441CF",
+                "decimals": 18,
+                "ticker": "RARI",
+                "iconAddress": "0xFca59Cd816aB1eaD66534D82bc21E7515cE441CF",
+                "precision": 2,
+                "chartColor": "#9a4f50"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
