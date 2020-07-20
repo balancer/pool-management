@@ -2048,6 +2048,15 @@
                 "iconAddress": "0xe1aFe1Fd76Fd88f78cBf599ea1846231B8bA3B6B",
                 "precision": 2,
                 "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "sXAG",
+                "address": "0x6A22e5e94388464181578Aa7A6B869e00fE27846",
+                "decimals": 18,
+                "ticker": "sXAG",
+                "iconAddress": "0x6A22e5e94388464181578Aa7A6B869e00fE27846",
+                "precision": 2,
+                "chartColor": "#be955c"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
