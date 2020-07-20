@@ -1940,6 +1940,15 @@
                 "iconAddress": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
                 "precision": 2,
                 "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "BZRX",
+                "address": "0x56d811088235F11C8920698a204A5010a788f4b3",
+                "decimals": 18,
+                "ticker": "BZRX",
+                "iconAddress": "0x56d811088235F11C8920698a204A5010a788f4b3",
+                "precision": 2,
+                "chartColor": "#6f6776"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
