@@ -2039,6 +2039,15 @@
                 "iconAddress": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
                 "precision": 2,
                 "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "sDEFI",
+                "address": "0xe1aFe1Fd76Fd88f78cBf599ea1846231B8bA3B6B",
+                "decimals": 18,
+                "ticker": "sDEFI",
+                "iconAddress": "0xe1aFe1Fd76Fd88f78cBf599ea1846231B8bA3B6B",
+                "precision": 2,
+                "chartColor": "#8d6268"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
