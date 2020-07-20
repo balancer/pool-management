@@ -790,15 +790,6 @@
                 "chartColor": "#387080"
             },
             {
-                "symbol": "AMPL",
-                "address": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
-                "decimals": 9,
-                "ticker": "AMPL",
-                "iconAddress": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
-                "precision": 2,
-                "chartColor": "#68aca9"
-            },
-            {
                 "symbol": "LEV",
                 "address": "0x0F4CA92660Efad97a9a70CB0fe969c755439772C",
                 "decimals": 9,
