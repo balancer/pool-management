@@ -800,10 +800,10 @@
             },
             {
                 "symbol": "BUIDL",
-                "address": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "address": "0x7b123f53421b1bF8533339BFBdc7C98aA94163db",
                 "decimals": 18,
                 "ticker": "BUIDL",
-                "iconAddress": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "iconAddress": "0x7b123f53421b1bF8533339BFBdc7C98aA94163db",
                 "precision": 2,
                 "chartColor": "#416aa3"
             },
