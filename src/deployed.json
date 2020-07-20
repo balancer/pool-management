@@ -1949,6 +1949,15 @@
                 "iconAddress": "0x56d811088235F11C8920698a204A5010a788f4b3",
                 "precision": 2,
                 "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "DUSK",
+                "address": "0x940a2dB1B7008B6C776d4faaCa729d6d4A4AA551",
+                "decimals": 18,
+                "ticker": "DUSK",
+                "iconAddress": "0x940a2dB1B7008B6C776d4faaCa729d6d4A4AA551",
+                "precision": 2,
+                "chartColor": "#9a9a97"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
