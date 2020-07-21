@@ -5,7 +5,15 @@ import { bnum } from '../utils/helpers';
 const pricesBackup = require('./pricesBackup.json');
 const listBackup = require('./listBackup.json');
 
-const conflictSymbols = ['master-usd', 'compound-coin', 'blazecoin'];
+const conflictSymbols = [
+    'master-usd',
+    'compound-coin',
+    'blazecoin',
+    'ong',
+    'swapcash',
+    'swaps-network',
+    'swap-token',
+];
 
 const MARKET_API_URL =
     process.env.REACT_APP_MARKET_API_URL || 'https://api.coingecko.com/api/v3';
