@@ -36,6 +36,53 @@ const ErrorMessage = styled.div`
     height: calc(100vh - 108px);
 `;
 
+const Icon = styled.img`
+    width: 26px;
+    height: 24px;
+    margin-right: 20px;
+`;
+
+const Container = styled.div`
+    display: block;
+    position: fixed;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+`;
+
+const ModalContent = styled.div`
+    position: relative;
+    margin: 120px auto 0;
+    display: flex;
+    flex-direction: column;
+    max-width: 862px;
+    padding: 25px;
+    background-color: var(--panel-background);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    color: white;
+`;
+
+const Message = styled.div`
+    margin-top: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--error);
+    border-radius: 4px;
+    font-size: 14px;
+`;
+
+const Error = styled(Message)`
+    border-color: var(--error);
+    color: var(--error);
+`;
+
 const InfoPanelWrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -82,6 +129,8 @@ const PoolView = observer((props: RouteComponentProps) => {
 
     const pool = poolStore.getPool(poolAddress);
     const account = providerStore.providerStatus.account;
+
+    let warningModalOpen = true;
 
     useEffect(() => {
         return function cleanup() {
@@ -157,6 +206,23 @@ const PoolView = observer((props: RouteComponentProps) => {
             )}
             {removeLiquidityFormStore.modalOpen ? (
                 <RemoveLiquidityModal poolAddress={poolAddress} />
+            ) : (
+                <div />
+            )}
+            {poolAddress === '0x60626db611a9957C1ae4Ac5b7eDE69e24A3B76c5' ? (
+                <Container
+                    style={{ display: warningModalOpen ? 'block' : 'none' }}
+                >
+                    <ModalContent>
+                        <Error>
+                            <Icon src="WarningSign.svg" />
+                            This is a extremely risky pool. A liquidity pool is
+                            only as good as its weakest token. If the token is
+                            infinitely minted, a huge percent of the entire Dai
+                            supply can be stolen. PLEASE SLOW DOWN AND DYOR.
+                        </Error>
+                    </ModalContent>
+                </Container>
             ) : (
                 <div />
             )}
