@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PoolAssetChartPanel from '../components/Pool/PoolAssetChartPanel';
 import AddRemovePanel from '../components/Pool/AddRemovePanel';
@@ -34,6 +34,16 @@ const ErrorMessage = styled.div`
     color: var(--panel-row-text);
     width: 100%;
     height: calc(100vh - 108px);
+`;
+
+const ExitComponent = styled.div`
+    color: var(--exit-modal-color);
+    transform: rotate(135deg);
+    font-size: 22px;
+    cursor: pointer;
+    width: 25px;
+    position: absolute;
+    right: 20px;
 `;
 
 const Icon = styled.img`
@@ -130,7 +140,11 @@ const PoolView = observer((props: RouteComponentProps) => {
     const pool = poolStore.getPool(poolAddress);
     const account = providerStore.providerStatus.account;
 
-    let warningModalOpen = true;
+    const [warningModalOpen, setWarningModalOpen] = useState(true);
+
+    const handleCloseModal = () => {
+        setWarningModalOpen(false);
+    };
 
     useEffect(() => {
         return function cleanup() {
@@ -214,6 +228,9 @@ const PoolView = observer((props: RouteComponentProps) => {
                     style={{ display: warningModalOpen ? 'block' : 'none' }}
                 >
                     <ModalContent>
+                        <ExitComponent onClick={() => handleCloseModal()}>
+                            +
+                        </ExitComponent>
                         <Error>
                             <Icon src="WarningSign.svg" />
                             This is a extremely risky pool. A liquidity pool is
