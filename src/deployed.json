@@ -30,6 +30,31 @@
             "transferFee": []
         }
     },
+    "rinkeby": {
+        "chainId": 4,
+        "defaultPrecision": 4,
+        "bFactory": "0x9C84391B443ea3a48788079a5f98e2EaD55c9309",
+        "bActions": "0xA492414f528175f7F5D7881eC01434eF62779502",
+        "dsProxyRegistry": "0xE8c7cE6Ee9Fc75196bC5317883bD73A0F4ac7Bc0",
+        "proxy": "0xeF5f222c49c89a231F3aBE30114c77EE904e1e44",
+        "weth": "0xc778417e063141139fce010982780140aa0cd5ab",
+        "multicall": "0x51A86f7c855e2Ccef4DeCE8b90409C2a639641E5",
+        "tokens": [
+            {
+                "symbol": "ETH",
+                "address": "ether",
+                "decimals": 18,
+                "ticker": "ETH",
+                "iconAddress": "ether",
+                "precision": 4
+            }
+        ],
+        "warnings": [],
+        "errors": {
+            "noBool": [],
+            "transferFee": []
+        }
+    },
     "kovan": {
         "chainId": 42,
         "defaultPrecision": 4,
