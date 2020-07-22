@@ -58,7 +58,7 @@ const IconAndNameContainer = styled.div`
 const NotSupported = require('../../assets/images/question.svg') as string;
 
 export const TokenIconAddress = (address, isSupported) => {
-    if (!isSupported) {
+    if (!isSupported || address === 'unknown') {
         return NotSupported;
     }
     if (address === 'ether') {

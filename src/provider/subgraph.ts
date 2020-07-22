@@ -14,94 +14,61 @@ enum QueryType {
     SINGLE_POOL,
 }
 
+class QueryParams {
+    pageIncrement?: number;
+    skip?: number;
+    account?: string;
+    tokens?: string[];
+    address?: string;
+}
+
 export async function fetchSharedPools(
     pageIncrement: number,
     skip: number,
     tokens?: string[]
 ): Promise<Pool[]> {
-    const query = getPoolQuery(
-        QueryType.SHARED_POOLS,
+    const params = {
         pageIncrement,
         skip,
-        null,
-        tokens
-    );
+        tokens,
+    };
+    const query = getPoolQuery(QueryType.SHARED_POOLS, params);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
 }
 
 export async function fetchPrivatePools(): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.PRIVATE_POOLS, 100, 0);
+    const params = {
+        pageIncrement: 100,
+        skip: 0,
+    };
+    const query = getPoolQuery(QueryType.PRIVATE_POOLS, params);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
 }
 
 export async function fetchContributedPools(account: string): Promise<Pool[]> {
-    const query = getPoolQuery(QueryType.CONTRIBUTED_POOLS, 100, 0, account);
+    const params = {
+        pageIncrement: 100,
+        skip: 0,
+        account,
+    };
+    const query = getPoolQuery(QueryType.CONTRIBUTED_POOLS, params);
     const rawPools = await fetchPools(query);
     const pools = processPools(rawPools);
     return pools;
 }
 
 export async function fetchPool(address: string): Promise<Pool> {
-    const ts = Math.round(new Date().getTime() / 1000);
-    const tsYesterday = ts - 24 * 3600;
-    const query = `
-        {
-            pool(id: "${address.toLowerCase()}") {
-                id
-                publicSwap
-                finalized
-                swapFee
-                totalWeight
-                totalShares
-                totalSwapVolume
-                tokensList
-                tokens {
-                    id
-                    address
-                    balance
-                    decimals
-                    symbol
-                    denormWeight
-                }
-                swaps (
-                    first: 1,
-                    orderBy: timestamp,
-                    orderDirection: desc,
-                    where: {
-                        timestamp_lt: ${tsYesterday}
-                    }
-                ) {
-                    tokenIn
-                    tokenInSym
-                    tokenAmountIn
-                    tokenOut
-                    tokenOutSym
-                    tokenAmountOut
-                    poolTotalSwapVolume
-                }
-            }
-        }
-    `;
-    const response = await fetch(SUBGRAPH_URL, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            query,
-        }),
-    });
-
-    const payload = await response.json();
-    const rawPool = payload.data.pool;
-    const pools = processPools([rawPool]);
-    const pool = pools[0];
-    return pool;
+    const params = {
+        address,
+    };
+    const query = getPoolQuery(QueryType.SINGLE_POOL, params);
+    const rawPools = await fetchPools(query);
+    const pools = processPools(rawPools);
+    return pools[0];
 }
 
 export async function fetchPoolSwaps(
@@ -139,15 +106,10 @@ export async function fetchPoolSwaps(
     return data.swaps;
 }
 
-function getPoolQuery(
-    type: QueryType,
-    pageIncrement: number,
-    skip: number,
-    account?: string,
-    tokens?: string[]
-): string {
+function getPoolQuery(type: QueryType, params: QueryParams): string {
     const ts = Math.round(new Date().getTime() / 1000);
     const tsYesterday = ts - 24 * 3600;
+    const { tokens } = params;
     const tokenStr = tokens
         ? `, tokensList_contains: ${JSON.stringify(
               tokens.map(token => token.toLowerCase())
@@ -188,6 +150,7 @@ function getPoolQuery(
         }
     `;
     if (type === QueryType.SHARED_POOLS) {
+        const { pageIncrement, skip } = params;
         return `
             {
                 pools (
@@ -207,6 +170,7 @@ function getPoolQuery(
         `;
     }
     if (type === QueryType.PRIVATE_POOLS) {
+        const { pageIncrement, skip } = params;
         return `
             {
                 pools (
@@ -225,6 +189,7 @@ function getPoolQuery(
         `;
     }
     if (type === QueryType.CONTRIBUTED_POOLS) {
+        const { account } = params;
         return `
             {
                 poolShares(where: {
@@ -233,6 +198,16 @@ function getPoolQuery(
                     poolId {
                         ${poolFields}
                     }
+                }
+            }
+        `;
+    }
+    if (type === QueryType.SINGLE_POOL) {
+        const { address } = params;
+        return `
+            {
+                pool(id: "${address.toLowerCase()}") {
+                    ${poolFields}
                 }
             }
         `;
@@ -262,9 +237,16 @@ async function fetchPools(query: string) {
             delay *= EXPONENTIAL_BACKOFF_FACTOR;
             continue;
         }
-        pools = payload.data.pools
-            ? payload.data.pools
-            : payload.data.poolShares.map(poolShare => poolShare.poolId);
+        const { data } = payload;
+        if (data.pools) {
+            pools = data.pools;
+        }
+        if (data.poolShares) {
+            pools = data.poolShares.map(poolShare => poolShare.poolId);
+        }
+        if (data.pool) {
+            pools = [data.pool];
+        }
     }
     return pools;
 }
@@ -298,15 +280,6 @@ function processPools(rawPools): Pool[] {
                 } as PoolToken;
             }),
             shares: [],
-            // shares: pool.shares.map(share => {
-            //     return {
-            //         account: getAddress(share.userAddress.id),
-            //         balance: bnum(share.balance),
-            //         balanceProportion: bnum(share.balance).div(
-            //             bnum(pool.totalShares)
-            //         ),
-            //     } as PoolShare;
-            // }),
             swaps: pool.swaps.map(swap => {
                 return {
                     tokenIn: getAddress(swap.tokenIn),
@@ -318,13 +291,12 @@ function processPools(rawPools): Pool[] {
                     poolTotalSwapVolume: bnum(swap.poolTotalSwapVolume),
                 } as Swap;
             }),
+            lastSwapVolume: pool.swaps[0]
+                ? bnum(pool.totalSwapVolume).minus(
+                      pool.swaps[0].poolTotalSwapVolume
+                  )
+                : bnum(pool.totalSwapVolume),
         };
-
-        processedPool.lastSwapVolume = processedPool.swaps[0]
-            ? processedPool.totalSwapVolume.minus(
-                  processedPool.swaps[0].poolTotalSwapVolume
-              )
-            : bnum(0);
 
         return processedPool;
     });

@@ -790,15 +790,6 @@
                 "chartColor": "#387080"
             },
             {
-                "symbol": "AMPL",
-                "address": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
-                "decimals": 9,
-                "ticker": "AMPL",
-                "iconAddress": "0xD46bA6D942050d489DBd938a2C909A5d5039A161",
-                "precision": 2,
-                "chartColor": "#68aca9"
-            },
-            {
                 "symbol": "LEV",
                 "address": "0x0F4CA92660Efad97a9a70CB0fe969c755439772C",
                 "decimals": 9,
@@ -809,10 +800,10 @@
             },
             {
                 "symbol": "BUIDL",
-                "address": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "address": "0x7b123f53421b1bF8533339BFBdc7C98aA94163db",
                 "decimals": 18,
                 "ticker": "BUIDL",
-                "iconAddress": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
+                "iconAddress": "0x7b123f53421b1bF8533339BFBdc7C98aA94163db",
                 "precision": 2,
                 "chartColor": "#416aa3"
             },
@@ -1841,6 +1832,240 @@
                 "iconAddress": "0x621E3b71D07b51242bcca167928e184235A4bb87",
                 "precision": 2,
                 "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "CTS",
+                "address": "0x57e83505827788c9F92bCfd398A51A7b0C83DD8e",
+                "decimals": 18,
+                "ticker": "CTS",
+                "iconAddress": "0x57e83505827788c9F92bCfd398A51A7b0C83DD8e",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "BTCRSIAPY",
+                "address": "0x924E26fEe8E10c20726006CC2Bd307A538B0eBE5",
+                "decimals": 18,
+                "ticker": "BTCRSIAPY",
+                "iconAddress": "0x924E26fEe8E10c20726006CC2Bd307A538B0eBE5",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "MQSS",
+                "address": "0x77b1465b0e01ba085e515324e30fEe6555C623EA",
+                "decimals": 18,
+                "ticker": "MQSS",
+                "iconAddress": "0x77b1465b0e01ba085e515324e30fEe6555C623EA",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "TCapBTCUSDC",
+                "address": "0x7510D6fac98A6eCa2DB7c9357619715a7f5049d4",
+                "decimals": 18,
+                "ticker": "TCapBTCUSDC",
+                "iconAddress": "0x7510D6fac98A6eCa2DB7c9357619715a7f5049d4",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "TCapETHDAI",
+                "address": "0x8e4dBF540Bf814c044785218B58C930B20a56BE1",
+                "decimals": 18,
+                "ticker": "TCapETHDAI",
+                "iconAddress": "0x8e4dBF540Bf814c044785218B58C930B20a56BE1",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "ETHSB",
+                "address": "0x8DDF05C42C698329053c4F39B5bb05A350fd8132",
+                "decimals": 18,
+                "ticker": "ETHSB",
+                "iconAddress": "0x8DDF05C42C698329053c4F39B5bb05A350fd8132",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "STMX",
+                "address": "0xbE9375C6a420D2eEB258962efB95551A5b722803",
+                "decimals": 18,
+                "ticker": "STMX",
+                "iconAddress": "0xbE9375C6a420D2eEB258962efB95551A5b722803",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "SWM",
+                "address": "0x3505F494c3f0fed0B594E01Fa41Dd3967645ca39",
+                "decimals": 18,
+                "ticker": "SWM",
+                "iconAddress": "0x3505F494c3f0fed0B594E01Fa41Dd3967645ca39",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "COCOS",
+                "address": "0x0C6f5F7D555E7518f6841a79436BD2b1Eef03381",
+                "decimals": 18,
+                "ticker": "COCOS",
+                "iconAddress": "0x0C6f5F7D555E7518f6841a79436BD2b1Eef03381",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "DOS",
+                "address": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
+                "decimals": 18,
+                "ticker": "DOS",
+                "iconAddress": "0x70861e862E1Ac0C96f853C8231826e469eAd37B1",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "RDN",
+                "address": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
+                "decimals": 18,
+                "ticker": "RDN",
+                "iconAddress": "0x255Aa6DF07540Cb5d3d297f0D0D4D84cb52bc8e6",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "MATH",
+                "address": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
+                "decimals": 18,
+                "ticker": "MATH",
+                "iconAddress": "0x08d967bb0134F2d07f7cfb6E246680c53927DD30",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "BZRX",
+                "address": "0x56d811088235F11C8920698a204A5010a788f4b3",
+                "decimals": 18,
+                "ticker": "BZRX",
+                "iconAddress": "0x56d811088235F11C8920698a204A5010a788f4b3",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "DUSK",
+                "address": "0x940a2dB1B7008B6C776d4faaCa729d6d4A4AA551",
+                "decimals": 18,
+                "ticker": "DUSK",
+                "iconAddress": "0x940a2dB1B7008B6C776d4faaCa729d6d4A4AA551",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "GRG",
+                "address": "0x4FbB350052Bca5417566f188eB2EBCE5b19BC964",
+                "decimals": 18,
+                "ticker": "GRG",
+                "iconAddress": "0x4FbB350052Bca5417566f188eB2EBCE5b19BC964",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "MCB",
+                "address": "0x4e352cF164E64ADCBad318C3a1e222E9EBa4Ce42",
+                "decimals": 18,
+                "ticker": "MCB",
+                "iconAddress": "0x4e352cF164E64ADCBad318C3a1e222E9EBa4Ce42",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "MTA",
+                "address": "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
+                "decimals": 18,
+                "ticker": "MTA",
+                "iconAddress": "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "MYST",
+                "address": "0xa645264C5603E96c3b0B078cdab68733794B0A71",
+                "decimals": 8,
+                "ticker": "MYST",
+                "iconAddress": "0xa645264C5603E96c3b0B078cdab68733794B0A71",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "ONG",
+                "address": "0xd341d1680Eeee3255b8C4c75bCCE7EB57f144dAe",
+                "decimals": 18,
+                "ticker": "ONG",
+                "iconAddress": "0xd341d1680Eeee3255b8C4c75bCCE7EB57f144dAe",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "RARI",
+                "address": "0xFca59Cd816aB1eaD66534D82bc21E7515cE441CF",
+                "decimals": 18,
+                "ticker": "RARI",
+                "iconAddress": "0xFca59Cd816aB1eaD66534D82bc21E7515cE441CF",
+                "precision": 2,
+                "chartColor": "#9a4f50"
+            },
+            {
+                "symbol": "SWAP",
+                "address": "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe",
+                "decimals": 18,
+                "ticker": "SWAP",
+                "iconAddress": "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe",
+                "precision": 2,
+                "chartColor": "#c28d75"
+            },
+            {
+                "symbol": "UTRUST",
+                "address": "0x70a72833d6bF7F508C8224CE59ea1Ef3d0Ea3A38",
+                "decimals": 18,
+                "ticker": "UTK",
+                "iconAddress": "0x70a72833d6bF7F508C8224CE59ea1Ef3d0Ea3A38",
+                "precision": 2,
+                "chartColor": "#7ca1c0"
+            },
+            {
+                "symbol": "YFI",
+                "address": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+                "decimals": 18,
+                "ticker": "YFI",
+                "iconAddress": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+                "precision": 2,
+                "chartColor": "#416aa3"
+            },
+            {
+                "symbol": "sDEFI",
+                "address": "0xe1aFe1Fd76Fd88f78cBf599ea1846231B8bA3B6B",
+                "decimals": 18,
+                "ticker": "sDEFI",
+                "iconAddress": "0xe1aFe1Fd76Fd88f78cBf599ea1846231B8bA3B6B",
+                "precision": 2,
+                "chartColor": "#8d6268"
+            },
+            {
+                "symbol": "sXAG",
+                "address": "0x6A22e5e94388464181578Aa7A6B869e00fE27846",
+                "decimals": 18,
+                "ticker": "sXAG",
+                "iconAddress": "0x6A22e5e94388464181578Aa7A6B869e00fE27846",
+                "precision": 2,
+                "chartColor": "#be955c"
+            },
+            {
+                "symbol": "wNXM",
+                "address": "0x0d438F3b5175Bebc262bF23753C1E53d03432bDE",
+                "decimals": 18,
+                "ticker": "NXM",
+                "iconAddress": "unknown",
+                "precision": 2,
+                "chartColor": "#628b8d"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
@@ -1899,8 +2124,9 @@
                 "0xb60Fde5D798236fBF1e2697B2A0645380921FccF",
                 "0xc58c0Fca06908E66540102356f2E91edCaEB8D81",
                 "0xDB7Eab9bA6be88B869F738f6DEeBa96d49Fe13fd",
-                "0xF0FAC7104aAC544e4a7CE1A55ADF2B5a25c65bD1",
-                "0xeEEE2a622330E6d2036691e983DEe87330588603"
+                "0xE6c2C240E1228980F322D76ed4C1F63078191BB5",
+                "0xeEEE2a622330E6d2036691e983DEe87330588603",
+                "0xF0FAC7104aAC544e4a7CE1A55ADF2B5a25c65bD1"
             ]
         }
     }
