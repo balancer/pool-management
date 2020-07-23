@@ -223,7 +223,9 @@ const PoolView = observer((props: RouteComponentProps) => {
             ) : (
                 <div />
             )}
-            {poolAddress === '0x60626db611a9957C1ae4Ac5b7eDE69e24A3B76c5' ? (
+            {pool.tokensList.includes(
+                '0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e'
+            ) ? (
                 <Container
                     style={{ display: warningModalOpen ? 'block' : 'none' }}
                 >
@@ -232,11 +234,12 @@ const PoolView = observer((props: RouteComponentProps) => {
                             +
                         </ExitComponent>
                         <Error>
-                            <Icon src="WarningSign.svg" />
-                            This is a extremely risky pool. A liquidity pool is
-                            only as good as its weakest token. If the token is
-                            infinitely minted, a huge percent of the entire Dai
-                            supply can be stolen. PLEASE SLOW DOWN AND DYOR.
+                            <Icon src="ErrorSign.svg" />
+                            This is an extremely risky pool. A liquidity pool is
+                            only as good as its weakest token. If the YFI token
+                            is infinitely minted, a huge percent of the entire
+                            pool supply can be stolen. PLEASE SLOW DOWN AND
+                            DYOR.
                         </Error>
                     </ModalContent>
                 </Container>
