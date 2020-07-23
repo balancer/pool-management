@@ -12,6 +12,7 @@ import {
     formatFee,
 } from '../../utils/helpers';
 import { formatPoolAssetChartData } from '../../utils/chartFormatter';
+import { BigNumber } from '../../utils/bignumber';
 
 const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
@@ -143,6 +144,7 @@ const AssetDot = styled.div`
 interface Props {
     pools: Pool[];
     dataSource: LiquidityPanelDataSource;
+    showTotalRow?: boolean;
 }
 
 export enum LiquidityPanelDataSource {
@@ -159,7 +161,7 @@ const LiquidityPanel = observer((props: Props) => {
     const {
         root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
-    const { pools, dataSource } = props;
+    const { pools, dataSource, showTotalRow } = props;
     const account = providerStore.providerStatus.account;
 
     const options = {
@@ -280,7 +282,48 @@ const LiquidityPanel = observer((props: Props) => {
                 );
             });
 
-            return <React.Fragment>{poolRows}</React.Fragment>;
+            let totalRow;
+            if (showTotalRow) {
+                const poolTotals = poolInfos.reduce(
+                    (acc, p) => {
+                        acc.liquidity = acc.liquidity.plus(p.liquidity);
+                        acc.userLiquidity = acc.userLiquidity.plus(
+                            p.userLiquidity
+                        );
+                        acc.volume = acc.volume.plus(p.volume);
+                        return acc;
+                    },
+                    {
+                        liquidity: new BigNumber(0),
+                        userLiquidity: new BigNumber(0),
+                        volume: new BigNumber(0),
+                    }
+                );
+
+                const totalLiquidityText = formatCurrency(poolTotals.liquidity);
+                const totalUserLiquidityText = poolTotals.userLiquidity
+                    ? formatCurrency(poolTotals.userLiquidity)
+                    : '-';
+                const totalVolumeText = formatCurrency(poolTotals.volume);
+
+                totalRow = (
+                    <HeaderRow>
+                        <TableCellHideMobile>Totals</TableCellHideMobile>
+                        <AssetCell />
+                        <TableCellHideMobile />
+                        <TableCellRight>{`$ ${totalLiquidityText}`}</TableCellRight>
+                        <TableCellRightHideMobile>{`$ ${totalUserLiquidityText}`}</TableCellRightHideMobile>
+                        <TableCellRightHideMobile>{`$ ${totalVolumeText}`}</TableCellRightHideMobile>
+                    </HeaderRow>
+                );
+            }
+
+            return (
+                <React.Fragment>
+                    {poolRows}
+                    {totalRow}
+                </React.Fragment>
+            );
         }
     };
 

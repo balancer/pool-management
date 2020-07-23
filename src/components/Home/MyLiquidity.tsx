@@ -61,6 +61,7 @@ const MyLiquidity = observer(() => {
             <LiquidityPanel
                 pools={pools}
                 dataSource={LiquidityPanelDataSource.ACCOUNT}
+                showTotalRow={true}
             />
         </Wrapper>
     );
