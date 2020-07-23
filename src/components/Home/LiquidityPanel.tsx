@@ -219,73 +219,68 @@ const LiquidityPanel = observer((props: Props) => {
                 );
             });
 
-            return (
-                <React.Fragment>
-                    {poolsShown.map(pool => {
-                        let liquidityText = '-';
-                        let userLiquidityText = '-';
-                        let volumeText = '-';
+            const poolInfos = poolsShown.map(pool => {
+                const poolLiquidity = marketStore.getPortfolioValue(pool);
 
-                        const poolLiquidity = marketStore.getPortfolioValue(
-                            pool
-                        );
-                        liquidityText = formatCurrency(poolLiquidity);
+                const userLiquidity = account
+                    ? poolStore.calcUserLiquidity(pool.address, account)
+                    : null;
 
-                        if (account) {
-                            const userLiquidity = poolStore.calcUserLiquidity(
-                                pool.address,
-                                account
-                            );
+                // const volume = marketStore.getPoolVolume(pool);
+                const volume = pool.lastSwapVolume;
 
-                            if (userLiquidity) {
-                                userLiquidityText = formatCurrency(
-                                    userLiquidity
-                                );
-                            }
-                        }
+                return Object.assign(
+                    {
+                        liquidity: poolLiquidity,
+                        userLiquidity: userLiquidity,
+                        volume: volume,
+                    },
+                    pool
+                );
+            });
 
-                        // const volume = marketStore.getPoolVolume(pool);
+            const poolRows = poolInfos.map(pool => {
+                const liquidityText = formatCurrency(pool.liquidity);
+                const userLiquidityText = pool.userLiquidity
+                    ? formatCurrency(pool.userLiquidity)
+                    : '-';
+                const volumeText = formatCurrency(pool.volume);
 
-                        volumeText = formatCurrency(pool.lastSwapVolume);
+                return (
+                    <PoolLink key={pool.address} to={`/pool/${pool.address}`}>
+                        <PoolRow>
+                            <TableCellHideMobile>
+                                <IdenticonText>
+                                    {shortenAddress(pool.address)}
+                                </IdenticonText>
+                            </TableCellHideMobile>
+                            <AssetCell>
+                                <PieChartWrapper>
+                                    <Pie
+                                        type={'doughnut'}
+                                        data={formatPoolAssetChartData(
+                                            pool,
+                                            contractMetadataStore.contractMetadata
+                                        )}
+                                        options={options}
+                                    />
+                                </PieChartWrapper>
+                                <BreakdownContainer>
+                                    {renderAssetPercentages(pool)}
+                                </BreakdownContainer>
+                            </AssetCell>
+                            <TableCellHideMobile>
+                                {formatFee(pool.swapFee)}
+                            </TableCellHideMobile>
+                            <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
+                            <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
+                            <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
+                        </PoolRow>
+                    </PoolLink>
+                );
+            });
 
-                        return (
-                            <PoolLink
-                                key={pool.address}
-                                to={`/pool/${pool.address}`}
-                            >
-                                <PoolRow>
-                                    <TableCellHideMobile>
-                                        <IdenticonText>
-                                            {shortenAddress(pool.address)}
-                                        </IdenticonText>
-                                    </TableCellHideMobile>
-                                    <AssetCell>
-                                        <PieChartWrapper>
-                                            <Pie
-                                                type={'doughnut'}
-                                                data={formatPoolAssetChartData(
-                                                    pool,
-                                                    contractMetadataStore.contractMetadata
-                                                )}
-                                                options={options}
-                                            />
-                                        </PieChartWrapper>
-                                        <BreakdownContainer>
-                                            {renderAssetPercentages(pool)}
-                                        </BreakdownContainer>
-                                    </AssetCell>
-                                    <TableCellHideMobile>
-                                        {formatFee(pool.swapFee)}
-                                    </TableCellHideMobile>
-                                    <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
-                                    <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
-                                    <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
-                                </PoolRow>
-                            </PoolLink>
-                        );
-                    })}
-                </React.Fragment>
-            );
+            return <React.Fragment>{poolRows}</React.Fragment>;
         }
     };
 
