@@ -108,7 +108,7 @@ export async function fetchPoolSwaps(
 
 function getPoolQuery(type: QueryType, params: QueryParams): string {
     const ts = Math.round(new Date().getTime() / 1000);
-    const tsYesterday = ts - 24 * 3600;
+    const tsYesterday = Math.round((ts - 24 * 3600) / 1000) * 1000;
     const { tokens } = params;
     const tokenStr = tokens
         ? `, tokensList_contains: ${JSON.stringify(
