@@ -2127,6 +2127,9 @@
                 "0xE6c2C240E1228980F322D76ed4C1F63078191BB5",
                 "0xeEEE2a622330E6d2036691e983DEe87330588603",
                 "0xF0FAC7104aAC544e4a7CE1A55ADF2B5a25c65bD1"
+            ],
+            "fakeToken": [
+                "0xb81D3cB2708530ea990a287142b82D058725C092"
             ]
         }
     }

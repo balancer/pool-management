@@ -383,9 +383,13 @@ const AddLiquidityModal = observer((props: Props) => {
     const hasTransactionError = addLiquidityFormStore.hasTransactionError;
 
     const tokenErrors = contractMetadataStore.getTokenErrors();
-    const hasTokenError = pool.tokens.some(token => {
+    const hasTransferFee = pool.tokens.some(token => {
         return tokenErrors.transferFee.includes(token.address);
     });
+    const isFakeToken = pool.tokens.some(token => {
+        return tokenErrors.fakeToken.includes(token.address);
+    });
+    const hasTokenError = hasTransferFee || isFakeToken;
 
     const userShare = calculateUserShare(pool, account, hasValidInput);
 
@@ -608,22 +612,34 @@ const AddLiquidityModal = observer((props: Props) => {
             return;
         }
 
-        return (
-            <Error>
-                <Icon src="ErrorSign.svg" />
-                <Content>
-                    This pool contains a deflationary token that is likely to
-                    cause loss of funds. Do not deposit.
-                    <Link
-                        href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Learn more
-                    </Link>
-                </Content>
-            </Error>
-        );
+        if (hasTransferFee) {
+            return (
+                <Error>
+                    <Icon src="ErrorSign.svg" />
+                    <Content>
+                        This pool contains a deflationary token that is likely to
+                        cause loss of funds. Do not deposit.
+                        <Link
+                            href="https://medium.com/balancer-protocol/incident-with-non-standard-erc20-deflationary-tokens-95a0f6d46dea"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Learn more
+                        </Link>
+                    </Content>
+                </Error>
+            );
+        } else if (isFakeToken) {
+            return (
+                <Error>
+                    <Icon src="ErrorSign.svg" />
+                    <Content>
+                        This pool contains an asset that mimics another asset.
+                        This is likely a phishing attempt. Do not deposit.
+                    </Content>
+                </Error>
+            );
+        }
     };
 
     const renderConfirmation = () => {

@@ -132,7 +132,8 @@ const AssetOptions = observer((props: RouteComponentProps) => {
         const errors = contractMetadataStore.getTokenErrors();
         const noBool = errors.noBool.includes(address);
         const transferFee = errors.transferFee.includes(address);
-        return noBool || transferFee;
+        const fakeToken = errors.fakeToken.includes(address);
+        return noBool || transferFee || fakeToken;
     };
 
     const getAssetOptions = (filter, account): Asset[] => {
