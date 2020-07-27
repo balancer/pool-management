@@ -28,7 +28,8 @@
         "errors": {
             "noBool": [],
             "transferFee": []
-        }
+        },
+        "scams": []
     },
     "kovan": {
         "chainId": 42,
@@ -147,7 +148,8 @@
                 "0xe7d8E7742ca6906a14F7e46770Fdfe6B7014e62D"
             ],
             "transferFee": ["0xbef02f140BFb37a75Ed6510e8D85C9E9e7e0ff1e"]
-        }
+        },
+        "scams": []
     },
     "mainnet": {
         "chainId": 1,
@@ -2128,6 +2130,10 @@
                 "0xeEEE2a622330E6d2036691e983DEe87330588603",
                 "0xF0FAC7104aAC544e4a7CE1A55ADF2B5a25c65bD1"
             ]
-        }
+        },
+        "scams": [
+            "0xa1d0E215a23d7030842FC67cE582a6aFa3CCaB83",
+            "0xb81D3cB2708530ea990a287142b82D058725C092"
+        ]
     }
 }
