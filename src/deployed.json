@@ -2095,6 +2095,15 @@
                 "iconAddress": "0x1a7a8BD9106F2B8D977E08582DC7d24c723ab0DB",
                 "precision": 2,
                 "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "ESS",
+                "address": "0xfc05987bd2be489ACCF0f509E44B0145d68240f7",
+                "decimals": 18,
+                "ticker": "ESS",
+                "iconAddress": "0xfc05987bd2be489ACCF0f509E44B0145d68240f7",
+                "precision": 2,
+                "chartColor": "#8b5580"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
