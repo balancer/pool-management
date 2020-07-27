@@ -2113,6 +2113,15 @@
                 "iconAddress": "0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8",
                 "precision": 2,
                 "chartColor": "#c38890"
+            },
+            {
+                "symbol": "yUSD-SEP20",
+                "address": "0x81ab848898b5ffD3354dbbEfb333D5D183eEDcB5",
+                "decimals": 18,
+                "ticker": "yUSD-SEP20",
+                "iconAddress": "0x81ab848898b5ffD3354dbbEfb333D5D183eEDcB5",
+                "precision": 2,
+                "chartColor": "#a593a5"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
