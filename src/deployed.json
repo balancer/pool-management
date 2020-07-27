@@ -2068,6 +2068,15 @@
                 "iconAddress": "unknown",
                 "precision": 2,
                 "chartColor": "#628b8d"
+            },
+            {
+                "symbol": "0xBTC",
+                "address": "0xB6eD7644C69416d67B522e20bC294A9a9B405B31",
+                "decimals": 8,
+                "ticker": "0xBTC",
+                "iconAddress": "0xB6eD7644C69416d67B522e20bC294A9a9B405B31",
+                "precision": 4,
+                "chartColor": "#6f6776"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
