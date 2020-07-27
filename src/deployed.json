@@ -2077,6 +2077,15 @@
                 "iconAddress": "0xB6eD7644C69416d67B522e20bC294A9a9B405B31",
                 "precision": 4,
                 "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "0xMR",
+                "address": "0x035dF12E0F3ac6671126525f1015E47D79dFEDDF",
+                "decimals": 18,
+                "ticker": "0xMR",
+                "iconAddress": "0x035dF12E0F3ac6671126525f1015E47D79dFEDDF",
+                "precision": 2,
+                "chartColor": "#9a9a97"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
