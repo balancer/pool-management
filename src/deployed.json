@@ -2086,6 +2086,15 @@
                 "iconAddress": "0x035dF12E0F3ac6671126525f1015E47D79dFEDDF",
                 "precision": 2,
                 "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "APPC",
+                "address": "0x1a7a8BD9106F2B8D977E08582DC7d24c723ab0DB",
+                "decimals": 18,
+                "ticker": "APPC",
+                "iconAddress": "0x1a7a8BD9106F2B8D977E08582DC7d24c723ab0DB",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
