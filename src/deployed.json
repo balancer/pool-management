@@ -2104,6 +2104,15 @@
                 "iconAddress": "0xfc05987bd2be489ACCF0f509E44B0145d68240f7",
                 "precision": 2,
                 "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "yCRV",
+                "address": "0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8",
+                "decimals": 18,
+                "ticker": "yCRV",
+                "iconAddress": "0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8",
+                "precision": 2,
+                "chartColor": "#c38890"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
