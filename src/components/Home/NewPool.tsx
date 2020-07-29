@@ -353,6 +353,10 @@ const NewPool = observer(() => {
                         • Any other <b>non-compliance from ERC20</b> may cause
                         issues. DYOR!
                     </div>
+                    <div>
+                        • By checking this box I agree that Balancer Labs is not
+                        liable for any losses or issues I might have.
+                    </div>
                 </div>
             </Check>
         );
