@@ -134,6 +134,7 @@ const PoolView = observer((props: RouteComponentProps) => {
             removeLiquidityFormStore,
             tokenStore,
             swapsTableStore,
+            contractMetadataStore,
         },
     } = useStores();
 
@@ -211,6 +212,10 @@ const PoolView = observer((props: RouteComponentProps) => {
         volumeText = formatCurrency(pool.lastSwapVolume);
     }
 
+    const hasCustomToken = pool.tokens.some(
+        token => !contractMetadataStore.isSupported(token.address)
+    );
+
     return (
         <PoolViewWrapper>
             {addLiquidityFormStore.modalOpen ? (
@@ -223,9 +228,7 @@ const PoolView = observer((props: RouteComponentProps) => {
             ) : (
                 <div />
             )}
-            {pool.tokensList.includes(
-                '0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e'
-            ) ? (
+            {hasCustomToken ? (
                 <Container
                     style={{ display: warningModalOpen ? 'block' : 'none' }}
                 >
@@ -235,11 +238,12 @@ const PoolView = observer((props: RouteComponentProps) => {
                         </ExitComponent>
                         <Error>
                             <Icon src="ErrorSign.svg" />
-                            This is an extremely risky pool. A liquidity pool is
-                            only as good as its weakest token. If the YFI token
-                            is infinitely minted, a huge percent of the entire
-                            pool supply can be stolen. PLEASE SLOW DOWN AND
-                            DYOR.
+                            This is a risky pool as it contains a token outside
+                            of whitelist. A liquidity pool is only as good as
+                            its weakest token. If the token get blacklisted,
+                            infinitely minted, or exploited in any other way,
+                            the pool value can signicantly decrease. Slow down
+                            and do your own research!
                         </Error>
                     </ModalContent>
                 </Container>
