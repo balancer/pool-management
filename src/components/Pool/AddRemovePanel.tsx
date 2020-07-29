@@ -75,7 +75,6 @@ const AddRemovePanel = (props: Props) => {
             addLiquidityFormStore,
             removeLiquidityFormStore,
             poolStore,
-            contractMetadataStore,
         },
     } = useStores();
     const account = providerStore.providerStatus.account;
@@ -93,17 +92,6 @@ const AddRemovePanel = (props: Props) => {
         );
         isFinalized = pool.finalized;
         isEmpty = pool.totalShares.isZero();
-    }
-
-    const scamTokens = contractMetadataStore.getScamTokens();
-
-    let isScamPool = false;
-    if (pool) {
-        for (const token of pool.tokensList) {
-            if (scamTokens.includes(token)) {
-                isScamPool = true;
-            }
-        }
     }
 
     return (
@@ -124,7 +112,7 @@ const AddRemovePanel = (props: Props) => {
                 <RightColumn>
                     <Button
                         text={'Add Liquidity'}
-                        isActive={!!pool && !isEmpty && !isScamPool}
+                        isActive={!!pool && !isEmpty}
                         isPrimary={true}
                         onClick={() => {
                             if (pool) {

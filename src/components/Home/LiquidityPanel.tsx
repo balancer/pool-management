@@ -162,8 +162,6 @@ const LiquidityPanel = observer((props: Props) => {
     const { pools, dataSource } = props;
     const account = providerStore.providerStatus.account;
 
-    const scamTokens = contractMetadataStore.getScamTokens();
-
     const options = {
         animation: {
             duration: 0,
@@ -214,23 +212,12 @@ const LiquidityPanel = observer((props: Props) => {
 
     const renderPoolsChart = () => {
         if (marketStore.assetPricesLoaded) {
-            let poolsShown = pools
-                .filter(pool => {
-                    if (pool) {
-                        for (const token of pool.tokensList) {
-                            if (scamTokens.includes(token)) {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                })
-                .sort((a, b) => {
-                    return (
-                        Number(marketStore.getPortfolioValue(b)) -
-                        Number(marketStore.getPortfolioValue(a))
-                    );
-                });
+            let poolsShown = pools.sort((a, b) => {
+                return (
+                    Number(marketStore.getPortfolioValue(b)) -
+                    Number(marketStore.getPortfolioValue(a))
+                );
+            });
 
             return (
                 <React.Fragment>
