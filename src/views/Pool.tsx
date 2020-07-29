@@ -242,8 +242,8 @@ const PoolView = observer((props: RouteComponentProps) => {
                             of whitelist. A liquidity pool is only as good as
                             its weakest token. If the token get blacklisted,
                             infinitely minted, or exploited in any other way,
-                            the pool value can signicantly decrease. Slow down
-                            and do your own research!
+                            the pool value can go to 0. Slow down and do your
+                            own research!
                         </Error>
                     </ModalContent>
                 </Container>
