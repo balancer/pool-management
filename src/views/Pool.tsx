@@ -134,11 +134,23 @@ const PoolView = observer((props: RouteComponentProps) => {
             removeLiquidityFormStore,
             tokenStore,
             swapsTableStore,
+            contractMetadataStore,
         },
     } = useStores();
 
     const pool = poolStore.getPool(poolAddress);
     const account = providerStore.providerStatus.account;
+
+    const scamTokens = contractMetadataStore.getScamTokens();
+
+    let isScamPool = false;
+    if (pool) {
+        for (const token of pool.tokensList) {
+            if (scamTokens.includes(token)) {
+                isScamPool = true;
+            }
+        }
+    }
 
     const [warningModalOpen, setWarningModalOpen] = useState(true);
 
@@ -174,6 +186,14 @@ const PoolView = observer((props: RouteComponentProps) => {
                 <ErrorMessage>
                     Pool with specified address not found
                 </ErrorMessage>
+            </PoolViewWrapper>
+        );
+    }
+
+    if (isScamPool) {
+        return (
+            <PoolViewWrapper>
+                <ErrorMessage>Pool unavailable</ErrorMessage>
             </PoolViewWrapper>
         );
     }
