@@ -98,7 +98,7 @@
                 "symbol": "WBTC",
                 "address": "0xe0C9275E44Ea80eF17579d33c55136b7DA269aEb",
                 "decimals": 8,
-                "ticker": "BTC",
+                "ticker": "WBTC",
                 "iconAddress": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
                 "precision": 4,
                 "chartColor": "#779bc0"
@@ -271,7 +271,7 @@
                 "symbol": "WBTC",
                 "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
                 "decimals": 8,
-                "ticker": "BTC",
+                "ticker": "WBTC",
                 "iconAddress": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
                 "precision": 4,
                 "chartColor": "#68aca9"
@@ -325,7 +325,7 @@
                 "symbol": "imBTC",
                 "address": "0x3212b29E33587A00FB1C83346f5dBFA69A458923",
                 "decimals": 8,
-                "ticker": "BTC",
+                "ticker": "imBTC",
                 "iconAddress": "0x3212b29E33587A00FB1C83346f5dBFA69A458923",
                 "precision": 4,
                 "chartColor": "#c38890"
@@ -334,7 +334,7 @@
                 "symbol": "pBTC",
                 "address": "0x5228a22e72ccC52d415EcFd199F99D0665E7733b",
                 "decimals": 18,
-                "ticker": "BTC",
+                "ticker": "pBTC",
                 "iconAddress": "0x5228a22e72ccC52d415EcFd199F99D0665E7733b",
                 "precision": 2,
                 "chartColor": "#8b5580"
@@ -343,7 +343,7 @@
                 "symbol": "sBTC",
                 "address": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
                 "decimals": 18,
-                "ticker": "BTC",
+                "ticker": "sBTC",
                 "iconAddress": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
                 "precision": 2,
                 "chartColor": "#6f6776"
@@ -604,7 +604,7 @@
                 "symbol": "renBTC",
                 "address": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
                 "decimals": 8,
-                "ticker": "renbtc",
+                "ticker": "renBTC",
                 "iconAddress": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
                 "precision": 2,
                 "chartColor": "#9a9a97"
