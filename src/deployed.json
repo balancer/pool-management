@@ -2102,6 +2102,15 @@
                 "iconAddress": "0x81ab848898b5ffD3354dbbEfb333D5D183eEDcB5",
                 "precision": 2,
                 "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "ALEPH",
+                "address": "0xC0134b5B924c2FCA106eFB33C45446c466FBe03e",
+                "decimals": 18,
+                "ticker": "ALEPH",
+                "iconAddress": "0xC0134b5B924c2FCA106eFB33C45446c466FBe03e",
+                "precision": 2,
+                "chartColor": "#6f6776"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
