@@ -2147,6 +2147,15 @@
                 "iconAddress": "0x13339fD07934CD674269726EdF3B5ccEE9DD93de",
                 "precision": 2,
                 "chartColor": "#c38890"
+            },
+            {
+                "symbol": "KAI",
+                "address": "0xBD6467a31899590474cE1e84F70594c53D628e46",
+                "decimals": 18,
+                "ticker": "KAI",
+                "iconAddress": "0xBD6467a31899590474cE1e84F70594c53D628e46",
+                "precision": 2,
+                "chartColor": "#a593a5"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
