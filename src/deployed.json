@@ -2165,6 +2165,15 @@
                 "iconAddress": "0xCc80C051057B774cD75067Dc48f8987C4Eb97A5e",
                 "precision": 2,
                 "chartColor": "#666092"
+            },
+            {
+                "symbol": "uDOO",
+                "address": "0x12f649A9E821F90BB143089a6e56846945892ffB",
+                "decimals": 18,
+                "ticker": "uDOO",
+                "iconAddress": "0x12f649A9E821F90BB143089a6e56846945892ffB",
+                "precision": 2,
+                "chartColor": "#9a4f50"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
