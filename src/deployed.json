@@ -2138,6 +2138,15 @@
                 "iconAddress": "0x954b890704693af242613edEf1B603825afcD708",
                 "precision": 2,
                 "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "CUR",
+                "address": "0x13339fD07934CD674269726EdF3B5ccEE9DD93de",
+                "decimals": 18,
+                "ticker": "CUR",
+                "iconAddress": "0x13339fD07934CD674269726EdF3B5ccEE9DD93de",
+                "precision": 2,
+                "chartColor": "#c38890"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
