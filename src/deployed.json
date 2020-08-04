@@ -2120,6 +2120,15 @@
                 "iconAddress": "0xBA50933C268F567BDC86E1aC131BE072C6B0b71a",
                 "precision": 2,
                 "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "ARTE",
+                "address": "0x44b6e3e85561ce054aB13Affa0773358D795D36D",
+                "decimals": 18,
+                "ticker": "ARTE",
+                "iconAddress": "0x44b6e3e85561ce054aB13Affa0773358D795D36D",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
