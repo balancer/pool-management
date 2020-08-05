@@ -790,15 +790,6 @@
                 "chartColor": "#387080"
             },
             {
-                "symbol": "LEV",
-                "address": "0x0F4CA92660Efad97a9a70CB0fe969c755439772C",
-                "decimals": 9,
-                "ticker": "LEV",
-                "iconAddress": "0x0F4CA92660Efad97a9a70CB0fe969c755439772C",
-                "precision": 2,
-                "chartColor": "#8d6268"
-            },
-            {
                 "symbol": "BUIDL",
                 "address": "0x7b123f53421b1bF8533339BFBdc7C98aA94163db",
                 "decimals": 18,
@@ -1067,15 +1058,6 @@
                 "iconAddress": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
                 "precision": 2,
                 "chartColor": "#c5ccb8"
-            },
-            {
-                "symbol": "PRO",
-                "address": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
-                "decimals": 18,
-                "ticker": "PRA",
-                "iconAddress": "0x9041Fe5B3FDEA0f5e4afDC17e75180738D877A01",
-                "precision": 2,
-                "chartColor": "#9a9a97"
             },
             {
                 "symbol": "JRT",
@@ -2120,6 +2102,78 @@
                 "iconAddress": "0x81ab848898b5ffD3354dbbEfb333D5D183eEDcB5",
                 "precision": 2,
                 "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "ALEPH",
+                "address": "0xC0134b5B924c2FCA106eFB33C45446c466FBe03e",
+                "decimals": 18,
+                "ticker": "ALEPH",
+                "iconAddress": "0xC0134b5B924c2FCA106eFB33C45446c466FBe03e",
+                "precision": 2,
+                "chartColor": "#6f6776"
+            },
+            {
+                "symbol": "ARPA",
+                "address": "0xBA50933C268F567BDC86E1aC131BE072C6B0b71a",
+                "decimals": 18,
+                "ticker": "ARPA",
+                "iconAddress": "0xBA50933C268F567BDC86E1aC131BE072C6B0b71a",
+                "precision": 2,
+                "chartColor": "#9a9a97"
+            },
+            {
+                "symbol": "ARTE",
+                "address": "0x44b6e3e85561ce054aB13Affa0773358D795D36D",
+                "decimals": 18,
+                "ticker": "ARTE",
+                "iconAddress": "0x44b6e3e85561ce054aB13Affa0773358D795D36D",
+                "precision": 2,
+                "chartColor": "#c5ccb8"
+            },
+            {
+                "symbol": "CARD",
+                "address": "0x954b890704693af242613edEf1B603825afcD708",
+                "decimals": 18,
+                "ticker": "CARD",
+                "iconAddress": "0x954b890704693af242613edEf1B603825afcD708",
+                "precision": 2,
+                "chartColor": "#8b5580"
+            },
+            {
+                "symbol": "CUR",
+                "address": "0x13339fD07934CD674269726EdF3B5ccEE9DD93de",
+                "decimals": 18,
+                "ticker": "CUR",
+                "iconAddress": "0x13339fD07934CD674269726EdF3B5ccEE9DD93de",
+                "precision": 2,
+                "chartColor": "#c38890"
+            },
+            {
+                "symbol": "KAI",
+                "address": "0xBD6467a31899590474cE1e84F70594c53D628e46",
+                "decimals": 18,
+                "ticker": "KAI",
+                "iconAddress": "0xBD6467a31899590474cE1e84F70594c53D628e46",
+                "precision": 2,
+                "chartColor": "#a593a5"
+            },
+            {
+                "symbol": "NEC",
+                "address": "0xCc80C051057B774cD75067Dc48f8987C4Eb97A5e",
+                "decimals": 18,
+                "ticker": "NEC",
+                "iconAddress": "0xCc80C051057B774cD75067Dc48f8987C4Eb97A5e",
+                "precision": 2,
+                "chartColor": "#666092"
+            },
+            {
+                "symbol": "uDOO",
+                "address": "0x12f649A9E821F90BB143089a6e56846945892ffB",
+                "decimals": 18,
+                "ticker": "uDOO",
+                "iconAddress": "0x12f649A9E821F90BB143089a6e56846945892ffB",
+                "precision": 2,
+                "chartColor": "#9a4f50"
             }
         ],
         "warnings": ["0x4f3AfEC4E5a3F2A6a1A411DEF7D7dFe50eE057bF"],
