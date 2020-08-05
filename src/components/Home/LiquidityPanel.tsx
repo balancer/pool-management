@@ -12,6 +12,7 @@ import {
     formatFee,
 } from '../../utils/helpers';
 import { formatPoolAssetChartData } from '../../utils/chartFormatter';
+import { BigNumber } from '../../utils/bignumber';
 
 const Wrapper = styled.div`
     border: 1px solid var(--panel-border);
@@ -143,6 +144,7 @@ const AssetDot = styled.div`
 interface Props {
     pools: Pool[];
     dataSource: LiquidityPanelDataSource;
+    showTotalRow?: boolean;
 }
 
 export enum LiquidityPanelDataSource {
@@ -159,7 +161,7 @@ const LiquidityPanel = observer((props: Props) => {
     const {
         root: { poolStore, providerStore, marketStore, contractMetadataStore },
     } = useStores();
-    const { pools, dataSource } = props;
+    const { pools, dataSource, showTotalRow } = props;
     const account = providerStore.providerStatus.account;
 
     const options = {
@@ -219,71 +221,107 @@ const LiquidityPanel = observer((props: Props) => {
                 );
             });
 
+            const poolInfos = poolsShown.map(pool => {
+                const poolLiquidity = marketStore.getPortfolioValue(pool);
+
+                const userLiquidity = account
+                    ? poolStore.calcUserLiquidity(pool.address, account)
+                    : null;
+
+                // const volume = marketStore.getPoolVolume(pool);
+                const volume = pool.lastSwapVolume;
+
+                return Object.assign(
+                    {
+                        liquidity: poolLiquidity,
+                        userLiquidity: userLiquidity,
+                        volume: volume,
+                    },
+                    pool
+                );
+            });
+
+            const poolRows = poolInfos.map(pool => {
+                const liquidityText = formatCurrency(pool.liquidity);
+                const userLiquidityText = pool.userLiquidity
+                    ? formatCurrency(pool.userLiquidity)
+                    : '-';
+                const volumeText = formatCurrency(pool.volume);
+
+                return (
+                    <PoolLink key={pool.address} to={`/pool/${pool.address}`}>
+                        <PoolRow>
+                            <TableCellHideMobile>
+                                <IdenticonText>
+                                    {shortenAddress(pool.address)}
+                                </IdenticonText>
+                            </TableCellHideMobile>
+                            <AssetCell>
+                                <PieChartWrapper>
+                                    <Pie
+                                        type={'doughnut'}
+                                        data={formatPoolAssetChartData(
+                                            pool,
+                                            contractMetadataStore.contractMetadata
+                                        )}
+                                        options={options}
+                                    />
+                                </PieChartWrapper>
+                                <BreakdownContainer>
+                                    {renderAssetPercentages(pool)}
+                                </BreakdownContainer>
+                            </AssetCell>
+                            <TableCellHideMobile>
+                                {formatFee(pool.swapFee)}
+                            </TableCellHideMobile>
+                            <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
+                            <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
+                            <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
+                        </PoolRow>
+                    </PoolLink>
+                );
+            });
+
+            let totalRow;
+            if (showTotalRow) {
+                const poolTotals = poolInfos.reduce(
+                    (acc, p) => {
+                        acc.liquidity = acc.liquidity.plus(p.liquidity);
+                        acc.userLiquidity = acc.userLiquidity.plus(
+                            p.userLiquidity
+                        );
+                        acc.volume = acc.volume.plus(p.volume);
+                        return acc;
+                    },
+                    {
+                        liquidity: new BigNumber(0),
+                        userLiquidity: new BigNumber(0),
+                        volume: new BigNumber(0),
+                    }
+                );
+
+                const totalLiquidityText = formatCurrency(poolTotals.liquidity);
+                const totalUserLiquidityText = poolTotals.userLiquidity
+                    ? formatCurrency(poolTotals.userLiquidity)
+                    : '-';
+                const totalVolumeText = formatCurrency(poolTotals.volume);
+
+                totalRow = (
+                    <HeaderRow>
+                        <TableCellHideMobile>Totals</TableCellHideMobile>
+                        <AssetCell />
+                        <TableCellHideMobile />
+                        <TableCellRight>{`$ ${totalLiquidityText}`}</TableCellRight>
+                        <TableCellRightHideMobile>{`$ ${totalUserLiquidityText}`}</TableCellRightHideMobile>
+                        <TableCellRightHideMobile>{`$ ${totalVolumeText}`}</TableCellRightHideMobile>
+                    </HeaderRow>
+                );
+            }
+
             return (
                 <React.Fragment>
-                    {poolsShown.map(pool => {
-                        let liquidityText = '-';
-                        let userLiquidityText = '-';
-                        let volumeText = '-';
-
-                        const poolLiquidity = marketStore.getPortfolioValue(
-                            pool
-                        );
-                        liquidityText = formatCurrency(poolLiquidity);
-
-                        if (account) {
-                            const userLiquidity = poolStore.calcUserLiquidity(
-                                pool.address,
-                                account
-                            );
-
-                            if (userLiquidity) {
-                                userLiquidityText = formatCurrency(
-                                    userLiquidity
-                                );
-                            }
-                        }
-
-                        // const volume = marketStore.getPoolVolume(pool);
-
-                        volumeText = formatCurrency(pool.lastSwapVolume);
-
-                        return (
-                            <PoolLink
-                                key={pool.address}
-                                to={`/pool/${pool.address}`}
-                            >
-                                <PoolRow>
-                                    <TableCellHideMobile>
-                                        <IdenticonText>
-                                            {shortenAddress(pool.address)}
-                                        </IdenticonText>
-                                    </TableCellHideMobile>
-                                    <AssetCell>
-                                        <PieChartWrapper>
-                                            <Pie
-                                                type={'doughnut'}
-                                                data={formatPoolAssetChartData(
-                                                    pool,
-                                                    contractMetadataStore.contractMetadata
-                                                )}
-                                                options={options}
-                                            />
-                                        </PieChartWrapper>
-                                        <BreakdownContainer>
-                                            {renderAssetPercentages(pool)}
-                                        </BreakdownContainer>
-                                    </AssetCell>
-                                    <TableCellHideMobile>
-                                        {formatFee(pool.swapFee)}
-                                    </TableCellHideMobile>
-                                    <TableCellRight>{`$ ${liquidityText}`}</TableCellRight>
-                                    <TableCellRightHideMobile>{`$ ${userLiquidityText}`}</TableCellRightHideMobile>
-                                    <TableCellRightHideMobile>{`$ ${volumeText}`}</TableCellRightHideMobile>
-                                </PoolRow>
-                            </PoolLink>
-                        );
-                    })}
+                    {poolRows}
+                    {totalRow}
                 </React.Fragment>
             );
         }
