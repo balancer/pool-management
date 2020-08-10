@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { getAddress } from 'ethers/utils';
+import { getAddress } from '@ethersproject/address';
 import { Pool, PoolToken, Swap } from '../types';
 import { bnum } from '../utils/helpers';
 import { getSupportedChainId, SUBGRAPH_URLS } from './connectors';

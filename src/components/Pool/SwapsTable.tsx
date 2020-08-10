@@ -5,7 +5,7 @@ import { padToDecimalPlaces } from '../../utils/helpers';
 import { getEtherscanLink } from '../../utils/helpers';
 import { useStores } from '../../contexts/storesContext';
 import { TokenIconAddress } from '../Common/WalletBalances';
-import { getAddress } from 'ethers/utils';
+import { getAddress } from '@ethersproject/address';
 const ExternalLink = require('../../assets/images/external-link.svg') as string;
 
 const formatDate = timestamp => {

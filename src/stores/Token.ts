@@ -3,7 +3,8 @@ import RootStore from 'stores/Root';
 import { ContractTypes } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
 import { bnum, scale } from 'utils/helpers';
-import { parseEther, Interface } from 'ethers/utils';
+import { Interface } from '@ethersproject/abi';
+import { parseEther } from '@ethersproject/units';
 import { FetchCode } from './Transaction';
 import { BigNumber } from 'utils/bignumber';
 import { AsyncStatus, UserAllowanceFetch } from './actions/fetch';
@@ -129,7 +130,7 @@ export default class TokenStore {
         tokenAddresses.forEach(value => {
             calls.push([
                 value,
-                iface.functions.allowance.encode([account, spender]),
+                iface.encodeFunctionData("allowance", [account, spender]),
             ]);
         });
 
@@ -409,14 +410,12 @@ export default class TokenStore {
             const iface = new Interface(tokenAbi);
 
             tokensToTrack.forEach(value => {
-                calls.push([value, iface.functions.totalSupply.encode([])]);
+                calls.push([value, iface.encodeFunctionData("totalSupply",[])]);
             });
 
             try {
                 const [blockNumber, response] = await multi.aggregate(calls);
-                const supplies = response.map(value =>
-                    bnum(iface.functions.totalSupply.decode(value))
-                );
+                const supplies = response.map(value => bnum(value));
 
                 this.setTotalSupplies(
                     tokensToTrack,
@@ -452,7 +451,7 @@ export default class TokenStore {
             if (value !== EtherKey) {
                 calls.push([
                     value,
-                    iface.functions.balanceOf.encode([account]),
+                    iface.encodeFunctionData("balanceOf", [account]),
                 ]);
             }
         });
@@ -464,9 +463,7 @@ export default class TokenStore {
             const [[blockNumber, response], ethBalance] = await Promise.all(
                 promises
             );
-            const balances = response.map(value =>
-                bnum(iface.functions.balanceOf.decode(value))
-            );
+            const balances = response.map(value => bnum(value));
             if (tokensToTrack[0] === EtherKey) {
                 balances.unshift(bnum(ethBalance));
             }
